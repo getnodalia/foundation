@@ -1,7 +1,6 @@
 [workspace]
 resolver = "3"
 members = ["crates/*"]
-exclude = ["vendor/krilla", "vendor/hayro", "vendor/hayro-interpret", "vendor/hayro-syntax", "vendor/hayro-jbig2"]
 
 [workspace.package]
 version = "0.1.0"
@@ -12,45 +11,12 @@ repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
 # internal: add each crate here as `craft-<name> = { path = "crates/<name>" }`
-nodalia-platform = { path = "crates/platform" }
-nodalia-ai-core = { path = "crates/ai-core" }
-nodalia-pdf = { path = "crates/pdf", version = "=0.1.0" }
-krilla = { version = "=0.8.2", default-features = false, features = ["raster-images"] }
-hayro = { version = "=0.7.1", default-features = false }
-hayro-interpret = { version = "=0.7.0", default-features = false, features = ["embed-fonts", "embed-cmaps"] }
-hayro-syntax = { version = "=0.7.2", default-features = false, features = ["std"] }
-bytemuck = "1"
-thiserror = "2"
-nodalia-atomic = { path = "crates/atomic" }
-nodalia-cms = { path = "crates/cms" }
-nodalia-docpath = { path = "crates/docpath" }
-nodalia-i18n = { path = "crates/i18n" }
-nodalia-media = { path = "crates/media" }
-nodalia-print = { path = "crates/print" }
-nodalia-quit = { path = "crates/quit" }
-nodalia-settings = { path = "crates/settings" }
 nodalia-ui = { path = "crates/ui" }
-nodalia-window = { path = "crates/window" }
 egui = { version = "0.36", default-features = false }
-rayon = "1"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-proptest = "1"
-# All date/time conversion goes through chrono (no hand-rolled calendar code beyond the 400-year range extension; AGENTS.md).
-chrono = { version = "0.4.45", default-features = false, features = ["std"] }
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
-unexpected_cfgs = { level = "warn", check-cfg = ["cfg(nodalia_pdf_unicode_fixtures)"] }
 
 [workspace.lints.clippy]
 dbg_macro = "warn"
 todo = "warn"
-
-[patch.crates-io]
-krilla = { path = "vendor/krilla" }
-
-hayro = { path = "vendor/hayro" }
-hayro-interpret = { path = "vendor/hayro-interpret" }
-hayro-syntax = { path = "vendor/hayro-syntax" }
-hayro-jbig2 = { path = "vendor/hayro-jbig2" }
