@@ -1,6 +1,6 @@
 
 Nodalia
 
-This tree is nodalia-winprint, made from storytold/winprint.rs at bc06a7c48b768eb27a828c7986f6d2868b245ee0 by renaming it
+This tree is nodalia-winprint, made from storytold/winprint.rs at 417ac3c4d14d3da5485a99c7d5ce8f05664ec312 by renaming it
 (scripts/nodalia_libs.py in https://github.com/getnodalia/foundation). Its code and assets keep the licences, copyright
 notices and credits above and in ATTRIBUTION.md, unchanged.
