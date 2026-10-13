@@ -7,7 +7,7 @@ mod pdfium;
 mod win_pdf;
 mod xps;
 
-pub use device::{DriverInfoError, PrinterDevice};
+pub use device::PrinterDevice;
 pub use dxgi::{DxgiPrintContext, DxgiPrintContextError};
 pub use file::FilePrinter;
 pub use image::{ImagePrinter, ImagePrinterError};
