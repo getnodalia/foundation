@@ -55,7 +55,6 @@ pub(crate) struct NonStreamChunks {
     pub(crate) patterns: Chunk,
     pub(crate) pages: Chunk,
     pub(crate) embedded_files: Chunk,
-    pub(crate) optional_content: Chunk,
 }
 
 impl ChunkContainer {
@@ -94,7 +93,6 @@ impl ChunkContainer {
                 patterns: sc.new_chunk(),
                 pages: sc.new_chunk(),
                 embedded_files: sc.new_chunk(),
-                optional_content: sc.new_chunk(),
             },
         }
     }
@@ -149,12 +147,14 @@ impl ChunkContainer {
             sc.register_validation_error(ValidationError::NoDocumentTitle);
         }
 
-        // Write the PDF document info metadata, also without metadata when print markers need it.
-        let no_metadata = Metadata::default();
-        self.metadata
-            .as_ref()
-            .unwrap_or(&no_metadata)
-            .serialize_document_info(&mut remapped_ref, &mut pdf, &sc.serialize_settings());
+        // Write the PDF document info metadata.
+        if let Some(metadata) = &self.metadata {
+            metadata.serialize_document_info(
+                &mut remapped_ref,
+                &mut pdf,
+                sc.serialize_settings().configuration,
+            );
+        }
 
         let instance_id = stable_hash_base64(pdf.as_bytes());
 
@@ -182,7 +182,6 @@ impl ChunkContainer {
         let settings = sc.serialize_settings();
         let validators = settings.validators();
         validators.write_xmp(&mut xmp);
-        settings.write_print_xmp(&mut xmp);
 
         xmp.num_pages(sc.page_infos().len() as u32);
         xmp.format("application/pdf");
@@ -193,12 +192,7 @@ impl ChunkContainer {
             instance_id.as_bytes().to_vec(),
         ));
 
-        // PdfCraft patch: a document written here is the master rendition, not a proof copy.
-        // `xmpMM:RenditionClass` says which rendition a file is (XMP Part 2, Media Management):
-        // `default` is the master, `proof` a proof copy. Writing `proof` on every file told a
-        // prepress system that a print deliverable was a proof, and PDF/X output carries it
-        // (storytold/designcraft#1207).
-        xmp.rendition_class(RenditionClass::Default);
+        xmp.rendition_class(RenditionClass::Proof);
         sc.serialize_settings().pdf_version().write_xmp(&mut xmp);
 
         let named_destinations = sc.global_objects.named_destinations.take();
@@ -347,9 +341,6 @@ impl ChunkContainer {
                 }
             }
 
-            sc.optional_content
-                .write_catalog_entries(&mut catalog, &remapper);
-
             catalog.finish();
         }
 
@@ -446,7 +437,6 @@ impl Visit for NonStreamChunks {
         self.patterns.visit(sc, f)?;
         self.pages.visit(sc, f)?;
         self.embedded_files.visit(sc, f)?;
-        self.optional_content.visit(sc, f)?;
 
         Ok(())
     }

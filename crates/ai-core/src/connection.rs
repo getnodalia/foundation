@@ -202,9 +202,8 @@ impl Connection {
                 return Err(ConnectionError::KeyHeader("a header name needs a connection that uses a key"));
             }
         }
-        let mut seen = std::collections::HashSet::with_capacity(self.models.len());
-        for m in &self.models {
-            if !seen.insert(&m.id) {
+        for (i, m) in self.models.iter().enumerate() {
+            if self.models.iter().skip(i + 1).any(|o| o.id == m.id) {
                 return Err(ConnectionError::DuplicateModel(m.id.to_string()));
             }
         }

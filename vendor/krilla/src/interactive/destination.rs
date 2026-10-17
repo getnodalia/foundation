@@ -117,10 +117,7 @@ impl From<XyzDestination> for Destination {
 impl XyzDestination {
     /// Create a new XYZ destination. `page_index` should be the index (i.e. number) of the
     /// target page, and point indicates the specific location on that page that should be
-    /// targeted. A `page_index` out of range, or a point that isn't finite, makes
-    /// [`Document::finish`] return [`KrillaError::InvalidDestination`].
-    ///
-    /// [`Document::finish`]: crate::Document::finish
+    /// targeted. If the `page_index` is out of range, export will panic.
     pub fn new(page_index: usize, point: Point) -> Self {
         Self(Arc::new(XyzDestRepr { page_index, point }))
     }
@@ -130,9 +127,17 @@ impl XyzDestination {
         sc: &mut SerializeContext,
         chunk_container: &mut ChunkContainer,
         root_ref: Ref,
-    ) -> KrillaResult<()> {
-        let invalid = || KrillaError::InvalidDestination(self.0.page_index);
-        let page_info = sc.page_infos().get(self.0.page_index).ok_or_else(invalid)?;
+    ) {
+        let chunk = &mut chunk_container.non_stream.destinations;
+        let destination = chunk.destination(root_ref);
+
+        let page_info = sc.page_infos().get(self.0.page_index).unwrap_or_else(|| {
+            panic!(
+                "attempted to link to page {}, but document only has {} pages",
+                self.0.page_index + 1,
+                sc.page_infos().len()
+            )
+        });
 
         let (ref_, surface_size) = match page_info {
             PageInfo::Krilla {
@@ -148,17 +153,10 @@ impl XyzDestination {
         // Convert to PDF coordinates
         let invert_transform = Transform::from_row(1.0, 0.0, 0.0, -1.0, 0.0, page_size);
         invert_transform.map_point(&mut mapped_point);
-        if !(mapped_point.x.is_finite() && mapped_point.y.is_finite()) {
-            return Err(invalid());
-        }
 
-        chunk_container
-            .non_stream
-            .destinations
-            .destination(root_ref)
+        destination
             .page(page_ref)
             .xyz(mapped_point.x, mapped_point.y, None);
-        Ok(())
     }
 }
 

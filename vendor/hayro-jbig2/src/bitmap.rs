@@ -7,6 +7,7 @@
 
 use crate::decode::CombinationOperator;
 use crate::error::{OverflowError, Result, bail};
+use alloc::vec;
 use alloc::vec::Vec;
 
 // To guard better against malicious files, we limit bitmap dimensions
@@ -49,14 +50,6 @@ pub(crate) struct Bitmap {
     pub(crate) y_location: u32,
 }
 
-/// PdfCraft patch: fallible replacement for `vec![word; len]` / `resize`.
-fn fill_words(data: &mut Vec<Word>, len: usize, word: Word) -> Result<()> {
-    data.try_reserve_exact(len)
-        .map_err(|_| OverflowError::BitmapDimension)?;
-    data.resize(len, word);
-    Ok(())
-}
-
 impl Bitmap {
     /// Create a new bitmap filled with white pixels (false).
     ///
@@ -83,9 +76,7 @@ impl Bitmap {
 
         let stride = width.div_ceil(WORD_BITS);
         let default_word: Word = if default_pixel { !0 } else { 0 };
-        // PdfCraft patch: reserve fallibly so hostile dimensions error instead of aborting.
-        let mut data = Vec::new();
-        fill_words(&mut data, stride as usize * height as usize, default_word)?;
+        let data = vec![default_word; stride as usize * height as usize];
         Ok(Self {
             width,
             height,
@@ -112,15 +103,14 @@ impl Bitmap {
 
         let stride = width.div_ceil(WORD_BITS);
         let default_word: Word = if default_pixel { !0 } else { 0 };
-        // Allocate first so a failed reservation leaves the bitmap untouched.
-        let mut data = Vec::new();
-        fill_words(&mut data, stride as usize * height as usize, default_word)?;
         self.width = width;
         self.height = height;
         self.stride = stride;
         self.x_location = 0;
         self.y_location = 0;
-        self.data = data;
+        self.data.clear();
+        self.data
+            .resize(stride as usize * height as usize, default_word);
 
         Ok(())
     }
@@ -233,16 +223,5 @@ impl Bitmap {
         }
 
         self.data[(row * self.stride + word_idx) as usize]
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn failed_reservation_is_an_error() {
-        let mut data = Vec::new();
-        assert!(fill_words(&mut data, usize::MAX / 2, 0).is_err());
     }
 }

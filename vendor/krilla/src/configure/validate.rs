@@ -83,8 +83,7 @@ pub enum ValidationError {
     MissingCMYKProfile,
     /// The same Separation colorant was used with multiple different fallback colors.
     ///
-    /// Occurs if the user specified multiple Separation color spaces with the same colorant but a different fallback color,
-    /// or a DeviceN spot colorant whose CMYK alternate differs from the fallback used elsewhere for that name.
+    /// Occurs if the user specified multiple Separation color spaces with the same colorant but a different fallback color.
     InconsistentSeparationFallback(SeparationColorant),
     /// The `.notdef` glyph was used, which is forbidden by some export formats.
     ///
@@ -132,22 +131,6 @@ pub enum ValidationError {
     Transparency(Option<Location>),
     /// The PDF contains an image with `interpolate` set to `true`.
     ImageInterpolation(Option<Location>),
-    /// Overprint mode 1 (`/OPM 1`) was combined with fill or stroke overprint while CMYK
-    /// colors are ICCBased.
-    ///
-    /// PDF/A-2 and later forbid overprint mode 1 when an ICCBased CMYK color space is used
-    /// for a side that overprints. Validated export always writes CMYK as ICCBased, so any
-    /// [`Overprint`] with `nonzero` and `fill` or `stroke` set triggers it; use
-    /// `nonzero: false` there.
-    ///
-    /// [`Overprint`]: crate::blend::Overprint
-    OverprintModeIccCmyk(Option<Location>),
-    /// [`SerializeSettings::pdfx_version`] is set. Its XMP property
-    /// `pdfxid:GTS_PDFXVersion` needs a PDF/A extension schema, which krilla does not write;
-    /// PDF/A-1, -2 and -3 require one for every property outside the predefined schemas.
-    ///
-    /// [`SerializeSettings::pdfx_version`]: crate::SerializeSettings::pdfx_version
-    PdfxVersionWithoutExtensionSchema,
     /// The PDF contains an embedded file.
     EmbeddedFile(EmbedError, Option<Location>),
     /// The PDF contains no tagging.
@@ -159,12 +142,6 @@ pub enum ValidationError {
     EmbeddedPDF(Option<Location>),
     /// A feature only available in a later PDF version was required.
     RequiresNewerPdfVersion(VersionedFeature, Option<Location>),
-    /// The PDF contains optional content groups, which PDF/A-1 forbids.
-    ///
-    /// Occurs if [`Document::add_optional_content_group`] was called.
-    ///
-    /// [`Document::add_optional_content_group`]: crate::Document::add_optional_content_group
-    OptionalContent(Option<Location>),
 }
 
 /// Features that may require a later PDF version than the current one.
@@ -176,8 +153,6 @@ pub enum VersionedFeature {
     HeaderFooterArtifactSubtypes,
     /// Scope attribute for table header cells.
     TableHeaderScope,
-    /// Optional content groups (layers).
-    OptionalContent,
 }
 
 impl VersionedFeature {
@@ -187,7 +162,6 @@ impl VersionedFeature {
             VersionedFeature::StructureOrderTabbing => PdfVersion::Pdf15,
             VersionedFeature::HeaderFooterArtifactSubtypes => PdfVersion::Pdf17,
             VersionedFeature::TableHeaderScope => PdfVersion::Pdf15,
-            VersionedFeature::OptionalContent => PdfVersion::Pdf15,
         }
     }
 }
@@ -573,16 +547,13 @@ impl Archival {
                 | ValidationError::MissingDocumentDate
                 | ValidationError::Transparency(_)
                 | ValidationError::ImageInterpolation(_)
-                | ValidationError::PdfxVersionWithoutExtensionSchema
                 | ValidationError::EmbeddedFile(EmbedError::Existence, _)
-                | ValidationError::EmbeddedPDF(_)
-                | ValidationError::OptionalContent(_),
+                | ValidationError::EmbeddedPDF(_),
             ) => true,
             // Allowed under all PDF/A-1 profiles.
             (
                 Self::A1_A | Self::A1_B,
                 ValidationError::InconsistentSeparationFallback(_)
-                | ValidationError::OverprintModeIccCmyk(_)
                 | ValidationError::InvalidCodepointMapping(_, _, _, _)
                 | ValidationError::UnicodePrivateArea(_, _, _, _)
                 | ValidationError::NoDocumentTitle
@@ -592,8 +563,7 @@ impl Archival {
                 | ValidationError::RequiresNewerPdfVersion(
                     VersionedFeature::HeaderFooterArtifactSubtypes
                     | VersionedFeature::StructureOrderTabbing
-                    | VersionedFeature::TableHeaderScope
-                    | VersionedFeature::OptionalContent,
+                    | VersionedFeature::TableHeaderScope,
                     _,
                 ),
             ) => false,
@@ -622,8 +592,6 @@ impl Archival {
                 | ValidationError::RestrictedLicense(_)
                 | ValidationError::MissingDocumentDate
                 | ValidationError::ImageInterpolation(_)
-                | ValidationError::OverprintModeIccCmyk(_)
-                | ValidationError::PdfxVersionWithoutExtensionSchema
                 | ValidationError::EmbeddedPDF(_),
             ) => true,
             // Allowed under all PDF/A-2 and PDF/A-3 profiles.
@@ -639,11 +607,9 @@ impl Archival {
                 | ValidationError::RequiresNewerPdfVersion(
                     VersionedFeature::HeaderFooterArtifactSubtypes
                     | VersionedFeature::StructureOrderTabbing
-                    | VersionedFeature::TableHeaderScope
-                    | VersionedFeature::OptionalContent,
+                    | VersionedFeature::TableHeaderScope,
                     _,
-                )
-                | ValidationError::OptionalContent(_),
+                ),
             ) => false,
             // Forbidden under PDF/A-2 but allowed under PDF/A-3.
             (
@@ -690,7 +656,6 @@ impl Archival {
                 | ValidationError::RestrictedLicense(_)
                 | ValidationError::MissingDocumentDate
                 | ValidationError::ImageInterpolation(_)
-                | ValidationError::OverprintModeIccCmyk(_)
                 | ValidationError::EmbeddedPDF(_),
             ) => true,
             // Allowed under all PDF/A-4 profiles.
@@ -704,7 +669,6 @@ impl Archival {
                 | ValidationError::TooManyIndirectObjects
                 | ValidationError::TooHighQNestingLevel
                 | ValidationError::ContainsPostScript(_)
-                | ValidationError::PdfxVersionWithoutExtensionSchema
                 | ValidationError::NoDocumentLanguage
                 | ValidationError::NoDocumentTitle
                 | ValidationError::MissingAltText(_)
@@ -720,11 +684,9 @@ impl Archival {
                 | ValidationError::RequiresNewerPdfVersion(
                     VersionedFeature::HeaderFooterArtifactSubtypes
                     | VersionedFeature::StructureOrderTabbing
-                    | VersionedFeature::TableHeaderScope
-                    | VersionedFeature::OptionalContent,
+                    | VersionedFeature::TableHeaderScope,
                     _,
-                )
-                | ValidationError::OptionalContent(_),
+                ),
             ) => false,
             // Forbidden under PDF/A-4 but allowed under other PDF/A-4 profiles.
             (
@@ -1148,8 +1110,7 @@ impl Accessibility {
                 | ValidationError::RequiresNewerPdfVersion(
                     VersionedFeature::HeaderFooterArtifactSubtypes
                     | VersionedFeature::StructureOrderTabbing
-                    | VersionedFeature::TableHeaderScope
-                    | VersionedFeature::OptionalContent,
+                    | VersionedFeature::TableHeaderScope,
                     _,
                 ),
             ) => true,
@@ -1169,14 +1130,11 @@ impl Accessibility {
                 | ValidationError::NoDocumentLanguage
                 | ValidationError::Transparency(_)
                 | ValidationError::ImageInterpolation(_)
-                | ValidationError::OverprintModeIccCmyk(_)
-                | ValidationError::PdfxVersionWithoutExtensionSchema
                 | ValidationError::EmbeddedFile(
                     EmbedError::Existence | EmbedError::MissingDate | EmbedError::MissingMimeType,
                     _,
                 )
-                | ValidationError::MissingDocumentDate
-                | ValidationError::OptionalContent(_),
+                | ValidationError::MissingDocumentDate,
             ) => false,
         }
     }
@@ -1263,27 +1221,16 @@ impl ValidationStore {
         &mut self,
         separation: &SeparationSpace,
     ) -> Result<(), ValidationError> {
-        self.validate_colorant(&separation.colorant, separation.fallback)
-    }
-
-    /// Register a colorant used by a Separation or DeviceN color space with its
-    /// fallback (the DeviceN spot's CMYK alternate) and raise an error if the name
-    /// already has another one.
-    pub(crate) fn validate_colorant(
-        &mut self,
-        colorant: &SeparationColorant,
-        fallback: RegularColor,
-    ) -> Result<(), ValidationError> {
         if self
             .separation_fallback_map
-            .entry(colorant.clone())
-            .or_insert(fallback)
-            == &fallback
+            .entry(separation.colorant.clone())
+            .or_insert(separation.fallback)
+            == &separation.fallback
         {
             Ok(())
         } else {
             Err(ValidationError::InconsistentSeparationFallback(
-                colorant.clone(),
+                separation.colorant.clone(),
             ))
         }
     }
