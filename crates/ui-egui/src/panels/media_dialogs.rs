@@ -34,10 +34,7 @@ fn mb(b: u64) -> String {
 /// Draw whichever media dialogs are open; open Link Media when a project needs it.
 pub fn show(app: &mut TomaApp, ctx: &egui::Context) {
     if app.session.offline.prompt && app.ui.link_media.is_none() {
-        // Asked on open: list only the newly missing files, not the ones already made offline.
-        let s = &app.session;
-        let skipped = s.offline.missing.iter().filter(|i| s.project.item(**i).and_then(|it| it.as_media()).is_some_and(|m| m.offline)).map(|i| i.0).collect();
-        app.ui.link_media = Some(LinkMediaDraft { skipped, ..LinkMediaDraft::default() });
+        app.ui.link_media = Some(LinkMediaDraft::default());
     }
     if app.ui.link_media.is_some() {
         link_media(app, ctx);
@@ -87,7 +84,7 @@ pub fn route(app: &mut TomaApp, id: &str, params: &Value) -> Option<Result<Value
             let exts: Vec<&str> = toma_media::VIDEO_EXTENSIONS.to_vec();
             let hint = RelinkHint { command: id.to_string(), params: json!({"item": item.0}) };
             let id = id.to_string();
-            Some(app.pick(FileDialog::Relink { exts: exts.iter().map(ToString::to_string).collect(), hint }, move |app, paths| {
+            Some(app.pick(FileDialog::Relink { exts: exts.iter().map(|e| e.to_string()).collect(), hint }, move |app, paths| {
                 let Some(picked) = paths.into_iter().next() else { return Ok(Value::Null) };
                 app.session.execute(&id, json!({"item": item.0, "path": picked})).map_err(|e| e.to_string())
             }))
@@ -132,7 +129,7 @@ fn match_params(d: &LinkMediaDraft) -> Value {
 }
 
 fn preview_texture(app: &TomaApp, ctx: &egui::Context, path: &str) -> Option<egui::TextureHandle> {
-    let key = egui::Id::unique(("link-preview", path));
+    let key = egui::Id::new(("link-preview", path));
     if let Some(t) = ctx.data(|d| d.get_temp::<Option<egui::TextureHandle>>(key)) {
         return t;
     }
@@ -164,7 +161,7 @@ fn link_media(app: &mut TomaApp, ctx: &egui::Context) {
     let rows_max_h = (ctx.content_rect().height() * 0.3).clamp(90.0, 320.0);
     let width = (ctx.content_rect().width() - 40.0).clamp(1.0, 760.0);
     egui::Window::new(tl!("Link Media"))
-        .id(egui::Id::unique("Link Media"))
+        .id(egui::Id::new("Link Media"))
         .collapsible(false)
         .resizable(false)
         .default_width(width)
@@ -220,10 +217,7 @@ fn link_media(app: &mut TomaApp, ctx: &egui::Context) {
                 ui.separator();
                 ui.horizontal_wrapped(|ui| {
                     ui.label(tl!("Search in:"));
-                    let r = crate::widgets::accessible_name(
-                        ui.add(egui::TextEdit::singleline(&mut d.folder).desired_width((ui.available_width() * 0.5).min(360.0)).hint_text(tl!("Folder"))),
-                        "Folder",
-                    );
+                    let r = ui.add(egui::TextEdit::singleline(&mut d.folder).desired_width((ui.available_width() * 0.5).min(360.0)).hint_text(tl!("Folder")));
                     push(&mut elems, "linkMedia.folder", &r, "folder");
                     let r = ui.button(tl!("Browse…"));
                     push(&mut elems, "linkMedia.browse", &r, "Browse…");
@@ -345,7 +339,7 @@ fn link_media(app: &mut TomaApp, ctx: &egui::Context) {
             params["item"] = json!(item);
             let hint = RelinkHint { command: "media.relink".into(), params };
             let item = json!(item);
-            app.pick_ui(FileDialog::Relink { exts: exts.iter().map(ToString::to_string).collect(), hint }, move |app, paths| {
+            app.pick_ui(FileDialog::Relink { exts: exts.iter().map(|e| e.to_string()).collect(), hint }, move |app, paths| {
                 let (Some(path), Some(mut d)) = (paths.into_iter().next(), app.ui.link_media.clone()) else { return };
                 relink_to(app, &mut d, &item, path);
                 app.ui.link_media = Some(d);
@@ -357,18 +351,12 @@ fn link_media(app: &mut TomaApp, ctx: &egui::Context) {
             }
         }
         Some("offline") => {
-            let _ = app.session.execute("media.makeOffline", json!({"items": [item]}));
             d.skipped.push(item);
             d.candidates.clear();
             d.candidate = None;
         }
-        Some("offlineAll") => {
+        Some("offlineAll") | Some("cancel") => {
             let _ = app.session.execute("media.offlineAll", json!({}));
-            keep = false;
-        }
-        // Cancel leaves the files missing for this session only; the next open asks again.
-        Some("cancel") => {
-            app.session.offline.prompt = false;
             keep = false;
         }
         _ => {}
@@ -383,7 +371,7 @@ fn make_offline(app: &mut TomaApp, ctx: &egui::Context) {
     let mut ok = false;
     let n = app.session.state.project_selection.len();
     egui::Window::new(tl!("Make Offline"))
-        .id(egui::Id::unique("Make Offline"))
+        .id(egui::Id::new("Make Offline"))
         .collapsible(false)
         .resizable(false)
         .pivot(egui::Align2::CENTER_CENTER)
@@ -428,7 +416,7 @@ fn create_proxies(app: &mut TomaApp, ctx: &egui::Context) {
     let mut ok = false;
     let mut browse = false;
     egui::Window::new(tl!("Create Proxies"))
-        .id(egui::Id::unique("Create Proxies"))
+        .id(egui::Id::new("Create Proxies"))
         .collapsible(false)
         .resizable(false)
         .pivot(egui::Align2::CENTER_CENTER)
@@ -447,12 +435,8 @@ fn create_proxies(app: &mut TomaApp, ctx: &egui::Context) {
             ui.add_space(4.0);
             ui.label(RichText::new(tl!("Destination")).strong());
             ui.horizontal(|ui| {
-                let r = crate::widgets::accessible_name(
-                    ui.add(
-                        egui::TextEdit::singleline(&mut d.destination).desired_width(320.0).hint_text(tl!("Next to the original media, in a Proxies folder")),
-                    ),
-                    "Destination",
-                );
+                let r = ui
+                    .add(egui::TextEdit::singleline(&mut d.destination).desired_width(320.0).hint_text(tl!("Next to the original media, in a Proxies folder")));
                 push(&mut elems, "proxies.destination", &r, "destination");
                 let r = ui.button(tl!("Browse…"));
                 push(&mut elems, "proxies.browse", &r, "Browse…");
@@ -505,14 +489,14 @@ fn pm_params(d: &ProjectManagerDraft, dry: bool) -> Value {
 
 fn project_manager(app: &mut TomaApp, ctx: &egui::Context) {
     let Some(mut d) = app.ui.project_manager.clone() else { return };
-    crate::widgets::revert_drag_on_escape(ctx, egui::Id::unique("project-manager-before-drag"), &mut d);
+    crate::widgets::revert_drag_on_escape(ctx, egui::Id::new("project-manager-before-drag"), &mut d);
     let before = d.clone();
     let mut elems: Elems = Vec::new();
     let mut keep = true;
     let (mut ok, mut calc, mut browse) = (false, false, false);
     let seqs: Vec<(u64, String)> = app.session.project.sequences().map(|i| (i.id.0, i.name.clone())).collect();
     egui::Window::new(tl!("Project Manager"))
-        .id(egui::Id::unique("Project Manager"))
+        .id(egui::Id::new("Project Manager"))
         .collapsible(false)
         .resizable(false)
         .pivot(egui::Align2::CENTER_CENTER)
@@ -571,7 +555,7 @@ fn project_manager(app: &mut TomaApp, ctx: &egui::Context) {
             ui.separator();
             ui.label(RichText::new(tl!("Destination Path")).strong());
             ui.horizontal(|ui| {
-                let r = crate::widgets::accessible_name(ui.add(egui::TextEdit::singleline(&mut d.destination).desired_width(360.0)), "Destination");
+                let r = ui.add(egui::TextEdit::singleline(&mut d.destination).desired_width(360.0));
                 push(&mut elems, "pm.destination", &r, "destination");
                 let r = ui.button(tl!("Browse…"));
                 push(&mut elems, "pm.browse", &r, "Browse…");

@@ -32,10 +32,6 @@ impl FrameRenderer for YieldingRenderer {
         RENDERED.fetch_add(1, Ordering::Relaxed);
         Some(toma_render::render_sequence(project, seq, t, opts, sources))
     }
-
-    fn caps(&self) -> toma_render::plan::DeviceCaps {
-        toma_render::plan::DeviceCaps::ALL
-    }
 }
 
 fn factory() -> Option<Box<dyn FrameRenderer>> {
@@ -58,7 +54,7 @@ fn project() -> (Arc<Project>, ItemId, SourceMap) {
         let id = project.add_item(
             &info.name.clone(),
             Label::Iris,
-            ItemKind::Media(Box::new(MediaClip {
+            ItemKind::Media(MediaClip {
                 media: MediaRef::Generator(source.generator.clone()),
                 info,
                 interpret: Default::default(),
@@ -68,7 +64,7 @@ fn project() -> (Arc<Project>, ItemId, SourceMap) {
                 offline: false,
                 proxy: None,
                 identity: None,
-            })),
+            }),
             None,
         );
         let item = project.make_track_item(id, kind, Tick::ZERO, TimeRange::new(Tick::ZERO, duration), rate).unwrap();

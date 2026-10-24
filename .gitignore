@@ -1,7 +1,6 @@
 *~
 plan/
 /target
-/crates/*/target/
 /dist
 /log
 .DS_Store

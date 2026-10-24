@@ -31,7 +31,6 @@ pub fn is_through_edit(a: &TrackItem, b: &TrackItem) -> bool {
         || a.field_options != b.field_options
         || a.audio_stream != b.audio_stream
         || a.source_channels != b.source_channels
-        || a.maintain_pitch != b.maintain_pitch
     {
         return false;
     }
@@ -174,7 +173,6 @@ mod tests {
 
     fn item(id: u64, start: i64, dur: i64, src: i64) -> TrackItem {
         TrackItem {
-            custom_label_color: None,
             id: ClipId(id),
             item: ItemId(1),
             name: "c".into(),
@@ -195,7 +193,6 @@ mod tests {
             essential: None,
             multicam: None,
             time_interpolation: Default::default(),
-            maintain_pitch: false,
             hold_filters: false,
             field_options: None,
             source_channels: Vec::new(),
@@ -231,8 +228,7 @@ mod tests {
 
     #[test]
     fn pieces_with_different_settings_are_not_through_edits() {
-        // Maintain Audio Pitch: joining would play one half stretched and the other resampled
-        let tweaks: [fn(&mut TrackItem); 4] = [|t| t.enabled = false, |t| t.gain_db = -20.0, |t| t.scale_to_frame = true, |t| t.maintain_pitch = true];
+        let tweaks: [fn(&mut TrackItem); 3] = [|t| t.enabled = false, |t| t.gain_db = -20.0, |t| t.scale_to_frame = true];
         for tweak in tweaks {
             let mut q = seq_with(vec![item(10, 0, 100, 500)]);
             let mut n = 1000;

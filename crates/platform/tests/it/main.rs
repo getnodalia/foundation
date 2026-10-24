@@ -1,6 +1,7 @@
 mod common;
 mod fallback;
 mod hardware_encode;
+mod hevc_probe;
 mod media_foundation;
 mod nvenc;
 mod nvenc_export;

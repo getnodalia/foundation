@@ -34,9 +34,11 @@ impl PushStage {
         Self { pipeline }
     }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn draw(
         &self,
-        (device, queue): (&wgpu::Device, &wgpu::Queue),
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
         canvas: &wgpu::TextureView,
         inputs: [&wgpu::TextureView; 2],
         size: (u32, u32),

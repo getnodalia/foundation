@@ -84,15 +84,6 @@ pub struct PendingJob {
     pub on_done: OnDone,
     /// (item, output path) for each finished output.
     pub outputs: Arc<Mutex<Vec<(ItemId, String)>>>,
-    /// Length of the source each finished output was transcoded from (the worker's own copy, filled
-    /// as it goes): a generated proxy is as long as that source, which a project's stored duration
-    /// can overstate.
-    pub source_durations: Arc<Mutex<Vec<(ItemId, Tick)>>>,
-    /// What each item was when the job started: (item, path, stored duration). An output whose item
-    /// has been relinked or refreshed since was made from a different file and is not applied.
-    pub started_from: Vec<(ItemId, String, Tick)>,
-    /// `Session::document_epoch` when the job started: item ids mean something else in another project.
-    pub epoch: u64,
 }
 
 /// Transcode `range` (whole media when None) of one media clip to `out` with `preset`, blocking.
@@ -106,13 +97,7 @@ pub fn transcode(
     preset: &Preset,
     progress: &Progress,
 ) -> std::result::Result<Report, String> {
-    transcode_with_file(clip, name, src, range, Dest { path: out, file: None }, preset, progress)
-}
-
-/// Output path, plus the already-open file to write into when the caller holds one.
-struct Dest<'a> {
-    path: &'a str,
-    file: Option<Arc<std::fs::File>>,
+    transcode_with_file(clip, name, src, range, out, None, preset, progress)
 }
 
 fn transcode_with_file(
@@ -120,11 +105,11 @@ fn transcode_with_file(
     name: &str,
     src: SharedSource,
     range: Option<TimeRange>,
-    dest: Dest<'_>,
+    out: &str,
+    output_file: Option<Arc<std::fs::File>>,
     preset: &Preset,
     progress: &Progress,
 ) -> std::result::Result<Report, String> {
-    let Dest { path: out, file: output_file } = dest;
     let info = &clip.info;
     let rate = clip.frame_rate();
     let mut st = SequenceSettings::default();
@@ -140,12 +125,11 @@ fn transcode_with_file(
     let mut c = clip.clone();
     c.offline = false;
     c.proxy = None;
-    let item = p.add_item(name, toma_project::Label::Iris, ItemKind::Media(Box::new(c)), None);
+    let item = p.add_item(name, toma_project::Label::Iris, ItemKind::Media(c), None);
     let has_v = info.video.is_some();
     let has_a = info.has_audio();
     let seq = p.new_sequence("transcode", st, usize::from(has_v), usize::from(has_a), None);
-    // the opened source's length, not the project's stored one: a project can claim any duration
-    let range = range.unwrap_or(TimeRange { start: Tick::ZERO, duration: src.info().duration });
+    let range = range.unwrap_or(TimeRange { start: Tick::ZERO, duration: info.duration });
     let mut placed = Vec::new();
     if has_v && let Some(ti) = p.make_track_item(item, TrackKind::Video, Tick::ZERO, range, rate) {
         placed.push((TrackKind::Video, ti));
@@ -202,13 +186,9 @@ impl ReservedOutput {
 impl Drop for ReservedOutput {
     fn drop(&mut self) {
         if !self.keep {
-            // Only our own file goes: a replacement someone put at the path is theirs.
-            let ours = self.file.as_deref().is_none_or(|f| toma_export::path_is_file(&self.path.to_string_lossy(), f));
             // Release our handle before removal, which is required on Windows.
             self.file.take();
-            if ours {
-                let _ = std::fs::remove_file(&self.path);
-            }
+            let _ = std::fs::remove_file(&self.path);
         }
     }
 }
@@ -224,7 +204,7 @@ fn reserve_unique_path(dir: &Path, stem: &str, suffix: &str, ext: &str, taken: &
             n += 1;
             continue;
         }
-        match std::fs::OpenOptions::new().read(true).write(true).create_new(true).open(&path) {
+        match std::fs::OpenOptions::new().write(true).create_new(true).open(&path) {
             Ok(file) => {
                 return Ok(ReservedOutput { path, file: Some(Arc::new(file)), keep: false });
             }
@@ -247,8 +227,7 @@ pub fn unique_path(dir: &Path, stem: &str, suffix: &str, ext: &str, taken: &[Str
     loop {
         let name = if n == 1 { format!("{stem}{suffix}.{ext}") } else { format!("{stem}{suffix} {n}.{ext}") };
         let p = dir.join(name);
-        // a dangling symbolic link is taken too: writing through it would create the file where it points
-        if std::fs::symlink_metadata(&p).is_err() && !taken.contains(&p.to_string_lossy().into_owned()) {
+        if !p.exists() && !taken.contains(&p.to_string_lossy().into_owned()) {
             return p;
         }
         n += 1;
@@ -275,39 +254,21 @@ fn items_param(s: &Session, p: &Value) -> Vec<ItemId> {
 fn start_job(s: &mut Session, label: String, work: Vec<(ItemId, ReservedOutput, &'static Preset)>, on_done: OnDone, wait: bool) -> Result<u64> {
     let mut tasks = Vec::new();
     let mut total = 0;
-    let mut started_from = Vec::new();
     for (item, output, pr) in work {
-        let (clip, path, name) = media_path(&s.project, item).ok_or_else(|| bad("media.createProxies", format!("item {} is not file media", item.0)))?;
+        let (clip, _, name) = media_path(&s.project, item).ok_or_else(|| bad("media.createProxies", format!("item {} is not file media", item.0)))?;
         let src = s.media.full_res_source(&s.project, item, &*s.services).ok_or_else(|| EngineError::Other(format!("{name}: no source")))?;
         if s.media.offline_status(item).is_some() {
             return Err(EngineError::Other(format!("{name} is offline; link it first")));
         }
-        let source_duration = src.info().duration;
-        total += frame_count(&clip, Some(TimeRange { start: Tick::ZERO, duration: source_duration }));
-        started_from.push((item, path, clip.info.duration));
+        total += frame_count(&clip, None);
         tasks.push((item, clip, name, src, output, pr));
     }
     let id = s.jobs.iter().map(|j| j.id).max().unwrap_or(0) + 1;
     let job = crate::Job { id, label, progress: Default::default(), result: Default::default() };
     job.progress.total.store(total, std::sync::atomic::Ordering::Relaxed);
     let outputs: Arc<Mutex<Vec<(ItemId, String)>>> = Arc::default();
-    let source_durations: Arc<Mutex<Vec<(ItemId, Tick)>>> = Arc::default();
-    let (prog, res, outs, durs) = (job.progress.clone(), job.result.clone(), outputs.clone(), source_durations.clone());
-    // Media jobs run one after another, in the order they were started (#1831); the browser has no
-    // threads to wait on, and runs each job where it is started.
-    #[cfg(not(target_arch = "wasm32"))]
-    let ticket = {
-        let ahead = crate::media_queue::MEDIA_JOBS.ahead();
-        if ahead > 0 {
-            *job.progress.status.lock().unwrap_or_else(|e| e.into_inner()) = format!("Waiting for {ahead} earlier job{}", if ahead == 1 { "" } else { "s" });
-        }
-        crate::media_queue::MEDIA_JOBS.ticket()
-    };
-    let (pool, project, services) = (s.media.clone(), s.project.clone(), s.services.clone());
+    let (prog, res, outs) = (job.progress.clone(), job.result.clone(), outputs.clone());
     let run = move || {
-        // a job cancelled while it waits raises the same flag the loop below checks
-        #[cfg(not(target_arch = "wasm32"))]
-        ticket.wait(&prog.cancel);
         let t0 = web_time::Instant::now();
         let mut bytes = 0;
         let mut err = None;
@@ -319,16 +280,10 @@ fn start_job(s: &mut Session, label: String, work: Vec<(ItemId, ReservedOutput, 
             }
             *prog.status.lock().unwrap_or_else(|e| e.into_inner()) = format!("{name} ({} of {n})", k + 1);
             let out = output.path().to_string_lossy().into_owned();
-            // its own copy of the file, opened here rather than on the main thread, so the
-            // monitors keep their decoder
-            let src = pool.own_source(&project, item, &*services).unwrap_or(src);
-            // the length of the file actually transcoded: the cached source may be an older read of it
-            let source_duration = src.info().duration;
-            match transcode_with_file(&clip, &name, src, None, Dest { path: &out, file: output.file() }, pr, &prog) {
+            match transcode_with_file(&clip, &name, src, None, &out, output.file(), pr, &prog) {
                 Ok(r) => {
                     bytes += r.bytes;
                     output.preserve();
-                    durs.lock().unwrap_or_else(|e| e.into_inner()).push((item, source_duration));
                     outs.lock().unwrap_or_else(|e| e.into_inner()).push((item, out));
                 }
                 Err(e) => {
@@ -355,7 +310,7 @@ fn start_job(s: &mut Session, label: String, work: Vec<(ItemId, ReservedOutput, 
     };
     let run = crate::export_tools::guard_job(job.progress.clone(), job.result.clone(), run);
     s.jobs.push(job);
-    s.media_jobs.push(PendingJob { job: id, on_done, outputs, source_durations, started_from, epoch: s.document_epoch });
+    s.media_jobs.push(PendingJob { job: id, on_done, outputs });
     if wait || cfg!(target_arch = "wasm32") {
         run();
         poll(s);
@@ -378,24 +333,11 @@ pub fn poll(s: &mut Session) {
     for i in finished.into_iter().rev() {
         let pj = s.media_jobs.remove(i);
         let outs = std::mem::take(&mut *pj.outputs.lock().unwrap_or_else(|e| e.into_inner()));
-        let source_durations = std::mem::take(&mut *pj.source_durations.lock().unwrap_or_else(|e| e.into_inner()));
-        if pj.epoch != s.document_epoch {
-            // the project was replaced under the job: its ids may now name unrelated items
-            if !outs.is_empty() {
-                s.error_toast("job", "the project was replaced; the media copies were not applied");
-            }
-            continue;
-        }
-        let (outs, changed): (Vec<_>, Vec<_>) = outs.into_iter().partition(|(item, _)| unchanged_since_start(&s.project, *item, &pj.started_from));
-        for (item, _) in &changed {
-            let name = s.project.item(*item).map_or_else(|| format!("item {}", item.0), |i| i.name.clone());
-            s.error_toast("job", format!("{name} changed while its copy was made; the copy was not applied"));
-        }
         if outs.is_empty() {
             continue;
         }
         let r = match pj.on_done {
-            OnDone::AttachProxies => attach_checked(s, &outs, false, &source_durations).map(|_| ()),
+            OnDone::AttachProxies => attach(s, &outs, false).map(|_| ()),
             OnDone::ReplaceMedia => replace_media(s, &outs),
             OnDone::Nothing => Ok(()),
         };
@@ -405,26 +347,18 @@ pub fn poll(s: &mut Session) {
     }
 }
 
-/// Whether `item` is still the file (path and stored length) it was when the job started.
-pub(crate) fn unchanged_since_start(p: &Project, item: ItemId, started: &[(ItemId, String, Tick)]) -> bool {
-    let Some((_, path, dur)) = started.iter().find(|(i, ..)| *i == item) else { return true };
-    media_path(p, item).is_some_and(|(clip, now, _)| now == *path && clip.info.duration == *dur)
-}
-
 /// Check a proxy file against its clip: duration within one frame, same frame rate.
-/// `source_duration`: the length a generated proxy has (the opened source's), when known; otherwise the clip's stored duration.
-fn check_proxy(s: &Session, item: ItemId, path: &str, source_duration: Option<Tick>) -> Result<()> {
+fn check_proxy(s: &Session, item: ItemId, path: &str) -> Result<()> {
     let (clip, _, name) = media_path(&s.project, item).ok_or_else(|| bad("media.attachProxies", format!("item {} is not file media", item.0)))?;
     let src = s.media.open_file(path, &*s.services).map_err(|e| EngineError::Other(format!("{path}: {e}")))?;
     let pi = src.info();
     let fd = clip.info.frame_rate().frame_duration();
-    let expected = source_duration.unwrap_or(clip.info.duration);
-    if (pi.duration - expected).0.abs() > fd.0 {
+    if (pi.duration - clip.info.duration).0.abs() > fd.0 {
         return Err(EngineError::Other(format!(
             "{}: the proxy is {:.3}s long but {name} is {:.3}s",
             Path::new(path).file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default(),
             pi.duration.seconds(),
-            expected.seconds()
+            clip.info.duration.seconds()
         )));
     }
     if let (Some(a), Some(b)) = (&pi.video, &clip.info.video)
@@ -440,14 +374,9 @@ fn check_proxy(s: &Session, item: ItemId, path: &str, source_duration: Option<Ti
 
 /// Attach proxies (checked unless `force`). One undo step.
 pub fn attach(s: &mut Session, pairs: &[(ItemId, String)], force: bool) -> Result<Value> {
-    attach_checked(s, pairs, force, &[])
-}
-
-/// [`attach`] with the source lengths of generated proxies, which the check uses in place of the stored duration.
-fn attach_checked(s: &mut Session, pairs: &[(ItemId, String)], force: bool, source_durations: &[(ItemId, Tick)]) -> Result<Value> {
     if !force {
         for (i, p) in pairs {
-            check_proxy(s, *i, p, source_durations.iter().find(|(d, _)| d == i).map(|&(_, t)| t))?;
+            check_proxy(s, *i, p)?;
         }
     }
     let pairs = pairs.to_vec();
@@ -651,11 +580,10 @@ pub fn commands() -> Vec<CommandSpec> {
             label: "Create Proxies…",
             menu: &["Clip", "Proxy"],
             shortcut: None,
-            params: r#"{"items":[id]?,"preset":"prores_proxy_quarter|prores_proxy_half|prores_lt_half|h264_quarter|h264_half"?,"destination":str?,"attach":bool=true,"wait":bool=false}"#,
+            params: r#"{"items":[id]?,"preset":"prores_proxy_quarter|prores_proxy_half|prores_lt_half|h264_quarter|h264_half","destination":str?,"attach":bool=true,"wait":bool=false}"#,
             enabled: has_file_media,
             run: create,
             journal: true,
-            named: crate::commands::NamedKeys::NONE,
         },
         CommandSpec {
             id: "media.attachProxies",
@@ -675,7 +603,6 @@ pub fn commands() -> Vec<CommandSpec> {
                 attach(s, &pairs, bool_p(p, "force").unwrap_or(false))
             },
             journal: true,
-            named: crate::commands::NamedKeys::NONE,
         },
         CommandSpec {
             id: "media.detachProxies",
@@ -700,7 +627,6 @@ pub fn commands() -> Vec<CommandSpec> {
                 Ok(json!({"detached": n}))
             },
             journal: true,
-            named: crate::commands::NamedKeys::NONE,
         },
         CommandSpec {
             id: "media.reconnectFullRes",
@@ -720,7 +646,6 @@ pub fn commands() -> Vec<CommandSpec> {
                 crate::relink::relink(s, &q)
             },
             journal: true,
-            named: crate::commands::NamedKeys::NONE,
         },
         CommandSpec {
             id: "media.toggleProxies",
@@ -738,7 +663,6 @@ pub fn commands() -> Vec<CommandSpec> {
                 Ok(json!({"enabled": on, "clipsWithProxies": attached}))
             },
             journal: false,
-            named: crate::commands::NamedKeys::NONE,
         },
         CommandSpec {
             id: "media.proxyPresets",
@@ -749,7 +673,6 @@ pub fn commands() -> Vec<CommandSpec> {
             enabled: always,
             run: |_, _| Ok(serde_json::to_value(PRESETS).unwrap_or_default()),
             journal: false,
-            named: crate::commands::NamedKeys::NONE,
         },
         CommandSpec {
             id: "project.ingestSettings",
@@ -788,7 +711,6 @@ pub fn commands() -> Vec<CommandSpec> {
                 Ok(serde_json::to_value(&s.project.settings.ingest).unwrap_or_default())
             },
             journal: true,
-            named: crate::commands::NamedKeys::NONE,
         },
     ]
 }

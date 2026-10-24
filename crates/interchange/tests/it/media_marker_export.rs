@@ -12,9 +12,6 @@ fn project_with_media_marker(rate: FrameRate) -> (toma_project::Project, toma_pr
     let a = media(&mut p, "/m/src.mov", true, true, rate);
     if let Some(m) = p.item_mut(a).and_then(|i| i.as_media_mut()) {
         m.markers.push(Marker {
-            url: String::new(),
-            author: String::new(),
-            custom_color: None,
             id: MarkerId(1),
             start: rate.tick_of(24),
             duration: Tick::ZERO,
@@ -25,7 +22,7 @@ fn project_with_media_marker(rate: FrameRate) -> (toma_project::Project, toma_pr
         });
     }
     let s = sequence(&mut p, "Cut", rate, false);
-    clip(&mut p, s, TrackKind::Video, 0, a, 0..48, 0);
+    clip(&mut p, s, TrackKind::Video, 0, a, 0, 48, 0);
     (p, s)
 }
 

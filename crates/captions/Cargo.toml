@@ -14,5 +14,8 @@ toma-time = { workspace = true }
 toma-color = { workspace = true }
 toma-project = { workspace = true }
 toma-text = { workspace = true }
-nodalia-captions = { workspace = true }
+thiserror = { workspace = true }
+roxmltree = { workspace = true }
 
+[dev-dependencies]
+proptest = { workspace = true }

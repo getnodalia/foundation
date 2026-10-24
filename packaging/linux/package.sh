@@ -48,13 +48,9 @@ echo "==> Toma $VERSION for Linux $ARCH ($FORMATS)"
 
 if [[ "$SKIP_BUILD" = 0 ]]; then
   if [[ -n "${CROSS_TARGET:-}" ]]; then
-    # The riscv64 cross job is not assumed to build candle/Kokoro. Official native packages
-    # include natural voices (downloaded on first use); the UI hides the download when this
-    # feature is off (#2318, #3773).
     (cd "$ROOT" && cargo build --release --locked -p toma -p toma-cli --target "$CROSS_TARGET")
   else
-    # Official packages include Kokoro natural voices (downloaded on first use). #2318 #3773
-    (cd "$ROOT" && cargo build --release --locked -p toma -p toma-cli --features toma/neural-voices)
+    (cd "$ROOT" && cargo build --release --locked -p toma -p toma-cli)
   fi
 fi
 BIN="$CARGO_TARGET_DIR/${CROSS_TARGET:+$CROSS_TARGET/}release"
@@ -83,7 +79,7 @@ if command -v appstreamcli >/dev/null; then
   appstreamcli validate --no-net --explain "$STAGE/usr/share/metainfo/$APP_ID.metainfo.xml"
 fi
 
-has() { local fmt="$1"; case " $FORMATS " in *" $fmt "*) return 0 ;; *) return 1 ;; esac; }
+has() { case " $FORMATS " in *" $1 "*) return 0 ;; *) return 1 ;; esac; }
 
 # ---- .tar.gz ------------------------------------------------------------------------------------
 if has tar; then
@@ -124,6 +120,7 @@ if has appimage; then
   esac
   APPDIR="$WORK/Toma.AppDir"
   cp -R "$STAGE" "$APPDIR"
+  mv "$APPDIR/usr/share/doc" "$WORK/doc-unused"
   ln -s usr/bin/toma "$APPDIR/AppRun"
   cp "$HERE/$APP_ID.desktop" "$APPDIR/$APP_ID.desktop"
   cp "$ROOT/assets/app-icon/hicolor/256x256/apps/$APP_ID.png" "$APPDIR/$APP_ID.png"

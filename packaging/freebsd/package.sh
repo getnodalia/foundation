@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Build and package Toma for FreeBSD:
 #
-#   $DIST/toma-<version>-freebsd-<arch>.tar.gz   (arch: x86_64 or aarch64) a /usr/local-style tree:
-#       toma-<version>-freebsd-<arch>/{bin, share/applications, share/icons, share/mime,
+#   $DIST/toma-<version>-freebsd-x86_64.tar.gz   a /usr/local-style tree:
+#       toma-<version>-freebsd-x86_64/{bin, share/applications, share/icons, share/mime,
 #       share/metainfo, share/doc/toma}
 #
 # Install by copying the tree's contents into /usr/local:
@@ -36,15 +36,6 @@ case "$MACHINE" in
   arm64 | aarch64) ARCH=aarch64 ;;
   *) echo "unsupported architecture $MACHINE" >&2; exit 2 ;;
 esac
-NATIVE_ARCH="$ARCH"
-# A cross build (the release workflow sets CARGO_BUILD_TARGET) takes its arch from the target.
-if [[ -n "${CARGO_BUILD_TARGET:-}" ]]; then
-  case "$CARGO_BUILD_TARGET" in
-    aarch64-unknown-freebsd) ARCH=aarch64 ;;
-    x86_64-unknown-freebsd) ARCH=x86_64 ;;
-    *) echo "error: unsupported CARGO_BUILD_TARGET $CARGO_BUILD_TARGET" >&2; exit 2 ;;
-  esac
-fi
 if [[ "$DRY_RUN" = 0 ]] && [[ "$(uname -s)" != FreeBSD ]]; then
   echo "error: build on FreeBSD (or pass --dry-run to check the tree layout)" >&2
   exit 2
@@ -56,15 +47,14 @@ echo "==> Toma $VERSION for FreeBSD $ARCH"
 # The release VM has 12 GB; full parallelism on the biggest crates runs it out of memory.
 export CARGO_BUILD_JOBS="${CARGO_BUILD_JOBS:-4}"
 if [[ "$SKIP_BUILD" = 0 ]]; then
-  # Official packages include Kokoro natural voices (downloaded on first use). #2318 #3773
-  (cd "$ROOT" && cargo build --release --locked ${CARGO_BUILD_TARGET:+--target "$CARGO_BUILD_TARGET"} -p toma -p toma-cli --features toma/neural-voices)
+  (cd "$ROOT" && cargo build --release --locked -p toma -p toma-cli)
 fi
 WORK="$CARGO_TARGET_DIR/freebsd-package"
 STAGE="$WORK/$BASENAME"
 rm -rf "$WORK"
 mkdir -p "$WORK"
 
-BIN="$CARGO_TARGET_DIR${CARGO_BUILD_TARGET:+/$CARGO_BUILD_TARGET}/release"
+BIN="$CARGO_TARGET_DIR/release"
 OUT_DIR="$DIST"
 if [[ "$DRY_RUN" = 1 ]]; then
   # Stub binaries, and the tarball stays in the work dir so dist/ only ever holds real builds.
@@ -105,8 +95,7 @@ mkdir -p "$OUT_DIR"
 tar -C "$WORK" -czf "$OUT_DIR/$BASENAME.tar.gz" "$BASENAME"
 echo "wrote $OUT_DIR/$BASENAME.tar.gz"
 
-# A cross-built binary can't run on this host.
-if [[ "$ARCH" = "$NATIVE_ARCH" ]]; then "$STAGE/bin/toma-cli" --version; fi
+"$STAGE/bin/toma-cli" --version
 if [[ "$DRY_RUN" = 1 ]]; then
   echo "==> dry run: tarball contents"
   tar -tzvf "$OUT_DIR/$BASENAME.tar.gz"

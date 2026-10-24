@@ -270,7 +270,6 @@ pub fn commands() -> Vec<CommandSpec> {
             enabled: can_enable,
             run: enable,
             journal: true,
-            named: crate::commands::NamedKeys::NONE,
         },
         CommandSpec {
             id: "clip.remix.properties",
@@ -281,7 +280,6 @@ pub fn commands() -> Vec<CommandSpec> {
             enabled: is_remixed,
             run: |s, p| remix(s, p, "clip.remix.properties", "Remix Properties"),
             journal: true,
-            named: crate::commands::NamedKeys::NONE,
         },
         CommandSpec {
             id: "clip.remix.revert",
@@ -292,7 +290,6 @@ pub fn commands() -> Vec<CommandSpec> {
             enabled: is_remixed,
             run: revert,
             journal: true,
-            named: crate::commands::NamedKeys::NONE,
         },
         CommandSpec {
             id: "clip.remix",
@@ -303,7 +300,6 @@ pub fn commands() -> Vec<CommandSpec> {
             enabled: has_seq,
             run: |s, p| remix(s, p, "clip.remix", "Remix"),
             journal: true,
-            named: crate::commands::NamedKeys::NONE,
         },
     ]
 }

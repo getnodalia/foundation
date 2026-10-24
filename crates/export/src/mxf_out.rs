@@ -1,20 +1,13 @@
 //! MXF output of the stepped exporter: OP1a (one file, frame-wrapped picture + one PCM track) or
 //! OP-Atom (Avid style: the picture in `path`, one mono PCM file per audio channel next to it,
-//! `<stem>_A1.mxf`, `<stem>_A2.mxf`, …), written with [`nodalia_media::mxf::MxfWriter`].
+//! `<stem>_A1.mxf`, `<stem>_A2.mxf`, …), written with [`toma_mxf::MxfWriter`].
 
-use nodalia_media::mxf::{
+use toma_mxf::{
     CodedKind, ColorSpace, FrameInfo, MxfWriter, PackageIds, Pattern, PictureCoding, PictureDesc, Rational, SoundDesc, StartTimecode, Timestamp, WriterConfig,
 };
 use toma_time::FrameRate;
 
 use crate::{ColorSignal, EncodedPacket, ExportError, ExportSettings, Format, H264Profile, Out, Result};
-
-/// The identification set Toma's MXF files carry (company, product, version).
-fn named(cfg: &mut WriterConfig) {
-    cfg.company = "Toma".into();
-    cfg.product = "Toma".into();
-    cfg.version = env!("CARGO_PKG_VERSION").into();
-}
 
 /// Paths of the OP-Atom audio files for an export to `path` with `channels` channels.
 pub fn opatom_audio_paths(path: &str, channels: usize) -> Vec<String> {
@@ -56,16 +49,12 @@ fn picture(settings: &ExportSettings, w: u32, h: u32) -> PictureDesc {
                 H264Profile::Baseline => 66,
                 H264Profile::Main => 77,
                 H264Profile::High => 100,
-                H264Profile::High10 => 110,
             },
-            intra: settings.h264_intra_only,
+            intra: false,
         },
         _ => PictureCoding::Vc3 { cid: crate::dnx_profile(&settings.dnx_profile).cid() },
     };
     let mut d = PictureDesc::new(coding, w, h);
-    if matches!(coding, PictureCoding::Avc { .. }) {
-        d.depth = u32::from(settings.h264_profile.bit_depth());
-    }
     d.color = match settings.signal {
         s if s == ColorSignal::PQ => ColorSpace::Rec2020Pq,
         s if s == ColorSignal::HLG => ColorSpace::Rec2020Hlg,
@@ -122,7 +111,6 @@ impl MxfMux {
         // integers only: `ExportSettings::validate` refuses float PCM in MXF
         let bits = u32::from(settings.audio.sample_format().bits());
         let mut cfg = WriterConfig::new(if atom { Pattern::OpAtom } else { Pattern::Op1a }, rate, ids.clone());
-        named(&mut cfg);
         cfg.picture = Some(picture(settings, s.width, s.height));
         cfg.modified = Timestamp::from_unix((now / 1_000_000_000) as i64);
         cfg.timecode = Some(StartTimecode { frames: s.timecode.0, rate, drop_frame: s.timecode.1 && s.rate.supports_drop_frame() });
@@ -138,12 +126,11 @@ impl MxfMux {
                     rate,
                     PackageIds {
                         material: ids.material,
-                        file: nodalia_media::mxf::Umid::from_seed(format!("file:{seed}:A{}", k + 1).as_bytes()),
+                        file: toma_mxf::Umid::from_seed(format!("file:{seed}:A{}", k + 1).as_bytes()),
                         material_name: ids.material_name.clone(),
                         file_name: format!("{} A{}", s.name, k + 1),
                     },
                 );
-                named(&mut a);
                 a.first_track_id = 3 + k as u32;
                 a.sound = vec![SoundDesc { sample_rate: sr, channels: 1, bits }];
                 a.timecode = cfg.timecode;
@@ -199,12 +186,12 @@ impl MxfMux {
         if self.atom {
             for (k, (_, w)) in self.audio.iter_mut().enumerate() {
                 if let Some(c) = planar.get(k) {
-                    w.push_sound(0, &nodalia_media::mxf::encode_pcm(std::slice::from_ref(c), self.bits)).map_err(io)?;
+                    w.push_sound(0, &toma_mxf::encode_pcm(std::slice::from_ref(c), self.bits)).map_err(io)?;
                 }
             }
             Ok(())
         } else {
-            self.video.push_sound(0, &nodalia_media::mxf::encode_pcm(planar, self.bits)).map_err(io)
+            self.video.push_sound(0, &toma_mxf::encode_pcm(planar, self.bits)).map_err(io)
         }
     }
 

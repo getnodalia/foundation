@@ -9,4 +9,7 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
-nodalia-timeline = { workspace = true }
+serde = { workspace = true }
+
+[dev-dependencies]
+proptest = { workspace = true }
