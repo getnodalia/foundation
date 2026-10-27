@@ -17,39 +17,17 @@ pub struct App {
     pub former_names: &'static [&'static str],
     /// Its 128 px PNG icon, for the menu entry written beside an AppImage. `None`: no icon.
     pub icon_png: Option<&'static [u8]>,
-    /// Its accent colour (sRGB), for the update prompt's buttons and highlights: the app's brand
-    /// colour, as ArtCraft Launcher shows it. `None`: the default blue.
-    pub accent: Option<[u8; 3]>,
-    /// Who makes it, shown as "by <developer>" in the update prompt. [`DEVELOPER`] unless the app
-    /// says otherwise.
-    pub developer: &'static str,
-    /// Existing package identity when it differs from the suite's `ai.storyteller.<id>` convention.
-    pub bundle_id_override: Option<&'static str>,
 }
-
-/// The developer of every app in the storytold organisation.
-pub const DEVELOPER: &str = "ArtCraft";
 
 impl App {
     /// An app with no former names and no icon.
     pub const fn new(id: &'static str, name: &'static str, tagline: &'static str, repo: &'static str) -> Self {
-        Self {
-            id,
-            name,
-            tagline,
-            repo,
-            former_ids: &[],
-            former_names: &[],
-            icon_png: None,
-            accent: None,
-            developer: DEVELOPER,
-            bundle_id_override: None,
-        }
+        Self { id, name, tagline, repo, former_ids: &[], former_names: &[], icon_png: None }
     }
 
-    /// macOS bundle id, Flatpak id and Linux desktop-file id; defaults to `ai.storyteller.<id>`.
+    /// `ai.storyteller.<id>`: macOS bundle id, Flatpak id and Linux desktop-file id.
     pub fn bundle_id(&self) -> String {
-        self.bundle_id_override.map_or_else(|| format!("ai.storyteller.{}", self.id), str::to_owned)
+        format!("ai.storyteller.{}", self.id)
     }
 
     pub fn releases_url(&self) -> String {
@@ -84,14 +62,6 @@ impl App {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn an_existing_package_identity_does_not_change_its_release_stem() {
-        let app = App { bundle_id_override: Some("ai.artcraft.app"), ..App::new("artcraft", "ArtCraft", "Create", "storytold/artcraft") };
-        assert_eq!(app.bundle_id(), "ai.artcraft.app");
-        assert_eq!(app.stems().collect::<Vec<_>>(), ["artcraft"]);
-        assert_eq!(App::new("photocraft", "Lienzo", "Photos", "storytold/photocraft").bundle_id(), "ai.storyteller.photocraft");
-    }
 
     #[test]
     fn former_names_follow_the_current_one() {
