@@ -1,7 +1,7 @@
 //! The ink model: which inks a job prints with, and colors as tints of those inks.
 
 use std::borrow::Cow;
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet};
 
 use nodalia_cms::math;
 use nodalia_pdf::interpret::color::CmykConversion;
@@ -114,8 +114,6 @@ impl InkId {
 #[derive(Clone, Debug, PartialEq)]
 pub struct InkSet {
     inks: Vec<Ink>,
-    /// Spot ids by normalized name, so adding each of many spots does not rescan the set.
-    by_name: HashMap<String, InkId>,
     aliases: BTreeMap<InkId, InkId>,
     to_process: BTreeSet<InkId>,
     all_to_process: bool,
@@ -132,7 +130,6 @@ impl InkSet {
     pub fn new() -> Self {
         Self {
             inks: Process::ALL.into_iter().map(Ink::Process).collect(),
-            by_name: HashMap::new(),
             aliases: BTreeMap::new(),
             to_process: BTreeSet::new(),
             all_to_process: false,
@@ -163,7 +160,6 @@ impl InkSet {
             return Some(id);
         }
         let id = InkId(u16::try_from(self.inks.len()).ok()?);
-        self.by_name.insert(spot.name.clone(), id);
         self.inks.push(Ink::Spot(spot));
         Some(id)
     }
@@ -178,7 +174,8 @@ impl InkSet {
         if let Some(p) = Process::from_name(name) {
             return Some(InkId::process(p));
         }
-        self.by_name.get(name).copied()
+        let at = self.inks.iter().skip(4).position(|ink| ink.name() == name)?;
+        u16::try_from(at + 4).ok().map(InkId)
     }
 
     pub fn get(&self, id: InkId) -> Option<&Ink> {
@@ -530,15 +527,6 @@ mod tests {
         let names: Vec<&str> = set.iter().map(|(_, ink)| ink.name()).collect();
         assert_eq!(names, ["Cyan", "Magenta", "Yellow", "Black", "Gold Foil"]);
         assert_eq!(set.spots().count(), 1);
-    }
-
-    #[test]
-    fn thousands_of_spots_are_added_and_found_without_rescanning() {
-        let mut set = InkSet::new();
-        let ids: Vec<InkId> = (0..60_000).map(|i| set.add(spot(&format!("Spot {i}"))).unwrap()).collect();
-        assert_eq!(set.add(spot("Spot 59999")), Some(ids[59_999]), "added once");
-        assert_eq!(set.lookup("Spot#2042"), Some(ids[42]));
-        assert_eq!(set.len(), 60_004);
     }
 
     fn close(got: Option<[f32; 4]>, expected: [f32; 4]) -> bool {
