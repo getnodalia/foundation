@@ -941,9 +941,6 @@ impl<P: Clone + Eq + Hash> Layout<P> {
             }
             action => action,
         };
-        // A destination in a floating window takes only floatable panels, and a group placed
-        // there becomes a split of the anchor's frame.
-        let floats = |anchor: &P| self.floating.iter().any(|w| w.contains(anchor));
         match &action {
             Action::Move { panel, anchor, placement } | Action::OpenAt { panel, anchor, placement } => {
                 // Opening an absent panel moves nothing, so it works in a locked workspace too.
@@ -951,7 +948,7 @@ impl<P: Clone + Eq + Hash> Layout<P> {
                 if !opens && !permissions(panel).movable {
                     return Err(DockError::NotAllowed);
                 }
-                if !placement_allowed(placement, permissions(anchor), floats(anchor)) || floats(anchor) && !permissions(panel).floatable {
+                if !placement_allowed(placement, permissions(anchor)) {
                     return Err(DockError::NotAllowed);
                 }
             }
@@ -970,9 +967,7 @@ impl<P: Clone + Eq + Hash> Layout<P> {
                 let allowed = policy.movable
                     && match to {
                         Target::Float { .. } => policy.floatable,
-                        Target::At { anchor, placement } => {
-                            placement_allowed(placement, permissions(anchor), floats(anchor)) && (!floats(anchor) || policy.floatable)
-                        }
+                        Target::At { anchor, placement } => placement_allowed(placement, permissions(anchor)),
                         Target::NewDock { .. } => true,
                     };
                 if !allowed {
@@ -986,11 +981,7 @@ impl<P: Clone + Eq + Hash> Layout<P> {
                 }
                 match to {
                     Target::Float { .. } if members.iter().any(|p| !permissions(p).floatable) => return Err(DockError::NotAllowed),
-                    Target::At { anchor, placement }
-                        if !members.contains(anchor)
-                            && (!placement_allowed(placement, permissions(anchor), floats(anchor))
-                                || floats(anchor) && members.iter().any(|p| !permissions(p).floatable)) =>
-                    {
+                    Target::At { anchor, placement } if !members.contains(anchor) && !placement_allowed(placement, permissions(anchor)) => {
                         return Err(DockError::NotAllowed);
                     }
                     _ => {}
@@ -1338,13 +1329,11 @@ impl<P: Clone + Eq + Hash> Layout<P> {
 }
 
 /// Whether the anchor's permissions take this placement: tabs need `accepts_tabs`, side
-/// splits `accepts_splits`, and so does a group placed at an anchor in a floating window
-/// (`floating`), which splits the anchor's frame.
-fn placement_allowed<P>(placement: &Placement<P>, anchor: Permissions, floating: bool) -> bool {
+/// splits `accepts_splits`.
+fn placement_allowed<P>(placement: &Placement<P>, anchor: Permissions) -> bool {
     match placement {
         Placement::Tab { .. } | Placement::Split(Zone::Center) => anchor.accepts_tabs,
         Placement::Split(_) | Placement::SplitSized { .. } => anchor.accepts_splits,
-        Placement::Group { .. } if floating => anchor.accepts_splits,
         _ => true,
     }
 }
