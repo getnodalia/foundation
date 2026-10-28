@@ -1,7 +1,7 @@
 [workspace]
 resolver = "3"
 members = ["crates/*"]
-exclude = ["vendor/krilla", "vendor/hayro", "vendor/hayro-interpret", "vendor/hayro-syntax", "vendor/hayro-jbig2", "vendor/hayro-cmap", "vendor/hayro-postscript", "vendor/linesweeper"]
+exclude = ["vendor/krilla", "vendor/hayro", "vendor/hayro-interpret", "vendor/hayro-syntax", "vendor/hayro-jbig2", "vendor/hayro-cmap", "vendor/hayro-postscript"]
 
 [workspace.package]
 version = "0.1.0"
@@ -13,11 +13,8 @@ repository = "https://github.com/getnodalia/foundation"
 [workspace.dependencies]
 # internal: add each crate here as `craft-<name> = { path = "crates/<name>" }`
 nodalia-platform = { path = "crates/platform" }
-nodalia-aep = { path = "crates/aep" }
-nodalia-affinity = { path = "crates/affinity" }
 nodalia-ai-core = { path = "crates/ai-core" }
 nodalia-pdf = { path = "crates/pdf", version = "=0.1.0" }
-nodalia-pdn = { path = "crates/pdn" }
 nodalia-plate-test = { path = "crates/plate-test" }
 krilla = { version = "=0.8.2", default-features = false, features = ["raster-images"] }
 hayro = { version = "=0.7.1", default-features = false }
@@ -26,121 +23,31 @@ hayro-syntax = { version = "=0.7.2", default-features = false, features = ["std"
 bytemuck = "1"
 kurbo = "0.13"
 thiserror = "2"
-nodalia-aaf = { path = "crates/aaf" }
 nodalia-atomic = { path = "crates/atomic" }
-nodalia-captions = { path = "crates/captions" }
-nodalia-cfb = { path = "crates/cfb" }
-nodalia-codepage = { path = "crates/codepage" }
 nodalia-cms = { path = "crates/cms" }
-nodalia-crs = { path = "crates/crs" }
-nodalia-crw = { path = "crates/crw" }
-nodalia-csv = { path = "crates/csv" }
-nodalia-dav = { path = "crates/dav" }
-nodalia-dialogs = { path = "crates/dialogs" }
-nodalia-doc-binary = { path = "crates/doc-binary" }
-nodalia-docx = { path = "crates/docx" }
-nodalia-dxf = { path = "crates/dxf" }
-nodalia-drawingml = { path = "crates/drawingml" }
-nodalia-eps = { path = "crates/eps" }
-nodalia-doc = { path = "crates/doc" }
 nodalia-docpath = { path = "crates/docpath" }
-nodalia-dpx = { path = "crates/dpx" }
-nodalia-ecproj-format = { path = "crates/ecproj-format" }
-nodalia-figma-rest = { path = "crates/figma-rest" }
-nodalia-exr = { path = "crates/exr" }
 nodalia-font-catalog = { path = "crates/font-catalog" }
 nodalia-font-manager = { path = "crates/font-manager" }
 nodalia-font-store = { path = "crates/font-store" }
-nodalia-gainmap = { path = "crates/gainmap" }
-nodalia-flow = { path = "crates/flow" }
-nodalia-gcode = { path = "crates/gcode" }
-nodalia-gif = { path = "crates/gif" }
-nodalia-hdr = { path = "crates/hdr" }
-nodalia-mesh = { path = "crates/mesh" }
-nodalia-html = { path = "crates/html" }
-nodalia-heif = { path = "crates/heif" }
-nodalia-fig = { path = "crates/fig" }
 nodalia-fonts-build = { path = "crates/fonts-build" }
 nodalia-i18n = { path = "crates/i18n" }
-nodalia-idml = { path = "crates/idml" }
-nodalia-jmap = { path = "crates/jmap" }
-nodalia-ical = { path = "crates/ical" }
 nodalia-jpeg = { path = "crates/jpeg" }
-nodalia-kiwi = { path = "crates/kiwi" }
 nodalia-keymap = { path = "crates/keymap" }
-nodalia-assuan = { path = "crates/assuan" }
-nodalia-kra = { path = "crates/kra" }
-nodalia-audio = { path = "crates/audio" }
-# No default features, so nodalia-audio's `encode` builds nodalia-media without `isobmff`.
-nodalia-latex = { path = "crates/latex" }
-nodalia-markdown = { path = "crates/markdown" }
-nodalia-math = { path = "crates/math" }
-nodalia-media = { path = "crates/media", default-features = false }
-nodalia-media-testkit = { path = "crates/media-testkit" }
-nodalia-midi = { path = "crates/midi" }
-nodalia-sf2 = { path = "crates/sf2" }
-nodalia-mime = { path = "crates/mime" }
-nodalia-odf = { path = "crates/odf" }
-nodalia-ods = { path = "crates/ods" }
-nodalia-prc = { path = "crates/prc" }
-nodalia-lottie = { path = "crates/lottie" }
+nodalia-media = { path = "crates/media" }
 nodalia-menu = { path = "crates/menu" }
-nodalia-metafile = { path = "crates/metafile" }
-nodalia-offcrypto = { path = "crates/offcrypto" }
-nodalia-opc = { path = "crates/opc" }
-nodalia-ora = { path = "crates/ora" }
-nodalia-pptx = { path = "crates/pptx" }
-nodalia-penpot = { path = "crates/penpot" }
-nodalia-lienzo-format = { path = "crates/lienzo-format" }
-nodalia-plotter = { path = "crates/plotter" }
 nodalia-prepress = { path = "crates/prepress" }
 nodalia-print = { path = "crates/print" }
-nodalia-proof = { path = "crates/proof" }
-nodalia-raster-codecs = { path = "crates/raster-codecs" }
-nodalia-psd = { path = "crates/psd" }
-nodalia-pst = { path = "crates/pst" }
 nodalia-quit = { path = "crates/quit" }
-nodalia-rtf = { path = "crates/rtf" }
-nodalia-raw = { path = "crates/raw" }
-nodalia-sheet = { path = "crates/sheet" }
-nodalia-sketch = { path = "crates/sketch" }
 nodalia-settings = { path = "crates/settings" }
-nodalia-silhouette-studio = { path = "crates/silhouette-studio" }
-nodalia-svg = { path = "crates/svg" }
-nodalia-svg-paths = { path = "crates/svg-paths" }
-nodalia-stream-codecs = { path = "crates/stream-codecs" }
 nodalia-text = { path = "crates/text" }
-nodalia-tga = { path = "crates/tga" }
-nodalia-timeline = { path = "crates/timeline" }
-nodalia-tiff = { path = "crates/tiff" }
-nodalia-metadata = { path = "crates/metadata" }
 nodalia-ui = { path = "crates/ui" }
 nodalia-update = { path = "crates/update" }
-nodalia-vcard = { path = "crates/vcard" }
-nodalia-pluma-format = { path = "crates/pluma-format" }
-nodalia-vectordrawable = { path = "crates/vectordrawable" }
-nodalia-xls = { path = "crates/xls" }
-nodalia-wordmodel = { path = "crates/wordmodel" }
-nodalia-xlsx = { path = "crates/xlsx" }
-nodalia-xcf = { path = "crates/xcf" }
-nodalia-xml = { path = "crates/xml" }
-nodalia-zip = { path = "crates/zip" }
-nodalia-y4m = { path = "crates/y4m" }
-nodalia-epub = { path = "crates/epub" }
-nodalia-ews = { path = "crates/ews" }
-nodalia-video = { path = "crates/video" }
-nodalia-web-api = { path = "crates/web-api" }
 nodalia-window = { path = "crates/window" }
-nodalia-web-host = { path = "crates/web-host" }
-nodalia-webp = { path = "crates/webp" }
 egui = { version = "0.37", default-features = false }
-md5 = { package = "md-5", version = "0.10", default-features = false }
 rayon = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 proptest = "1"
-# Character sets of the WHATWG Encoding Standard (nodalia-mime). (Apache-2.0 OR MIT) AND BSD-3-Clause.
-encoding_rs = "0.8"
 # All date/time conversion goes through chrono (no hand-rolled calendar code beyond the 400-year range extension; AGENTS.md).
 chrono = { version = "0.4.45", default-features = false, features = ["std"] }
 
@@ -164,7 +71,6 @@ hayro-syntax = { path = "vendor/hayro-syntax" }
 hayro-jbig2 = { path = "vendor/hayro-jbig2" }
 hayro-cmap = { path = "vendor/hayro-cmap" }
 hayro-postscript = { path = "vendor/hayro-postscript" }
-linesweeper = { path = "vendor/linesweeper" }
 ecolor = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
 emath = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
 epaint = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
@@ -180,19 +86,3 @@ eframe = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc79968
 egui_demo_lib = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
 egui_inspection = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
 winit = { git = "https://github.com/getnodalia/foundation", rev = "a517b3846ee8457d84ee4975110bfda6797c44dc" }
-
-# symphonia's FLAC decoder restores LPC samples as `residual + (prediction as i32)`. In a valid
-# 32-bit stream the prediction can leave the i32 range while the sum does not, so a debug build
-# panics where a release build wraps to the right sample. Apps that decode 32-bit FLAC through
-# nodalia-audio's `decode` need the same override in their own workspace.
-[profile.dev.package.symphonia-bundle-flac]
-overflow-checks = false
-
-# Codec hot loops: the oracle and conformance tests of a debug build take minutes below opt-level 3.
-[profile.dev.package.nodalia-video]
-opt-level = 3
-
-# The object-stream parser follows nesting 384 levels deep: unoptimised, its frames overflow the
-# 2 MiB stack of a test thread. The apps this reader came from build their crates at this level.
-[profile.dev.package.nodalia-affinity]
-opt-level = 1
