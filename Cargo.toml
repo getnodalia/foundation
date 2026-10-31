@@ -28,7 +28,6 @@ nodalia-cms = { path = "crates/cms" }
 nodalia-crw = { path = "crates/crw" }
 nodalia-dialogs = { path = "crates/dialogs" }
 nodalia-docpath = { path = "crates/docpath" }
-nodalia-ecproj-format = { path = "crates/ecproj-format" }
 nodalia-font-catalog = { path = "crates/font-catalog" }
 nodalia-font-manager = { path = "crates/font-manager" }
 nodalia-font-store = { path = "crates/font-store" }

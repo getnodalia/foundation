@@ -63,15 +63,11 @@ pub struct Limits {
     /// `u16` buffers of this size at its peak. Default: 2²³ (8.4 million) on every target; real
     /// CRW frames hold at most 7.4 million samples.
     pub max_samples: usize,
-    /// Most samples [`decode`] may fill after the entropy stream ends (the stream-end rule: they
-    /// take their predictor values); more is [`Error::Corrupt`], a stream cut short. Default: 64,
-    /// one block; every real file measured (1,318 files, all seven verified bodies) fills none.
-    pub max_stream_end_fill: usize,
 }
 
 impl Default for Limits {
     fn default() -> Self {
-        Self { max_samples: 1 << 23, max_stream_end_fill: 64 }
+        Self { max_samples: 1 << 23 }
     }
 }
 
@@ -183,9 +179,6 @@ pub struct Image {
     pub black: BlackLevel,
     /// White level: the saturation plateau, the sensor's clip level, or the full range.
     pub white: f32,
-    /// Samples filled after the entropy stream ended, at their predictor values (the stream-end
-    /// rule); at most [`Limits::max_stream_end_fill`]. Zero on every real file measured.
-    pub stream_end_fill: usize,
 }
 
 /// Result alias for this crate.
@@ -375,18 +368,13 @@ fn parse(bytes: &[u8], limits: &Limits, full: bool) -> Result<Image> {
     let has_low = header_after_plane || (plane_fits && head.windows(2).any(|p| p[0] == 0xff && p[1] != 0x00));
     let bits = if has_low { 12 } else { 10 };
     let low_len = if has_low { q } else { 0 };
-    let mut stream_end_fill = 0;
     let samples = if full {
         let entropy = payload.get(low_len.saturating_add(ent_off)..).ok_or_else(|| corrupt("payload shorter than its header"))?;
         let low = has_low.then(|| payload.get(..q)).flatten();
         if has_low && low.is_none() {
             return Err(corrupt("payload shorter than its low-bits plane"));
         }
-        let (hi, tail) = decode_entropy(entropy, w, h, &tables)?;
-        if tail > limits.max_stream_end_fill {
-            return Err(Error::Corrupt(format!("entropy stream ends {tail} samples before the frame does")));
-        }
-        stream_end_fill = tail;
+        let hi = decode_entropy(entropy, w, h, &tables)?;
         let mut samples = vec![0u16; n];
         // `samples` is documented as `bits` deep, so a damaged stream whose chain value runs past
         // the range is clamped here: a consumer indexing a `1 << bits` LUT must not see more.
@@ -441,7 +429,7 @@ fn parse(bytes: &[u8], limits: &Limits, full: bool) -> Result<Image> {
         exif_orientation,
         wb_multipliers: wb_from_color_balance(bytes, &rec, o),
     };
-    Ok(Image { header, samples, black, white, stream_end_fill })
+    Ok(Image { header, samples, black, white })
 }
 
 /// As-shot white-balance multipliers from the ColorBalance record (0x10a9, D60/10D/300D): a
@@ -657,9 +645,8 @@ fn build_lut(codes: &[(u16, u8, u8, u8)]) -> Vec<u32> {
 /// model (`clean-room/02-crw-format.md` §2): 64-sample blocks, first/main code tables,
 /// (run, size) leaves with JPEG-rule magnitudes, EOB, block-DC carry, and two parity DPCM chains
 /// initialised to 512 and reset at every row start. A stream that ends early leaves the remaining
-/// samples at their chain values (the frozen stream-end rule); the second value returned is how
-/// many, so [`decode`] can refuse a stream cut short ([`Limits::max_stream_end_fill`]).
-fn decode_entropy(entropy: &[u8], w: usize, h: usize, tables: &tables::SelTables) -> Result<(Vec<u16>, usize)> {
+/// samples at their chain values (the frozen stream-end rule).
+fn decode_entropy(entropy: &[u8], w: usize, h: usize, tables: &tables::SelTables) -> Result<Vec<u16>> {
     let d = unstuff(entropy);
     let nbits = d.len().saturating_mul(8);
     let peek16 = |pos: usize| -> u16 {
@@ -674,15 +661,12 @@ fn decode_entropy(entropy: &[u8], w: usize, h: usize, tables: &tables::SelTables
     let mut out = Chains { dec: vec![0u16; n], w, qi: 0, ce: 512, co: 512 };
     let mut carry: i32 = 0;
     let mut pos = 0usize;
-    // samples filled after the stream ended (the stream-end rule)
-    let mut tail = 0usize;
     while out.qi < n {
         let block_end = n.min((out.qi / 64 + 1) * 64);
         let mut tok = 0u32;
         while out.qi < block_end {
             // stream exhausted: every remaining sample keeps its chain value
             if pos >= nbits.saturating_sub(1) {
-                tail = n - out.qi;
                 out.fill(n);
                 break;
             }
@@ -692,7 +676,6 @@ fn decode_entropy(entropy: &[u8], w: usize, h: usize, tables: &tables::SelTables
             }
             let (len, mut rr, s) = ((e >> 16) as usize, ((e >> 8) & 0xff) as usize, e & 0xff);
             if pos.saturating_add(len).saturating_add(s as usize) > nbits {
-                tail = n - out.qi;
                 out.fill(n);
                 break;
             }
@@ -730,7 +713,7 @@ fn decode_entropy(entropy: &[u8], w: usize, h: usize, tables: &tables::SelTables
             }
         }
     }
-    Ok((out.dec, tail))
+    Ok(out.dec)
 }
 
 /// Drop the stuffing byte: an 0x00 after an 0xff.
