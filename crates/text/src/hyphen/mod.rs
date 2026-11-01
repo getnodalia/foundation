@@ -427,12 +427,10 @@ fn char_points(word: &str, lim: &Limits, lang: Lang) -> Vec<usize> {
 
 /// `word` with `-` at every hyphenation point (tests and diagnostics).
 pub fn hyphenate_word(word: &str, lim: &Limits) -> String {
-    let mut pts = hyphen_points(word, lim);
-    pts.sort_unstable();
-    let mut next = pts.iter().peekable();
+    let pts = hyphen_points(word, lim);
     let mut s = String::with_capacity(word.len() + pts.len());
     for (i, ch) in word.char_indices() {
-        if next.next_if_eq(&&i).is_some() {
+        if pts.contains(&i) {
             s.push('-');
         }
         s.push(ch);
