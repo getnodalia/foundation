@@ -10,11 +10,7 @@
 //! compositor — so on KDE, say, one app wore KWin's title bar while another wore its own. This
 //! crate makes the decision one place.
 //!
-//! This page describes the first-generation rule ([`Choice::probe`], [`Frame`], [`decorate`]),
-//! which stays for apps that have not moved. The current rule is in [`policy`]: the app's own bar
-//! is the title bar by default, and the user setting "Use system title bar" turns that off.
-//!
-//! The rule of the first-generation API, by platform:
+//! The rule, by platform:
 //!
 //! - **macOS and Windows:** the OS always draws the frame ([`Frame::Desktop`]). (An app that insets
 //!   its content under the traffic lights, or draws its own caption buttons on Windows, still asks
@@ -131,29 +127,18 @@
 //!     }
 //! }
 //! ```
-//!
-//! # Window restore
-//!
-//! The `restore` feature (no egui) adds [`restore`]: where a window opens, from the last session's
-//! geometry and the connected monitors, and the `window.json` store beside `config.toml`.
 
-mod desktop;
-mod layout;
 mod list;
 mod menu;
 mod place;
-pub mod policy;
 #[cfg(feature = "egui")]
 pub mod title_bar;
 #[cfg(feature = "egui")]
 mod viewports;
 
-#[cfg(feature = "restore")]
-pub mod restore;
-
 pub use list::{Closed, WindowId, WindowList};
 pub use menu::{Document, MenuEntry, WindowMenu};
-pub use place::{CASCADE_STEP, Rect, cascade, monitor_of};
+pub use place::{CASCADE_STEP, Rect, cascade};
 #[cfg(feature = "egui")]
 pub use viewports::{Viewports, WindowEvent, child_viewport_id};
 
@@ -183,7 +168,7 @@ impl Prefix {
     }
 }
 
-/// Who draws the window frame. Superseded by [`policy::Frame`]; kept for apps that have not moved.
+/// Who draws the window frame.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Frame {
     /// The desktop draws it: the OS on macOS and Windows, the window manager on X11, the
@@ -211,7 +196,7 @@ impl Frame {
 }
 
 /// How the frame was decided, so an app can log it or offer a "System title bar" preference that
-/// knows the current state. Superseded by [`policy::Decision`] and [`policy::decide_for`].
+/// knows the current state.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Choice {
     frame: Frame,
@@ -326,15 +311,10 @@ impl Layout {
         Self { left, right }
     }
 
-    /// The layout with the two sides swapped, for right-to-left UIs.
-    pub fn mirrored(&self) -> Self {
-        Self { left: self.right.clone(), right: self.left.clone() }
-    }
-
     /// Whether the layout has at least one button, so the window can be closed by mouse. A layout
     /// with none (a desktop that named only buttons this crate skips) falls back to the default.
     #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd", test))]
-    pub(crate) fn is_usable(&self) -> bool {
+    fn is_usable(&self) -> bool {
         !self.left.is_empty() || !self.right.is_empty()
     }
 }
@@ -365,7 +345,7 @@ fn app_draws_frame() -> bool {
     }
 }
 
-/// Apply a [`Frame`] to an [`egui::ViewportBuilder`] (superseded by [`policy::apply`]): decorations on for the desktop frame, off for
+/// Apply a [`Frame`] to an [`egui::ViewportBuilder`]: decorations on for the desktop frame, off for
 /// the app frame. Call before the window is created. The app still draws its header bar and, for
 /// [`Frame::App`], lays its window buttons out by [`Frame::layout`].
 #[cfg(feature = "egui")]
@@ -395,12 +375,6 @@ mod platform {
     /// acceptable because this is a single, one-shot call, not a repeated one.)
     pub(super) fn wayland_leaves_frame_to_app() -> bool {
         bounded(registry_leaves_frame_to_app).flatten().unwrap_or(false)
-    }
-
-    /// Whether the Wayland compositor offers server-side decorations: `None` when there is no
-    /// answer (no compositor, an inherited socket, a stalled registry), same deadline as above.
-    pub(super) fn wayland_offers_ssd() -> Option<bool> {
-        bounded(registry_leaves_frame_to_app).flatten().map(|leaves| !leaves)
     }
 
     /// Run `f` on a short-lived worker thread with a 500 ms deadline, so a stalled dependency can't
@@ -542,12 +516,6 @@ mod tests {
         let layout = Layout::parse("minimize,maximize,close");
         assert_eq!(layout.left, vec![Button::Minimize, Button::Maximize, Button::Close]);
         assert!(layout.right.is_empty());
-    }
-
-    #[test]
-    fn mirrored_swaps_the_sides() {
-        let layout = Layout::parse("close:minimize,maximize").mirrored();
-        assert_eq!((layout.left, layout.right), (vec![Button::Minimize, Button::Maximize], vec![Button::Close]));
     }
 
     #[test]
