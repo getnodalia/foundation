@@ -4,7 +4,9 @@ Several crates here read or write formats that other open-source projects also i
 under licences the Craft apps cannot take code from (GPL, LGPL, AGPL, CDDL) or under terms that
 forbid it (Adobe's). This document is the standard a format crate follows so that every line of
 it is ours, and so that a reviewer can check that claim from the repository alone. It is the
-written form of what `nodalia-jpeg`, `nodalia-media` and `nodalia-crw` did.
+written form of what `nodalia-jpeg`, `nodalia-media` and `nodalia-crw` did; the suite-wide rules live in
+[craftrules](https://github.com/storytold/craftrules) (`standards/licensing.md`,
+`standards/never-crash.md`), which this does not replace.
 
 ## What "clean-room" means here
 
