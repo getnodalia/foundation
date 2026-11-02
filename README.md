@@ -34,9 +34,20 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
 - [`nodalia-cms`](crates/cms/README.md): pure-Rust ICC v2/v4 colour management: profile parsing
   and writing, transforms, rendering intents, black point compensation, soft proofing, gamut
   checks, 3D LUTs and built-in profiles (sRGB, Display P3, synthetic coated CMYK and others).
+- [`nodalia-crw`](crates/crw/README.md): clean-room Canon CRW (CIFF) raw decoder, from Luz:
+  the heap container, the entropy coding derived by black-box analysis (frozen code tables), sensor
+  black and white levels and as-shot white balance. The complete derivation record (plan, sources
+  log, scripts, verification) is in `crates/crw/clean-room/`. Colour stays in each app.
+- [`nodalia-dialogs`](crates/dialogs/README.md): native file and message dialogs that never block
+  the event loop: queued requests shown at the end of the frame and answered on a later frame,
+  free-standing Open and Folder panels and Save sheets on macOS, case-insensitive filters. What
+  to do with the answer stays in each app.
 - [`nodalia-docpath`](crates/docpath/src/lib.rs): decides whether a path or `file:` URL stored in a
   document may be opened. Paths stored in documents are followed only when they are local or on the
   document's own network share; other network paths, device paths and non-file URLs are refused.
+- [`nodalia-ecproj-format`](crates/ecproj-format/README.md): the envelope of Pulso `.ecproj`
+  project files: `savedBy`, the schema version and its check, and the file object with the
+  project and its saved view as type parameters. The project model stays in Pulso.
 - [`nodalia-font-catalog`](crates/font-catalog/README.md): the installed fonts on every platform
   (font folders, fontconfig and Flatpak host folders, CoreText, DirectWrite, the font store),
   lookup by family, style, localized, legacy, full and PostScript names, family loads shared
