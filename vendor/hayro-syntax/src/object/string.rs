@@ -150,7 +150,7 @@ fn read_hex(r: &mut Reader<'_>) -> Option<SmallVec<[u8; 23]>> {
 
     // Exclude outer brackets.
     let raw = r.range(start + 1..end - 1)?;
-    let decoded = ascii_hex::decode_into_controlled(raw, r.control())?;
+    let decoded = ascii_hex::decode_into(raw)?;
 
     Some(decoded)
 }
@@ -183,21 +183,11 @@ fn read_literal<'a>(r: &mut Reader<'a>) -> Option<StringInner<'a>> {
     // Exclude outer parentheses.
     let data = r.range(start + 1..end - 1)?;
 
-    let mut special = false;
-    for chunk in data.chunks(64 * 1024) {
-        crate::cancel::check(r.control())?;
-        if chunk.iter().any(|b| matches!(b, b'\\' | b'\n' | b'\r')) {
-            special = true;
-            break;
-        }
-    }
-    if !special {
+    if !data.iter().any(|b| matches!(b, b'\\' | b'\n' | b'\r')) {
         return Some(StringInner::Borrowed(data));
     }
 
-    let control = r.control().cloned();
     let mut r = Reader::new(data);
-    r.set_control(control);
     let mut result = SmallVec::new();
 
     while let Some(byte) = r.read_byte() {

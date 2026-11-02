@@ -42,9 +42,6 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   the event loop: queued requests shown at the end of the frame and answered on a later frame,
   free-standing Open and Folder panels and Save sheets on macOS, case-insensitive filters. What
   to do with the answer stays in each app.
-- [`nodalia-doc`](crates/doc/README.md): reads Lienzo `.pcraft`, Pluma `.vectorcraft`
-  and Pulso `.ecproj` documents without the apps: the kind and version, the previews and
-  PDF they carry, and their pages and layers. Rendering and editing stay in each app.
 - [`nodalia-docpath`](crates/docpath/src/lib.rs): decides whether a path or `file:` URL stored in a
   document may be opened. Paths stored in documents are followed only when they are local or on the
   document's own network share; other network paths, device paths and non-file URLs are refused.
@@ -78,13 +75,9 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   scopes, conflicts, user overrides stored through nodalia-settings and import of other
   applications' shortcut sets. Command catalogs, file readers and the shortcut editor UI stay
   in each app.
-- [`nodalia-audio`](crates/audio/README.md): audio file I/O and codecs (WAV, AIFF, FLAC, AAC),
-  streaming and seeking, and packet decoding for any demuxer. See its README for formats and
-  features.
 - [`nodalia-media`](crates/media/README.md): bit-level I/O (`bitstream`), clean-room MP4/MOV
-  (`isobmff`) and Matroska/WebM (`matroska`) demuxers and muxers, an Ogg demuxer (`ogg`), from
-  Toma, and an ISO BMFF box reader. Containers only; codecs are in `nodalia-audio`, and
-  video codecs will go in a separate crate.
+  (`isobmff`) and Matroska/WebM (`matroska`) demuxers and muxers, from Toma, and an ISO BMFF
+  box reader. Containers only; codecs stay in each app.
 - [`nodalia-menu`](crates/menu/README.md): an app's menus as a macOS menu bar: the Mac layout
   (app menu, Window, Help, system-key clashes), a platform backend trait, and key equivalents
   fed back to egui as the input egui-winit would have made. Commands and their enabled state
@@ -94,11 +87,6 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   manifest decode limits and the migration runner. The document model stays in Lienzo.
 - [`nodalia-print`](crates/print/README.md): PDF submission to CUPS and Windows, printer discovery,
   duplex/copies/colour and driver preferences. PDF generation stays in each app.
-- [`nodalia-proof`](crates/proof/README.md): proofing per language (spelling, suggestions, grammar,
-  hyphenation, a Hunspell reader, user words, Language packs). The word lists and patterns are
-  nodalia-i18n's `language-data/`, embedded at build time from `NODALIA_I18N_DIR`: English and the
-  carry-over locales by default, the set `NODALIA_PROOF_EMBED` names otherwise (`en` for English
-  only); other languages come from installed Language packs.
 
 - [`nodalia-quit`](crates/quit/src/lib.rs): native macOS quit, egui close handling and an optional
   app menu. Unsaved-document decisions and save prompts stay in each app.
@@ -112,10 +100,6 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
 - [`nodalia-pluma-format`](crates/pluma-format/README.md): the envelope of Pluma's
   `.vectorcraft` file: its members, versions, embedded images and the data after the JSON, with the
   document as a type parameter. The document and its migrations stay in Pluma.
-- [`nodalia-web-api`](crates/web-api/README.md): the page command API every Craft web build offers its page — one
-  `window.<app>` shape (`request`, `execute`, `commands`, `docInspect`, `uiInspect`, `screenshot`) over the app's
-  JSON control channel.
-- [`nodalia-web-host`](crates/web-host/README.md): the host messages between a Craft app's web build and the page that hosts it (`?host=parent` or `data-host="page"`): one contract and one bridge for every app.
 - [Shared UI component audit](docs/ui-components-audit.md): source inventory, extraction priorities
   and compatibility boundaries across the Craft suite.
 - [Theme infrastructure](docs/theme-infrastructure.md): eight-app comparison and the small shared

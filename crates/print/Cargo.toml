@@ -9,10 +9,7 @@ description = "System PDF print spooler for the Craft apps: CUPS and Windows"
 
 [dependencies]
 # Safe API; Win32 calls are isolated in this maintained MIT OR Apache-2.0 dependency.
-# Keep the public rgb re-export at main's GDI revision: a different Git rev gives
-# downstream GDI values a different Rust type identity even when the code is unchanged.
-# PDF loader updates below are independent of this public transport API.
-nodalia-winprint-gdi = { git = "https://github.com/getnodalia/foundation", rev = "e6b9c3cb65bf6d11a75b0ee2c17b41aae14a6b7d" }
+nodalia-winprint-gdi = { git = "https://github.com/getnodalia/foundation", rev = "37204e0d317058d49920c3d8beadd0dc35aa1252" }
 
 [lints]
 workspace = true
@@ -26,12 +23,9 @@ log = "0.4"
 # and the job (Windows.Data.Pdf drawn with Direct2D into the XPS print API, options as a
 # PrintTicket) are safe wrappers over Win32 and WinRT (BSD-3-Clause). Its default `pdfium`
 # feature downloads PDFium at build time and is off. The maintained BSD-3-Clause fork
-# preserves terminal failures/cancellation and bounds the completion notification wait, and
-# creates the Direct2D factory multi-threaded, since Windows.Data.Pdf draws on its own worker
-# threads (storytold/pdfcraft#5006). File-backed PDF loading avoids StorageFile access
-# denial without whole-job buffering; includes the #15 test cleanup and explicit WinRT
-# feature. Pinned to an immutable revision; review before bumping.
-winprint = { git = "https://github.com/getnodalia/foundation", rev = "f74759aedd0d72605baf33ba882da0dd38e8476c", default-features = false }
+# preserves terminal failures/cancellation and bounds the completion notification wait.
+# Pinned to an immutable revision; review before bumping.
+winprint = { git = "https://github.com/getnodalia/foundation", rev = "5c371e0f978c173f30d2fc2408677c799ffd9374", default-features = false }
 # GetDefaultPrinter (MIT).
 winsafe = { version = "0.0.29", default-features = false, features = ["winspool"] }
 # The job file's private folder.
