@@ -37,27 +37,26 @@ pub(in crate::fonts) fn install(ctx: &egui::Context, mut stack: Stack, fetcher: 
     let fetch = {
         let mut state = loader.lock();
         let now = loader.fetcher.now();
-        for (&(url, integrity), file) in &state.files {
-            stack.provide_fetched(url, integrity, file);
+        for (url, file) in &state.files {
+            stack.provide(url, file);
         }
         state.ui_pending.clear();
-        let mut fetch: Vec<Key> = Vec::new();
+        let mut fetch: Vec<(&'static str, &'static str)> = Vec::new();
         for face in stack.ui_downloads() {
-            let key = (face.url, face.integrity);
-            if state.files.contains_key(&key) || !state.due(key, now) {
+            if state.files.contains_key(face.url) || !state.due(face.url, now) {
                 continue;
             }
-            state.ui_pending.insert(key);
-            if !fetch.contains(&key) {
-                fetch.push(key);
+            state.ui_pending.insert(face.url);
+            if !fetch.iter().any(|(url, _)| *url == face.url) {
+                fetch.push((face.url, face.integrity));
             }
         }
         state.stack = Some(stack.clone());
         fetch
     };
     stack.install_faces(ctx, Some(Arc::clone(&loader) as Arc<dyn FontProvider>));
-    for key in fetch {
-        loader.fetch(key);
+    for (url, integrity) in fetch {
+        loader.fetch(url, integrity);
     }
 }
 
@@ -93,20 +92,16 @@ struct Loader {
     state: Mutex<State>,
 }
 
-/// A file as one face asks for it: its URL and the integrity the bytes were checked against.
-/// Bytes fetched for one integrity (or none) are never handed to a face that requires another.
-type Key = (&'static str, &'static str);
-
 #[derive(Default)]
 struct State {
     /// The installed stack, without the files' data.
     stack: Option<Stack>,
-    /// Fetched files; the browser's HTTP cache keeps them across page loads.
-    files: BTreeMap<Key, Blob>,
-    in_flight: BTreeSet<Key>,
-    failed: BTreeMap<Key, Failure>,
+    /// Fetched files by URL; the browser's HTTP cache keeps them across page loads.
+    files: BTreeMap<&'static str, Blob>,
+    in_flight: BTreeSet<&'static str>,
+    failed: BTreeMap<&'static str, Failure>,
     /// The UI language's files not fetched yet.
-    ui_pending: BTreeSet<Key>,
+    ui_pending: BTreeSet<&'static str>,
 }
 
 struct Failure {
@@ -115,9 +110,9 @@ struct Failure {
 }
 
 impl State {
-    /// Whether `key` may be fetched: it never failed, or its retry time has come.
-    fn due(&self, key: Key, now: f64) -> bool {
-        self.failed.get(&key).is_none_or(|failure| now >= failure.retry_at)
+    /// Whether `url` may be fetched: it never failed, or its retry time has come.
+    fn due(&self, url: &str, now: f64) -> bool {
+        self.failed.get(url).is_none_or(|failure| now >= failure.retry_at)
     }
 }
 
@@ -135,35 +130,34 @@ impl Loader {
         self.state.lock().unwrap_or_else(PoisonError::into_inner)
     }
 
-    fn fetch(&self, key: Key) {
-        if !self.lock().in_flight.insert(key) {
+    fn fetch(&self, url: &'static str, integrity: &'static str) {
+        if !self.lock().in_flight.insert(url) {
             return;
         }
         let Some(me) = self.me.upgrade() else { return };
-        let (url, integrity) = key;
-        self.fetcher.fetch(url, integrity, Box::new(move |result| me.arrived(key, result)));
+        self.fetcher.fetch(url, integrity, Box::new(move |result| me.arrived(url, result)));
     }
 
-    fn arrived(&self, key: Key, result: Result<Vec<u8>, String>) {
+    fn arrived(&self, url: &'static str, result: Result<Vec<u8>, String>) {
         let (stack, retry) = {
             let mut state = self.lock();
-            state.in_flight.remove(&key);
-            state.ui_pending.remove(&key);
+            state.in_flight.remove(url);
+            state.ui_pending.remove(url);
             match result {
                 Ok(bytes) => {
-                    state.failed.remove(&key);
+                    state.failed.remove(url);
                     let file: Blob = Arc::new(bytes);
-                    state.files.insert(key, Arc::clone(&file));
+                    state.files.insert(url, Arc::clone(&file));
                     let stack = state.stack.as_mut().map(|stack| {
-                        stack.provide_fetched(key.0, key.1, &file);
+                        stack.provide(url, &file);
                         stack.clone()
                     });
                     (stack, None)
                 }
                 Err(_) => {
-                    let attempts = state.failed.get(&key).map_or(1, |failure| failure.attempts + 1);
+                    let attempts = state.failed.get(url).map_or(1, |failure| failure.attempts + 1);
                     let delay = (RETRY_FIRST * 2f64.powi(attempts.saturating_sub(1).min(16) as i32)).min(RETRY_MAX);
-                    state.failed.insert(key, Failure { attempts, retry_at: self.fetcher.now() + delay });
+                    state.failed.insert(url, Failure { attempts, retry_at: self.fetcher.now() + delay });
                     (None, Some(delay))
                 }
             }
@@ -202,18 +196,18 @@ impl FontProvider for Loader {
         let state = self.lock();
         let mut next = None;
         for face in state.stack.as_ref()?.downloads(request.family, request.cluster) {
-            let key = (face.url, face.integrity);
-            if state.in_flight.contains(&key) || state.files.contains_key(&key) {
+            if state.in_flight.contains(face.url) || state.files.contains_key(face.url) {
                 // It draws the character once it arrives, or already does.
                 return None;
             }
-            if state.due(key, now) {
-                next = Some(key);
+            if state.due(face.url, now) {
+                next = Some((face.url, face.integrity));
                 break;
             }
         }
         drop(state);
-        self.fetch(next?);
+        let (url, integrity) = next?;
+        self.fetch(url, integrity);
         None
     }
 }

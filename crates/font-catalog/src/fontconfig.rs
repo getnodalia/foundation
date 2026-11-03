@@ -211,8 +211,7 @@ fn decode_entities(s: &str) -> String {
     s.replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&apos;", "'").replace("&amp;", "&")
 }
 
-// Uses Unix paths, which Windows doesn't treat as absolute (#619).
-#[cfg(all(test, unix))]
+#[cfg(test)]
 mod tests {
     use super::*;
 
