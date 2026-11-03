@@ -3,26 +3,15 @@
 //! (`thumbnail`, `composite`). Only the ZIP form is read; a bundle saved as a folder is not. The
 //! manifest's envelope is [`nodalia_lienzo_format::Manifest`]'s.
 
-use std::fmt;
-use std::marker::PhantomData;
-
-use nodalia_lienzo_format::{self as format, COMPOSITE, FORMAT_VERSION, MANIFEST, MAX_GROUP_DEPTH, THUMB, manifest_depth};
+use nodalia_lienzo_format::{self as format, COMPOSITE, FORMAT_VERSION, MANIFEST, THUMB};
 use serde::Deserialize;
-use serde::de::value::MapAccessDeserializer;
-use serde::de::{DeserializeOwned, Deserializer, IgnoredAny, MapAccess, Visitor};
+use serde::de::{DeserializeOwned, IgnoredAny};
 
 use crate::zip::{Zip, local_names_include};
-use crate::{Budget, Canvas, Error, Kind, Layer, Outline, Rendition, RenditionKind, counted, lenient, malformed, parse, too_new};
+use crate::{Budget, Canvas, Error, Kind, Layer, MAX_DEPTH, Outline, Rendition, RenditionKind, counted, malformed, parse, parse_versioned, too_new};
 
-/// A ZIP archive with a `manifest.json` entry. When `head` holds the whole archive, the names in
-/// its central directory decide, as [`Zip::find`] reads them; otherwise the names in the local
-/// headers that `head` holds.
 pub(crate) fn sniff(head: &[u8]) -> bool {
-    head.starts_with(b"PK\x03\x04")
-        && match Zip::open(head) {
-            Ok(zip) => zip.find(MANIFEST).is_some(),
-            Err(_) => local_names_include(head, MANIFEST),
-        }
+    head.starts_with(b"PK\x03\x04") && (local_names_include(head, MANIFEST) || Zip::open(head).is_ok_and(|z| z.find(MANIFEST).is_some()))
 }
 
 /// The archive and its `manifest.json`.
@@ -34,60 +23,27 @@ fn manifest<'a>(bytes: &'a [u8], budget: &mut Budget) -> Result<(Zip<'a>, Vec<u8
     Ok((zip, json))
 }
 
-/// A `T` read only from a JSON object, as [`nodalia_lienzo_format::read_manifest`] reads the
-/// manifest. serde's derived `Deserialize` also reads a struct from a JSON array.
-struct Object<T>(T);
-
-impl<'de, T: Deserialize<'de>> Deserialize<'de> for Object<T> {
-    fn deserialize<D: Deserializer<'de>>(d: D) -> Result<Self, D::Error> {
-        struct ObjectVisitor<T>(PhantomData<T>);
-        impl<'de, T: Deserialize<'de>> Visitor<'de> for ObjectVisitor<T> {
-            type Value = Object<T>;
-
-            fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
-                f.write_str("the manifest's JSON object")
-            }
-
-            fn visit_map<A: MapAccess<'de>>(self, map: A) -> Result<Object<T>, A::Error> {
-                T::deserialize(MapAccessDeserializer::new(map)).map(Object)
-            }
-        }
-        d.deserialize_map(ObjectVisitor(PhantomData))
-    }
-}
-
 /// The version and the writer, read without the rest of the manifest, so that a manifest of a
-/// newer format still reports them. A `generator` that is not a string reads as `None`, as
-/// [`nodalia_lienzo_format::migrate`] reads it.
+/// newer format still reports them.
 #[derive(Deserialize)]
 struct Stamp {
-    /// `None` only when the member is missing; a `null` is not a version.
-    #[serde(default, deserialize_with = "present")]
-    format_version: Option<u32>,
-    #[serde(default, deserialize_with = "lenient")]
+    format_version: u32,
+    #[serde(default)]
     generator: Option<String>,
 }
 
-/// A member that is present, read as `T`.
-fn present<'de, D: Deserializer<'de>, T: Deserialize<'de>>(d: D) -> Result<Option<T>, D::Error> {
-    T::deserialize(d).map(Some)
-}
-
-/// The manifest's version and writer. A manifest without `format_version` is not Lienzo's:
-/// [`Error::Unrecognized`]. A version of 0 is refused.
-fn stamp(json: &[u8], budget: &Budget) -> Result<(u32, Option<String>), Error> {
-    let Object(stamp) = parse::<Object<Stamp>>(json, budget.limits)?;
-    let version = stamp.format_version.ok_or(Error::Unrecognized)?;
+fn checked(version: u32) -> Result<u32, Error> {
     if version == 0 {
         return Err(malformed("format_version 0 is invalid"));
     }
-    Ok((version, stamp.generator))
+    Ok(version)
 }
 
-/// The members of [`nodalia_lienzo_format::Manifest`] after `format_version`, with the document as
-/// `D`, read without building the manifest as a `serde_json::Value` first.
+/// The members of [`nodalia_lienzo_format::Manifest`], with the document as `D`, read without
+/// building the manifest as a `serde_json::Value` first.
 #[derive(Deserialize)]
 struct Envelope<D> {
+    format_version: u32,
     /// Required, and a string, as in the manifest; [`info`] reports it.
     #[serde(rename = "generator")]
     _generator: String,
@@ -99,23 +55,22 @@ struct Envelope<D> {
 }
 
 /// The manifest's envelope, checked as [`nodalia_lienzo_format::read_manifest`] checks it: the
-/// size, nesting and item count with [`nodalia_lienzo_format::check_manifest`] and Lienzo's
-/// own nesting limit, a manifest that is not a JSON object refused, the version read first (0 or
-/// newer than [`FORMAT_VERSION`] refused), and a preview that names an entry other than [`THUMB`]
+/// size, nesting and item count with [`nodalia_lienzo_format::check_manifest`], a version of 0 or
+/// newer than [`FORMAT_VERSION`] refused, and a preview that names an entry other than [`THUMB`]
 /// or [`COMPOSITE`] refused. A member that appears twice is refused.
 fn read<D: DeserializeOwned>(json: &[u8], budget: &Budget) -> Result<Envelope<D>, Error> {
     let mut limits = format::Limits::default();
     limits.max_manifest_bytes = json.len();
-    limits.max_depth = (budget.limits.max_depth as usize).min(manifest_depth(MAX_GROUP_DEPTH));
+    limits.max_depth = budget.limits.max_depth.min(MAX_DEPTH) as usize;
     format::check_manifest(json, &limits).map_err(|e| match e {
         format::Error::LimitExceeded(m) => Error::LimitExceeded(m),
         e => malformed(e),
     })?;
-    let (version, _) = stamp(json, budget)?;
+    let m: Envelope<D> = parse_versioned(json, budget.limits, Kind::Lienzo)?;
+    let version = checked(m.format_version)?;
     if version > FORMAT_VERSION {
         return Err(too_new(Kind::Lienzo, version));
     }
-    let Object(m) = parse::<Object<Envelope<D>>>(json, budget.limits)?;
     for (member, entry, expected) in [("thumbnail", &m.thumbnail, THUMB), ("composite", &m.composite, COMPOSITE)] {
         if let Some(entry) = entry
             && entry != expected
@@ -128,7 +83,8 @@ fn read<D: DeserializeOwned>(json: &[u8], budget: &Budget) -> Result<Envelope<D>
 
 pub(crate) fn info(bytes: &[u8], budget: &mut Budget) -> Result<(u32, Option<String>), Error> {
     let (_, json) = manifest(bytes, budget)?;
-    stamp(&json, budget)
+    let stamp: Stamp = parse(&json, budget.limits)?;
+    Ok((checked(stamp.format_version)?, stamp.generator))
 }
 
 pub(crate) fn renditions(bytes: &[u8], budget: &mut Budget) -> Result<Vec<Rendition>, Error> {
@@ -199,12 +155,4 @@ pub(crate) fn outline(bytes: &[u8], budget: &mut Budget) -> Result<Outline, Erro
         pages: vec![],
         layers: d.layers.into_iter().map(Layer::from).collect(),
     })
-}
-
-/// The archive and the manifest's document read as `D`, checked as [`outline`] reads it.
-#[cfg(feature = "pcraft-pixels")]
-pub(crate) fn document<'a, D: DeserializeOwned>(bytes: &'a [u8], budget: &mut Budget) -> Result<(Zip<'a>, D), Error> {
-    let (zip, json) = manifest(bytes, budget)?;
-    let document = read::<D>(&json, budget)?.document;
-    Ok((zip, document))
 }

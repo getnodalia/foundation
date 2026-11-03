@@ -1,8 +1,7 @@
 # nodalia-media
 
 Media containers and bit-level I/O for the Craft apps: an MSB-first bit reader and writer,
-clean-room ISO BMFF (MP4), QuickTime (MOV) and Matroska (MKV, WebM) demuxers and muxers, and an Ogg
-demuxer, written from the public specifications. No `unsafe`, no panics on malformed input, builds
+clean-room ISO BMFF (MP4), QuickTime (MOV) and Matroska (MKV, WebM) demuxers and muxers, written from the public specifications. No `unsafe`, no panics on malformed input, builds
 for `wasm32-unknown-unknown`. Dependencies: `thiserror` (for `isobmff`), `serde` (optional).
 
 Codecs go in separate crates that depend on this one: `craft-audio` for audio (in a follow-up),
@@ -17,13 +16,12 @@ that codec crates use to describe a file and configure a decoder.
 | `bitstream` | `nodalia_media::bitstream` | none |
 | `isobmff` | `nodalia_media::isobmff` | `bitstream`, `thiserror` |
 | `matroska` | `nodalia_media::matroska` | none |
-| `ogg` | `nodalia_media::ogg` | none |
 | (none) | `Container`, `CodecId`, `CodecParams`, `PcmFormat`, `xiph_lace`, `ByteSource`, `ReadSeekSource` | none |
 | `serde` | `Serialize`/`Deserialize` on `Container`, `CodecId`, `CodecParams` and `PcmFormat` | `serde` |
 
 `default = ["isobmff"]`, so `bitstream` and `isobmff` build. `matroska` is opt-in: it is about as
 much code as `isobmff`, and most users of MP4/MOV (Luz, Trama, SoundCraft, Pulso)
-do not read Matroska. `ogg` is opt-in as well. The features are independent.
+do not read Matroska. The features are independent.
 
 ```toml
 nodalia-media = { git = "https://github.com/getnodalia/foundation", rev = "<commit>", features = ["matroska"] }
@@ -109,15 +107,14 @@ Other differences:
   accepted any entry.
 - `isobmff::Mp4Writer::write_sample` returns an error when a track would pass 2³² − 1 samples
   (PCM: frames), the most `stsz` can count; Toma clamped the count.
-- `isobmff::ByteSource`, `matroska::ByteSource` and `ogg::ByteSource` are one trait,
+- `isobmff::ByteSource` and `matroska::ByteSource` are one trait,
   `nodalia_media::ByteSource` (with `ReadSeekSource`, which was Matroska's). A type Toma
   implements both traits for keeps one of its two impls.
-- `isobmff::Track`, `matroska::Track` and `ogg::Stream` have `codec_params()`, all returning a
+- `isobmff::Track` and `matroska::Track` have `codec_params()`, both returning a
   `CodecParams` (`CodecId::Unknown` for a codec without an identifier). The MP4 one describes
   the first sample's sample description; `codec_params_for(description_index)` gives any other,
   and `has_mixed_descriptions()` says whether the samples use more than one.
   `isobmff::CodecConfig` has `codec_id()` and `extradata()`, and `OpusConfig::opus_head()`.
-- `ogg::Codec` and `ogg::Error`, and the `ogg` structs, are `#[non_exhaustive]`.
 
 ## `bitstream`
 
@@ -400,20 +397,6 @@ first frame (AV1 from `rav1e`) creates the writer after that frame.
   from codec parsers).
 - Muxer: no CRC-32, Chapters, Tags, Attachments, content encodings or block additions.
 
-## `ogg`
-
-A clean-room Ogg demuxer from Toma's `filmcraft-ogg` (RFC 3533, RFC 7845 Ogg Opus, the Vorbis
-I Ogg mapping). `open` reads every page (CRC-32 checked; damage is skipped by searching for the next
-`OggS`), groups pages by logical stream and assembles packets across pages; codec headers are kept
-apart from audio packets. A gap in a stream's page sequence numbers drops the packet the lost page
-continued, and a beginning-of-stream page for a serial already seen starts a new stream (the next
-link of a chained file), unless it carries on the page sequence of a stream with no end-of-stream
-page yet. Damage recovery may read bytes again up to twice the file's length plus 1 MiB, so a file
-is read at most about three times over; the packets kept and the header packets of a stream are
-bounded too, with a warning when a bound is reached.
-`OpusTiming` gives each Opus packet's start, the pre-skip and the end trimming of the final page.
-No muxer.
-
 ## Containers, codecs and codec parameters
 
 Always built, with no dependencies, so codec crates share them:
@@ -440,8 +423,8 @@ All are `#[non_exhaustive]`: new formats and fields are minor changes.
 ## `ByteSource`
 
 `nodalia_media::ByteSource` (`len`, `read_at(offset, buf)`) is what every demuxer reads from. It is
-always built, so a crate that uses only `bitstream` can name it too. `isobmff::ByteSource`,
-`matroska::ByteSource` and `ogg::ByteSource` are the same trait. It is implemented for `[u8]`,
+always built, so a crate that uses only `bitstream` can name it too. `isobmff::ByteSource` and
+`matroska::ByteSource` are the same trait. It is implemented for `[u8]`,
 `Vec<u8>`, `&T`, `Arc<T>`, `Box<T>` and `std::fs::File` (not on wasm). `ReadSeekSource` adapts any
 `Read + Seek`; it is `Send + Sync` when the reader is `Send`. Implement the trait once for a
 custom source (a web `Blob`, a network range reader) to use every container with it.
@@ -453,9 +436,7 @@ custom source (a web `Blob`, a network range reader) to use every container with
   guards. For Matroska: EBML integers, typed values, CRC-32, every lacing mode, codec mapping, a
   hand-built file (unknown-size Segment and Clusters, header stripping, BlockGroups, block
   additions, color and mastering metadata, Chapters, Tags, Attachments, CRC-32, Cue-less seek,
-  hostile cluster timestamps) and mux-demux round trips. For Ogg (`src/ogg`): page parsing, CRC,
-  packets across pages, damage resync and its read budget, lost pages, chained links and stray
-  beginning-of-stream flags, the packet and header caps, Opus timing (end trimming, hostile granules) and the codec parameters of each codec.
+  hostile cluster timestamps) and mux-demux round trips.
 - `tests/roundtrip.rs`: property tests that write random multi-track files (progressive and
   fragmented) and read them back.
 - `tests/oracle_demux.rs` and `tests/oracle_mux.rs` compare the demuxer and muxer with ffprobe and

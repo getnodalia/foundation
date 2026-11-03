@@ -247,6 +247,6 @@ output; no raw-decoder source was consulted (crates/crw/clean-room/sources.md).
 
 Nodalia
 
-This tree is nodalia-libs, made from storytold/craft-libs at 32b2fd8adf4bcf1bdf3e4f6728af6f3230c03ee4 by renaming it
+This tree is nodalia-libs, made from storytold/craft-libs at 47c9f62530db72bc5c3831c86653b47b20c640be by renaming it
 (scripts/nodalia_libs.py in https://github.com/getnodalia/foundation). Its code and assets keep the licences, copyright
 notices and credits above and in ATTRIBUTION.md, unchanged.
