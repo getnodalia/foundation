@@ -1,6 +1,6 @@
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
 //! Media containers and bit-level I/O for the Craft apps. Codecs are in other crates
-//! (`nodalia-audio`; video later), which depend on this one.
+//! (`craft-audio`; video later), which depend on this one.
 //!
 //! - `bitstream` (feature `bitstream`): MSB-first bit reader and writer, Exp-Golomb codes,
 //!   emulation-prevention escaping and NAL unit splitting.

@@ -5,8 +5,8 @@ clean-room ISO BMFF (MP4), QuickTime (MOV) and Matroska (MKV, WebM) demuxers and
 demuxer, written from the public specifications. No `unsafe`, no panics on malformed input, builds
 for `wasm32-unknown-unknown`. Dependencies: `thiserror` (for `isobmff`), `serde` (optional).
 
-Codecs are in separate crates that depend on this one: [`nodalia-audio`](../audio/README.md) for
-audio; video codecs will go in a separate crate. What both need lives here: the containers, the
+Codecs go in separate crates that depend on this one: `craft-audio` for audio (in a follow-up),
+and a video codec crate later. What both need lives here: the containers, the
 bit I/O, one `ByteSource` trait, and the [shared identifiers](#containers-codecs-and-codec-parameters)
 that codec crates use to describe a file and configure a decoder.
 
@@ -39,7 +39,7 @@ nodalia-media = { git = "https://github.com/getnodalia/foundation", rev = "<comm
 
 - In scope: bit-level reading and writing, and container demuxing and muxing (boxes, sample
   tables, sample entries and codec configuration records) for audio and video tracks.
-- Out of scope: codecs. Audio codecs are in `nodalia-audio`; video codecs (H.264, HEVC, ProRes and
+- Out of scope: codecs. Audio codecs are in `craft-audio`; video codecs (H.264, HEVC, ProRes and
   others) stay in the apps until a video crate exists. Containers only Toma reads (MXF,
   MPEG-TS/PS, AVI) are not here yet.
 - Anything both the audio and the video codec crates need belongs here, so the two never depend
@@ -472,9 +472,9 @@ custom source (a web `Blob`, a network range reader) to use every container with
   range stays inside its parent.
 
 ffmpeg and ffprobe are test oracles only, never linked. The helpers are in `nodalia-media-testkit`
-(an unpublished crate, shared with nodalia-audio and the video crate to come). They are looked up in
+(an unpublished crate, shared with craft-audio and the video crate to come). They are looked up in
 `$NODALIA_MEDIA_FFMPEG` / `$NODALIA_MEDIA_FFPROBE`, then `PATH`, then common install directories. When
 a tool is missing, the oracle tests print `SKIPPED` and pass; `NODALIA_MEDIA_REQUIRE_ORACLES=1` turns
 a skip into a failure. CI (`.github/workflows/media.yml`) sets it and installs Ubuntu's ffmpeg.
-nodalia-audio's oracle tests use the same variables. Generate every fixture ahead of time with
+craft-audio's oracle tests use the same variables. Generate every fixture ahead of time with
 `cargo test -p nodalia-media --all-features -- --ignored generate_fixtures`.

@@ -1,4 +1,4 @@
-//! Container and codec identifiers and codec parameters shared by the codec crates (nodalia-audio,
+//! Container and codec identifiers and codec parameters shared by the codec crates (craft-audio,
 //! and the video crate to come), so a file's container and codec are named the same way
 //! everywhere, and a codec is configured the same way whatever container its track came from.
 //!
