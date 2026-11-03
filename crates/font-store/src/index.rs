@@ -1,7 +1,7 @@
 //! Font indexes (aiongg/craft-font-index, format 1.x): the families of every source in one
 //! [`Index`], and exact lookup.
 
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap};
 
 use serde::Deserialize;
 
@@ -519,11 +519,8 @@ impl Index {
             by_name.entry(fam.family.to_lowercase()).or_default().push(fi);
             for (xi, file) in fam.files.iter().enumerate() {
                 for ps in &file.postscript {
-                    // Files are visited in order, so a file that lists a name twice can only
-                    // have been the last one pushed: checking the end keeps this linear
-                    // however many files share the name.
                     let hits = by_postscript.entry(ps.clone()).or_default();
-                    if hits.last() != Some(&(fi, xi)) {
+                    if !hits.contains(&(fi, xi)) {
                         hits.push((fi, xi));
                     }
                 }
@@ -613,10 +610,9 @@ impl Index {
     pub fn find_postscript(&self, name: &str) -> Result<Face<'_>, Unavailable> {
         let hits = self.by_postscript.get(name).map(Vec::as_slice).unwrap_or_default();
         let mut names: Vec<&str> = Vec::new();
-        let mut seen: HashSet<String> = HashSet::new();
         for &(fi, _) in hits {
             if let Some(f) = self.families.get(fi)
-                && seen.insert(f.family.to_lowercase())
+                && !names.iter().any(|n| n.to_lowercase() == f.family.to_lowercase())
             {
                 names.push(&f.family);
             }

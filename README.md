@@ -79,8 +79,8 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   applications' shortcut sets. Command catalogs, file readers and the shortcut editor UI stay
   in each app.
 - [`nodalia-media`](crates/media/README.md): bit-level I/O (`bitstream`), clean-room MP4/MOV
-  (`isobmff`) and Matroska/WebM (`matroska`) demuxers and muxers, an Ogg demuxer (`ogg`), from
-  Toma, and an ISO BMFF box reader. Containers only; codecs stay in each app.
+  (`isobmff`) and Matroska/WebM (`matroska`) demuxers and muxers, from Toma, and an ISO BMFF
+  box reader. Containers only; codecs stay in each app.
 - [`nodalia-menu`](crates/menu/README.md): an app's menus as a macOS menu bar: the Mac layout
   (app menu, Window, Help, system-key clashes), a platform backend trait, and key equivalents
   fed back to egui as the input egui-winit would have made. Commands and their enabled state
