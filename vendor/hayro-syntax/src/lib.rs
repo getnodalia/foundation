@@ -76,8 +76,6 @@ pub(crate) mod math;
 pub(crate) mod sync;
 
 mod data;
-mod cancel;
-pub use cancel::Cancellation;
 pub(crate) mod filter;
 pub(crate) mod pdf;
 pub(crate) mod trivia;
