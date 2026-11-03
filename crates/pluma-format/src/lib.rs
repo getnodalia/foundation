@@ -34,7 +34,6 @@
 //! [`sniff`] reads: a reader of a compressed file decompresses it with its own limits first.
 
 pub mod base64;
-pub mod stream;
 
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
@@ -189,30 +188,18 @@ impl<D> File<D> {
     where
         D: Deserialize<'de>,
     {
-        read(json, true, false).map(|(file, _)| file)
+        read(json, true)
     }
 }
 
 /// [`File::read`] and [`Contents::read`]; `keep` is false for [`Contents`], which skips
 /// `generator`, `preview` and `pdf` without keeping them.
-fn read<'de, D: Deserialize<'de>>(json: &'de [u8], keep: bool, read_pdf: bool) -> Result<(File<D>, bool), ReadError> {
+fn read<'de, D: Deserialize<'de>>(json: &'de [u8], keep: bool) -> Result<File<D>, ReadError> {
     let mut de = serde_json::Deserializer::from_slice(json);
-    let mut pdf = PdfPreference::default();
-    let file = serde::Deserializer::deserialize_struct(
-        &mut de,
-        "File",
-        MEMBERS,
-        FileVisitor { keep, pdf: read_pdf.then_some(&mut pdf), document: PhantomData },
-    )?;
+    let file = serde::Deserializer::deserialize_struct(&mut de, "File", MEMBERS, FileVisitor { keep, document: PhantomData })?;
     de.end()?;
     file.check()?;
-    Ok((file, pdf.preference.unwrap_or(pdf.present)))
-}
-
-#[derive(Default)]
-struct PdfPreference {
-    preference: Option<bool>,
-    present: bool,
+    Ok(file)
 }
 
 /// The members of a file, in the order of the array form.
@@ -232,13 +219,12 @@ struct Members<D> {
 }
 
 /// Reads a [`File`] from a JSON object or array.
-struct FileVisitor<'a, D> {
+struct FileVisitor<D> {
     keep: bool,
-    pdf: Option<&'a mut PdfPreference>,
     document: PhantomData<D>,
 }
 
-impl<'de, D: Deserialize<'de>> Visitor<'de> for FileVisitor<'_, D> {
+impl<'de, D: Deserialize<'de>> Visitor<'de> for FileVisitor<D> {
     type Value = File<D>;
 
     fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -250,7 +236,7 @@ impl<'de, D: Deserialize<'de>> Visitor<'de> for FileVisitor<'_, D> {
         Ok(File { format, version, generator: None, preview: None, profiles, pdf: None, document, images })
     }
 
-    fn visit_map<A: MapAccess<'de>>(mut self, mut map: A) -> Result<File<D>, A::Error> {
+    fn visit_map<A: MapAccess<'de>>(self, mut map: A) -> Result<File<D>, A::Error> {
         let (mut format, mut version, mut document, mut images, mut profiles) = (None, None, None, None, None);
         let (mut generator, mut preview, mut pdf) = (None, None, None);
         while let Some(key) = map.next_key::<String>()? {
@@ -263,16 +249,6 @@ impl<'de, D: Deserialize<'de>> Visitor<'de> for FileVisitor<'_, D> {
                 "generator" if self.keep => generator = map.next_value::<Lenient<String>>()?.0,
                 "preview" if self.keep => preview = map.next_value::<Lenient<Image>>()?.0,
                 "pdf" if self.keep => pdf = map.next_value::<Lenient<Image>>()?.0,
-                "pdfCompatible" if self.pdf.is_some() => {
-                    if let Some(state) = self.pdf.as_mut() {
-                        state.preference = map.next_value::<Option<bool>>()?;
-                    }
-                }
-                "pdf" if self.pdf.is_some() => {
-                    if let Some(state) = self.pdf.as_mut() {
-                        state.present = map.next_value::<Option<IgnoredAny>>()?.is_some();
-                    }
-                }
                 _ => {
                     map.next_value::<IgnoredAny>()?;
                 }
@@ -363,23 +339,8 @@ impl<D> Contents<D> {
     where
         D: Deserialize<'de>,
     {
-        let (file, _) = read(json, false, false)?;
-        let File { format, version, document, images, profiles, .. } = file;
+        let File { format, version, document, images, profiles, .. } = read(json, false)?;
         Ok(Self { format, version, document, images, profiles })
-    }
-
-    /// Reads the document and its saved PDF preference in one envelope pass, without
-    /// keeping or decoding the PDF payload. A non-null `pdf` supplies the fallback when
-    /// `pdfCompatible` is absent or null. Repeated members use their last value; arrays
-    /// have no PDF preference and return false. A non-boolean preference is an error.
-    /// The existing [`Self::read`] continues to ignore that optional preference.
-    pub fn read_with_pdf_preference<'de>(json: &'de [u8]) -> Result<(Self, bool), ReadError>
-    where
-        D: Deserialize<'de>,
-    {
-        let (file, compatible) = read(json, false, true)?;
-        let File { format, version, document, images, profiles, .. } = file;
-        Ok((Self { format, version, document, images, profiles }, compatible))
     }
 
     /// [`File::is_legacy`].
@@ -445,18 +406,6 @@ impl Image {
         self.len() == 0
     }
 
-    /// [`Image::len`] with fallible checkpoints while scanning inline data. The checkpoint's
-    /// error is returned unchanged.
-    pub fn len_with_check<E>(&self, mut check: impl FnMut() -> Result<(), E>) -> Result<u64, E> {
-        match self.blob {
-            Some([_, len]) => {
-                check()?;
-                Ok(len)
-            }
-            None => base64::decoded_len_with_check(&self.data, check),
-        }
-    }
-
     /// The entry's bytes: `data` decoded, or the range `blob` names in `tail` (the data after the
     /// JSON, from [`split_tail`]). `None` when the entry states more than [`MAX_ENTRY`] bytes,
     /// when `data` is not valid base64, or when `tail` ends before the range does. Each call
@@ -475,26 +424,6 @@ impl Image {
         match self.blob {
             Some(at) => entry(tail, at).map(<[u8]>::to_vec),
             None => base64::decode(&self.data),
-        }
-    }
-
-    /// [`Image::bytes_at_most`] with fallible checkpoints during size checks, base64 decoding
-    /// and copying. `Ok(None)` has the same meaning as [`Image::bytes_at_most`].
-    pub fn bytes_at_most_with_check<E>(&self, tail: &[u8], max: u64, mut check: impl FnMut() -> Result<(), E>) -> Result<Option<Vec<u8>>, E> {
-        if self.len_with_check(&mut check)? > max {
-            return Ok(None);
-        }
-        match self.blob {
-            Some(at) => {
-                let Some(bytes) = entry(tail, at) else { return Ok(None) };
-                let mut out = Vec::with_capacity(bytes.len());
-                for chunk in bytes.chunks(base64::CHECK_CHUNK) {
-                    check()?;
-                    out.extend_from_slice(chunk);
-                }
-                Ok(Some(out))
-            }
-            None => base64::decode_with_check(&self.data, check),
         }
     }
 }
@@ -770,20 +699,10 @@ impl<'a> Tail<'a> {
 
     /// Write what follows the JSON: [`BLOB_MAGIC`] and the entries, or nothing when there are none.
     pub fn write_to(&self, mut w: impl Write) -> io::Result<()> {
-        self.write_to_with(&mut w, |_, _| Ok(()))
-    }
-
-    /// Write the marker and parts, calling `before_part` before each payload. A compressed
-    /// writer can use the MIME type to switch between compressed and stored deflate blocks.
-    pub fn write_to_with<W: Write>(&self, mut w: W, mut before_part: impl FnMut(&mut W, &str) -> io::Result<()>) -> io::Result<()> {
         if self.parts.is_empty() {
             return Ok(());
         }
         w.write_all(BLOB_MAGIC)?;
-        for part in &self.parts {
-            before_part(&mut w, &part.mime)?;
-            w.write_all(part.bytes)?;
-        }
-        Ok(())
+        self.parts.iter().try_for_each(|p| w.write_all(p.bytes))
     }
 }
