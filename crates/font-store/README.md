@@ -117,14 +117,14 @@ The catalog scans the store folder. With `with_catalog(catalog)`, every install 
 
 ## Language packs
 
-The store's second item kind, `language-pack`: a language's spelling dictionary, hyphenation patterns and licence texts, published by [getnodalia/foundation (nodalia/i18n)](https://github.com/getnodalia/foundation) as `<locale>.tar.zst` release assets listed in an `index.json`, and read at runtime by `craft-proof` (`craft_proof::packs`). It reuses the store's folder, consent, HTTP client, staging and sha256 checks; there is no second downloader.
+The store's second item kind, `language-pack`: a language's spelling dictionary, hyphenation patterns and licence texts, published by [getnodalia/foundation (nodalia/i18n)](https://github.com/getnodalia/foundation) as `<locale>.tar.zst` release assets listed in an `index.json`, and read at runtime by `nodalia-proof` (`nodalia_proof::packs`). It reuses the store's folder, consent, HTTP client, staging and sha256 checks; there is no second downloader.
 
 ```rust
 const PACKS: PackIndexPin = PackIndexPin { url: "https://github.com/storytold/craft-i18n/releases/download/language-packs-1/index.json", sha256: "<hex>" };
 let index = store.fetch_language_pack_index(&PACKS, &Cancel::new())?;   // or cached_language_pack_index(&PACKS)
 let nl = index.pack("nl").unwrap();
 store.install_language_pack(&index, nl, &Cancel::new(), &mut |p| ())?;  // network on, like fonts
-craft_proof::packs::set_packs_dir(Some(store.language_packs_dir()));      // then packs::reload() after each change
+nodalia_proof::packs::set_packs_dir(Some(store.language_packs_dir()));      // then packs::reload() after each change
 store.remove_language_pack("nl")?;
 let installed = store.installed_language_packs();
 ```
@@ -136,7 +136,7 @@ let installed = store.installed_language_packs();
 | `install_language_pack(index, pack, cancel, progress)` | Downloads the archive (at most 128 MiB), checks size and sha256, unpacks it into `.staging/` and moves it into `language-packs/<locale>/` with one rename (an older pack is replaced the same way). Records it in `language-packs.json`. |
 | `remove_language_pack(locale)` | Moves the folder out at once, updates the record, deletes the files. No network needed. |
 | `installed_language_packs()` | The recorded packs whose folder is there. |
-| `language_packs_dir()` | `<store>/language-packs`, for `craft_proof::packs::set_packs_dir`. |
+| `language_packs_dir()` | `<store>/language-packs`, for `nodalia_proof::packs::set_packs_dir`. |
 
 **Unpacking is hostile-input safe:** pure-Rust zstd (`ruzstd`, MIT; every frame is read, and nothing but tar padding may follow the archive) and `tar` (MIT OR Apache-2.0); regular files and the `LICENCES` folder only (no links or devices). Only the contract's names are allowed: `pack.toml`, `spelling.aff`, `spelling.dic`, `hyphenation.pat` at the root and `LICENCES/<name>` (`[A-Za-z0-9._-]`, no leading or trailing dot, no Windows device names such as `CON` or `nul.txt`). Each file at most 64 MiB, 256 MiB and 256 entries per pack. `pack.toml` is required and must name the entry's locale; the files the index promises (`spelling`, `hyphenation`) must be there. Index entries need a lowercase BCP 47 locale (listed once, not a Windows device name), a sha256 and an `https://` URL; names, licences, versions, classes and the release lose control and bidi/format characters before they are stored or listed; an optional `source` must be an `https://` URL. At most 4096 zstd frames per archive. An unreadable `language-packs.json` is copied to `language-packs.json.bad` and rebuilt from the pack folders (each `pack.toml`) atomically in place, as is a missing one when pack folders are there, so no installed pack drops out of the list. Only an install or removal (under the store lock) rewrites it; listing reads the folders meanwhile and writes nothing.
 

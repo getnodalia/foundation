@@ -1,6 +1,6 @@
 //! The store's second item kind, `language-pack`: a language's spelling dictionary, hyphenation
 //! patterns and licence texts, published by getnodalia/foundation (nodalia/i18n) as `<locale>.tar.zst` release
-//! assets listed in an `index.json`, and read at runtime by `craft-proof` (`craft_proof::packs`).
+//! assets listed in an `index.json`, and read at runtime by `nodalia-proof` (`nodalia_proof::packs`).
 //!
 //! It reuses the store's folder, consent ([`FontStore::enable_network`]), HTTP client and sha256
 //! checks: the app pins the index by URL and sha256 ([`PackIndexPin`]), each archive is checked
@@ -38,7 +38,7 @@ pub const LANGUAGE_PACK_INDEX_ENV: &str = "NODALIA_LANGUAGE_PACK_INDEX";
 pub const MAX_PACK_INDEX_BYTES: u64 = 4 << 20;
 /// Largest pack archive downloaded.
 pub const MAX_PACK_ARCHIVE_BYTES: u64 = 128 << 20;
-/// Largest file unpacked from a pack (craft-proof's dictionary cap).
+/// Largest file unpacked from a pack (nodalia-proof's dictionary cap).
 pub const MAX_PACK_FILE_BYTES: u64 = 64 << 20;
 /// Largest total unpacked size of a pack.
 pub const MAX_PACK_UNPACKED_BYTES: u64 = 256 << 20;
@@ -234,7 +234,7 @@ fn local_source(s: &str) -> Option<Result<&str, PathBuf>> {
     Some(Err(PathBuf::from(s)))
 }
 
-/// A lowercase BCP 47 tag as packs are named (craft-proof's rule): ASCII lowercase letters and
+/// A lowercase BCP 47 tag as packs are named (nodalia-proof's rule): ASCII lowercase letters and
 /// digits in parts of 1 to 8 joined by `-`, at most 35 characters.
 fn is_locale(s: &str) -> bool {
     !windows_reserved(s)
@@ -249,7 +249,7 @@ fn is_sha256(s: &str) -> bool {
 
 impl FontStore {
     /// The folder of installed Language packs (`<store>/language-packs`): give it to
-    /// `craft_proof::packs::set_packs_dir`.
+    /// `nodalia_proof::packs::set_packs_dir`.
     pub fn language_packs_dir(&self) -> PathBuf {
         self.dir().join(LANGUAGE_PACKS)
     }
@@ -323,7 +323,7 @@ impl FontStore {
 
     /// Downloads `pack` from `index`, checks its size and sha256, unpacks it and moves it into
     /// `language-packs/<locale>/` in one rename, replacing an older one. Needs the network on.
-    /// Then call `craft_proof::packs::reload()`.
+    /// Then call `nodalia_proof::packs::reload()`.
     pub fn install_language_pack(
         &self,
         index: &PackIndex,
@@ -437,7 +437,7 @@ impl FontStore {
     }
 
     /// Removes the pack for `locale`: its folder disappears at once (one rename) and is deleted
-    /// after. No network needed. Then call `craft_proof::packs::reload()`.
+    /// after. No network needed. Then call `nodalia_proof::packs::reload()`.
     pub fn remove_language_pack(&self, locale: &str) -> Result<(), Error> {
         if !is_locale(locale) {
             return Err(Error::NotInstalled(locale.chars().take(40).collect()));
