@@ -1,6 +1,6 @@
 [package]
 name = "nodalia-media"
-description = "Bit-level I/O, clean-room ISO BMFF (MP4), QuickTime (MOV) and Matroska (MKV, WebM) and MXF demuxers and muxers, and Ogg, AVI and MPEG-TS/PS demuxers."
+description = "Bit-level I/O, clean-room ISO BMFF (MP4), QuickTime (MOV) and Matroska (MKV, WebM) demuxers and muxers, and an Ogg demuxer."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -18,12 +18,6 @@ default = ["isobmff"]
 bitstream = []
 isobmff = ["bitstream", "dep:thiserror"]
 matroska = []
-# AVI (RIFF) and OpenDML demuxer and muxer (`nodalia_media::avi`).
-avi = []
-# MXF demuxer and writer (`nodalia_media::mxf`); the writer formats dates with chrono.
-mxf = ["dep:chrono"]
-# MPEG-2 Systems demuxer: transport streams and program streams (`nodalia_media::mpegts`).
-mpegts = []
 # Ogg demuxer (Ogg Opus and Vorbis mapping, `nodalia_media::ogg`).
 ogg = []
 # Serialize and Deserialize for `Container`, `CodecId`, `CodecParams` and `PcmFormat`.
@@ -32,7 +26,6 @@ serde = ["dep:serde"]
 [dependencies]
 thiserror = { workspace = true, optional = true }
 serde = { workspace = true, optional = true }
-chrono = { workspace = true, optional = true }
 
 [dev-dependencies]
 nodalia-media-testkit = { workspace = true }
@@ -48,14 +41,6 @@ name = "fuzz_matroska"
 required-features = ["matroska"]
 
 [[test]]
-name = "oracle_avi"
-required-features = ["avi"]
-
-[[test]]
-name = "oracle_avi_mux"
-required-features = ["avi"]
-
-[[test]]
 name = "oracle_demux"
 required-features = ["isobmff"]
 
@@ -64,20 +49,8 @@ name = "oracle_matroska"
 required-features = ["matroska"]
 
 [[test]]
-name = "oracle_mpegts"
-required-features = ["mpegts"]
-
-[[test]]
 name = "oracle_mux"
 required-features = ["isobmff"]
-
-[[test]]
-name = "oracle_mxf"
-required-features = ["mxf"]
-
-[[test]]
-name = "oracle_ogg"
-required-features = ["ogg"]
 
 [[test]]
 name = "roundtrip"

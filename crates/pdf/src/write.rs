@@ -15,8 +15,6 @@ const _: bool = backend::NODALIA_PRINT_COLOR;
 const _: bool = backend::NODALIA_OPTIONAL_CONTENT;
 
 pub mod print;
-#[cfg(feature = "write-svg")]
-pub mod svg;
 
 use backend::configure::{Archival, Configuration, ConfigurationBuilder, ConfigurationError, PdfVersion};
 use backend::text::{Font, Tag};
