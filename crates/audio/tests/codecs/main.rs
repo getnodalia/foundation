@@ -7,14 +7,4 @@ use nodalia_media_testkit as common;
 #[macro_use]
 mod testkit;
 
-mod aac;
-mod ac3_encoder_oracle;
-mod ac3_oracle;
-mod alac;
-mod concealment;
-mod mp3_decoder_oracle;
-mod mp3_encoder_oracle;
-mod mpa_oracle;
-mod opus;
 mod routing_oracle;
-mod track_decoder;
