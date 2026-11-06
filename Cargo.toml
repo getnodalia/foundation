@@ -25,7 +25,11 @@ kurbo = "0.13"
 thiserror = "2"
 nodalia-atomic = { path = "crates/atomic" }
 nodalia-cms = { path = "crates/cms" }
+nodalia-crw = { path = "crates/crw" }
+nodalia-dialogs = { path = "crates/dialogs" }
+nodalia-doc = { path = "crates/doc" }
 nodalia-docpath = { path = "crates/docpath" }
+nodalia-ecproj-format = { path = "crates/ecproj-format" }
 nodalia-font-catalog = { path = "crates/font-catalog" }
 nodalia-font-manager = { path = "crates/font-manager" }
 nodalia-font-store = { path = "crates/font-store" }
@@ -33,16 +37,24 @@ nodalia-fonts-build = { path = "crates/fonts-build" }
 nodalia-i18n = { path = "crates/i18n" }
 nodalia-jpeg = { path = "crates/jpeg" }
 nodalia-keymap = { path = "crates/keymap" }
-nodalia-media = { path = "crates/media" }
+nodalia-audio = { path = "crates/audio" }
+# No default features, so nodalia-audio's `encode` builds nodalia-media without `isobmff`.
+nodalia-media = { path = "crates/media", default-features = false }
+nodalia-media-testkit = { path = "crates/media-testkit" }
 nodalia-menu = { path = "crates/menu" }
+nodalia-lienzo-format = { path = "crates/lienzo-format" }
 nodalia-prepress = { path = "crates/prepress" }
 nodalia-print = { path = "crates/print" }
+nodalia-proof = { path = "crates/proof" }
 nodalia-quit = { path = "crates/quit" }
 nodalia-settings = { path = "crates/settings" }
 nodalia-text = { path = "crates/text" }
 nodalia-ui = { path = "crates/ui" }
 nodalia-update = { path = "crates/update" }
+nodalia-pluma-format = { path = "crates/pluma-format" }
+nodalia-web-api = { path = "crates/web-api" }
 nodalia-window = { path = "crates/window" }
+nodalia-web-host = { path = "crates/web-host" }
 egui = { version = "0.37", default-features = false }
 rayon = "1"
 serde = { version = "1", features = ["derive"] }
@@ -86,3 +98,10 @@ eframe = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc79968
 egui_demo_lib = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
 egui_inspection = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
 winit = { git = "https://github.com/getnodalia/foundation", rev = "a517b3846ee8457d84ee4975110bfda6797c44dc" }
+
+# symphonia's FLAC decoder restores LPC samples as `residual + (prediction as i32)`. In a valid
+# 32-bit stream the prediction can leave the i32 range while the sum does not, so a debug build
+# panics where a release build wraps to the right sample. Apps that decode 32-bit FLAC through
+# nodalia-audio's `decode` need the same override in their own workspace.
+[profile.dev.package.symphonia-bundle-flac]
+overflow-checks = false
