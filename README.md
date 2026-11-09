@@ -78,9 +78,13 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   scopes, conflicts, user overrides stored through nodalia-settings and import of other
   applications' shortcut sets. Command catalogs, file readers and the shortcut editor UI stay
   in each app.
+- [`nodalia-audio`](crates/audio/README.md): audio file I/O and codecs (WAV, AIFF, FLAC, AAC),
+  streaming and seeking, and packet decoding for any demuxer. See its README for formats and
+  features.
 - [`nodalia-media`](crates/media/README.md): bit-level I/O (`bitstream`), clean-room MP4/MOV
   (`isobmff`) and Matroska/WebM (`matroska`) demuxers and muxers, an Ogg demuxer (`ogg`), from
-  Toma, and an ISO BMFF box reader. Containers only; codecs stay in each app.
+  Toma, and an ISO BMFF box reader. Containers only; codecs are in `nodalia-audio`, and
+  video codecs will go in a separate crate.
 - [`nodalia-menu`](crates/menu/README.md): an app's menus as a macOS menu bar: the Mac layout
   (app menu, Window, Help, system-key clashes), a platform backend trait, and key equivalents
   fed back to egui as the input egui-winit would have made. Commands and their enabled state
@@ -108,6 +112,10 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
 - [`nodalia-pluma-format`](crates/pluma-format/README.md): the envelope of Pluma's
   `.vectorcraft` file: its members, versions, embedded images and the data after the JSON, with the
   document as a type parameter. The document and its migrations stay in Pluma.
+- [`nodalia-web-api`](crates/web-api/README.md): the page command API every Craft web build offers its page — one
+  `window.<app>` shape (`request`, `execute`, `commands`, `docInspect`, `uiInspect`, `screenshot`) over the app's
+  JSON control channel.
+- [`nodalia-web-host`](crates/web-host/README.md): the host messages between a Craft app's web build and the page that hosts it (`?host=parent` or `data-host="page"`): one contract and one bridge for every app.
 - [Shared UI component audit](docs/ui-components-audit.md): source inventory, extraction priorities
   and compatibility boundaries across the Craft suite.
 - [Theme infrastructure](docs/theme-infrastructure.md): eight-app comparison and the small shared

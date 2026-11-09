@@ -1,5 +1,5 @@
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
-//! Oracle-test support for the nodalia-libs media crates (nodalia-media, craft-audio, and the video
+//! Oracle-test support for the nodalia-libs media crates (nodalia-media, nodalia-audio, and the video
 //! crate to come): ffmpeg/ffprobe discovery, the skip-or-fail rule, and fixture locations.
 //! ffmpeg is used only as an external fixture generator and oracle (never linked). Test support
 //! only: unpublished, and used as a dev-dependency.
