@@ -58,45 +58,10 @@ pub fn run(program: &str, args: &[&str], timeout: Duration) -> Result<String, St
     run_command(cmd, program, timeout)
 }
 
-/// How a helper failed: for a check, whether the helper reached an answer at all.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum HelperFailure {
-    /// The helper ran to its end and exited with `code`. `reason` is in its own words where it
-    /// gave them.
-    Exited { code: i32, reason: String },
-    /// The helper gave no answer: it couldn't be started or read, a signal stopped it, or it ran
-    /// past its time limit.
-    Unfinished(String),
-}
-
-impl HelperFailure {
-    /// The reason in words, as [`run`] reports it.
-    pub fn into_reason(self) -> String {
-        match self {
-            Self::Exited { reason, .. } | Self::Unfinished(reason) => reason,
-        }
-    }
-}
-
-/// [`run`], for a caller that needs to tell a helper's answer from a helper that gave none.
-pub fn run_detailed(program: &str, args: &[&str], timeout: Duration) -> Result<String, HelperFailure> {
-    let mut cmd = command(program);
-    cmd.args(args);
-    run_command_detailed(cmd, program, timeout)
-}
-
 /// Runs a configured helper with bounded output and a timeout.
-pub fn run_command(cmd: Command, program: &str, timeout: Duration) -> Result<String, String> {
-    run_command_detailed(cmd, program, timeout).map_err(HelperFailure::into_reason)
-}
-
-fn run_command_detailed(mut cmd: Command, program: &str, timeout: Duration) -> Result<String, HelperFailure> {
-    let mut child = cmd
-        .stdin(Stdio::null())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .map_err(|e| HelperFailure::Unfinished(format!("couldn't start {program} ({e})")))?;
+pub fn run_command(mut cmd: Command, program: &str, timeout: Duration) -> Result<String, String> {
+    let mut child =
+        cmd.stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::piped()).spawn().map_err(|e| format!("couldn't start {program} ({e})"))?;
     // Read both pipes while it runs, so a chatty helper can't block on a full one.
     let readers = read_all(child.stdout.take()).and_then(|stdout| Ok((stdout, read_all(child.stderr.take())?)));
     let (stdout, stderr) = match readers {
@@ -104,10 +69,9 @@ fn run_command_detailed(mut cmd: Command, program: &str, timeout: Duration) -> R
         Err(e) => {
             let _ = child.kill();
             let _ = child.wait();
-            return Err(HelperFailure::Unfinished(format!("couldn't read the output of {program} ({e})")));
+            return Err(format!("couldn't read the output of {program} ({e})"));
         }
     };
-    let timed_out = || HelperFailure::Unfinished(format!("{program} didn't finish within {} seconds", timeout.as_secs()));
     let start = Instant::now();
     let status = loop {
         match child.try_wait() {
@@ -116,7 +80,7 @@ fn run_command_detailed(mut cmd: Command, program: &str, timeout: Duration) -> R
             _ => {
                 let _ = child.kill();
                 let _ = child.wait();
-                return Err(timed_out());
+                return Err(format!("{program} didn't finish within {} seconds", timeout.as_secs()));
             }
         }
     };
@@ -124,7 +88,7 @@ fn run_command_detailed(mut cmd: Command, program: &str, timeout: Duration) -> R
     // under the same deadline; on timeout the readers detach, as in the child timeout path.
     while !stdout.is_finished() || !stderr.is_finished() {
         if start.elapsed() >= timeout {
-            return Err(timed_out());
+            return Err(format!("{program} didn't finish within {} seconds", timeout.as_secs()));
         }
         std::thread::sleep(Duration::from_millis(15));
     }
@@ -134,11 +98,7 @@ fn run_command_detailed(mut cmd: Command, program: &str, timeout: Duration) -> R
         return Ok(out);
     }
     let reason = err.trim();
-    let reason = if reason.is_empty() { format!("{program} failed ({status})") } else { reason.to_string() };
-    Err(match status.code() {
-        Some(code) => HelperFailure::Exited { code, reason },
-        None => HelperFailure::Unfinished(reason),
-    })
+    Err(if reason.is_empty() { format!("{program} failed ({status})") } else { reason.to_string() })
 }
 
 /// Captures at most 8 MB of a child's pipe and drains the rest on its own thread.
@@ -424,42 +384,22 @@ fn explorer_select_arg(path: &Path) -> Option<std::ffi::OsString> {
 
 /// Whether a process started from inside `path` (an exe, an AppImage, or a `.app`) is running.
 pub fn is_running(path: &Path) -> bool {
-    running(path).unwrap_or(false)
-}
-
-/// Whether a process started from inside `path` (an exe, an AppImage, or a `.app`) is running.
-/// On macOS, `Err` gives the reason the check got no answer. On other systems a check that gets
-/// no answer counts as "not running", since `pgrep` isn't installed on every Linux system.
-pub fn running(path: &Path) -> Result<bool, String> {
-    if cfg!(target_os = "macos") {
-        let p = path.to_str().ok_or("unusual characters in the app's path")?;
-        return pgrep_answer(run_detailed("/usr/bin/pgrep", &["-f", "--", &pgrep_pattern(p)], Duration::from_secs(30)));
-    }
     if cfg!(windows) {
-        let Some(name) = path.file_name().and_then(OsStr::to_str) else { return Ok(false) };
+        let Some(name) = path.file_name().and_then(OsStr::to_str) else { return false };
         let filter = format!("IMAGENAME eq {name}");
-        let Ok(tasklist) = windows_system_program(r"System32\tasklist.exe") else { return Ok(false) };
+        let Ok(tasklist) = windows_system_program(r"System32\tasklist.exe") else { return false };
         let mut cmd = command(tasklist);
         cmd.args(["/FI", &filter, "/NH", "/FO", "CSV"]);
-        Ok(run_command(cmd, "tasklist", Duration::from_secs(5)).ok().is_some_and(|out| out.to_ascii_lowercase().contains(&name.to_ascii_lowercase())))
+        run_command(cmd, "tasklist", Duration::from_secs(5)).ok().is_some_and(|out| out.to_ascii_lowercase().contains(&name.to_ascii_lowercase()))
     } else {
-        let Some(p) = path.to_str() else { return Ok(false) };
+        let Some(p) = path.to_str() else { return false };
         let pattern = pgrep_pattern(p);
         // pgrep exits 0 when something matches; it never matches itself.
-        Ok(if in_sandbox() {
+        if in_sandbox() {
             capture("flatpak-spawn", &["--host", "pgrep", "-f", "--", &pattern], Duration::from_secs(5)).is_some()
         } else {
             capture("pgrep", &["-f", "--", &pattern], Duration::from_secs(5)).is_some()
-        })
-    }
-}
-
-/// What a `pgrep` run says: exit 0 is a match and exit 1 is no match. Anything else gave no answer.
-fn pgrep_answer(output: Result<String, HelperFailure>) -> Result<bool, String> {
-    match output {
-        Ok(_) => Ok(true),
-        Err(HelperFailure::Exited { code: 1, .. }) => Ok(false),
-        Err(failure) => Err(failure.into_reason()),
+        }
     }
 }
 
@@ -488,17 +428,16 @@ fn pgrep_pattern(path: &str) -> String {
 
 #[cfg(test)]
 #[cfg(unix)]
-pub(crate) mod tests {
+mod tests {
     use std::io::{BufRead, BufReader};
     use std::process::Child;
 
     use super::*;
 
-    /// A process whose command line is `path`, as `pgrep -f` sees it, until dropped.
-    pub(crate) struct RunningProbe(Child);
+    struct RunningProbe(Child);
 
     impl RunningProbe {
-        pub(crate) fn start(path: &str) -> Self {
+        fn start(path: &str) -> Self {
             let child = command("/bin/sh")
                 .args(["-c", "printf 'ready\\n'; read line", path])
                 .stdin(Stdio::piped())
@@ -534,7 +473,6 @@ pub(crate) mod tests {
             let actual = format!("{root}/{actual}");
             let requested = format!("{root}/{requested}");
             let _probe = RunningProbe::start(&actual);
-            assert_eq!(running(Path::new(&requested)), Ok(expected), "{requested}");
             assert_eq!(is_running(Path::new(&requested)), expected, "{requested}");
         }
     }
@@ -587,54 +525,6 @@ mod run_tests {
         let out = run("/bin/sh", &["-c", "head -c 9437184 /dev/zero >&2"], Duration::from_secs(10));
         assert!(out.is_ok(), "the helper should finish without a broken pipe");
         assert!(out.unwrap().is_empty());
-    }
-
-    /// Long enough that no helper in these tests reaches it.
-    #[cfg(unix)]
-    const NO_LIMIT: Duration = Duration::from_secs(86_400);
-
-    #[cfg(unix)]
-    #[test]
-    fn a_helper_past_its_time_limit_gives_no_answer() {
-        // A time limit of zero expires at the first look, so the test doesn't wait for it.
-        let mut cmd = command("/bin/sh");
-        cmd.args(["-c", "exec sleep 86400"]);
-        let timed_out = run_command_detailed(cmd, "the helper", Duration::ZERO);
-        assert_eq!(timed_out, Err(HelperFailure::Unfinished("the helper didn't finish within 0 seconds".into())));
-    }
-
-    #[cfg(unix)]
-    #[test]
-    fn a_helper_that_cannot_start_gives_no_answer() {
-        let not_found = run_detailed("/nonexistent/helper", &[], NO_LIMIT);
-        assert!(matches!(not_found, Err(HelperFailure::Unfinished(_))), "{not_found:?}");
-    }
-
-    #[cfg(unix)]
-    #[test]
-    fn a_helper_stopped_by_a_signal_gives_no_answer() {
-        let killed = run_detailed("/bin/sh", &["-c", "kill -9 $$"], NO_LIMIT);
-        assert!(matches!(killed, Err(HelperFailure::Unfinished(_))), "{killed:?}");
-    }
-
-    #[cfg(unix)]
-    #[test]
-    fn a_helper_that_exits_gives_its_code_and_its_reason() {
-        let exited = run_detailed("/bin/sh", &["-c", "echo it failed >&2; exit 3"], NO_LIMIT);
-        assert_eq!(exited, Err(HelperFailure::Exited { code: 3, reason: "it failed".into() }));
-        assert_eq!(run("/bin/sh", &["-c", "echo it failed >&2; exit 3"], NO_LIMIT), Err("it failed".into()));
-    }
-
-    #[test]
-    fn pgrep_finding_nothing_is_an_answer() {
-        assert_eq!(pgrep_answer(Ok("123\n".into())), Ok(true));
-        assert_eq!(pgrep_answer(Err(HelperFailure::Exited { code: 1, reason: "pgrep failed".into() })), Ok(false));
-    }
-
-    #[test]
-    fn a_pgrep_that_gives_no_answer_is_not_read_as_not_running() {
-        assert_eq!(pgrep_answer(Err(HelperFailure::Unfinished("too slow".into()))), Err("too slow".into()));
-        assert_eq!(pgrep_answer(Err(HelperFailure::Exited { code: 2, reason: "bad flag".into() })), Err("bad flag".into()));
     }
 
     #[cfg(unix)]
@@ -837,83 +727,5 @@ mod inherited_pipe_tests {
             // The guard stops the finite descendant and waits for its completion marker on failures too.
             break;
         }
-    }
-}
-
-/// Runs a helper while polling cancellation and draining its bounded output.
-#[cfg(target_os = "linux")]
-pub(crate) fn cancellable_output(mut cmd: Command, check: impl Fn() -> Result<(), String>) -> Result<std::process::Output, String> {
-    check()?;
-    let mut child =
-        cmd.stdin(Stdio::null()).stdout(Stdio::piped()).stderr(Stdio::piped()).spawn().map_err(|e| format!("couldn't run flatpak ({e})"))?;
-    let stdout = read_all(child.stdout.take()).map_err(|e| format!("couldn't read flatpak output ({e})"))?;
-    let stderr = read_all(child.stderr.take()).map_err(|e| format!("couldn't read flatpak output ({e})"))?;
-    let started = Instant::now();
-    let status = loop {
-        if started.elapsed() >= Duration::from_secs(60 * 60) {
-            let _ = child.kill();
-            let _ = child.wait();
-            return Err("Flatpak did not finish within one hour".into());
-        }
-        if let Err(e) = check() {
-            let _ = child.kill();
-            let _ = child.wait();
-            return Err(e);
-        }
-        match child.try_wait() {
-            Ok(Some(status)) => break status,
-            Ok(None) => std::thread::sleep(Duration::from_millis(25)),
-            Err(e) => {
-                let _ = child.kill();
-                let _ = child.wait();
-                return Err(format!("couldn't wait for flatpak ({e})"));
-            }
-        }
-    };
-    let deadline = Instant::now();
-    while !stdout.is_finished() || !stderr.is_finished() {
-        check()?;
-        if deadline.elapsed() > Duration::from_secs(5) {
-            return Err("Flatpak output did not close after completion".into());
-        }
-        std::thread::sleep(Duration::from_millis(25));
-    }
-    Ok(std::process::Output { status, stdout: stdout.join().unwrap_or_default(), stderr: stderr.join().unwrap_or_default() })
-}
-
-#[cfg(all(test, target_os = "linux"))]
-mod update_cancel_tests {
-    use super::*;
-
-    #[test]
-    fn cancels_a_running_helper_promptly() {
-        let mut cmd = command("sleep");
-        cmd.arg("30");
-        let start = Instant::now();
-        let result = cancellable_output(cmd, || if start.elapsed() >= Duration::from_millis(100) { Err("cancelled".into()) } else { Ok(()) });
-        assert_eq!(result.unwrap_err(), "cancelled");
-        assert!(start.elapsed() < Duration::from_secs(5));
-    }
-
-    /// A descendant that outlives the helper keeps the pipes open; the caller gets an error at
-    /// the deadline instead of waiting for it.
-    #[test]
-    fn output_held_open_by_a_descendant_fails_at_the_deadline() {
-        let mut cmd = command("sh");
-        cmd.args(["-c", "sleep 8 &"]);
-        let start = Instant::now();
-        let err = cancellable_output(cmd, || Ok(())).expect_err("a descendant holding the pipes should time out");
-        assert!(err.contains("did not close after completion"), "{err}");
-        assert!(start.elapsed() < Duration::from_secs(8), "{:?}", start.elapsed());
-    }
-
-    #[test]
-    fn retains_both_output_streams_and_exit_status() {
-        let mut cmd = command("sh");
-        cmd.args(["-c", "printf output; printf error >&2; exit 7"]);
-        let output = cancellable_output(cmd, || Ok(())).unwrap();
-        assert_eq!(output.status.code(), Some(7));
-        assert_eq!(output.stdout, b"output");
-        assert_eq!(output.stderr, b"error");
     }
 }
