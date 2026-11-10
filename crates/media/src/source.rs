@@ -211,8 +211,7 @@ mod tests {
     #[test]
     fn file_sources_read_like_a_buffer() {
         let v: Vec<u8> = (0..=255).collect();
-        let dir = nodalia_media_testkit::private_dir("source");
-        let path = dir.join("source.bin");
+        let path = std::env::temp_dir().join(format!("nodalia-media-source-{}.bin", std::process::id()));
         std::fs::write(&path, &v).unwrap();
         let f = std::fs::File::open(&path).unwrap();
         let r = ReadSeekSource::new(std::fs::File::open(&path).unwrap()).unwrap();
@@ -231,7 +230,7 @@ mod tests {
             }
         }
         drop((f, r)); // Windows deletes no open file
-        std::fs::remove_dir_all(&dir).ok();
+        std::fs::remove_file(&path).ok();
     }
 
     #[test]

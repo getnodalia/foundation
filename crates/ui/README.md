@@ -3,7 +3,6 @@
 `nodalia-ui` provides small egui components with application-supplied styles. `icons` prepares
 embedded SVG catalogs; `buttons` paints accessible icon buttons; `tabs` handles tab fitting and
 interaction; `layout` provides toolbar fitting, split geometry and resize handles; `theme` shares widget-state styling.
-`layout::Section` groups dialog or inspector settings in caller-styled frames with optional headings.
 `docking` supplies transactional panel moves and an optional docking surface.
 `printing` supplies printer/job controls and asynchronous feedback used by Letra and Celdas.
 `fonts` installs the UI font stack, the same fallback order in every app.
@@ -14,14 +13,9 @@ and command handling remain in each application. No icons, fonts or application 
 
 ## Host-owned docking chrome
 
-Iconic flyouts resize from their canvas-side edge, top, bottom and the two
-canvas-side corners, keeping the edge against the icon column anchored. Resizing
-saves the group's `height` and `flyout_width`, and a top-edge resize saves
-`flyout_offset`, the top's distance from the group's icons, so workspaces retain
-independent sizes and placement for each group. Without an offset a flyout aligns
-with its icons, and a saved one stays inside the float bounds. The top handle is a
-4 pt band over the top of the tab strip (`FloatingFrame::top_handle_height`), so it is
-easy to grab while the rest of the strip keeps its clicks and drags.
+Iconic flyouts resize from their canvas-side edge, bottom and shared corner, keeping
+the edge against the icon column anchored. Resizing saves the group's `height`
+and `flyout_width`, so workspaces retain independent sizes for each group.
 An explicit height overrides content fitting; untouched heights continue to fit
 content, including after a width-only drag. Layout locks and float bounds apply.
 
@@ -62,42 +56,7 @@ sizes, the viewport edge, and top-gutter opt-out geometry.
 Exhaustive `DockStyle` struct literals need `dock_gap: None`; constructors such
 as `from_ui` and `from_visuals` supply the compatible default.
 
-## Dialog and inspector sections
-
-`layout::Section` groups related settings without owning a window, theme or commands. Pass a
-localized heading and a frame built from the application's tokens. Typography stays in the supplied
-`WidgetText`; contents keep normal egui focus, clipping and parent disabled state.
-
-```rust
-use nodalia_ui::layout::Section;
-use egui::{CornerRadius, Frame, Margin, RichText};
-
-fn display_settings(ui: &mut egui::Ui, show_grid: &mut bool) {
-    let frame = Frame::new()
-        .fill(ui.visuals().window_fill.lerp_to_gamma(ui.visuals().text_color(), 0.04))
-        .stroke(ui.visuals().window_stroke)
-        .corner_radius(CornerRadius::same(6))
-        .inner_margin(Margin::symmetric(10, 8));
-    Section::new(frame).heading(RichText::new("Display").strong()).show(ui, |ui| {
-        ui.checkbox(show_grid, "Show grid");
-    });
-}
-```
-
-The default fills available width; `.fill_width(false)` wraps the contents. An empty heading adds
-no row or heading gap. The heading remains above the contents even in a horizontal parent.
-The helper neither indents controls nor adds exterior spacing: compose those
-in the caller's layout. Reusing the same frame for nested sections preserves its fill. A translucent fill
-blends again in each nested section; the component does not change global visuals. Invalid floating-point decoration becomes zero and
-large heading gaps/strokes are capped at 64 logical points; forced widths are capped at one million.
-
-This small framing boundary comes from [Letra #4038](https://github.com/storytold/wordcraft/pull/4038)
-and is also suitable for Celdas/Lámina dialogs and creative-app inspectors. Consumer adoption
-is separate; application-specific dialog behavior remains in each app.
-
 ## SVG catalogs
-
-For common Insert Shapes choices and previews, see [the shared shape gallery](docs/shape-gallery.md).
 
 ```rust
 use std::sync::OnceLock;
@@ -546,38 +505,6 @@ documentation has the recipe for a shortcut smoke test on a non-Latin layout thr
 letters such as ổ, so an app relying on it fails the `vi` screens until its own face covers them. The per-release manual checks are in
 [language-testing.md](../../docs/language-testing.md).
 
-### Input steps and review screenshots
-
-`testing::input` drives any egui_kittest `Harness<State>` with a fixed number of frames per step:
-`move_to` (1), `press` and `release` (2 each), `click` (3), `drag` (`steps` + 3, primary button,
-1 to `MAX_DRAG_STEPS` moves), `key` (2), `type_text` (2) and `wheel` (2, in points). The modifiers
-given to a step are held from its first frame and released in its last; `press` keeps them held
-until the matching `release`. A drag with another button is `press`, `move_to` and `release`. The
-module documentation lists the events of each frame. The counts hold when no events queued with
-`Harness::event` are waiting, so run the harness after queuing events. `docking::testing::DockDriver` runs its own
-egui context and keeps its own `window_click` and `window_hold`.
-
-`testing::snapshot` writes screenshots for review and compares nothing. `snapshot_dir(var)` reads
-the folder from the environment variable `var`: `DEFAULT_DIR_VAR` (`NODALIA_UI_SNAPSHOT_DIR`), or an
-app's own variable name. With no folder, `with_snapshot_renderer` leaves the builder unchanged and
-no GPU is set up; with one, it sets up wgpu and returns `SnapshotError::Render` on a machine that
-can't render. `save(harness, dir, name)` renders the last frame to `{dir}/{name}.png`, creating the
-folder, and runs no frames, so settle the screen and set the theme first. Names are plain file
-names (ASCII letters, digits, `-`, `_`, `.`, `@`).
-
-```rust,ignore
-use nodalia_ui::testing::{input, snapshot};
-use egui::{Modifiers, PointerButton, pos2};
-
-let dir = snapshot::snapshot_dir("NODALIA_EXPORT_SNAPSHOTS");
-let mut harness = snapshot::with_snapshot_renderer(Harness::builder(), dir.as_deref())?.build_ui_state(export_ui, state);
-input::click(&mut harness, pos2(40.0, 20.0), PointerButton::Primary, Modifiers::NONE);
-harness.run();
-if let Some(dir) = &dir {
-    snapshot::save(&mut harness, dir, "export-dialog")?;
-}
-```
-
 ## Print settings and feedback
 
 `printing::State` holds the transient printer selection, copies, duplex and grayscale settings,
@@ -710,8 +637,7 @@ verify the actual pixels as well as callback routing.
 The crate uses egui 0.37 and Rust 1.95 or later. Its production dependency disables egui's default
 features, so egui's bundled fonts and rendering features remain the application's choice. It has
 no default features; see [UI fonts](#ui-fonts) for `color_fonts` and `system_fonts`, and
-[Testing screens in each language](#testing-screens-in-each-language) for `screen-testing`, which
-also adds `testing::input` and `testing::snapshot`;
+[Testing screens in each language](#testing-screens-in-each-language) for `screen-testing`;
 `testing` adds the headless docking driver `docking::testing`. See the
 [suite audit](../../docs/ui-components-audit.md) for candidates, policies and adoption order.
 

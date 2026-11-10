@@ -19,12 +19,12 @@ commands, fixtures and behavior-specific assertions.
 The inventory covers 15 applications: Forja, Lámina, Pliego, Pulso, Trama,
 Toma, Celdas, Luz, Papel, Lienzo, SoundCraft, Pluma, Letra,
 ArtCraft Launcher (`craft-launcher`) and ArtCraft Native (`artcraft/artcraft-native`).
-It also covers `nodalia-libs`, `nodalia-ai-integrations`, `storytold/egui` and the required
+It also covers `nodalia-libs`, `craft-ai-integrations`, `storytold/egui` and the required
 `storytold/winit` companion fork. CLI, web, headless, examples, benchmarks and nested workspaces
 that consume these libraries belong to their repository's migration.
 
 The first 14 applications were present in the earlier suite audit; ArtCraft Native and
-`nodalia-ai-integrations/crates/ai-egui` must not be lost from the rollout. `nodalia-fonts` and
+`craft-ai-integrations/crates/ai-egui` must not be lost from the rollout. `nodalia-fonts` and
 `nodalia-i18n` are relevant data/API inputs, not egui rendering consumers in the inspected sources.
 The older `storyteller-bevy` studio and `bevy-mocap` examples use Bevy-specific integrations
 (`bevy-inspector-egui` 0.23 and 0.22); they are outside this Craft suite/fork migration. A
@@ -117,7 +117,7 @@ unit. winit remains 0.30.13 and wgpu remains 30 unless a separately justified ch
    `nodalia-quit`/`nodalia-window` and all relevant optional features. The current shared workspace
    has no binary/example targets; excluded vendor examples retain their separate disposition.
    Add narrowly justified shared helpers and their
-   regressions. Port `nodalia-ai-egui` in parallel once its dependency contracts are fixed.
+   regressions. Port `craft-ai-egui` in parallel once its dependency contracts are fixed.
 5. Port each application in its own reviewable PR series. Atomic compatibility changes include
    manifests, lockfiles, source adaptations and harness changes; never land an intermediate
    dependency bump that leaves main unbuildable. Eleven nodalia-ui consumers adopt the capture
