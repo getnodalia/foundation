@@ -1,0 +1,71 @@
+name: Git sources
+
+# Reusable supply-chain check for Cargo projects: every git dependency in Cargo.lock comes from an
+# allowed GitHub owner, Cargo.lock matches the manifests, and no cargo config silently replaces,
+# patches or overrides a source (those never show up in Cargo.lock).
+on:
+  workflow_call:
+    inputs:
+      allowed-prefixes:
+        description: "Allowed git source prefixes, one per line"
+        type: string
+        default: |
+          git+https://github.com/getnodalia/
+          git+https://github.com/danielmigueltejedor/nodalia-design
+      working-directory:
+        description: "Directory holding Cargo.lock"
+        type: string
+        default: "."
+
+permissions:
+  contents: read
+
+jobs:
+  git-sources:
+    name: Git dependencies come from allowed owners
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Cargo.lock matches the manifests
+        run: |
+          test -f Cargo.lock || { echo "::error::Cargo.lock is missing"; exit 1; }
+          cargo metadata --locked --format-version 1 > /dev/null
+      - name: No source replacement, patches or path overrides in cargo config
+        run: |
+          python3 - <<'PY'
+          import os, sys, tomllib
+          for path in (".cargo/config", ".cargo/config.toml"):
+              if not os.path.exists(path):
+                  continue
+              with open(path, "rb") as fh:
+                  config = tomllib.load(fh)
+              replaced = [n for n, s in config.get("source", {}).items()
+                          if isinstance(s, dict) and "replace-with" in s]
+              if replaced or "patch" in config or "paths" in config:
+                  print(f"::error file={path}::replaces, patches or overrides a source")
+                  sys.exit(1)
+          PY
+      - name: Git dependencies come from allowed owners
+        env:
+          ALLOWED: ${{ inputs.allowed-prefixes }}
+        run: |
+          python3 - <<'PY'
+          import os, sys, tomllib
+          allowed = tuple(p.strip() for p in os.environ["ALLOWED"].splitlines() if p.strip())
+          with open("Cargo.lock", "rb") as fh:
+              lock = tomllib.load(fh)
+          bad = sorted({p["source"].split("#")[0] for p in lock.get("package", [])
+                        if p.get("source", "").startswith("git+")
+                        and not p["source"].startswith(allowed)})
+          if bad:
+              print("::error::Git dependencies outside the allowed owners:")
+              print(*bad, sep="\n")
+              sys.exit(1)
+          print("All git dependencies come from:", *allowed, sep="\n  ")
+          PY

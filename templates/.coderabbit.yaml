@@ -1,0 +1,17 @@
+# CodeRabbit (free for public repositories). Findings are review suggestions, not gates.
+language: en-US
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: ".github/workflows/**"
+      instructions: "Check least-privilege permissions, SHA-pinned actions and that no check was weakened."
+    - path: "**/*.rs"
+      instructions: "Non-test code must not panic (unwrap/expect/panic/index on input). Errors are Result."
+chat:
+  auto_reply: true

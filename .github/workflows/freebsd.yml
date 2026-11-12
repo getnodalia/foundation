@@ -1,0 +1,71 @@
+name: FreeBSD
+
+# Reusable FreeBSD build and test for Rust apps, in a FreeBSD VM on a standard Linux runner
+# (GitHub has no FreeBSD runners). Slow: call it nightly and on release branches, not on every PR.
+on:
+  workflow_call:
+    inputs:
+      release:
+        description: "FreeBSD release for the VM"
+        type: string
+        default: "15.0"
+      packages:
+        description: "FreeBSD packages the build needs, besides rust, git and pkgconf"
+        type: string
+        default: "libxkbcommon wayland libX11 libXcursor libXrandr libXi libxcb mesa-libs vulkan-loader fontconfig freetype2 alsa-lib dejavu"
+      command:
+        description: "Build and test command run in the VM from the repository root"
+        type: string
+        default: "cargo build --workspace --locked && cargo test --workspace --locked"
+      fonts-repository:
+        description: "Repository with the fonts build input; empty skips it"
+        type: string
+        default: ""
+      fonts-ref:
+        type: string
+        default: ""
+      timeout-minutes:
+        type: number
+        default: 240
+
+permissions:
+  contents: read
+
+jobs:
+  freebsd:
+    name: FreeBSD ${{ inputs.release }} x86_64
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check out fonts build input
+        if: inputs.fonts-repository != '' && inputs.fonts-ref != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ inputs.fonts-repository }}
+          ref: ${{ inputs.fonts-ref }}
+          path: .nodalia/fonts
+          persist-credentials: false
+      - name: Build and test in the VM
+        uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
+        env:
+          PACKAGES: ${{ inputs.packages }}
+          COMMAND: ${{ inputs.command }}
+          CARGO_INCREMENTAL: "0"
+          CARGO_TERM_COLOR: always
+        with:
+          release: ${{ inputs.release }}
+          usesh: true
+          cpu: 4
+          mem: 12288
+          envs: "PACKAGES COMMAND CARGO_INCREMENTAL CARGO_TERM_COLOR"
+          prepare: |
+            pkg install -y bash git pkgconf rust $PACKAGES
+          run: |
+            set -e
+            if [ -d .nodalia/fonts ]; then
+              export CRAFT_FONTS_DIR="$PWD/.nodalia/fonts"
+            fi
+            bash -c "$COMMAND"

@@ -1,0 +1,32 @@
+name: Nix
+
+# Reusable flake evaluation: `nix flake check` without building, about a minute. Catches a
+# Cargo.lock change the Nix package cannot vendor before anyone runs `nix build`.
+on:
+  workflow_call:
+    inputs:
+      args:
+        description: "Arguments to `nix flake check`"
+        type: string
+        default: "--no-build --all-systems"
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    name: nix flake check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@3dc140bfc76c49fbd4dd958429132e3746bcb086 # v31.11.5
+      - name: Evaluate the flake
+        env:
+          ARGS: ${{ inputs.args }}
+        run: |
+          if [ ! -f flake.nix ]; then echo "No flake.nix; nothing to check."; exit 0; fi
+          # shellcheck disable=SC2086 # ARGS is a list of flags
+          nix flake check $ARGS

@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  gate:
+    uses: getnodalia/foundation/.github/workflows/rust-gate.yml@FOUNDATION_SHA # foundation vX
+    with:
+      packages: pkg-config libxkbcommon-dev libwayland-dev
+  git-sources:
+    uses: getnodalia/foundation/.github/workflows/git-sources.yml@FOUNDATION_SHA # foundation vX

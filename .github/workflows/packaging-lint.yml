@@ -1,0 +1,87 @@
+name: Packaging lint
+
+# Reusable static checks for release plumbing, in seconds and without building the app:
+# workflow files (actionlint), shell scripts (shellcheck), and Linux desktop/AppStream metadata.
+on:
+  workflow_call:
+    inputs:
+      shell-paths:
+        description: "Directories whose *.sh files shellcheck checks (space separated)"
+        type: string
+        default: "packaging scripts"
+      metadata-paths:
+        description: "Directories searched for .desktop and AppStream metainfo files"
+        type: string
+        default: "packaging data"
+
+permissions:
+  contents: read
+
+jobs:
+  workflows:
+    name: Workflow syntax
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: actionlint
+        run: |
+          set -euo pipefail
+          # Fetches the release binary of the same pinned version; no install script piped to sh.
+          version=1.7.9
+          curl -fsSL -o actionlint.tgz \
+            "https://github.com/rhysd/actionlint/releases/download/v${version}/actionlint_${version}_linux_amd64.tar.gz"
+          tar -xzf actionlint.tgz actionlint
+          ./actionlint -color
+
+  shell:
+    name: Shell scripts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: shellcheck
+        env:
+          PATHS: ${{ inputs.shell-paths }}
+        run: |
+          set -euo pipefail
+          files=()
+          for p in $PATHS; do
+            [ -d "$p" ] || continue
+            while IFS= read -r -d '' f; do files+=("$f"); done < <(find "$p" -name '*.sh' -type f -print0)
+          done
+          if [ ${#files[@]} -eq 0 ]; then echo "No shell scripts to check."; exit 0; fi
+          shellcheck --severity=warning "${files[@]}"
+
+  metadata:
+    name: Desktop and AppStream metadata
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install validators
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends desktop-file-utils appstream
+      - name: Validate
+        env:
+          PATHS: ${{ inputs.metadata-paths }}
+        run: |
+          set -euo pipefail
+          status=0
+          for p in $PATHS; do
+            [ -d "$p" ] || continue
+            while IFS= read -r -d '' f; do
+              echo "desktop-file-validate $f"; desktop-file-validate "$f" || status=1
+            done < <(find "$p" -name '*.desktop' -type f -print0)
+            while IFS= read -r -d '' f; do
+              echo "appstreamcli validate $f"; appstreamcli validate --no-net --pedantic=no "$f" || status=1
+            done < <(find "$p" \( -name '*.metainfo.xml' -o -name '*.appdata.xml' \) -type f -print0)
+          done
+          exit $status

@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security problem
+    url: https://github.com/getnodalia/foundation/blob/main/standards/security.md
+    about: Security issues are reported privately, never in a public issue.

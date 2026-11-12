@@ -1,0 +1,185 @@
+name: Rust gate
+
+# Reusable quality gate for Nodalia's Rust apps: one job per runner in `os`, each running
+# `command` (default `cargo xtask ci`) after installing the toolchain, system packages and
+# optional build inputs (fonts, translations). Callers pin this file by commit SHA.
+on:
+  workflow_call:
+    inputs:
+      command:
+        description: "Gate command, run with bash from the repository root"
+        type: string
+        default: "cargo xtask ci"
+      windows-command:
+        description: "Gate command on Windows legs; empty runs `command`"
+        type: string
+        default: ""
+      os:
+        description: 'JSON array of runner labels, e.g. ["ubuntu-24.04"]. Standard free runners only.'
+        type: string
+        default: '["ubuntu-24.04"]'
+      packages:
+        description: "Ubuntu packages to apt-get install on Linux legs (space or newline separated)"
+        type: string
+        default: ""
+      targets:
+        description: "Extra rustup targets (space or comma separated)"
+        type: string
+        default: "wasm32-unknown-unknown"
+      tools:
+        description: "Cargo tools for taiki-e/install-action, each with a version (e.g. cargo-nextest@0.9.150)"
+        type: string
+        default: "cargo-nextest"
+      fonts-repository:
+        description: "Repository holding the fonts build input (CRAFT_FONTS_DIR); empty skips it"
+        type: string
+        default: ""
+      fonts-ref:
+        description: "Commit of fonts-repository to build with"
+        type: string
+        default: ""
+      i18n-repository:
+        description: "Repository holding the translations build input (CRAFT_I18N_DIR). Checked out only when the repo has craft-i18n.rev"
+        type: string
+        default: ""
+      env:
+        description: "KEY=VALUE lines added to every leg's environment"
+        type: string
+        default: ""
+      free-disk-space:
+        description: "Remove unused toolchains from the Linux image before building"
+        type: boolean
+        default: true
+      timeout-minutes:
+        type: number
+        default: 60
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: gate (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON(inputs.os) }}
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_INCREMENTAL: 0
+      CARGO_NET_RETRY: 10
+      CARGO_PROFILE_DEV_DEBUG: line-tables-only
+      RUST_BACKTRACE: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check out fonts build input
+        if: inputs.fonts-repository != '' && inputs.fonts-ref != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ inputs.fonts-repository }}
+          ref: ${{ inputs.fonts-ref }}
+          path: .nodalia/fonts
+          persist-credentials: false
+
+      - name: Use fonts build input
+        if: inputs.fonts-repository != '' && inputs.fonts-ref != ''
+        shell: bash
+        run: |
+          echo "CRAFT_FONTS_DIR=$GITHUB_WORKSPACE/.nodalia/fonts" >> "$GITHUB_ENV"
+          echo "CRAFT_FONTS_REQUIRED=1" >> "$GITHUB_ENV"
+
+      - name: Read translations pin
+        id: i18n
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.i18n-repository }}" ] && [ -f craft-i18n.rev ]; then
+            echo "rev=$(tr -d '[:space:]' < craft-i18n.rev)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check out translations build input
+        if: steps.i18n.outputs.rev != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ inputs.i18n-repository }}
+          ref: ${{ steps.i18n.outputs.rev }}
+          path: .nodalia/i18n
+          persist-credentials: false
+
+      - name: Use translations build input
+        if: steps.i18n.outputs.rev != ''
+        shell: bash
+        run: echo "CRAFT_I18N_DIR=$GITHUB_WORKSPACE/.nodalia/i18n" >> "$GITHUB_ENV"
+
+      - name: Caller environment
+        if: inputs.env != ''
+        shell: bash
+        env:
+          LINES: ${{ inputs.env }}
+        run: |
+          printf '%s\n' "$LINES" | while IFS= read -r line; do
+            [ -n "$line" ] && echo "$line" >> "$GITHUB_ENV"
+          done
+
+      - name: Free disk space
+        if: runner.os == 'Linux' && inputs.free-disk-space
+        shell: bash
+        run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL &
+
+      - name: Install system packages
+        if: runner.os == 'Linux' && inputs.packages != ''
+        shell: bash
+        env:
+          PACKAGES: ${{ inputs.packages }}
+        run: |
+          set -euo pipefail
+          sudo apt-get update -q
+          # shellcheck disable=SC2086 # word splitting is the package list
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q --no-install-recommends $PACKAGES
+
+      - name: Install Rust
+        shell: bash
+        env:
+          TARGETS: ${{ inputs.targets }}
+        run: |
+          set -euo pipefail
+          # rust-toolchain.toml, when present, picks the channel; otherwise stable.
+          if [ ! -f rust-toolchain.toml ] && [ ! -f rust-toolchain ]; then
+            rustup toolchain install stable --profile minimal -c rustfmt,clippy
+            rustup default stable
+          fi
+          rustup show active-toolchain || rustup toolchain install
+          for t in ${TARGETS//,/ }; do rustup target add "$t"; done
+
+      - name: Install cargo tools
+        if: inputs.tools != ''
+        uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+        with:
+          tool: ${{ inputs.tools }}
+
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          # Pull requests read the main branch cache and never write their own.
+          save-if: ${{ github.event_name != 'pull_request' }}
+
+      - name: Gate
+        shell: bash
+        env:
+          COMMAND: ${{ inputs.command }}
+          WINDOWS_COMMAND: ${{ inputs.windows-command }}
+        run: |
+          set -euo pipefail
+          if [ "$RUNNER_OS" = Windows ] && [ -n "$WINDOWS_COMMAND" ]; then
+            eval "$WINDOWS_COMMAND"
+          else
+            eval "$COMMAND"
+          fi
+
+      - name: Lockfile unchanged
+        if: hashFiles('Cargo.lock') != ''
+        shell: bash
+        run: git diff --exit-code -- Cargo.lock
