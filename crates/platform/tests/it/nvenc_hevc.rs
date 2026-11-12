@@ -4,8 +4,8 @@
 //! without an NVIDIA GPU / driver with HEVC encoding.
 #![cfg(target_os = "windows")]
 
+use nodalia_video::hevc::decode::params::Sps;
 use toma_bitstream::unescape_rbsp;
-use toma_hevc::params::Sps;
 use toma_isobmff::{HevcConfig, SampleEntry};
 use toma_platform::nvenc::{Codec, Config, Nvenc, Packet, Profile, annex_b_to_length_prefixed_for, hevc_available, nal_type};
 

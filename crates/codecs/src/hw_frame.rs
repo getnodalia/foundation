@@ -84,8 +84,8 @@ pub(crate) fn obus(data: &[u8]) -> Vec<(u8, &[u8])> {
 
 /// What an AV1 sequence header fixes about the pictures: profile, maximum size and the colour
 /// configuration (bit depth, chroma format, colour description). `None` when it does not parse.
-fn av1_format(seq: &[u8]) -> Option<(u8, u32, u32, toma_av1::ColorConfig)> {
-    let h = toma_av1::SequenceHeader::parse(seq).ok()?;
+fn av1_format(seq: &[u8]) -> Option<(u8, u32, u32, nodalia_video::av1::decode::ColorConfig)> {
+    let h = nodalia_video::av1::decode::SequenceHeader::parse(seq).ok()?;
     Some((h.profile, h.max_frame_width, h.max_frame_height, h.color))
 }
 
@@ -170,7 +170,7 @@ impl FrameStreamInfo {
     fn from_av1(c: &toma_isobmff::Av1Config, entry_size: (u32, u32)) -> Result<Self> {
         let seq =
             obus(&c.config_obus).into_iter().find(|(t, _)| *t == 1).map(|(_, p)| p).ok_or_else(|| CodecError::Decode("av1C has no sequence header".into()))?;
-        let h = toma_av1::SequenceHeader::parse(seq).map_err(|e| CodecError::Decode(e.to_string()))?;
+        let h = nodalia_video::av1::decode::SequenceHeader::parse(seq).map_err(|e| CodecError::Decode(e.to_string()))?;
         let size = (h.max_frame_width, h.max_frame_height);
         if entry_size != (0, 0) && entry_size != size {
             // the sample entry and the sequence header disagree: leave the stream to our decoder
@@ -219,8 +219,8 @@ impl FrameStreamInfo {
     /// frame is a shown key frame): the software decoders' own test.
     pub fn is_random_access(&self, sample: &[u8]) -> bool {
         match self.codec {
-            FrameCodec::Vp9 => toma_vp9::is_keyframe(sample),
-            FrameCodec::Av1 => toma_av1::is_key_frame_unit(sample),
+            FrameCodec::Vp9 => nodalia_video::vp9::decode::is_keyframe(sample),
+            FrameCodec::Av1 => nodalia_video::av1::decode::is_key_frame_unit(sample),
         }
     }
 
@@ -229,7 +229,7 @@ impl FrameStreamInfo {
     pub fn picture_params(&self, sample: &[u8]) -> Option<PictureParams> {
         match self.codec {
             FrameCodec::Vp9 => {
-                let k = toma_vp9::keyframe_info(sample)?;
+                let k = nodalia_video::vp9::decode::keyframe_info(sample)?;
                 let color = vp9_color(k.width, k.height, k.color.color_space, k.color.full_range, self.transfer, self.primaries);
                 Some(PictureParams {
                     size: (k.width, k.height),
@@ -240,7 +240,7 @@ impl FrameStreamInfo {
             }
             FrameCodec::Av1 => {
                 let seq = obus(sample).into_iter().find(|(t, _)| *t == 1).map(|(_, p)| p)?;
-                let h = toma_av1::SequenceHeader::parse(seq).ok()?;
+                let h = nodalia_video::av1::decode::SequenceHeader::parse(seq).ok()?;
                 let cc = &h.color;
                 let size = (h.max_frame_width, h.max_frame_height);
                 let color = av1_color(size.0, size.1, cc.matrix_coefficients, cc.transfer_characteristics, cc.color_primaries, cc.color_range);

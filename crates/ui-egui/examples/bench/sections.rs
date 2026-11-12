@@ -29,6 +29,10 @@ fn gpu_export_frame_renderer_factory() -> Option<Box<dyn toma_export::FrameRende
         ) -> Option<toma_render::Image> {
             self.0.render(project, seq, t, opts, sources)
         }
+
+        fn caps(&self) -> toma_render::plan::DeviceCaps {
+            self.0.caps()
+        }
     }
     toma_gpu::ExportRenderer::new().map(|r| Box::new(R(r)) as Box<dyn toma_export::FrameRenderer>)
 }
@@ -256,7 +260,7 @@ pub fn scrub(o: &Opts) -> Vec<Value> {
         for _ in 0..o.repeat {
             let bench = new_bench(&s, 0.0);
             let mut display = Display::new(o.gpu);
-            let r = bench.scrub(&s, seq, &mut display, 1.0, seeks, drags, 24, Duration::from_secs(8));
+            let r = bench.scrub(&s, seq, &mut display, 1.0, playback::ScrubPlan { seeks, drags, drag_frames: 24, timeout: Duration::from_secs(8) });
             let positions = (seeks + drags) as f64;
             let row = json!({
                 "scenario": scenario,

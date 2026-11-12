@@ -13,21 +13,22 @@ rust-version.workspace = true
 unsafe_code = "deny"
 
 [lints.clippy]
+cognitive_complexity = "deny"
+too_many_arguments = "deny"
+wildcard_imports = "deny"
 dbg_macro = "warn"
 todo = "warn"
-too_many_arguments = "allow"
 needless_range_loop = "allow"
 type_complexity = "allow"
 undocumented_unsafe_blocks = "deny"
 
 [dependencies]
 toma-bitstream = { workspace = true }
+nodalia-video = { workspace = true }
 toma-codecs = { workspace = true }
 toma-color = { workspace = true }
 toma-export = { workspace = true }
 toma-frame = { workspace = true }
-toma-h264 = { workspace = true }
-toma-hevc = { workspace = true }
 toma-isobmff = { workspace = true }
 toma-time = { workspace = true }
 log = { workspace = true }
@@ -60,6 +61,7 @@ libloading = "0.8"
 
 [dev-dependencies]
 toma-testkit = { workspace = true }
+tempfile = "3"
 toma-media = { workspace = true }
 toma-frame = { workspace = true }
 toma-project = { workspace = true }

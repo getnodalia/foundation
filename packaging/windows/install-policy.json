@@ -1,0 +1,27 @@
+{
+  "id": "toma",
+  "name": "Toma",
+  "upgradeCode": "91AEDAB0-A090-4A19-9E97-4B7D2BCBDF6B",
+  "sources": [
+    "toma.wxs"
+  ],
+  "icon": "assets/app-icon/toma.ico",
+  "localization": [],
+  "extensions": [
+    "UI"
+  ],
+  "payloads": [
+    "NOTICE",
+    "toma-cli.exe",
+    "toma.exe"
+  ],
+  "registry": [
+    [
+      "-1",
+      "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\toma.exe",
+      "",
+      "[#TomaExe]"
+    ]
+  ],
+  "mode": "dualScope"
+}

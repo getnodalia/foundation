@@ -24,6 +24,7 @@ toma-geom = { workspace = true }
 toma-color = { workspace = true }
 toma-frame = { workspace = true }
 toma-media = { workspace = true }
+nodalia-media = { workspace = true, features = ["mxf"] }
 toma-codecs = { workspace = true }
 toma-project = { workspace = true }
 toma-edit = { workspace = true }
@@ -32,7 +33,6 @@ toma-scopes = { workspace = true }
 toma-text = { workspace = true }
 toma-audio-dsp = { workspace = true }
 toma-export = { workspace = true }
-toma-mxf = { workspace = true }
 toma-format = { workspace = true }
 toma-interchange = { workspace = true }
 toma-captions = { workspace = true }
@@ -42,12 +42,15 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
 log = { workspace = true }
+roxmltree = { workspace = true }
 chrono = { workspace = true }
 nodalia-docpath = { workspace = true }
 web-time = "1"
 
 [dev-dependencies]
 toma-testkit = { workspace = true }
+tempfile = "3"
+toma-audio-dsp = { workspace = true, features = ["test-util"] }
 toma-dng = { workspace = true, features = ["writer"] }
 toma-isobmff = { workspace = true }
 image = { version = "0.25", default-features = false, features = ["png", "gif"] }

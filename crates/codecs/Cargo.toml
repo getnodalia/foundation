@@ -10,30 +10,19 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
+nodalia-audio = { workspace = true }
+nodalia-video = { workspace = true }
 toma-time = { workspace = true }
 toma-color = { workspace = true }
 toma-frame = { workspace = true }
 toma-media = { workspace = true }
-toma-avi = { workspace = true }
 toma-isobmff = { workspace = true }
 toma-matroska = { workspace = true }
-toma-mxf = { workspace = true }
-toma-mpegts = { workspace = true }
-toma-mpeg2v = { workspace = true }
-toma-ac3 = { workspace = true }
-toma-mpa = { workspace = true }
-toma-ogg = { workspace = true }
+nodalia-media = { workspace = true, features = ["avi", "mpegts", "mxf", "ogg"] }
 toma-bitstream = { workspace = true }
-toma-h264 = { workspace = true }
-toma-hevc = { workspace = true }
 toma-vp8 = { workspace = true }
-toma-vp9 = { workspace = true }
 toma-prores = { workspace = true }
 toma-dnx = { workspace = true }
-toma-av1 = { workspace = true }
-toma-apv = { workspace = true }
-toma-aac = { workspace = true }
-toma-opus = { workspace = true }
 rayon = { workspace = true }
 thiserror = { workspace = true }
 log = { workspace = true }

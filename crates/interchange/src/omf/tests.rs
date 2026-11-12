@@ -25,7 +25,7 @@ fn project() -> (Project, ItemId) {
     let a = p.add_item(
         "a.wav",
         toma_project::Label::Iris,
-        toma_project::ItemKind::Media(toma_project::MediaClip {
+        toma_project::ItemKind::Media(Box::new(toma_project::MediaClip {
             media: toma_project::MediaRef::File { path: "/m/a.wav".into() },
             info,
             interpret: Default::default(),
@@ -35,7 +35,7 @@ fn project() -> (Project, ItemId) {
             offline: false,
             proxy: None,
             identity: None,
-        }),
+        })),
         None,
     );
     let r = FrameRate::FPS_25;

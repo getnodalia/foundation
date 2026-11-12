@@ -42,7 +42,7 @@ use std::sync::{Arc, RwLock};
 pub use apv::ApvSource;
 pub use audio::AudioFileSource;
 pub use avi::AviSource;
-pub use gop::{FRAME_BUDGET, GopStats, cached_bytes, gop_stats, live_decoders};
+pub use gop::{FRAME_BUDGET, GopStats, cached_bytes, gop_stats, live_decoders, release_idle};
 pub use mkv::MkvSource;
 pub use mp4::Mp4Source;
 pub use mpeg::MpegSource;
@@ -77,7 +77,7 @@ impl From<CodecError> for toma_media::MediaError {
 }
 
 /// Our own (pure-Rust) decoders, in the order they are tried.
-const BUILTIN_FACTORIES: [VideoDecoderFactory; 10] = [
+const BUILTIN_FACTORIES: [VideoDecoderFactory; 11] = [
     video::h264_factory,
     video::hevc_factory,
     video::vp8_factory,
@@ -88,6 +88,7 @@ const BUILTIN_FACTORIES: [VideoDecoderFactory; 10] = [
     video::dnx_factory,
     video::mjpeg_factory,
     video::mpeg2_factory,
+    video::raw_factory,
 ];
 
 fn factories() -> &'static RwLock<Vec<VideoDecoderFactory>> {
@@ -116,7 +117,7 @@ pub fn make_video_decoder(entry: &toma_isobmff::SampleEntry) -> Result<Box<dyn V
             return r;
         }
     }
-    Err(CodecError::Unsupported(format!("no decoder for {} video", entry.codec.name())))
+    Err(CodecError::Unsupported(format!("no decoder for {} video", undecodable_codec(entry))))
 }
 
 /// Create one of our own (software) decoders for a sample entry, skipping registered factories:
@@ -127,7 +128,17 @@ pub fn software_video_decoder(entry: &toma_isobmff::SampleEntry) -> Result<Box<d
             return r;
         }
     }
-    Err(CodecError::Unsupported(format!("no decoder for {} video", entry.codec.name())))
+    Err(CodecError::Unsupported(format!("no decoder for {} video", undecodable_codec(entry))))
+}
+
+/// The codec a "no decoder" error names: the short codec name, or for a sample entry the parser
+/// keeps as `Unknown`, the label probe shows, so the message reads "no decoder for Apple
+/// Intermediate Codec video" rather than "no decoder for unknown video" (#3646).
+fn undecodable_codec(entry: &toma_isobmff::SampleEntry) -> String {
+    match &entry.codec {
+        c @ toma_isobmff::CodecConfig::Unknown { .. } => mp4::codec_label(c),
+        c => c.name().to_string(),
+    }
 }
 
 /// Openers for the engine's media pool (MP4/MOV, Matroska/WebM, MXF, Ogg Opus/Vorbis, MPEG TS/PS and
@@ -167,29 +178,12 @@ pub fn register_reader_opener(f: toma_media::ReaderOpener) {
     }
 }
 
-/// A media reader as the demuxers' byte source.
+/// A media reader as the demuxers' byte source. The ISO BMFF and Matroska demuxers share one
+/// `ByteSource` trait (nodalia-media), so one impl serves both.
 #[derive(Clone)]
 pub(crate) struct Src(pub toma_media::SharedReader);
 
 impl toma_isobmff::ByteSource for Src {
-    fn len(&self) -> u64 {
-        self.0.len()
-    }
-    fn read_at(&self, offset: u64, buf: &mut [u8]) -> std::io::Result<()> {
-        self.0.read_at(offset, buf)
-    }
-}
-
-impl toma_avi::ByteSource for Src {
-    fn len(&self) -> u64 {
-        self.0.len()
-    }
-    fn read_at(&self, offset: u64, buf: &mut [u8]) -> std::io::Result<()> {
-        self.0.read_at(offset, buf)
-    }
-}
-
-impl toma_matroska::ByteSource for Src {
     fn len(&self) -> u64 {
         self.0.len()
     }

@@ -267,7 +267,7 @@ pub fn mjpeg_factory(e: &SampleEntry) -> Option<Result<Box<dyn VideoDecoder>>> {
 /// Our pure-Rust H.264 decoder (frame-threaded).
 pub struct H264Decoder {
     avcc: Vec<u8>,
-    dec: toma_h264::Decoder,
+    dec: nodalia_video::h264::decode::Decoder,
     length_size: usize,
     draft: bool,
     /// Worker threads (a background decoder gets fewer).
@@ -280,8 +280,8 @@ impl H264Decoder {
         if toma_media::cancel::background() { BACKGROUND_H264_THREADS.min(h264_threads()) } else { h264_threads() }
     }
 
-    fn make_inner(avcc: &[u8], threads: usize) -> Result<toma_h264::Decoder> {
-        let mut dec = toma_h264::Decoder::with_threads(threads);
+    fn make_inner(avcc: &[u8], threads: usize) -> Result<nodalia_video::h264::decode::Decoder> {
+        let mut dec = nodalia_video::h264::decode::Decoder::with_threads(threads);
         if !avcc.is_empty() {
             dec.configure_avcc(avcc).map_err(h264_error)?;
         }
@@ -299,9 +299,9 @@ impl H264Decoder {
     pub fn annexb() -> Self {
         recycle_h264_planes();
         let threads = Self::threads_now();
-        Self { avcc: Vec::new(), dec: toma_h264::Decoder::with_threads(threads), length_size: 0, draft: false, threads }
+        Self { avcc: Vec::new(), dec: nodalia_video::h264::decode::Decoder::with_threads(threads), length_size: 0, draft: false, threads }
     }
-    fn convert(p: toma_h264::Picture) -> DecodedFrame {
+    fn convert(p: nodalia_video::h264::decode::Picture) -> DecodedFrame {
         use std::sync::Arc;
         let draft = p.draft;
         let (w, h) = (p.width as usize, p.height as usize);
@@ -326,9 +326,9 @@ impl H264Decoder {
 /// An H.264 decoder error as a [`CodecError`]: a feature the decoder does not implement (High
 /// 4:2:2, field pictures...) is [`CodecError::Unsupported`], so the media pool shows the
 /// unreadable slate instead of a black picture (#626); anything else is a decode error.
-fn h264_error(e: toma_h264::Error) -> CodecError {
+fn h264_error(e: nodalia_video::h264::decode::Error) -> CodecError {
     match e {
-        toma_h264::Error::Unsupported(what) => CodecError::Unsupported(format!("H.264: {what}")),
+        nodalia_video::h264::decode::Error::Unsupported(what) => CodecError::Unsupported(format!("H.264: {what}")),
         e => CodecError::Decode(e.to_string()),
     }
 }
@@ -342,10 +342,10 @@ impl VideoDecoder for H264Decoder {
         self.dec.flush().into_iter().map(Self::convert).collect()
     }
     fn reset(&mut self) {
-        if let Ok(d) = Self::make_inner(&self.avcc, self.threads) {
-            self.dec = d;
+        self.dec.reset();
+        if !self.avcc.is_empty() {
+            let _ = self.dec.configure_avcc(&self.avcc);
         }
-        self.dec.set_draft(self.draft);
     }
     fn name(&self) -> &str {
         "Toma H.264"
@@ -364,20 +364,28 @@ impl VideoDecoder for H264Decoder {
         h264_disposable(sample, self.length_size)
     }
     fn is_random_access(&self, sample: &[u8]) -> Option<bool> {
-        // Annex B samples carry their parameter sets: an IDR access unit is a starting point.
-        (self.length_size == 0).then(|| toma_bitstream::annexb_nals(sample).iter().any(|n| n.first().is_some_and(|h| h & 0x1f == 5)))
+        // Annex B samples carry their parameter sets: an IDR access unit is a starting point, and
+        // so is a non-IDR one with a recovery point SEI of recovery_frame_cnt 0 (open GOP), the
+        // same rule as the transport stream splitter's `key`.
+        (self.length_size == 0).then(|| {
+            toma_bitstream::annexb_nals(sample).iter().any(|n| match n.first().map(|h| h & 0x1f) {
+                Some(5) => true,
+                Some(6) => nodalia_media::mpegts::sei_has_recovery_point(n),
+                _ => false,
+            })
+        })
     }
 }
 
 /// The H.264 decoder's output planes come from the frames the caches evicted
 /// (`toma_frame::pool`) instead of the allocator.
 fn recycle_h264_planes() {
-    toma_h264::set_plane_allocator(toma_frame::pool::take_u8);
+    nodalia_video::h264::decode::set_plane_allocator(toma_frame::pool::take_u8);
 }
 
 /// Worker threads each H.264 decoder uses (frame threading; 1 on wasm).
 pub fn h264_threads() -> usize {
-    toma_h264::default_threads()
+    nodalia_video::h264::decode::default_threads()
 }
 
 pub fn h264_factory(e: &SampleEntry) -> Option<Result<Box<dyn VideoDecoder>>> {
@@ -390,23 +398,23 @@ pub fn h264_factory(e: &SampleEntry) -> Option<Result<Box<dyn VideoDecoder>>> {
 /// Our pure-Rust HEVC decoder (Main / Main 10, frame-threaded).
 pub struct HevcDecoder {
     hvcc: Vec<u8>,
-    dec: toma_hevc::Decoder,
+    dec: nodalia_video::hevc::decode::Decoder,
     length_size: usize,
     highest_tid: Option<u8>,
 }
 
 impl HevcDecoder {
     pub fn new(hvcc: Vec<u8>) -> Result<Self> {
-        let dec = toma_hevc::Decoder::from_hvcc(&hvcc).map_err(hevc_error)?;
+        let dec = nodalia_video::hevc::decode::Decoder::from_hvcc(&hvcc).map_err(hevc_error)?;
         let (length_size, highest_tid) = hvcc_length_size_and_tid(&hvcc);
         Ok(Self { hvcc, dec, length_size, highest_tid })
     }
     /// A decoder for Annex B byte-stream samples (start codes, in-band parameter sets: TS).
     pub fn annexb() -> Self {
-        Self { hvcc: Vec::new(), dec: toma_hevc::Decoder::new(), length_size: 0, highest_tid: None }
+        Self { hvcc: Vec::new(), dec: nodalia_video::hevc::decode::Decoder::new(), length_size: 0, highest_tid: None }
     }
-    fn convert(p: toma_hevc::Picture) -> DecodedFrame {
-        use toma_hevc::Plane;
+    fn convert(p: nodalia_video::hevc::decode::Picture) -> DecodedFrame {
+        use nodalia_video::hevc::decode::Plane;
         use std::sync::Arc;
         let (w, h) = (p.width as usize, p.height as usize);
         let (cw, ch) = (p.chroma_width as usize, p.chroma_height as usize);
@@ -438,9 +446,9 @@ impl HevcDecoder {
 }
 
 /// An HEVC decoder error as a [`CodecError`] (see [`h264_error`]).
-fn hevc_error(e: toma_hevc::Error) -> CodecError {
+fn hevc_error(e: nodalia_video::hevc::decode::Error) -> CodecError {
     match e {
-        toma_hevc::Error::Unsupported(what) => CodecError::Unsupported(format!("HEVC: {what}")),
+        nodalia_video::hevc::decode::Error::Unsupported(what) => CodecError::Unsupported(format!("HEVC: {what}")),
         e => CodecError::Decode(e.to_string()),
     }
 }
@@ -455,8 +463,8 @@ impl VideoDecoder for HevcDecoder {
     }
     fn reset(&mut self) {
         if self.hvcc.is_empty() {
-            self.dec = toma_hevc::Decoder::new();
-        } else if let Ok(d) = toma_hevc::Decoder::from_hvcc(&self.hvcc) {
+            self.dec = nodalia_video::hevc::decode::Decoder::new();
+        } else if let Ok(d) = nodalia_video::hevc::decode::Decoder::from_hvcc(&self.hvcc) {
             self.dec = d;
         }
     }
@@ -487,7 +495,7 @@ pub fn hevc_factory(e: &SampleEntry) -> Option<Result<Box<dyn VideoDecoder>>> {
 /// Our pure-Rust VP9 decoder (profiles 0-3, 8/10/12-bit; tile columns and loop filter decode in
 /// parallel).
 pub struct Vp9Decoder {
-    dec: toma_vp9::Decoder,
+    dec: nodalia_video::vp9::decode::Decoder,
     /// Container colour (vpcC / Matroska `Colour`): transfer and primaries are not in the VP9
     /// bitstream.
     transfer: Option<toma_color::Transfer>,
@@ -510,17 +518,17 @@ pub(crate) fn primaries_from_code(c: u8) -> Option<toma_color::Primaries> {
 impl Vp9Decoder {
     pub fn new(cfg: Option<&toma_isobmff::VpcConfig>) -> Self {
         Self {
-            dec: toma_vp9::Decoder::new(),
+            dec: nodalia_video::vp9::decode::Decoder::new(),
             transfer: cfg.and_then(|c| toma_color::Transfer::from_code(c.transfer_characteristics)),
             primaries: cfg.and_then(|c| primaries_from_code(c.colour_primaries)),
         }
     }
 
     /// `None` for a picture whose planes mix sample types (never produced by the decoder).
-    fn convert(&self, p: toma_vp9::Picture) -> Option<DecodedFrame> {
+    fn convert(&self, p: nodalia_video::vp9::decode::Picture) -> Option<DecodedFrame> {
+        use nodalia_video::vp9::decode::Plane;
         use toma_color::Range;
         use toma_frame::{Chroma, PixelData};
-        use toma_vp9::Plane;
         use std::sync::Arc;
         let (w, h) = (p.width as usize, p.height as usize);
         let (cw, ch) = (p.chroma_width as usize, p.chroma_height as usize);
@@ -595,7 +603,7 @@ impl VideoDecoder for Vp9Decoder {
         self.dec.set_draft(on);
     }
     fn is_random_access(&self, sample: &[u8]) -> Option<bool> {
-        Some(toma_vp9::is_keyframe(sample))
+        Some(nodalia_video::vp9::decode::is_keyframe(sample))
     }
 }
 
@@ -663,17 +671,17 @@ pub fn vp8_factory(e: &SampleEntry) -> Option<Result<Box<dyn VideoDecoder>>> {
 /// Our AV1 decoder. The `av1C` configuration OBUs (sequence header) are fed before the first
 /// sample and again after every reset.
 pub struct Av1Decoder {
-    dec: toma_av1::Decoder,
+    dec: nodalia_video::av1::decode::Decoder,
     config_obus: Vec<u8>,
     primed: bool,
 }
 
 impl Av1Decoder {
     pub fn new(config_obus: Vec<u8>) -> Av1Decoder {
-        Av1Decoder { dec: toma_av1::Decoder::new(), config_obus, primed: false }
+        Av1Decoder { dec: nodalia_video::av1::decode::Decoder::new(), config_obus, primed: false }
     }
 
-    fn convert(p: toma_av1::Picture, pts: i64) -> DecodedFrame {
+    fn convert(p: nodalia_video::av1::decode::Picture, pts: i64) -> DecodedFrame {
         use std::sync::Arc;
         let draft = p.draft;
         let w = p.width as usize;
@@ -731,7 +739,7 @@ impl VideoDecoder for Av1Decoder {
             .collect()
     }
     fn reset(&mut self) {
-        self.dec = toma_av1::Decoder::new();
+        self.dec = nodalia_video::av1::decode::Decoder::new();
         self.primed = false;
     }
     fn name(&self) -> &str {
@@ -741,7 +749,7 @@ impl VideoDecoder for Av1Decoder {
         self.dec.set_draft(on);
     }
     fn is_random_access(&self, sample: &[u8]) -> Option<bool> {
-        Some(toma_av1::is_key_frame_unit(sample))
+        Some(nodalia_video::av1::decode::is_key_frame_unit(sample))
     }
 }
 
@@ -806,11 +814,13 @@ pub fn prores_factory(e: &SampleEntry) -> Option<Result<Box<dyn VideoDecoder>>> 
 pub struct ApvDecoder;
 
 /// Convert a decoded APV frame to a [`VideoFrame`].
-pub fn apv_to_video_frame(f: toma_apv::Frame) -> VideoFrame {
+pub fn apv_to_video_frame(f: nodalia_video::apv::Frame) -> VideoFrame {
     use std::sync::Arc;
     let chroma = match f.chroma {
-        toma_apv::ChromaFormat::Yuv422 => toma_frame::Chroma::C422,
-        toma_apv::ChromaFormat::Monochrome | toma_apv::ChromaFormat::Yuv444 | toma_apv::ChromaFormat::Yuv4444 => toma_frame::Chroma::C444,
+        nodalia_video::apv::ChromaFormat::Yuv422 => toma_frame::Chroma::C422,
+        nodalia_video::apv::ChromaFormat::Monochrome | nodalia_video::apv::ChromaFormat::Yuv444 | nodalia_video::apv::ChromaFormat::Yuv4444 => {
+            toma_frame::Chroma::C444
+        }
     };
     let mut color = toma_color::ColorInfo { matrix: toma_frame::default_matrix(f.width, f.height), ..toma_color::ColorInfo::REC709 };
     if let Some(m) = toma_color::Matrix::from_code(f.color.matrix) {
@@ -826,7 +836,7 @@ pub fn apv_to_video_frame(f: toma_apv::Frame) -> VideoFrame {
         color.range = toma_color::Range::Full;
     }
     let neutral = 1u16 << f.bit_depth.saturating_sub(1);
-    let (cb, cr) = if f.chroma == toma_apv::ChromaFormat::Monochrome {
+    let (cb, cr) = if f.chroma == nodalia_video::apv::ChromaFormat::Monochrome {
         let u = vec![neutral; (f.width as usize) * (f.height as usize)];
         (u.clone(), u)
     } else {
@@ -848,7 +858,7 @@ pub fn apv_to_video_frame(f: toma_apv::Frame) -> VideoFrame {
 
 impl VideoDecoder for ApvDecoder {
     fn decode(&mut self, sample: &[u8], pts: i64) -> Result<Vec<DecodedFrame>> {
-        let f = toma_apv::decode_frame(sample).map_err(|e| CodecError::Decode(e.to_string()))?;
+        let f = nodalia_video::apv::decode_frame(sample).map_err(|e| CodecError::Decode(e.to_string()))?;
         Ok(vec![DecodedFrame { pts, frame: apv_to_video_frame(f), draft: false }])
     }
     fn flush(&mut self) -> Vec<DecodedFrame> {
@@ -941,7 +951,7 @@ pub fn dnx_factory(e: &SampleEntry) -> Option<Result<Box<dyn VideoDecoder>>> {
 
 /// Our MPEG-1 / MPEG-2 video decoder (Main / 4:2:2 profile, field and frame pictures).
 pub struct Mpeg2Decoder {
-    dec: toma_mpeg2v::Decoder,
+    dec: nodalia_video::mpeg2::Decoder,
     /// Sequence header (and extensions) fed after a reset, so a random-access point without its
     /// own sequence header decodes (MKV `CodecPrivate`, or the stream's first header).
     header: Vec<u8>,
@@ -949,7 +959,7 @@ pub struct Mpeg2Decoder {
 
 impl Mpeg2Decoder {
     pub fn new(header: Vec<u8>) -> Self {
-        let mut d = Self { dec: toma_mpeg2v::Decoder::new(), header };
+        let mut d = Self { dec: nodalia_video::mpeg2::Decoder::new(), header };
         d.prime();
         d
     }
@@ -963,7 +973,7 @@ impl Mpeg2Decoder {
 /// The sequence header with its extensions at the start of an MPEG video sample (up to the first
 /// GOP or picture start code).
 pub fn mpeg2_sequence_header(sample: &[u8]) -> Option<Vec<u8>> {
-    let codes = toma_mpeg2v::start_codes(sample);
+    let codes = nodalia_video::mpeg2::start_codes(sample);
     let (start, _) = *codes.iter().find(|c| c.1 == 0xB3)?;
     let end = codes.iter().find(|c| c.0 > start && matches!(c.1, 0x00 | 0xB8 | 0x01..=0xAF)).map_or(sample.len(), |c| c.0);
     Some(sample[start..end].to_vec())
@@ -971,7 +981,7 @@ pub fn mpeg2_sequence_header(sample: &[u8]) -> Option<Vec<u8>> {
 
 /// Convert a decoded MPEG-1/2 picture. Colour comes from the sequence display extension
 /// (defaults: BT.601 for SD, BT.709 for HD); the pixel aspect from the aspect ratio code.
-pub fn mpeg2_to_video_frame(p: toma_mpeg2v::Picture) -> VideoFrame {
+pub fn mpeg2_to_video_frame(p: nodalia_video::mpeg2::Picture) -> VideoFrame {
     use std::sync::Arc;
     let info = &p.info;
     let mut color = toma_color::ColorInfo { matrix: toma_frame::default_matrix(p.width, p.height), ..toma_color::ColorInfo::REC709 };
@@ -990,9 +1000,9 @@ pub fn mpeg2_to_video_frame(p: toma_mpeg2v::Picture) -> VideoFrame {
         }
     }
     let chroma = match p.chroma {
-        toma_mpeg2v::ChromaFormat::Yuv420 => toma_frame::Chroma::C420,
-        toma_mpeg2v::ChromaFormat::Yuv422 => toma_frame::Chroma::C422,
-        toma_mpeg2v::ChromaFormat::Yuv444 => toma_frame::Chroma::C444,
+        nodalia_video::mpeg2::ChromaFormat::Yuv420 => toma_frame::Chroma::C420,
+        nodalia_video::mpeg2::ChromaFormat::Yuv422 => toma_frame::Chroma::C422,
+        nodalia_video::mpeg2::ChromaFormat::Yuv444 => toma_frame::Chroma::C444,
     };
     let par = info.sar;
     VideoFrame {
@@ -1006,15 +1016,15 @@ pub fn mpeg2_to_video_frame(p: toma_mpeg2v::Picture) -> VideoFrame {
 }
 
 /// "YUV 4:2:2 8-bit, interlaced (upper field first)" for the media info.
-pub fn mpeg2_pixel_format(info: &toma_mpeg2v::SequenceInfo, field_order: Option<toma_mpeg2v::FieldOrder>) -> String {
+pub fn mpeg2_pixel_format(info: &nodalia_video::mpeg2::SequenceInfo, field_order: Option<nodalia_video::mpeg2::FieldOrder>) -> String {
     let sub = match info.chroma {
-        toma_mpeg2v::ChromaFormat::Yuv420 => "4:2:0",
-        toma_mpeg2v::ChromaFormat::Yuv422 => "4:2:2",
-        toma_mpeg2v::ChromaFormat::Yuv444 => "4:4:4",
+        nodalia_video::mpeg2::ChromaFormat::Yuv420 => "4:2:0",
+        nodalia_video::mpeg2::ChromaFormat::Yuv422 => "4:2:2",
+        nodalia_video::mpeg2::ChromaFormat::Yuv444 => "4:4:4",
     };
     let scan = match field_order {
-        Some(toma_mpeg2v::FieldOrder::TopFirst) => ", interlaced (upper field first)",
-        Some(toma_mpeg2v::FieldOrder::BottomFirst) => ", interlaced (lower field first)",
+        Some(nodalia_video::mpeg2::FieldOrder::TopFirst) => ", interlaced (upper field first)",
+        Some(nodalia_video::mpeg2::FieldOrder::BottomFirst) => ", interlaced (lower field first)",
         None => ", progressive",
     };
     format!("YUV {sub} 8-bit{scan}")
@@ -1036,10 +1046,10 @@ impl VideoDecoder for Mpeg2Decoder {
         "Toma MPEG-2"
     }
     fn is_random_access(&self, sample: &[u8]) -> Option<bool> {
-        Some(toma_mpeg2v::scan_access_unit(sample).is_intra())
+        Some(nodalia_video::mpeg2::scan_access_unit(sample).is_intra())
     }
     fn is_disposable(&self, sample: &[u8]) -> bool {
-        toma_mpeg2v::scan_access_unit(sample).is_disposable()
+        nodalia_video::mpeg2::scan_access_unit(sample).is_disposable()
     }
 }
 
@@ -1092,6 +1102,13 @@ fn esds_object_type(raw: &[u8]) -> Option<u8> {
     p += 1;
     size(&mut p)?;
     raw.get(p).copied()
+}
+
+/// Uncompressed QuickTime / MP4 video (`raw ` 24-bit RGB, `2vuy`, `v210`, #2340).
+pub fn raw_factory(e: &SampleEntry) -> Option<Result<Box<dyn VideoDecoder>>> {
+    let v = e.video.as_ref()?;
+    let format = RawFormat::from_mov(e.format.0, v.depth)?;
+    Some(RawVideoDecoder::new(format, u32::from(v.width), u32::from(v.height), false).map(|d| Box::new(d) as Box<dyn VideoDecoder>))
 }
 
 pub fn mpeg2_factory(e: &SampleEntry) -> Option<Result<Box<dyn VideoDecoder>>> {
@@ -1168,6 +1185,11 @@ pub enum RawFormat {
     Nv12,
     /// Luma only (`Y800`, `GREY`, `Y8  `).
     Gray8,
+    /// 24-bit R, G, B; rows unpadded (QuickTime `raw ` at depth 24).
+    Rgb24,
+    /// 10-bit 4:2:2 Y'CbCr, six pixels in four little-endian words, rows padded to 128 bytes
+    /// (QuickTime `v210`); shown at 8 bits.
+    V210,
 }
 
 impl RawFormat {
@@ -1193,13 +1215,24 @@ impl RawFormat {
         })
     }
 
+    /// The layout of a QuickTime / MP4 video sample entry (`raw ` RGB at depth 24, `2vuy`, `v210`).
+    pub fn from_mov(fourcc: [u8; 4], depth: u16) -> Option<RawFormat> {
+        match (&fourcc, depth) {
+            (b"raw ", 24) => Some(RawFormat::Rgb24),
+            (b"2vuy", _) => Some(RawFormat::Uyvy),
+            (b"v210", _) => Some(RawFormat::V210),
+            _ => None,
+        }
+    }
+
     pub fn label(self) -> &'static str {
         match self {
-            RawFormat::Bgr24 => "Uncompressed RGB 24-bit",
+            RawFormat::Bgr24 | RawFormat::Rgb24 => "Uncompressed RGB 24-bit",
             RawFormat::Bgrx32 => "Uncompressed RGB 32-bit",
             RawFormat::Yuy2 | RawFormat::Uyvy => "Uncompressed YUV 4:2:2",
             RawFormat::I420 | RawFormat::Yv12 | RawFormat::Nv12 => "Uncompressed YUV 4:2:0",
             RawFormat::Gray8 => "Uncompressed greyscale",
+            RawFormat::V210 => "Uncompressed YUV 4:2:2 10-bit",
         }
     }
 }
@@ -1253,6 +1286,42 @@ impl RawVideoDecoder {
                     }
                 }
                 VideoFrame::rgba8(self.width, self.height, rgba)
+            }
+            RawFormat::Rgb24 => {
+                let stride = w * 3;
+                if s.len() < stride * h {
+                    return Err(short());
+                }
+                let mut rgba = Vec::with_capacity(w * h * 4);
+                for px in s.get(..stride * h).unwrap_or_default().as_chunks::<3>().0 {
+                    rgba.extend_from_slice(&[px[0], px[1], px[2], 255]);
+                }
+                VideoFrame::rgba8(self.width, self.height, rgba)
+            }
+            RawFormat::V210 => {
+                // 6 pixels per 16 bytes; each row padded to a multiple of 128 bytes (48 pixels)
+                let stride = w.div_ceil(48) * 128;
+                if s.len() < stride * h {
+                    return Err(short());
+                }
+                let (mut y, mut u, mut v) = (Vec::with_capacity(w * h), Vec::with_capacity(cw * h), Vec::with_capacity(cw * h));
+                for row in s.chunks_exact(stride).take(h) {
+                    // the row's 10-bit samples in order: Cb Y Cr Y Cb Y Cr Y …, kept at 8 bits
+                    let mut comps = row.as_chunks::<4>().0.iter().flat_map(|b| {
+                        let word = u32::from_le_bytes(*b);
+                        [word & 0x3ff, (word >> 10) & 0x3ff, (word >> 20) & 0x3ff].map(|c| (c >> 2) as u8)
+                    });
+                    for x in 0..cw {
+                        let (Some(cb), Some(y0), Some(cr), Some(y1)) = (comps.next(), comps.next(), comps.next(), comps.next()) else { break };
+                        u.push(cb);
+                        v.push(cr);
+                        y.push(y0);
+                        if 2 * x + 1 < w {
+                            y.push(y1);
+                        }
+                    }
+                }
+                self.yuv([y, u, v], toma_frame::Chroma::C422)
             }
             RawFormat::Yuy2 | RawFormat::Uyvy => {
                 let stride = cw * 4;

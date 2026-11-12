@@ -16,6 +16,10 @@ crate-type = ["cdylib", "rlib"]
 # and clippy stay cheap). Build with `cargo xtask web` (see docs/web.md).
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 toma-engine = { workspace = true }
+# The host messages (getnodalia/foundation (nodalia/libs)): one contract and one bridge for the web builds.
+# The page command API (storytold/craft-libs#413): the request plumbing behind window.toma.
+nodalia-web-api = { git = "https://github.com/getnodalia/foundation", rev = "5b3722d84b420071e3e318e453f44dc5c130bb86", version = "0.1.0" }
+nodalia-web-host = { git = "https://github.com/getnodalia/foundation", rev = "5b3722d84b420071e3e318e453f44dc5c130bb86", version = "0.1.0" }
 toma-ui-egui = { workspace = true }
 toma-media = { workspace = true }
 toma-codecs = { workspace = true }
@@ -45,6 +49,8 @@ web-sys = { version = "0.3", features = [
     "Blob",
     "BlobPropertyBag",
     "CssStyleDeclaration",
+    "CustomEvent",
+    "CustomEventInit",
     "DataTransfer",
     "Document",
     "DragEvent",

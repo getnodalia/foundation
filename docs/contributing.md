@@ -8,7 +8,7 @@ of the crate you will change.
 
 | | All platforms |
 |---|---|
-| Rust | stable ≥ 1.95 (edition 2024; egui 0.36 requires it), via [rustup](https://rustup.rs) |
+| Rust | stable ≥ 1.95 (edition 2024; egui 0.37 requires it), via [rustup](https://rustup.rs) |
 | wasm target | `rustup target add wasm32-unknown-unknown` (for `cargo xtask wasm`) |
 | Components | `rustup component add rustfmt clippy` |
 | ffmpeg + ffprobe (optional) | test oracle and fixture generator only; tests skip without it |
@@ -74,7 +74,7 @@ browser console instead.
 ### Building with nodalia-fonts
 
 Font assets live in [getnodalia/foundation (nodalia/fonts)](https://github.com/getnodalia/foundation), never in this
-repo ([standard](https://github.com/storytold/craftrules/blob/main/standards/fonts.md)). It is an optional build input, not a Cargo
+repo. It is an optional build input, not a Cargo
 dependency:
 
 ```sh
@@ -246,7 +246,7 @@ stream is cut into blocks (there are tests for this).
    - containers: an `Opener` in `codecs::openers()`;
    - encoders: an `export::VideoEncoder` / audio encoder plus a `Format` in `crates/export`.
 5. Write the README: features, API, test matrix, accuracy and speed numbers, limitations. Use
-   `crates/h264/README.md` as the model.
+   the H.264 README in nodalia-libs (`crates/video/src/h264/decode/README.md`) as the model.
 
 ### A panel or widget
 
@@ -279,8 +279,7 @@ In short:
 - **Fonts live in [getnodalia/foundation (nodalia/fonts)](https://github.com/getnodalia/foundation), not here.**
   Don't commit new font files to this repo (the Latin UI fonts already in `assets/fonts/` stay): add
   the font to nodalia-fonts (file, licence, manifest line, `ATTRIBUTION.md` row) and use it through
-  `toma_text::fonts::NODALIA_FONTS`. See [Building with nodalia-fonts](#building-with-craft-fonts)
-  and [`craftrules/standards/fonts.md`](https://github.com/storytold/craftrules/blob/main/standards/fonts.md).
+  `toma_text::fonts::NODALIA_FONTS`. See [Building with nodalia-fonts](#building-with-craft-fonts).
 
 For each asset file `X`, commit a sidecar `X.attribution`. This is the real one for
 `assets/fonts/Inter-Regular.ttf`:

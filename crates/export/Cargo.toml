@@ -10,10 +10,14 @@ rust-version.workspace = true
 workspace = true
 
 [dependencies]
+nodalia-audio = { workspace = true }
+nodalia-video = { workspace = true }
 toma-time = { workspace = true }
 toma-frame = { workspace = true }
 toma-color = { workspace = true }
 toma-media = { workspace = true }
+nodalia-media = { workspace = true, features = ["mxf"] }
+toma-codecs = { workspace = true }
 toma-project = { workspace = true }
 toma-render = { workspace = true }
 toma-audio-dsp = { workspace = true }
@@ -22,10 +26,6 @@ toma-text = { workspace = true }
 toma-isobmff = { workspace = true }
 toma-prores = { workspace = true }
 toma-dnx = { workspace = true }
-toma-apv = { workspace = true }
-toma-mxf = { workspace = true }
-toma-aac = { workspace = true }
-toma-flac = { workspace = true }
 toma-h264enc = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -36,4 +36,3 @@ image = { version = "0.25", default-features = false, features = ["png", "jpeg",
 
 [dev-dependencies]
 toma-testkit = { workspace = true }
-toma-codecs = { workspace = true }

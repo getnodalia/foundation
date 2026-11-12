@@ -5,7 +5,7 @@
 #[path = "../tests/it/common/mod.rs"]
 mod common;
 
-use toma_h264enc::*;
+use toma_h264enc::{Encoder, EncoderConfig, Preset, Profile, RateControl};
 use std::time::Instant;
 
 fn main() {

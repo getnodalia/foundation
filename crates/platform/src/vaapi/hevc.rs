@@ -1,5 +1,5 @@
 //! The HEVC side of the VA-API decoder, like [`super::h264`]: the software decoder's own parsers
-//! (`toma_hevc::params`, `slice`) and decoded picture buffer (`toma_hevc::dpb`: POC,
+//! (`nodalia_video::hevc::decode::params`, `slice`) and decoded picture buffer (`nodalia_video::hevc::decode::dpb`: POC,
 //! reference picture sets, reference lists, output order) drive a stateless hardware decoder, so
 //! both decoders make the same decisions and output the same pictures in the same order, RASL
 //! pictures of a CRA the run starts at left out as in software.
@@ -12,11 +12,11 @@
 
 use std::sync::Arc;
 
+use nodalia_video::hevc::decode::dpb::{Dpb, Marking, Output, OutputMeta, PocState, Ref, RefPicSet, build_ref_lists};
+use nodalia_video::hevc::decode::params::{Layout, Pps, ScalingList, Sps};
+use nodalia_video::hevc::decode::slice::{NalHeader, SliceHeader, SliceType, nal_type};
 use toma_bitstream::{length_prefixed_nals, unescape_rbsp};
 use toma_codecs::{CodecError, DecodedFrame, Result};
-use toma_hevc::dpb::{Dpb, Marking, Output, OutputMeta, PocState, Ref, RefPicSet, build_ref_lists};
-use toma_hevc::params::{Layout, Pps, ScalingList, Sps};
-use toma_hevc::slice::{NalHeader, SliceHeader, SliceType, nal_type};
 
 use super::Accel;
 use super::ffi::{
@@ -199,7 +199,7 @@ impl<A: Accel> Front<A> {
             &rbsp,
             hdr,
             |id| {
-                let missing = |what: String| toma_hevc::Error::MissingParameterSet(what);
+                let missing = |what: String| nodalia_video::hevc::decode::Error::MissingParameterSet(what);
                 let pps = ppss.get(id as usize).and_then(Option::as_ref).ok_or_else(|| missing(format!("PPS {id}")))?;
                 let sps = spss.get(pps.sps_id as usize).and_then(Option::as_ref).ok_or_else(|| missing(format!("SPS {}", pps.sps_id)))?;
                 Ok((pps.clone(), sps.clone()))

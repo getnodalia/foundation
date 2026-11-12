@@ -31,7 +31,9 @@ unaffected; `cargo xtask wasm` (part of `cargo xtask ci`) checks it, with `toma-
 URL flags: `?empty` (no demo project), `?norecover` (don't reopen the auto-saved project),
 `?fresh` (also don't restore media kept in OPFS), `?cpu` (CPU compositor), `?webgl` (WebGL2 only;
 the page reloads with it when WebGPU is present but fails to start), `?nowebcodecs` (decode with
-Toma's own decoders only).
+Toma's own decoders only), `?host=parent` (host mode: a same-origin page embedding the app
+hands it files and takes its saves back instead of downloads; `data-host="page"` on the canvas
+is the no-iframe form — [hosting](../packaging/web/README.md)).
 
 If the app panics after start-up (or runs out of memory), `index.html` shows a "Toma stopped
 working" overlay with the panic message and a Reload button instead of a frozen canvas, and sets
@@ -109,13 +111,15 @@ eframe creates a WebGPU device when the browser has one, else WebGL2. Toma's GPU
 The control channel of the desktop app (`docs/control-protocol.md`) as promises. Results resolve
 with the method's `result`, errors reject.
 
+`request`, `execute`, `commands`, `uiInspect` and `screenshot` come from [`nodalia-web-api`](https://github.com/storytold/craft-libs/tree/main/crates/web-api) (storytold/craft-libs#413), the same shape in every Craft app; a call the app does not answer within 30 seconds rejects. The rest are Toma's own.
+
 | Call | |
 |---|---|
 | `toma.execute(command, params)` | run an engine command (same ids and params as MCP / `toma-cli`) |
 | `toma.request(method, params)` | any control method: `ui.inspect`, `ui.click`, `ui.key`, `ui.playback`, `ui.menu.invoke`… |
 | `toma.commands()` | the command list |
-| `toma.inspect()` | `ui.inspect` |
-| `toma.screenshot(params)` | `{pngBase64, width, height}` of the canvas (or `{panel}`) |
+| `toma.inspect()` / `toma.uiInspect(params)` | `ui.inspect` |
+| `toma.screenshot(params)` | `{pngBase64, width, height}` of the canvas (or `{panel}`), and the same PNG as `data` |
 | `toma.importFiles(files)` | import `File` / `FileList` / `File[]`; resolves `{items, errors, paths}` |
 | `toma.importUrl(url, name?)` | fetch a URL and import it (tests) |
 | `toma.openProject(fileOrUrl)` | open a `.fcproj` |
