@@ -10,21 +10,5 @@ repository.workspace = true
 [lints]
 workspace = true
 
-[features]
-# HTML documents: read into and written from the nodalia-flow model and a nodalia-wordmodel Document.
-flow = ["dep:nodalia-codepage", "dep:nodalia-flow", "dep:nodalia-math", "dep:nodalia-mime", "dep:nodalia-wordmodel", "dep:encoding_rs"]
-
-[dependencies]
-nodalia-codepage = { workspace = true, optional = true }
-nodalia-flow = { workspace = true, optional = true }
-nodalia-math = { workspace = true, optional = true }
-nodalia-mime = { workspace = true, features = ["detect"], optional = true }
-nodalia-wordmodel = { workspace = true, optional = true }
-encoding_rs = { workspace = true, optional = true }
-
 [dev-dependencies]
 proptest = { workspace = true }
-
-[[test]]
-name = "doc"
-required-features = ["flow"]

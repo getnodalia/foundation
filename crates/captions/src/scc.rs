@@ -295,8 +295,7 @@ pub fn parse(text: &str) -> Result<Document> {
         // the first time code says how the file counts (drop-frame or not)
         doc.labels.get_or_insert((RATE, tc.contains([';', '.', ','])));
         for (k, w) in it.enumerate() {
-            let v = if w.len() == 4 && w.bytes().all(|b| b.is_ascii_hexdigit()) { u16::from_str_radix(w, 16).ok() } else { None };
-            let Some(v) = v else {
+            let Ok(v) = u16::from_str_radix(w, 16) else {
                 doc.warnings.push(format!("line {}: bad code word \"{w}\"", n + 1));
                 continue;
             };
@@ -537,17 +536,6 @@ mod tests {
 
     fn cue(s: i64, e: i64, text: &str) -> Cue {
         Cue { start: RATE.tick_of(s), end: RATE.tick_of(e), text: text.into(), ..Default::default() }
-    }
-
-    #[test]
-    fn plus_signed_code_word_is_rejected() {
-        for bad in ["+942", "-942", "+94", "94G2"] {
-            let doc = parse(&format!("Scenarist_SCC V1.0\n\n00:00:01:00\t{bad} 9420\n")).unwrap();
-            assert_eq!(doc.warnings.len(), 1, "{bad}: {:?}", doc.warnings);
-            assert!(doc.warnings[0].contains("bad code word"));
-        }
-        let doc = parse("Scenarist_SCC V1.0\n\n00:00:01:00\t9420 9420\n").unwrap();
-        assert!(doc.warnings.is_empty());
     }
 
     #[test]

@@ -101,13 +101,11 @@ pub struct Options<'g> {
     /// The plugin data (plugin id, key) under which a writer kept what a layer written as the
     /// outline of its stroke was: read back as `outlinedStroke` (an extension of the file JSON).
     pub outlined_stroke: Option<(&'g str, &'g str)>,
-    /// Map FigJam sticky notes to native board items instead of generic frames.
-    pub board: bool,
 }
 
 impl Default for Options<'_> {
     fn default() -> Self {
-        Options { max_nodes: MAX_NODES, geometry: &Straight, outlined_stroke: None, board: false }
+        Options { max_nodes: MAX_NODES, geometry: &Straight, outlined_stroke: None }
     }
 }
 
@@ -433,7 +431,6 @@ struct Mapper<'a> {
     warnings: nodalia_figma_rest::Warnings,
     geometry: &'a dyn Geometry,
     outlined_stroke: Option<(&'a str, &'a str)>,
-    board: bool,
     count: usize,
     /// The mains in the file that instances or instance swap defaults name, and the mains mapped
     /// as layers: the difference is what the layer cap kept out.
@@ -529,7 +526,6 @@ impl<'a> Mapper<'a> {
             warnings: nodalia_figma_rest::Warnings::default(),
             geometry: options.geometry,
             outlined_stroke: options.outlined_stroke,
-            board: options.board,
             count: 0,
             referenced_mains: BTreeSet::new(),
             mapped_mains: BTreeSet::new(),

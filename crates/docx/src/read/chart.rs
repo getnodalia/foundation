@@ -29,9 +29,7 @@ pub(super) use canvas::text_w;
 use canvas::{Rect, clip_text, legend, text};
 #[cfg(test)]
 use format::{civil, excel_stamp, format_value};
-pub(crate) use model::Axis;
-use model::{Grouping, Kind, Pos, Series};
-pub(crate) use parse::chart_axes;
+use model::{Axis, Grouping, Kind, Pos, Series};
 #[cfg(test)]
 use parse::{axis, category_text, labels, numbers};
 use parse::{read_series, text_size, title_of};

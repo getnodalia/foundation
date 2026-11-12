@@ -11,6 +11,3 @@ repository.workspace = true
 workspace = true
 
 [dependencies]
-
-[dev-dependencies]
-nodalia-media-testkit = { workspace = true }

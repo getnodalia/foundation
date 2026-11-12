@@ -117,9 +117,6 @@ struct PendingLink {
     refs: Vec<String>,
 }
 
-const MAX_NESTING_DEPTH: usize = 64;
-const MAX_REIMPORTS: usize = 4096;
-
 struct Imp<'a, 'c, 'r> {
     b: Builder<'c>,
     opts: &'a ImportOptions<'a>,
@@ -129,9 +126,6 @@ struct Imp<'a, 'c, 'r> {
     file_items: HashMap<String, ItemId>,
     seq_items: HashMap<String, ItemId>,
     in_progress: HashSet<String>,
-    depth_hits: usize,
-    truncated_at: HashMap<String, usize>,
-    reimports_left: usize,
     links: Vec<PendingLink>,
     xml_clip_ids: HashMap<(ItemId, String), ClipId>,
     /// `(sequence key, file key)` pairs where some audio clip item of that file uses `sourcetrack/trackindex` > 1,
@@ -183,9 +177,6 @@ pub fn import(text_in: &str, opts: &ImportOptions, report: &mut Report) -> Resul
         file_items: HashMap::new(),
         seq_items: HashMap::new(),
         in_progress: HashSet::new(),
-        depth_hits: 0,
-        truncated_at: HashMap::new(),
-        reimports_left: MAX_REIMPORTS,
         links: Vec::new(),
         xml_clip_ids: HashMap::new(),
         split_files: HashSet::new(),
@@ -358,27 +349,10 @@ impl<'a> Imp<'a, '_, '_> {
     /// Sequence item for a `<sequence>` element (definition or reference).
     fn sequence(&mut self, n: Node<'a>, bin: Option<BinId>) -> Option<ItemId> {
         let key = node_key(n);
-        let depth = self.in_progress.len();
-        let mut again = None;
         if let Some(id) = self.seq_items.get(&key) {
-            let shallower = self.truncated_at.get(&key).is_some_and(|d| depth < *d) && !self.in_progress.contains(&key);
-            if !shallower {
-                return Some(*id);
-            }
-            if self.reimports_left == 0 {
-                self.report.warn("truncated nested sequence kept incomplete after the re-import limit was reached");
-                return Some(*id);
-            }
-            self.reimports_left -= 1;
-            again = Some(*id);
+            return Some(*id);
         }
         let def = if child(n, "media").is_some() { n } else { *self.seq_defs.get(&key)? };
-        if depth >= MAX_NESTING_DEPTH {
-            self.depth_hits += 1;
-            self.report.warn("nested sequence is nested too deeply; imported as a gap");
-            return None;
-        }
-        let hits_before = self.depth_hits;
         if !self.in_progress.insert(key.clone()) {
             self.report.warn("recursive nested sequence ignored");
             return None;
@@ -400,18 +374,12 @@ impl<'a> Imp<'a, '_, '_> {
         {
             settings.sample_rate = sr as u32;
         }
-        let id = match again {
-            Some(id) => id,
-            None => {
-                let id = self.b.reserve_sequence(&name, settings.clone(), bin);
-                if let Some(l) = path_text(def, &["labels", "label2"]).and_then(label_from)
-                    && let Some(it) = self.b.p.item_mut(id)
-                {
-                    it.label = l;
-                }
-                id
-            }
-        };
+        let id = self.b.reserve_sequence(&name, settings.clone(), bin);
+        if let Some(l) = path_text(def, &["labels", "label2"]).and_then(label_from)
+            && let Some(it) = self.b.p.item_mut(id)
+        {
+            it.label = l;
+        }
         self.seq_items.insert(key.clone(), id);
         let mut seq = empty_sequence(settings);
         seq.start_timecode = tc.and_then(|t| child_i64(t, "frame")).unwrap_or(0);
@@ -435,11 +403,6 @@ impl<'a> Imp<'a, '_, '_> {
         }
         self.b.put_sequence(id, seq);
         self.in_progress.remove(&key);
-        if self.depth_hits > hits_before {
-            self.truncated_at.insert(key, depth);
-        } else {
-            self.truncated_at.remove(&key);
-        }
         Some(id)
     }
 
@@ -568,19 +531,9 @@ impl<'a> Imp<'a, '_, '_> {
                 }
             }
         } else if let Some(s) = child(c, "sequence") {
-            if let Some(id) = self.sequence(s, None) {
-                return Some(id);
-            }
-            self.report.warn(format!("clip \"{name}\" refers to a nested sequence that was left out; imported offline"));
-            Some(self.offline_media(kind, seq_rate, frame, name))
+            self.sequence(s, None)
         } else {
             self.report.warn(format!("clip \"{name}\" has no media reference; imported offline"));
-            Some(self.offline_media(kind, seq_rate, frame, name))
-        }
-    }
-
-    fn offline_media(&mut self, kind: TrackKind, seq_rate: FrameRate, frame: (u32, u32), name: &str) -> ItemId {
-        {
             let spec = MediaSpec {
                 video: (kind == TrackKind::Video).then_some((frame.0, frame.1, seq_rate)),
                 audio: (kind == TrackKind::Audio).then_some((48_000, 2)),
@@ -592,7 +545,7 @@ impl<'a> Imp<'a, '_, '_> {
             if let Some(m) = self.b.p.item_mut(id).and_then(|i| i.as_media_mut()) {
                 m.offline = true;
             }
-            id
+            Some(id)
         }
     }
 

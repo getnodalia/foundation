@@ -56,10 +56,6 @@ pub const MAX_MAINDOC: usize = 32 << 20;
 pub const MAX_LAYER_FILE: usize = 1 << 30;
 /// Most entries the archive may declare; checked before the archive is indexed.
 pub const MAX_ENTRIES: u64 = 100_000;
-/// Most bytes all the entries read from one archive may expand to together. Each pixel file may be
-/// [`MAX_LAYER_FILE`] on its own, so without a total a document of many layers could spend far more
-/// than one open should.
-pub const MAX_TOTAL: u64 = 4 << 30;
 /// Largest ICC profile.
 pub const MAX_ICC: usize = 16 << 20;
 /// Deepest element nesting of `maindoc.xml`.
@@ -165,16 +161,6 @@ fn children<'a>(el: &'a El, container: &'static str, tag: &'static str) -> impl 
 }
 
 fn node(el: &El, is_mask: bool, count: &mut usize) -> Result<Node> {
-    let mut out = node_fields(el, is_mask)?;
-    if !is_mask {
-        out.layers = layers(el, count)?;
-        out.masks = children(el, "masks", "mask").map(|m| node(m, true, count)).collect::<Result<_>>()?;
-    }
-    Ok(out)
-}
-
-/// A node's own attributes, without its children.
-fn node_fields(el: &El, is_mask: bool) -> Result<Node> {
     let owned = |name: &str| attr(el, name).map(str::to_string);
     let node_type = attr(el, "nodetype").unwrap_or("").to_string();
     // Only the kinds whose pixels are read need sound numbers; a node an application will leave
@@ -182,7 +168,7 @@ fn node_fields(el: &El, is_mask: bool) -> Result<Node> {
     let read = matches!(node_type.as_str(), "paintlayer" | "grouplayer" | "transparencymask");
     let lenient = |v: Result<f64>, default: f64| if read { v } else { Ok(v.unwrap_or(default)) };
     let (x, y) = if is_mask && !read { (offset(el, "x").unwrap_or(0), offset(el, "y").unwrap_or(0)) } else { (offset(el, "x")?, offset(el, "y")?) };
-    let out = Node {
+    let mut out = Node {
         node_type,
         name: owned("name"),
         visible: attr(el, "visible") != Some("0"),
@@ -201,39 +187,22 @@ fn node_fields(el: &El, is_mask: bool) -> Result<Node> {
         layers: Vec::new(),
         masks: Vec::new(),
     };
+    if !is_mask {
+        out.layers = layers(el, count)?;
+        out.masks = children(el, "masks", "mask").map(|m| node(m, true, count)).collect::<Result<_>>()?;
+    }
     Ok(out)
 }
 
-/// The `<layers>` of `el`, walked with an explicit stack: groups can nest up to [`MAX_XML_DEPTH`]
-/// deep, more than a small thread stack can recurse.
+/// The `<layers>` of `el`. Recursion is bounded by [`MAX_XML_DEPTH`].
 fn layers(el: &El, count: &mut usize) -> Result<Vec<Node>> {
-    struct Frame<'a> {
-        node: Node,
-        rest: std::vec::IntoIter<&'a El>,
-    }
-    let mut root = children(el, "layers", "layer").collect::<Vec<_>>().into_iter();
-    let mut stack: Vec<Frame> = Vec::new();
     let mut out = Vec::new();
-    loop {
-        let next = match stack.last_mut() {
-            Some(frame) => frame.rest.next(),
-            None => root.next(),
-        };
-        let Some(child) = next else {
-            let Some(frame) = stack.pop() else { break };
-            match stack.last_mut() {
-                Some(parent) => parent.node.layers.push(frame.node),
-                None => out.push(frame.node),
-            }
-            continue;
-        };
+    for child in children(el, "layers", "layer") {
         *count += 1;
         if *count > MAX_NODES {
             return Err(invalid(format!("more than {MAX_NODES} layers")));
         }
-        let mut built = node_fields(child, false)?;
-        built.masks = children(child, "masks", "mask").map(|m| node(m, true, count)).collect::<Result<_>>()?;
-        stack.push(Frame { node: built, rest: children(child, "layers", "layer").collect::<Vec<_>>().into_iter() });
+        out.push(node(child, false, count)?);
     }
     Ok(out)
 }
@@ -251,10 +220,7 @@ impl Image {
             limits: nodalia_xml::Limits { max_input: MAX_MAINDOC, max_depth: MAX_XML_DEPTH, ..nodalia_xml::Limits::DEFAULT },
             ..nodalia_xml::Options::local().strict()
         };
-        let root = options.parse(maindoc).map_err(|e| match e {
-            nodalia_xml::Error::Doctype => invalid("maindoc.xml: a document type with an internal DTD subset is not accepted"),
-            other => invalid(format!("maindoc.xml: {other}")),
-        })?;
+        let root = options.parse(maindoc).map_err(|e| invalid(format!("maindoc.xml: {e}")))?;
         let image = root.child("IMAGE").ok_or_else(|| invalid("maindoc.xml has no IMAGE"))?;
         let side = |a: &str| -> Result<u32> {
             let v = number(image, a, 0.0)?;
@@ -291,13 +257,8 @@ pub struct Archive<'a> {
 impl<'a> Archive<'a> {
     /// Opens the archive, checks its `mimetype` and reads `maindoc.xml`.
     pub fn open(bytes: &'a [u8]) -> Result<Archive<'a>> {
-        Self::open_with(bytes, nodalia_zip::Limits { max_entries: MAX_ENTRIES, max_total_bytes: MAX_TOTAL })
-    }
-
-    /// [`Archive::open`] with explicit zip limits, so a test can set a small document-wide total
-    /// ([`MAX_TOTAL`] is what [`Archive::open`] passes).
-    pub(crate) fn open_with(bytes: &'a [u8], limits: nodalia_zip::Limits) -> Result<Archive<'a>> {
-        let mut zip = nodalia_zip::Archive::open(bytes, limits).map_err(zip_error)?;
+        let mut zip =
+            nodalia_zip::Archive::open(bytes, nodalia_zip::Limits { max_entries: MAX_ENTRIES, max_total_bytes: u64::MAX }).map_err(zip_error)?;
         // `zip` keeps one entry of a repeated name; which one the writer meant is not known.
         if zip.has_duplicate_names() {
             return Err(invalid("two entries of the archive share a name"));
