@@ -1,0 +1,46 @@
+name: Agent instructions
+
+# Reusable check that a repository's agent instructions are Nodalia's own: AGENTS.md exists and
+# names its sections, CLAUDE.md (if any) only imports it, and no inherited rule block from another
+# organisation is still presented as binding. Replaces the inherited "house rules" check.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  agents:
+    name: AGENTS.md is Nodalia's
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check AGENTS.md
+        run: |
+          python3 - <<'PY'
+          import pathlib, re, sys
+          errors = []
+          agents = pathlib.Path("AGENTS.md")
+          if not agents.is_file():
+              sys.exit("::error::AGENTS.md is missing")
+          text = agents.read_text(encoding="utf-8")
+          # The sections every Nodalia AGENTS.md carries (see foundation/standards/agents.md).
+          for heading in ("What this is", "Architecture", "Build and test", "Rules", "Release"):
+              if not re.search(rf"^##+ .*{re.escape(heading)}", text, re.M | re.I):
+                  errors.append(f"AGENTS.md has no '{heading}' section")
+          # Inherited rule blocks that bound contributors to another organisation's process.
+          for marker in ("house-rules-core.md", "craft-contrib", "craft-common-actions` at `@main"):
+              if marker in text:
+                  errors.append(f"AGENTS.md still carries an inherited rule block ({marker})")
+          claude = pathlib.Path("CLAUDE.md")
+          if claude.is_file():
+              body = [l for l in claude.read_text(encoding="utf-8").splitlines() if l.strip()]
+              if not body or body[0].strip() != "@AGENTS.md":
+                  errors.append("CLAUDE.md must start with '@AGENTS.md' so both agents read one file")
+          for e in errors:
+              print(f"::error file=AGENTS.md::{e}")
+          sys.exit(1 if errors else 0)
+          PY
