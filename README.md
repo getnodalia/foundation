@@ -17,40 +17,11 @@ A Cargo workspace (edition 2024, resolver 3). Each library is a crate under `cra
 (`license.workspace = true`, and so on) and `[lints] workspace = true`. Register each crate in
 `[workspace.dependencies]` in the root `Cargo.toml`.
 
-## Use a released version
-
-The first coordinated release is **[v0.1.0](https://github.com/storytold/craft-libs/releases/tag/v0.1.0)**.
-It gives consumers a fixed baseline while development continues on `main`. All five crates
-share this version. They require Rust 1.95 or later; the UI integrations use egui 0.36.
-
-Add only the crates you need, using the same tag for every nodalia-libs dependency:
+Apps depend on a crate by git:
 
 ```toml
-[dependencies]
-nodalia-ui = { git = "https://github.com/getnodalia/foundation", tag = "v0.1.0" }
-nodalia-settings = { git = "https://github.com/getnodalia/foundation", tag = "v0.1.0" }
-# Optional, for egui close handling and the macOS application menu:
-nodalia-quit = { git = "https://github.com/getnodalia/foundation", tag = "v0.1.0", features = ["menu"] }
+craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commit>" }
 ```
-
-`nodalia-atomic` and `nodalia-print` use the same dependency syntax. Enable `nodalia-ui`'s
-`serde` feature if you need to serialize its docking layout. These are Git releases;
-crates.io publication is deferred.
-
-Release tags are never moved or reused. For a commit pin, resolve the tag with
-`git ls-remote https://github.com/getnodalia/foundation 'refs/tags/v0.1.0^{}'` and replace
-`tag = "v0.1.0"` with `rev = "<full commit SHA>"` on every nodalia-libs dependency.
-Use either `tag` or `rev`, not both. An existing commit pin keeps working; switching to this
-release may require adapting to changes since that commit.
-
-Commit your application's `Cargo.lock` and build with `cargo build --locked` for reproducible
-Rust dependency resolution. A Git pin fixes nodalia-libs source, not every transitive dependency.
-A library's own lockfile does not constrain its downstream consumers. Upgrade deliberately:
-read the release notes, update all nodalia-libs pins together, refresh the lockfile with
-`cargo check`, and run your application's tests and affected workflows before committing.
-
-See the [release notes](CHANGELOG.md) for included functionality and known limits, and the
-[versioning policy](docs/versioning.md) for compatibility guarantees and release checks.
 
 ## Libraries
 
@@ -61,7 +32,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   of compositions, layers, properties, keyframes, effects, masks, shapes, text and footage.
   Clean room, from Pulso. Mapping onto an app's document stays in the app.
 - [`nodalia-ai-core`](crates/ai-core/README.md): the data model and contract for AI in the Craft Apps (connections, models, tools, requests, jobs, consent, history, route spec). Pure, no I/O, wasm-safe. Contract in [docs/ai-shared-layer.md](docs/ai-shared-layer.md).
-- [`nodalia-pe`](crates/pe/src/lib.rs): PE/COFF headers (`.exe`, `.dll`, `.sys`, `.efi`) from untrusted bytes, from Craft Anything: the COFF header, PE32/PE32+ optional header with its data directories bounded by the header's real size, the section table, RVA-to-file mapping and the decoded Rich header.
 - [`nodalia-pdf`](crates/pdf/README.md): independently optional PDF parsing, interpretation, rasterization and guarded authoring. Apps retain layout, fonts, editing and export policy; writer-only consumers do not enable the shared reader.
 
 - [`nodalia-pdn`](crates/pdn/README.md): Paint.NET documents (`.pdn`, PDN3), read: the layer list, blend modes and chunked gzip pixel blocks, with a data-only MS-NRBF (.NET binary serialization) reader. From Lienzo.
@@ -76,9 +46,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
 - [`nodalia-cfb`](crates/cfb/README.md): clean-room Compound File Binary ([MS-CFB], OLE structured
   storage) reader and writer: the container of legacy Office files, Outlook messages, encrypted
   OOXML packages and AAF. Bounded on hostile input; what the streams hold stays with each format.
-- [`nodalia-dav`](crates/dav/README.md): WebDAV multistatus documents (RFC 4918) with the CalDAV and
-  CardDAV namespaces, from MailCraft: read fail-closed into a bounded `nodalia-xml` tree with fixed
-  prefixes, and the successful properties of each response. No I/O.
 - [`nodalia-cms`](crates/cms/README.md): pure-Rust ICC v2/v4 colour management: profile parsing
   and writing, transforms, rendering intents, black point compensation, soft proofing, gamut
   checks, 3D LUTs and built-in profiles (sRGB, Display P3, synthetic coated CMYK and others).
@@ -89,11 +56,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   black and white levels and as-shot white balance. The complete derivation record (plan, sources
   log, scripts, verification) is in `crates/crw/clean-room/`. Colour stays in each app.
 - [`nodalia-csv`](crates/csv/README.md): delimited text (CSV, TSV) and SYLK: encoding detection (UTF-8, UTF-16, Windows-1252 or Windows-1256), delimiter sniffing, a record parser with a cap on fields per record, field quoting for writers, and a SYLK (`.slk`) reader with R1C1 formulas rewritten to A1.
-- [`nodalia-dds`](crates/dds/README.md): DirectDraw Surface (DDS) textures, read and written: the
-  top mip level of uncompressed, BC1 to BC3 (DXT1/3/5) and BC4/BC5 (grayscale data and normal
-  maps) textures, legacy and DX10 headers, and our own block encoder with optional mip chains. No dependencies (rayon behind `parallel`), so an
-  app that only exports textures needn't take the whole `nodalia-image-codecs` codec set and its
-  licences; `nodalia-image-codecs` reads and writes DDS through it.
 - [`nodalia-dialogs`](crates/dialogs/README.md): native file and message dialogs that never block
   the event loop: queued requests shown at the end of the frame and answered on a later frame,
   free-standing Open and Folder panels and Save sheets on macOS, case-insensitive filters. What
@@ -101,8 +63,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
 - [`nodalia-doc`](crates/doc/README.md): reads Lienzo `.pcraft`, Pluma `.vectorcraft`
   and Pulso `.ecproj` documents without the apps: the kind and version, the previews and
   PDF they carry, and their pages and layers. Rendering and editing stay in each app.
-- [`nodalia-doc-binary`](crates/doc-binary/README.md): the Word 97-2003 binary format (`.doc`, [MS-DOC]) read into
-  `nodalia-wordmodel`, with XOR, RC4 and RC4 CryptoAPI password protection. Letra's reader, on `nodalia-cfb`.
 - [`nodalia-docpath`](crates/docpath/src/lib.rs): decides whether a path or `file:` URL stored in a
   document may be opened. Paths stored in documents are followed only when they are local or on the
   document's own network share; other network paths, device paths and non-file URLs are refused.
@@ -114,7 +74,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   EMU units and `a:xfrm`, colours with theme slots and colour transforms, preset shape outlines
   (`a:prstGeom`), custom geometry with guide formulas (`a:custGeom`) and preset text warps
   (`a:prstTxWarp`). From Lámina. Takes `nodalia-xml` trees; packages stay with each format.
-- [`nodalia-elf`](crates/elf/src/lib.rs): ELF program headers and dynamic section entries from untrusted bytes, from Craft Anything: 32- or 64-bit in either byte order, bounded counts and overflow-checked offsets, virtual-address-to-file mapping through `PT_LOAD`, and segment, permission and dynamic tag names.
 - [`nodalia-eps`](crates/eps/README.md): Encapsulated PostScript files as a container: the binary
   preview header (read and write), the DSC header comments and bounding boxes (also `(atend)`),
   the EPSI preview bitmap, ASCII85 data, and telling EPS, PostScript and Illustrator files
@@ -127,13 +86,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   pages and version detection, and written back; and `model`, the drawing above the tags (header
   variables, tables, blocks, layouts, entities) and its writer (R12 to 2018), merged from Forja's and Pluma's readers. Bounded
   on hostile input. Mapping the model onto a document stays in each app.
-- [`nodalia-lamina-format`](crates/lamina-format/README.md): the Lámina `.deckcraft` package:
-  identity and sniffing, the `presentation.json` envelope with the presentation as a type
-  parameter, NaN-safe JSON and the reader for older files with `null` numbers, member names and
-  compression, and bounded, budgeted member reads. The presentation model and its mapping stay in Lámina.
-- [`nodalia-dwg`](crates/dwg/README.md): bounded byte-level DWG↔DXF conversion with diagnostics,
-  capped output and an optional child-process worker; the `acadrust` dependency remains isolated
-  behind bytes and is unavailable on wasm32 and FreeBSD/aarch64.
 - [`nodalia-ecproj-format`](crates/ecproj-format/README.md): the envelope of Pulso `.ecproj`
   project files: `savedBy`, the schema version and its check, and the file object with the
   project and its saved view as type parameters. The project model stays in Pulso.
@@ -154,8 +106,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   and channel names, the channels that make a colour picture, and Cryptomatte IDs, metadata keys,
   manifests and rank channels. The optional `decode` feature adds bounded part listing, flat
   decoding (scan lines, tiles, every compression of the `exr` crate) and writing.
-- [`nodalia-flags`](crates/flags/README.md): Feature flags shared by the Craft apps and the ArtCraft Launcher: one per-user `ArtCraft/flags.toml`, a `NODALIA_FLAGS` override, every flag off by default (`AI-MCP`, `AI-MODELS`).
-- [`nodalia-flow`](crates/flow/README.md): the flow model every text format maps to (paragraphs with a kind, lists and formatted spans; tables; pictures, fields, notes, equations), converted to and from a nodalia-wordmodel `Document`.
 - [`nodalia-font-catalog`](crates/font-catalog/README.md): the installed fonts on every platform
   (font folders, fontconfig and Flatpak host folders, CoreText, DirectWrite, the font store),
   lookup by family, style, localized, legacy, full and PostScript names, family loads shared
@@ -183,9 +133,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   every frame's position, delay, disposal and transparent colour, the loop count and the first
   frame's colour table, without decompressing pixels. Tells an animation from a still and whether
   a file can hold the picture it declares before a decoder runs.
-- [`nodalia-celdas-format`](crates/celdas-format/README.md): Celdas's native JSON workbook
-  (`.json`, `.scjson`): the extensions, the reader, the pretty writer, and newer entries kept
-  unread and written back into a list. The workbook model and what follows a read stay in Celdas.
 - [`nodalia-hdr`](crates/hdr/src/lib.rs): Radiance HDR (RGBE) picture reader, from Toma: flat,
   old and new run-length scan lines and all eight axis orders, to linear float RGB. Scan lines are
   validated before the picture is allocated.
@@ -193,7 +140,7 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   heic-rs reads the container and HEVC pictures, and this crate converts to 16-bit RGB to match
   libheif (VUI range and matrix, chroma upsampling, `imir`, ICC on grid tiles). Also orientation,
   alpha, EXIF/XMP and thumbnails. It never panics, and apps put it behind a non-default feature.
-- [`nodalia-html`](crates/html/README.md): the bottom layer of reading and writing HTML: a tolerant tokenizer (text, start tags, end tags; elements to drop or to read as raw text are options), character references with the legacy names browsers accept without `;`, escaping, and the character set a page declares. With the `flow` feature, HTML documents read into and written from the nodalia-flow model.
+- [`nodalia-html`](crates/html/README.md): the bottom layer of reading and writing HTML: a tolerant tokenizer (text, start tags, end tags; elements to drop or to read as raw text are options), character references with the legacy names browsers accept without `;`, escaping, and the character set a page declares. No tree, no CSS, no rendering.
 - [`nodalia-i18n`](crates/i18n/README.md): translations over the embedded nodalia-i18n catalogs:
   lookup with fallback (`pt-br` → `pt` → English), plurals, language names, the system locale and
   a pseudo locale. The catalogs stay a fully optional build input; apps keep `tl!` and their
@@ -202,12 +149,11 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   what Lienzo's and Toma's readers added: container parsing and decompression to a neutral
   raw image (samples, CFA, black and white levels, active area, crop, orientation, colour tags,
   opcode lists, embedded previews), one Cargo feature per format. DNG reading and writing,
-  Hasselblad 3FR/FFF, Minolta MRW, Epson ERF, Mamiya MEF, Kodak DCS, Pentax PEF, Samsung SRW, Canon CR2, Nikon NEF/NRW, Panasonic RW2, Fujifilm RAF, Olympus ORF (uncompressed), Sony ARW, Canon CR3 and Canon CRW (through
+  Hasselblad 3FR/FFF, Minolta MRW, Epson ERF, Mamiya MEF, Kodak DCS, Pentax PEF, Samsung SRW, Canon CR2, Nikon NEF/NRW, Panasonic RW2, Fujifilm RAF and Canon CRW (through
+  Hasselblad 3FR/FFF, Minolta MRW, Epson ERF, Mamiya MEF, Kodak DCS, Pentax PEF, Samsung SRW, Canon CR2, Nikon NEF/NRW, Panasonic RW2 and Canon CRW (through
+  Hasselblad 3FR/FFF, Minolta MRW, Epson ERF, Mamiya MEF, Kodak DCS, Pentax PEF, Samsung SRW, Canon CR2, Nikon NEF/NRW and Canon CRW (through
   `nodalia-crw`) so far; demosaicing and everything after stay with the develop
   pipeline.
-- [`nodalia-render-parity`](crates/render-parity/README.md): test support for the shared develop
-  pipeline (#587): how far two renders of the same photo are apart (per-channel error, CIEDE2000,
-  the worst pixel) and whether that is within a stated tolerance.
 - [`nodalia-tga`](crates/tga/src/lib.rs): Truevision Targa, from Toma (reader) and Lienzo
   (writer): true-colour, grayscale and colour-mapped pictures, raw or run-length encoded, any
   origin, to RGBA8, and a run-length writer whose packets end with their scan line. Bounded on
@@ -219,12 +165,10 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   mean stays in each app. Bounded and panic-free on hostile input.
 - [`nodalia-stream-codecs`](crates/stream-codecs/README.md): byte-stream and bi-level image codecs that
   PDF, PostScript and TIFF share: LZW, ASCII85, ASCIIHex, RunLength, TIFF and PNG predictors,
-  CCITT Group 3 and 4 decoding and Group 4 encoding, JBIG2 decoding and lossless encoding. Every
+  CCITT Group 3 and 4 decoding and Group 4 encoding, lossless JBIG2 encoding. Every
   decoder is bounded and returns its partial output on damage. From Papel; a PDF filter chain
   is built on it in `nodalia-pdf`.
 - [`nodalia-timeline`](crates/timeline/README.md): editorial timeline interchange: exact media time and SMPTE timecode, import/export reports, media path and `file://` URL handling, Avid Log Exchange (ALE) and CMX 3600 EDL documents, format detection. From Toma.
-- [`nodalia-time`](crates/time/README.md): exact rational ticks and SMPTE time across media, with a `soundcraft` compatibility module retaining SoundCraft's sample-index timebase, tempo maps, grids and session serialization semantics.
-- [`nodalia-sound-format`](crates/sound-format/README.md): SoundCraft's typed `.scraft` session schema, versioned reader/writer, hostile-input validation, and `.scraftz` bundle reader/writer. Engine and UI mapping stays in SoundCraft.
 - [`nodalia-metadata`](crates/metadata/README.md): photo metadata, from Luz: EXIF (read and write,
   maker-note lens and focus point, every tag by name), IPTC-IIM, XMP packets (read, write, and a merge
   that keeps what another program wrote), GPX track logs, and the blocks that carry them in JPEG, PNG,
@@ -244,17 +188,15 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   primitives (`.abr`, `.asl`, `.aco`, `.act`, `.ase`, `.grd`, `.pat`, `.atn`, `.csh`, `.shc`) and
   the Photoshop blocks of a layered TIFF. Bounded and panic-free on hostile input. Compositing
   and the mapping onto a document stay in each app.
-- [`nodalia-ipc`](crates/ipc/README.md): Craft apps talking on one machine: per-user local sockets (Unix socket, Windows named pipe), token auth, instance discovery, launch on demand, focus hand-off, frame transfer and linked-file watching. Native only: it does not build for `wasm32`. Protocol in [PROTOCOL.md](crates/ipc/PROTOCOL.md).
 - [`nodalia-jmap`](crates/jmap/README.md): the JMAP protocol core (RFC 8620), from MailCraft, without
   sockets: session, requests of method calls with back-references, responses, ids, address
   templates, credentials and the judgement of HTTP answers, over any HTTP implementation. Bounded
   on hostile answers; what a program asks and makes of the answers stays in it.
-- [`nodalia-jpeg`](crates/jpeg/README.md): clean-room JPEG decoder for 12-bit and arithmetic-coded
-  frames (T.81 SOF0/SOF1 at 12 bits, SOF9, SOF10), band decoding, and an optimized 8-bit baseline
-  encoder, from Lienzo; includes a frame probe for routing. Metadata interpretation stays in
-  each app.
+- [`nodalia-jpeg`](crates/jpeg/README.md): clean-room decoder for 12-bit and arithmetic-coded
+  JPEG (T.81 SOF0/SOF1 at 12 bits, SOF9, SOF10), from Lienzo, and a frame probe for routing.
+  Metadata stays in each app.
 - [`nodalia-raster-codecs`](crates/raster-codecs/README.md): small raster formats, one module each,
-  from Lienzo: DDS (BC1 to BC3 read and write, BC4 and BC5 read), DICOM, FITS (read and write), IFF/ILBM (read
+  from Lienzo: DDS (BC1 to BC3, read and write), DICOM, FITS (read and write), IFF/ILBM (read
   and write), PCX, PNM/PAM/PFM (read and write) and XPM, into one flat image type. Bounded and
   panic-free on hostile input. Colour, orientation and the document mapping stay in each app.
 - [`nodalia-kiwi`](crates/kiwi/README.md): clean-room decoder and encoder for the kiwi binary schema
@@ -267,9 +209,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
 - [`nodalia-audio`](crates/audio/README.md): audio file I/O and codecs (WAV, AIFF, FLAC, AAC, Opus,
   AC-3/E-AC-3, MP1/MP2, MP3 encoding), streaming and seeking, and packet decoding for any demuxer. See its
   README for formats and features.
-- [`nodalia-latex`](crates/latex/README.md): LaTeX documents read (the everyday subset) and written (a standalone article), to and from the nodalia-flow model.
-- [`nodalia-macho`](crates/macho/src/lib.rs): Mach-O header pieces from untrusted bytes, from Craft Anything: universal (fat and fat64) slice tables checked against the file, CPU and load command names, the fixed size each load command needs before its fields are read, and the thread-state program counter.
-- [`nodalia-markdown`](crates/markdown/README.md): Markdown read and written (a CommonMark subset with GitHub tables and strikethrough), to and from the nodalia-flow model.
 - [`nodalia-math`](crates/math/README.md): equations as one tree (the Office Math object model) with its syntaxes, read and written: OMML, presentation MathML, LaTeX math and the UnicodeMath linear format.
 - [`nodalia-media`](crates/media/README.md): bit-level I/O (`bitstream`), clean-room MP4/MOV
   (`isobmff`), Matroska/WebM (`matroska`) and MXF (`mxf`) demuxers and muxers, Ogg (`ogg`), AVI (`avi`) and
@@ -296,10 +235,7 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   header fields, MIME parts and multiparts, encoded-words, RFC 2231 parameters, base64 and
   quoted-printable, character sets, address lists, dates, mbox files and the `multipart/related`
   lookups of MHT web archives. What a message means (body, attachments, flags) stays in each app.
-- [`nodalia-openpgp`](crates/openpgp/README.md): OpenPGP as mail carries it: PGP/MIME and cleartext
-  Digital signatures checked, attached Public keys and `Autocrypt:` headers read, a secret key
-  file inspected without using it. Built on rPGP; no I/O, and every size and count is capped.
-- [`nodalia-odf`](crates/odf/README.md): OpenDocument packages (ODF 1.3 Part 2), read and written: the ZIP container with its `mimetype` and manifest within limits, password protection (AES-256-CBC with PBKDF2, as LibreOffice writes it) and flat single-file documents. With the `text` feature, OpenDocument Text documents read into and written from the nodalia-flow model.
+- [`nodalia-odf`](crates/odf/README.md): OpenDocument packages (ODF 1.3 Part 2), read and written: the ZIP container with its `mimetype` and manifest within limits, password protection (AES-256-CBC with PBKDF2, as LibreOffice writes it) and flat single-file documents. The container only: what the XML inside means belongs to the readers of each document type.
 - [`nodalia-prc`](crates/prc/README.md): a reader for PRC (ISO 14739-1), the 3D model format of PDF 3D
   annotations: container, bit-level primitives, schema, tessellations and the product tree as
   placed, coloured triangle meshes and a model tree. Bounded on hostile input. From Papel;
@@ -312,10 +248,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
 - [`nodalia-lienzo-format`](crates/lienzo-format/README.md): the envelope of Lienzo's `.pcraft`
   bundle: `Manifest<D>` with the document as a type parameter, `TileRef`, the entry paths, the
   manifest decode limits and the migration runner. The document model stays in Lienzo.
-- [`nodalia-pkcs7`](crates/pkcs7/README.md): the formats of digital signatures, read, verified and
-  written: ASN.1 DER, X.509 certificates and chains, CMS SignedData (PKCS #7), PKCS #12 identity
-  files, RFC 3161 timestamps, and CRL / OCSP revocation evidence. What a signature means for a
-  document or a message stays in each app.
 - [`nodalia-penpot`](crates/penpot/README.md): clean-room reader and writer for the Penpot 2.x export
   container (`.penpot`): the ZIP archive, its manifest, the per-file, per-page and per-shape JSON
   members and media objects, as the JSON the file holds. Bounded on hostile input. Carved from
@@ -323,9 +255,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
 - [`nodalia-plotter`](crates/plotter/README.md): cutter and pen-plotter command languages: HP-GL,
   DMPL and GP-GL (plain and the Silhouette dialect, three generations, registration marks) from a
   job in millimetres, plus the Silhouette device queries and reply parsers. No I/O.
-- [`nodalia-pptx`](crates/pptx/README.md): PresentationML, the model of a `.pptx` presentation:
-  masters, layouts, slides, shapes, placeholders and their inheritance, transitions and animations,
-  comments, sections, media and kept parts. From Lámina. DrawingML comes from `nodalia-drawingml`.
 - [`nodalia-print`](crates/print/README.md): PDF submission to CUPS and Windows, printer discovery,
   duplex/copies/colour and driver preferences. PDF generation stays in each app.
 - [`nodalia-proof`](crates/proof/README.md): proofing per language (spelling, suggestions, grammar,
@@ -348,10 +277,7 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   for a small neutral model (paragraphs, character formatting, outline levels, tables).
 - [`nodalia-settings`](crates/settings/README.md): `config.toml` settings storage for every app: platform folders, portable mode and overrides, atomic saves while running, backup, damaged-file recovery and schema migrations. Policy in [docs/settings-storage.md](docs/settings-storage.md).
 - [`nodalia-sheet`](crates/sheet/README.md): spreadsheet vocabulary shared by `nodalia-xls`, `nodalia-xlsx` and `nodalia-ods`: cell positions and A1 text, cell values and error values, sheet-name quoting, Excel's built-in number formats and indexed colour palette. Not a file format; no dependencies.
-- [`nodalia-sf2`](crates/sf2/README.md): SoundFont 2 (`.sf2`) reader: the sample pool and, per preset, the key and velocity regions a note sounds, with tuning, loop points, pan, level and volume envelope resolved from the preset and instrument zones. Bounded on hostile input. From LoopCraft.
 - [`nodalia-silhouette-studio`](crates/silhouette-studio/src/lib.rs): bounded, fail-closed reader for Silhouette Studio `.studio` and `.studio3` documents: outlines, line colours and page size in millimetres. Protected designs are refused.
-- [`nodalia-stencil-format`](crates/stencil-format/README.md): the versioned `.stencilcraft` JSON wire schema and envelope: required members, version 1 defaults, optional fields, and header checks.
-- `nodalia-stencil-document`: StencilCraft's typed document model, geometry helpers, validation, and native `.stencilcraft` codec.
 - [`nodalia-sketch`](crates/sketch/README.md): clean-room reader for the `.sketch` container (Sketch 48 and newer): the ZIP archive, the version cut, `document.json`, the pages in document order and images, as the JSON the file holds. Bounded on hostile input. Carved from Trama.
 - [`nodalia-svg`](crates/svg/src/lib.rs): SVG. `sniff` recognises SVG and SVGZ data; `svgz` unpacks
   SVGZ within a byte limit, decodes UTF-8, UTF-16 and ISO 8859-1, and compresses; `guard` bounds
@@ -367,9 +293,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
 - [`nodalia-text`](crates/text/README.md): text processing below the composer. Its `hyphen` module finds
   hyphenation points, with a bundled US English dictionary and patterns and optional hypher patterns
   for 47 more languages (one cargo feature each).
-- [`nodalia-texture`](crates/texture/README.md): linear float image planes, gray or RGBA, with
-  nearest and bilinear sampling that repeats or clamps, resizing and display conversion. Sizes are
-  bounded by `Limits`. From MaterialCraft.
 - [`nodalia-ui`](crates/ui/README.md): SVG catalogs, icon buttons, tabs, pane controls, transactional docking, print settings and theme helpers for egui frontends;
   assets, themes, localization and command handling stay in each app. Requires Rust 1.95 or later.
 - [`nodalia-vcard`](crates/vcard/README.md): vCard contacts, from MailCraft: vCard 2.1, 3.0 and 4.0 read
@@ -398,15 +321,13 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   text-format crates read into and write from. Letra's model without its editing code.
 - [`nodalia-xlsx`](crates/xlsx/README.md): Excel workbooks (`.xlsx`, `.xlsm`, SpreadsheetML, transitional and strict) and binary workbooks (`.xlsb`) on `nodalia-opc`: the workbook part, shared strings, the styles tables and worksheet rows streamed one at a time, with limits on the package, the XML and the binary records.
 - [`nodalia-ora`](crates/ora/README.md): OpenRaster documents (`.ora`): the ZIP archive and the `stack.xml` layer tree as written, read with bounded sizes and written. From Lienzo.
-- [`nodalia-sniff`](crates/sniff/src/lib.rs): what a file is from its first bytes: one dependency-free, wasm-safe signature table naming the format, its media type, extension and family for images, audio, video, 3D models, archives, compressed streams, executables and databases. Identifies only; parsing stays with each format's reader.
-- [`nodalia-tar`](crates/tar/src/lib.rs): TAR (v7, ustar, GNU long names and base-256 sizes, local and global pax overrides) and cpio (newc, crc, odc) member walkers for hostile input, from Craft Anything: list each member, its kind, mode, link target and where its data lies, without extracting. Bounded by the input and a member cap; an optional `serde` feature serializes listings.
 - [`nodalia-y4m`](crates/y4m/src/lib.rs): YUV4MPEG2 (`.y4m`) reader, from Toma: the stream
   header, colour space layouts at 8 to 16 bits, a frame index built from the `FRAME` lines without
   loading the file, and plane access. Bounded on hostile input.
 - [`nodalia-kra`](crates/kra/README.md): Krita documents (`.kra`, `.krz`), read: the ZIP archive, the `maindoc.xml` node tree as written, and the tiled pixel files with their LZF compression, a tile at a time. From Lienzo.
 - [`nodalia-xcf`](crates/xcf/README.md): GIMP XCF images (`.xcf`, `.xcf.gz`), read: header, properties, parasites, layers with their item paths, channels, and tiled pixels (uncompressed, RLE, zlib) at every precision, under a caller's byte budget. From Lienzo.
 - [`nodalia-xml`](crates/xml/README.md): bounded XML for hostile input: an owned element tree with limits on size, depth, nodes and attributes, streaming of repeated elements, namespace handling (as written, by local name, or canonical prefixes by URI), escaping and a writer. No DTDs and no entity expansion.
-- [`nodalia-zip`](crates/zip/README.md): ZIP archives from untrusted files: an entry-count check before the archive is indexed (ZIP64 included), entry reads within per-entry and total budgets that count real bytes, duplicate-name detection, a strict structure preflight, and a deterministic stored/deflate writer. The shared ZIP layer for the package formats. With the `lenient` feature, also a reader of the raw bytes without the `zip` crate, from Craft Anything, for inspectors that must describe damaged archives rather than refuse them: the central-directory listing with ZIP64, prepended-stub and multi-volume checks, CP437 and Info-ZIP Unicode Path names, and entry reads (stored, DEFLATE, and bzip2, LZMA, XZ and Zstandard behind `lenient-*` features) checked against the declared size and CRC-32.
+- [`nodalia-zip`](crates/zip/README.md): ZIP archives from untrusted files: an entry-count check before the archive is indexed (ZIP64 included), entry reads within per-entry and total budgets that count real bytes, duplicate-name detection, a strict structure preflight, and a deterministic stored/deflate writer. The shared ZIP layer for the package formats.
 - [Shared UI component audit](docs/ui-components-audit.md): source inventory, extraction priorities
   and compatibility boundaries across the Craft suite.
 - [Theme infrastructure](docs/theme-infrastructure.md): eight-app comparison and the small shared

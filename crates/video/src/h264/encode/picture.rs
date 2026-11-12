@@ -1,25 +1,24 @@
 //! Padded picture planes, reference pictures and motion-compensated prediction (§8.4.2.2).
 
 use crate::h264::encode::mbinfo::{MbInfo, Mv};
-use crate::h264::encode::pixel::{Depth, Pixel};
 
 pub const LUMA_PAD: usize = 64;
 pub const CHROMA_PAD: usize = 32;
 
 /// A plane with `pad` replicated samples on every side.
 #[derive(Clone)]
-pub struct Plane<P> {
-    pub data: Vec<P>,
+pub struct Plane {
+    pub data: Vec<u8>,
     pub stride: usize,
     pub w: usize,
     pub h: usize,
     pub pad: usize,
 }
 
-impl<P: Pixel> Plane<P> {
+impl Plane {
     pub fn new(w: usize, h: usize, pad: usize) -> Self {
         let stride = w + 2 * pad;
-        Plane { data: vec![P::default(); stride * (h + 2 * pad)], stride, w, h, pad }
+        Plane { data: vec![0; stride * (h + 2 * pad)], stride, w, h, pad }
     }
     #[inline]
     pub fn idx(&self, x: isize, y: isize) -> usize {
@@ -42,24 +41,24 @@ impl<P: Pixel> Plane<P> {
             self.data.copy_within(last..last + stride, (pad + h + y) * stride);
         }
     }
-    /// Copy the picture area out as a tightly packed plane of `cw x ch` (cropping), as bytes ([`Pixel::extend_bytes`]).
+    /// Copy the picture area out as a tightly packed plane of `cw x ch` (cropping).
     pub fn copy_out(&self, cw: usize, ch: usize, out: &mut Vec<u8>) {
         for y in 0..ch {
             let o = self.idx(0, y as isize);
-            P::extend_bytes(&self.data[o..o + cw], out);
+            out.extend_from_slice(&self.data[o..o + cw]);
         }
     }
 }
 
 /// A 4:2:0 frame with padded planes.
 #[derive(Clone)]
-pub struct Frame<P> {
-    pub y: Plane<P>,
-    pub u: Plane<P>,
-    pub v: Plane<P>,
+pub struct Frame {
+    pub y: Plane,
+    pub u: Plane,
+    pub v: Plane,
 }
 
-impl<P: Pixel> Frame<P> {
+impl Frame {
     pub fn new(w: usize, h: usize) -> Self {
         Frame { y: Plane::new(w, h, LUMA_PAD), u: Plane::new(w / 2, h / 2, CHROMA_PAD), v: Plane::new(w / 2, h / 2, CHROMA_PAD) }
     }
@@ -71,28 +70,33 @@ impl<P: Pixel> Frame<P> {
 }
 
 /// A decoded reference picture with half-sample planes for fast sub-pel access.
-pub struct RefPic<P> {
-    pub frame: Frame<P>,
+pub struct RefPic {
+    pub frame: Frame,
     /// Horizontal half (b), vertical half (h) and centre (j) planes, same geometry as luma.
-    pub hpel: [Plane<P>; 3],
+    pub hpel: [Plane; 3],
     pub mbs: Vec<MbInfo>,
     pub poc: i32,
     pub id: u32,
 }
 
+#[inline]
+fn clip8(v: i32) -> u8 {
+    v.clamp(0, 255) as u8
+}
+
 /// Compute the H, V and centre half-sample planes over the whole padded area (clamped at the buffer edge,
 /// which equals the normative picture-edge clamping because the padding is replicated).
-pub fn build_hpel<P: Pixel>(f: &Plane<P>, d: Depth, reuse: Option<[Plane<P>; 3]>) -> [Plane<P>; 3] {
+pub fn build_hpel(f: &Plane, reuse: Option<[Plane; 3]>) -> [Plane; 3] {
     let [mut hp, mut vp, mut cp] = reuse.filter(|r| r[0].data.len() == f.data.len()).unwrap_or_else(|| {
-        let mk = || Plane { data: vec![P::default(); f.data.len()], stride: f.stride, w: f.w, h: f.h, pad: f.pad };
+        let mk = || Plane { data: vec![0; f.data.len()], stride: f.stride, w: f.w, h: f.h, pad: f.pad };
         [mk(), mk(), mk()]
     });
     let rows = f.data.len() / f.stride;
     let band = 16usize;
-    let work = |b: usize, hrows: &mut [P], vrows: &mut [P], crows: &mut [P], scratch: &mut HpelScratch<P>| {
+    let work = |b: usize, hrows: &mut [u8], vrows: &mut [u8], crows: &mut [u8], scratch: &mut HpelScratch| {
         let r0 = b * band;
         let r1 = (r0 + band).min(rows);
-        hpel_rows(f, d, r0, r1, hrows, vrows, crows, scratch);
+        hpel_rows(f, r0, r1, hrows, vrows, crows, scratch);
     };
     let chunk = band * f.stride;
     #[cfg(feature = "threads")]
@@ -116,26 +120,20 @@ pub fn build_hpel<P: Pixel>(f: &Plane<P>, d: Depth, reuse: Option<[Plane<P>; 3]>
 }
 
 /// Per-worker buffers for `hpel_rows`, reused across bands.
-struct HpelScratch<P: Pixel> {
-    hs: Vec<P::Tap>,
-    ext: Vec<P>,
+#[derive(Default)]
+struct HpelScratch {
+    hs: Vec<i16>,
+    ext: Vec<u8>,
 }
 
-impl<P: Pixel> Default for HpelScratch<P> {
-    fn default() -> Self {
-        HpelScratch { hs: Vec::new(), ext: Vec::new() }
-    }
-}
-
-#[allow(clippy::too_many_arguments)]
-fn hpel_rows<P: Pixel>(f: &Plane<P>, d: Depth, r0: usize, r1: usize, hout: &mut [P], vout: &mut [P], cout: &mut [P], scratch: &mut HpelScratch<P>) {
+fn hpel_rows(f: &Plane, r0: usize, r1: usize, hout: &mut [u8], vout: &mut [u8], cout: &mut [u8], scratch: &mut HpelScratch) {
     let stride = f.stride;
     let rows = f.data.len() / stride;
     let clampr = |r: isize| r.clamp(0, rows as isize - 1) as usize;
     // Horizontal intermediate (unclipped, unshifted) for rows r0-2 .. r1+3.
     let nrows = r1 - r0 + 5;
-    scratch.hs.resize(nrows * stride, P::Tap::default());
-    scratch.ext.resize(stride + 5, P::default());
+    scratch.hs.resize(nrows * stride, 0);
+    scratch.ext.resize(stride + 5, 0);
     let (hs, ext) = (&mut scratch.hs[..], &mut scratch.ext[..]);
     for k in 0..nrows {
         let r = clampr(r0 as isize - 2 + k as isize);
@@ -147,10 +145,9 @@ fn hpel_rows<P: Pixel>(f: &Plane<P>, d: Depth, r0: usize, r1: usize, hout: &mut 
         ext[stride + 3] = row[stride - 1];
         ext[stride + 4] = row[stride - 1];
         let o = &mut hs[k * stride..k * stride + stride];
-        for (o, e) in o.iter_mut().zip(ext.windows(6)) {
-            if let Some(e) = e.first_chunk::<6>() {
-                *o = P::tap6(e);
-            }
+        for x in 0..stride {
+            let e = &ext[x..x + 6];
+            o[x] = (e[0] as i16 + e[5] as i16) - 5 * (e[1] as i16 + e[4] as i16) + 20 * (e[2] as i16 + e[3] as i16);
         }
     }
     for r in r0..r1 {
@@ -158,21 +155,20 @@ fn hpel_rows<P: Pixel>(f: &Plane<P>, d: Depth, r0: usize, r1: usize, hout: &mut 
         let k = r - r0 + 2;
         let hrow = &hs[k * stride..k * stride + stride];
         for x in 0..stride {
-            hout[lo + x] = P::clip((P::untap(hrow[x]) + 16) >> 5, d);
+            hout[lo + x] = clip8((hrow[x] as i32 + 16) >> 5);
         }
         // vertical
         let rr: [usize; 6] = std::array::from_fn(|i| clampr(r as isize - 2 + i as isize) * stride);
         for x in 0..stride {
-            let px = |i: usize| f.data[rr[i] + x].get();
-            let s = px(0) + px(5) - 5 * (px(1) + px(4)) + 20 * (px(2) + px(3));
-            vout[lo + x] = P::clip((s + 16) >> 5, d);
+            let s = f.data[rr[0] + x] as i32 + f.data[rr[5] + x] as i32 - 5 * (f.data[rr[1] + x] as i32 + f.data[rr[4] + x] as i32)
+                + 20 * (f.data[rr[2] + x] as i32 + f.data[rr[3] + x] as i32);
+            vout[lo + x] = clip8((s + 16) >> 5);
         }
         // centre from horizontal intermediates
-        let hk: [&[P::Tap]; 6] = std::array::from_fn(|i| &hs[(k - 2 + i) * stride..(k - 1 + i) * stride]);
+        let hk: [&[i16]; 6] = std::array::from_fn(|i| &hs[(k - 2 + i) * stride..(k - 1 + i) * stride]);
         for x in 0..stride {
-            let t = |i: usize| P::untap(hk[i][x]);
-            let s = t(0) + t(5) - 5 * (t(1) + t(4)) + 20 * (t(2) + t(3));
-            cout[lo + x] = P::clip((s + 512) >> 10, d);
+            let s = hk[0][x] as i32 + hk[5][x] as i32 - 5 * (hk[1][x] as i32 + hk[4][x] as i32) + 20 * (hk[2][x] as i32 + hk[3][x] as i32);
+            cout[lo + x] = clip8((s + 512) >> 10);
         }
     }
 }
@@ -211,9 +207,9 @@ pub struct McBlock {
     pub h: usize,
 }
 
-impl<P: Pixel> RefPic<P> {
+impl RefPic {
     #[inline]
-    fn plane(&self, p: u8) -> &Plane<P> {
+    fn plane(&self, p: u8) -> &Plane {
         match p {
             0 => &self.frame.y,
             n => &self.hpel[n as usize - 1],
@@ -223,7 +219,7 @@ impl<P: Pixel> RefPic<P> {
     /// Luma prediction of a w x h block at (x, y) displaced by `mv`, as (samples, stride). Full- and half-sample
     /// positions are read straight from their plane; other positions are interpolated into `buf` (stride 16).
     #[inline]
-    pub fn luma_ref<'s>(&'s self, x: usize, y: usize, mv: Mv, w: usize, h: usize, buf: &'s mut [P]) -> (&'s [P], usize) {
+    pub fn luma_ref<'s>(&'s self, x: usize, y: usize, mv: Mv, w: usize, h: usize, buf: &'s mut [u8]) -> (&'s [u8], usize) {
         let [(pa, dxa, dya), (pb, dxb, dyb)] = QPEL_SRC[((mv.y & 3) * 4 + (mv.x & 3)) as usize];
         if pa == pb && dxa == dxb && dya == dyb {
             let a = self.plane(pa);
@@ -236,7 +232,7 @@ impl<P: Pixel> RefPic<P> {
     }
 
     /// Luma prediction of a w x h block at picture position (x, y) displaced by `mv` (quarter samples).
-    pub fn mc_luma(&self, blk: McBlock, mv: Mv, out: &mut [P], ostride: usize) {
+    pub fn mc_luma(&self, blk: McBlock, mv: Mv, out: &mut [u8], ostride: usize) {
         match blk.w {
             16 => self.mc_luma_w(McBlock { w: 16, ..blk }, mv, out, ostride),
             8 => self.mc_luma_w(McBlock { w: 8, ..blk }, mv, out, ostride),
@@ -245,7 +241,7 @@ impl<P: Pixel> RefPic<P> {
     }
 
     #[inline(always)]
-    fn mc_luma_w(&self, blk: McBlock, mv: Mv, out: &mut [P], ostride: usize) {
+    fn mc_luma_w(&self, blk: McBlock, mv: Mv, out: &mut [u8], ostride: usize) {
         let McBlock { x, y, w, h } = blk;
         let xi = x as isize + (mv.x as isize >> 2);
         let yi = y as isize + (mv.y as isize >> 2);
@@ -266,14 +262,14 @@ impl<P: Pixel> RefPic<P> {
                 let rb = &b.data[ib + r * stride..ib + r * stride + w];
                 let o = &mut out[r * ostride..r * ostride + w];
                 for i in 0..w {
-                    o[i] = ra[i].avg(rb[i]);
+                    o[i] = ((ra[i] as u16 + rb[i] as u16 + 1) >> 1) as u8;
                 }
             }
         }
     }
 
     /// Chroma prediction (both planes) of a w x h chroma block at chroma position (x, y); mv in luma quarter units.
-    pub fn mc_chroma(&self, blk: McBlock, mv: Mv, out: (&mut [P], &mut [P]), ostride: usize) {
+    pub fn mc_chroma(&self, blk: McBlock, mv: Mv, out: (&mut [u8], &mut [u8]), ostride: usize) {
         match blk.w {
             8 => self.mc_chroma_w(McBlock { w: 8, ..blk }, mv, out, ostride),
             4 => self.mc_chroma_w(McBlock { w: 4, ..blk }, mv, out, ostride),
@@ -282,13 +278,13 @@ impl<P: Pixel> RefPic<P> {
     }
 
     #[inline(always)]
-    fn mc_chroma_w(&self, blk: McBlock, mv: Mv, out: (&mut [P], &mut [P]), ostride: usize) {
+    fn mc_chroma_w(&self, blk: McBlock, mv: Mv, out: (&mut [u8], &mut [u8]), ostride: usize) {
         let McBlock { x, y, w, h } = blk;
         let (out_u, out_v) = out;
         let xi = x as isize + (mv.x as isize >> 3);
         let yi = y as isize + (mv.y as isize >> 3);
-        let fx = (mv.x & 7) as i32;
-        let fy = (mv.y & 7) as i32;
+        let fx = (mv.x & 7) as u32;
+        let fy = (mv.y & 7) as u32;
         let w00 = (8 - fx) * (8 - fy);
         let w01 = fx * (8 - fy);
         let w10 = (8 - fx) * fy;
@@ -301,7 +297,7 @@ impl<P: Pixel> RefPic<P> {
                 let b = &p.data[i0 + (r + 1) * s..i0 + (r + 1) * s + w + 1];
                 let o = &mut out[r * ostride..r * ostride + w];
                 for i in 0..w {
-                    o[i] = P::of((w00 * a[i].get() + w01 * a[i + 1].get() + w10 * b[i].get() + w11 * b[i + 1].get() + 32) >> 6);
+                    o[i] = ((w00 * a[i] as u32 + w01 * a[i + 1] as u32 + w10 * b[i] as u32 + w11 * b[i + 1] as u32 + 32) >> 6) as u8;
                 }
             }
         }
@@ -310,8 +306,8 @@ impl<P: Pixel> RefPic<P> {
 
 /// Average two predictions in place (default bi-prediction).
 #[inline]
-pub fn avg_into<P: Pixel>(dst: &mut [P], src: &[P]) {
+pub fn avg_into(dst: &mut [u8], src: &[u8]) {
     for (d, &s) in dst.iter_mut().zip(src) {
-        *d = d.avg(s);
+        *d = ((*d as u16 + s as u16 + 1) >> 1) as u8;
     }
 }

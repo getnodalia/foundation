@@ -167,22 +167,8 @@ struct Object {
     slots: HashMap<(String, Option<usize>, u32), usize>,
 }
 
-/// Options for callers that need strict parsing or original face-run order.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub struct ReadOptions {
-    /// Return an error when a vertex or face line cannot be read.
-    pub strict: bool,
-    /// Keep separate runs when groups, materials or smoothing change.
-    pub preserve_runs: bool,
-    /// Do not resolve or report material libraries; `usemtl` names remain available.
-    pub ignore_material_libraries: bool,
-    /// Treat each group declaration as an object boundary, retaining repeated names.
-    pub groups_as_objects: bool,
-}
-
 struct Reader<'a> {
     limits: &'a Limits,
-    options: ReadOptions,
     v: Vec<[f64; 3]>,
     colors: Vec<[f32; 4]>,
     vt: Vec<[f32; 2]>,
@@ -250,13 +236,6 @@ impl Reader<'_> {
 
     fn use_material(&mut self, name: &str) -> Result<()> {
         self.slot = None;
-        if name.trim().is_empty() {
-            // A bare `usemtl` selects no named material. In particular, do not create a
-            // material with an empty name: callers can map the missing material to their own
-            // default, and writers need not emit a meaningless empty material name.
-            self.material = None;
-            return Ok(());
-        }
         self.material = match self.material_ids.get(name) {
             Some(i) => Some(*i),
             None if self.scene.materials.len() >= self.limits.max_materials => {
@@ -328,7 +307,7 @@ impl Reader<'_> {
         let Some(object) = self.objects.last_mut() else { return Ok(None) };
         let slot = match self.slot {
             Some(s) => s,
-            None => match (!self.options.preserve_runs).then(|| object.slots.get(&(self.group.clone(), self.material, self.smoothing))).flatten() {
+            None => match object.slots.get(&(self.group.clone(), self.material, self.smoothing)) {
                 Some(s) => *s,
                 None => {
                     if self.parts >= self.limits.max_parts {
@@ -345,26 +324,15 @@ impl Reader<'_> {
         Ok(object.parts.get_mut(slot))
     }
 
-    fn face<'a>(&mut self, rest: impl Iterator<Item = &'a str>) -> Result<()> {
-        let mut corners = Vec::new();
-        let mut invalid = false;
-        for token in rest {
-            // Check before collecting tokens or corners: one line can hold millions of them.
-            if corners.len() >= self.limits.max_face_corners {
-                return Err(too_large(KIND, format!("a face of more than {} corners", self.limits.max_face_corners)));
-            }
-            match self.corner(token) {
-                Some(corner) => corners.push(corner),
-                None => {
-                    invalid = true;
-                    corners.push(Corner::at(0));
-                }
-            }
+    fn face(&mut self, rest: &[&str]) -> Result<()> {
+        if rest.len() > self.limits.max_face_corners {
+            return Err(too_large(KIND, format!("a face of more than {} corners", self.limits.max_face_corners)));
         }
-        if invalid || corners.len() < 3 {
+        let corners: Option<Vec<Corner>> = rest.iter().map(|t| self.corner(t)).collect();
+        let Some(corners) = corners.filter(|c| c.len() >= 3) else {
             self.bad_lines += 1;
             return Ok(());
-        }
+        };
         self.triangles = self.triangles.saturating_add(corners.len() - 2);
         if self.triangles > self.limits.max_triangles {
             return Err(too_large(KIND, format!("more than {} triangles", self.limits.max_triangles)));
@@ -386,7 +354,7 @@ impl Reader<'_> {
         let Some(key) = it.next() else { return Ok(()) };
         let after = line.get(key.len()..).unwrap_or("").trim();
         match key {
-            "v" => self.vertex(&it.take(6).collect::<Vec<_>>())?,
+            "v" => self.vertex(&it.collect::<Vec<_>>())?,
             "vt" => {
                 self.pool_room(self.vt.len(), "texture coordinates")?;
                 // `vt u` alone is a 1D coordinate; OBJ's v axis points up the image.
@@ -400,7 +368,6 @@ impl Reader<'_> {
                 self.vn.push(n.unwrap_or(NAN3));
                 self.bad_lines += usize::from(n.is_none());
             }
-            "s" if self.options.groups_as_objects => {}
             "s" => {
                 self.slot = None;
                 self.smoothing = match it.next() {
@@ -410,17 +377,13 @@ impl Reader<'_> {
                 };
             }
             "o" => self.start_object(after.to_string())?,
-            "g" if self.options.groups_as_objects => {
-                self.group.clear();
-                self.start_object(after.to_string())?;
-            }
             "g" => {
                 self.slot = None;
                 self.group = after.to_string();
             }
             "usemtl" => self.use_material(after)?,
-            "mtllib" if !self.options.ignore_material_libraries => self.library(after, resolve)?,
-            "f" => self.face(it)?,
+            "mtllib" => self.library(after, resolve)?,
+            "f" => self.face(&it.collect::<Vec<_>>())?,
             _ => {}
         }
         Ok(())
@@ -475,19 +438,9 @@ impl Reader<'_> {
 /// writes; every name asked, and every image a library names, is listed in
 /// [`Scene::external`].
 pub fn read(bytes: &[u8], limits: &Limits, resolve: Resolver) -> Result<Scene> {
-    read_with_options(bytes, limits, resolve, &ReadOptions::default())
-}
-
-/// Read an OBJ using the selected compatibility behavior.
-pub fn read_with_options(bytes: &[u8], limits: &Limits, resolve: Resolver, options: &ReadOptions) -> Result<Scene> {
-    // Lossy UTF-8 conversion can allocate, so bound it before copying invalid input.
-    if std::str::from_utf8(bytes).is_err() && bytes.len() > limits.max_data_bytes {
-        return Err(too_large(KIND, "invalid UTF-8 text exceeds the memory limit"));
-    }
     let text = String::from_utf8_lossy(bytes);
     let mut r = Reader {
         limits,
-        options: *options,
         v: vec![],
         colors: vec![],
         vt: vec![],
@@ -507,12 +460,8 @@ pub fn read_with_options(bytes: &[u8], limits: &Limits, resolve: Resolver, optio
     };
     // A line ending in `\` continues on the next.
     let mut joined = String::new();
-    for (i, raw) in text.lines().enumerate() {
-        let raw = if i == 0 { raw.trim_start_matches('\u{feff}') } else { raw };
+    for raw in text.lines() {
         let line = raw.split('#').next().unwrap_or("");
-        if line.len() > limits.max_data_bytes || joined.len().checked_add(line.len()).is_none_or(|n| n > limits.max_data_bytes) {
-            return Err(too_large(KIND, "a continued line exceeds the memory limit"));
-        }
         if let Some(head) = line.trim_end().strip_suffix('\\') {
             joined.push_str(head);
             joined.push(' ');
@@ -527,9 +476,6 @@ pub fn read_with_options(bytes: &[u8], limits: &Limits, resolve: Resolver, optio
         }
     }
     r.line(joined.trim(), resolve)?;
-    if options.strict && r.bad_lines > 0 {
-        return Err(malformed(KIND, "invalid vertex or face line"));
-    }
     r.finish()
 }
 
@@ -572,7 +518,6 @@ pub fn write(scene: &Scene, mtllib: Option<&str>, limits: &Limits) -> Result<Str
     // OBJ indices run on across objects.
     let (mut vbase, mut tbase, mut nbase) = (1u64, 1u64, 1u64);
     let mut smoothing = 0;
-    let mut current_material: Option<Option<usize>> = None;
     for (index, world) in scene.instances(limits)? {
         let Some(mesh) = scene.meshes.get(index) else { continue };
         mesh.validate()?;
@@ -601,17 +546,8 @@ pub fn write(scene: &Scene, mtllib: Option<&str>, limits: &Limits) -> Result<Str
             if !part.name.trim().is_empty() {
                 let _ = writeln!(text, "g {}", part.name.trim().replace(|c: char| c.is_control(), " "));
             }
-            if current_material != Some(part.material) {
-                match part.material.and_then(|m| materials.get(m)) {
-                    Some(m) => {
-                        let _ = writeln!(text, "usemtl {m}");
-                    }
-                    None if current_material.is_some() => {
-                        let _ = writeln!(text, "usemtl");
-                    }
-                    None => {}
-                }
-                current_material = Some(part.material);
+            if let Some(m) = part.material.and_then(|m| materials.get(m)) {
+                let _ = writeln!(text, "usemtl {m}");
             }
             if part.smoothing != smoothing {
                 smoothing = part.smoothing;

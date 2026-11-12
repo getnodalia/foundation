@@ -2,7 +2,7 @@
 
 #[cfg(feature = "dng")]
 use crate::unpack::inflate;
-use crate::unpack::{f16_to_f32, f24_to_f32, read_u16s, undo_diff_u16, undo_float_predictor, unpack_lsb, unpack_msb, unpack_words32_msb_with};
+use crate::unpack::{f16_to_f32, f24_to_f32, read_u16s, undo_diff_u16, undo_float_predictor, unpack_lsb, unpack_msb, unpack_words32_msb};
 use crate::{Limits, RawData, RawError, Result, ljpeg};
 use nodalia_tiff::image::{Chunk, ImageInfo, chunk_bytes};
 use nodalia_tiff::{ByteOrder, tags::compression as comp};
@@ -18,8 +18,8 @@ pub enum Packing {
     Lsb,
     /// Each sample stored in 16 bits in file byte order, regardless of `bits`.
     Word16,
-    /// MSB-first bit stream inside 32-bit words stored in file byte order ([`unpack_words32_msb`](crate::unpack::unpack_words32_msb));
-    /// rows start on a word boundary.
+    /// MSB-first bit stream inside 32-bit words stored in file byte order ([`unpack_words32_msb`]); rows start on a
+    /// word boundary.
     Words32Msb,
 }
 
@@ -37,19 +37,24 @@ pub(crate) fn check_image(data: &[u8], info: &ImageInfo, limits: &Limits) -> Res
     if total > limits.samples() || total == 0 {
         return Err(RawError::Limit("image too large"));
     }
+    let bits = info.bits() as u32;
+    let float = info.sample_format == 3;
+    if float && !matches!(bits, 16 | 24 | 32) {
+        return Err(RawError::Unsupported(format!("{bits}-bit floating point samples")));
+    }
+    if !float && !(1..=16).contains(&bits) {
+        return Err(RawError::Unsupported(format!("{bits}-bit integer samples")));
+    }
     let chunks = info.chunks(data.len() as u64);
     if chunks.is_empty() {
         return Err(RawError::Corrupt("no image data chunks".into()));
     }
-    // every visible sample needs a chunk: a short offsets table would leave zero-filled (black) regions.
-    // Count the table, not `chunks`: nodalia-tiff builds at most one descriptor per byte of file
-    // (storytold/craft-libs#827), so a grid of tiles sharing one payload lists fewer chunks than the
-    // table declares and would be refused here for a short file rather than for the data it holds.
+    // every visible sample needs a chunk: a short offsets table would leave zero-filled (black) regions
     let (across, down) = info.grid();
     let planes = if info.planar == 2 { cpp } else { 1 };
     let expected = (across as usize).saturating_mul(down as usize).saturating_mul(planes);
-    if info.offsets.len() < expected {
-        return Err(RawError::Corrupt(format!("{} image data chunks, expected {expected}", info.offsets.len())));
+    if chunks.len() < expected {
+        return Err(RawError::Corrupt(format!("{} image data chunks, expected {expected}", chunks.len())));
     }
     // Tile sizes don't depend on the image size, and every tile is decoded at its nominal size and held until the copy:
     // a grid of tiles no larger than the image covers less than twice its width and height, so more than four times
@@ -87,17 +92,6 @@ pub(crate) fn check_image(data: &[u8], info: &ImageInfo, limits: &Limits) -> Res
     if info.compression == comp::JPEG && referenced.saturating_mul(32) < total as u64 {
         return Err(RawError::Corrupt(format!("{referenced} bytes of lossless JPEG data cannot hold {total} samples")));
     }
-    // Validate that the source actually contains the declared image before reporting a format
-    // limitation. A truncated unsupported float DNG must not be mistaken for a valid raw and
-    // silently replaced by its embedded preview.
-    let bits = info.bits() as u32;
-    let float = info.sample_format == 3;
-    if float && !matches!(bits, 16 | 24 | 32) {
-        return Err(RawError::Unsupported(format!("{bits}-bit floating-point samples")));
-    }
-    if !float && !(1..=16).contains(&bits) {
-        return Err(RawError::Unsupported(format!("{bits}-bit integer samples")));
-    }
     Ok(total)
 }
 
@@ -115,7 +109,6 @@ pub(crate) fn read_image_in(
         crate::Mode::Full => read_image(data, info, order, packing, limits),
         crate::Mode::Header => {
             check_image(data, info, limits)?;
-            check_uncompressed_chunks(data, info, &info.chunks(data.len() as u64), packing)?;
             // a lossless-JPEG layout the decoder rejects (subsampled components, e.g. Sony's
             // lossless M/S sizes) must fail here too, as the full decode will; likewise a JPEG XL
             // chunk whose headers don't match the IFD
@@ -152,7 +145,6 @@ pub(crate) fn read_image(data: &[u8], info: &ImageInfo, order: ByteOrder, packin
     let bits = info.bits() as u32;
     let float = info.sample_format == 3;
     let chunks = info.chunks(data.len() as u64);
-    check_uncompressed_chunks(data, info, &chunks, packing)?;
     let planar = info.planar == 2 && cpp > 1;
     let ccpp = if planar { 1 } else { cpp };
     // The chunks are decoded and copied into the output in groups whose combined nominal size stays within
@@ -184,90 +176,44 @@ pub(crate) fn read_image(data: &[u8], info: &ImageInfo, order: ByteOrder, packin
             .par_iter()
             .map(|c| decode_chunk(data, info, c, order, packing, ccpp, bits, float, limits).map(|p| (*c, p)))
             .collect();
-        // a chunk that cannot be decoded is not a partial image: the file stays preview-only
-        let decoded = decoded.into_iter().collect::<Result<Vec<_>>>()?;
-        // The copy runs in parallel over bands of output rows: each band takes its rows of every chunk of the
-        // group that reaches it, in chunk order (so overlapping chunks resolve as a serial copy would).
-        let row_samples = w * cpp;
-        let threads = rayon::current_num_threads().max(1);
-        let band_rows = h.div_ceil(threads * 4).max(1);
-        if float {
-            out_f32.par_chunks_mut(band_rows * row_samples).enumerate().for_each(|(bi, band)| {
-                for (c, px) in &decoded {
-                    if let ChunkPx::F32(v) = px {
-                        place_chunk(band, bi * band_rows, c, v, w, h, cpp, planar);
+        for r in decoded {
+            // a chunk that cannot be decoded is not a partial image: the file stays preview-only
+            let (c, px) = r?;
+            let (cw, ch) = (c.width as usize, c.height as usize);
+            let (x0, y0) = (c.x as usize, c.y as usize);
+            if x0 >= w || y0 >= h {
+                continue;
+            }
+            let copy_w = cw.min(w - x0);
+            let copy_h = ch.min(h - y0);
+            for y in 0..copy_h {
+                for x in 0..copy_w {
+                    for s in 0..ccpp {
+                        let src = (y * cw + x) * ccpp + s;
+                        let dst_s = if planar { c.plane as usize } else { s };
+                        if dst_s >= cpp {
+                            continue;
+                        }
+                        let dst = ((y0 + y) * w + x0 + x) * cpp + dst_s;
+                        match &px {
+                            ChunkPx::U16(v) => {
+                                if let (Some(o), Some(&s)) = (out_u16.get_mut(dst), v.get(src)) {
+                                    *o = s;
+                                }
+                            }
+                            ChunkPx::F32(v) => {
+                                if let (Some(o), Some(&s)) = (out_f32.get_mut(dst), v.get(src)) {
+                                    *o = s;
+                                }
+                            }
+                        }
                     }
                 }
-            });
-        } else {
-            out_u16.par_chunks_mut(band_rows * row_samples).enumerate().for_each(|(bi, band)| {
-                for (c, px) in &decoded {
-                    if let ChunkPx::U16(v) = px {
-                        place_chunk(band, bi * band_rows, c, v, w, h, cpp, planar);
-                    }
-                }
-            });
+            }
         }
         decode_from = to;
     }
     Ok(if float { RawData::F32(out_f32) } else { RawData::U16(out_u16) })
-}
-
-/// Copy the rows of chunk `c` (samples `src`, `c.width` per row, `ccpp` samples per pixel) that fall into the output
-/// band `band`, which holds the image rows from `band_y0` on (`w` pixels of `cpp` samples each, `h` rows in the whole
-/// image). Pixels past the image edge and samples `src` does not hold are skipped; a planar chunk (`planar`) writes
-/// its one sample per pixel into the channel `c.plane`, a chunk of a plane the image does not have is skipped.
-#[allow(clippy::too_many_arguments)]
-fn place_chunk<T: Copy>(band: &mut [T], band_y0: usize, c: &Chunk, src: &[T], w: usize, h: usize, cpp: usize, planar: bool) {
-    let (cw, ch) = (c.width as usize, c.height as usize);
-    let (x0, y0) = (c.x as usize, c.y as usize);
-    if x0 >= w || y0 >= h || cpp == 0 {
-        return;
-    }
-    let plane = c.plane as usize;
-    if planar && plane >= cpp {
-        return;
-    }
-    let ccpp = if planar { 1 } else { cpp };
-    let copy_w = cw.min(w - x0);
-    let copy_h = ch.min(h - y0);
-    let band_rows = band.len() / (w * cpp);
-    let first = y0.max(band_y0);
-    let last = (y0 + copy_h).min(band_y0 + band_rows);
-    for y in first..last {
-        let s0 = (y - y0) * cw * ccpp;
-        let Some(avail) = src.get(s0..) else { break };
-        let d0 = ((y - band_y0) * w + x0) * cpp;
-        if planar {
-            let row = &mut band[d0..d0 + copy_w * cpp];
-            for (o, &v) in row[plane..].iter_mut().step_by(cpp).zip(&avail[..copy_w.min(avail.len())]) {
-                *o = v;
-            }
-        } else {
-            let n = (copy_w * cpp).min(avail.len());
-            band[d0..d0 + n].copy_from_slice(&avail[..n]);
-        }
-    }
-}
-
-/// Framing precedes allocation even in header-only probes: missing source rows may not
-/// be reported as a decodable image and later silently filled with zero samples.
-fn check_uncompressed_chunks(data: &[u8], info: &ImageInfo, chunks: &[Chunk], packing: Packing) -> Result<()> {
-    if info.compression != comp::NONE {
-        return Ok(());
-    }
-    let cpp = if info.planar == 2 { 1 } else { info.samples_per_pixel as usize };
-    for chunk in chunks {
-        let src = chunk_bytes(data, chunk).ok_or_else(|| RawError::Corrupt("uncompressed chunk is outside the file".into()))?;
-        let (cw, _, vw, vh) = chunk_dims(info, chunk);
-        let row = packed_row_bytes(cw as u64 * cpp as u64, info.bits() as u32, packing, info.sample_format == 3);
-        let last = packed_row_bytes(vw as u64 * cpp as u64, info.bits() as u32, packing, info.sample_format == 3);
-        let need = row.saturating_mul(vh.saturating_sub(1) as u64).saturating_add(last);
-        if (src.len() as u64) < need {
-            return Err(RawError::Corrupt(format!("an uncompressed chunk has {} bytes, expected at least {need}", src.len())));
-        }
-    }
-    Ok(())
 }
 
 /// Bytes that `n` samples take in a row of an uncompressed or inflated chunk, laid out as
@@ -290,29 +236,6 @@ fn chunk_samples(c: &Chunk, ccpp: usize) -> usize {
     (c.width as usize).saturating_mul(c.height as usize).saturating_mul(ccpp)
 }
 
-/// Consecutive index ranges of `chunks` whose combined nominal samples (`ccpp` per pixel) stay within the group size
-/// [`read_image`] uses for an image of `total` samples (at least one chunk per range). A decoder that holds its
-/// decoded tiles until it copies them decodes one range at a time, so it holds a group's frames beside the output,
-/// not the whole grid's (storytold/lightcraft#1517, storytold/lightcraft#2554).
-#[cfg(feature = "arw")]
-pub(crate) fn decode_groups(chunks: &[Chunk], ccpp: usize, total: usize) -> Vec<std::ops::Range<usize>> {
-    let budget = (total / 4).max(1 << 20);
-    let mut groups = Vec::new();
-    let (mut from, mut taken) = (0usize, 0usize);
-    for (i, c) in chunks.iter().enumerate() {
-        let n = chunk_samples(c, ccpp);
-        if i > from && taken.saturating_add(n) > budget {
-            groups.push(from..i);
-            (from, taken) = (i, 0);
-        }
-        taken = taken.saturating_add(n);
-    }
-    if from < chunks.len() {
-        groups.push(from..chunks.len());
-    }
-    groups
-}
-
 #[allow(clippy::too_many_arguments)]
 fn decode_chunk(
     data: &[u8],
@@ -333,12 +256,10 @@ fn decode_chunk(
     }
     match info.compression {
         comp::NONE => {
-            // Require every visible sample. Nominal edge-tile padding may be absent, but
-            // missing image rows must not turn a truncated file into a zero-filled success.
-            let row_bytes = packed_row_bytes(cw as u64 * cpp as u64, bits, packing, float);
-            let last_row = packed_row_bytes(vw as u64 * cpp as u64, bits, packing, float);
-            let need = row_bytes.saturating_mul(vh.saturating_sub(1) as u64).saturating_add(last_row);
-            if (src.len() as u64) < need {
+            // uncompressed: missing rows are filled with zeros, but a chunk holding a small fraction of what its
+            // samples need is no picture: refused before the nominal chunk is allocated (storytold/lightcraft#1512)
+            let need = (n as u64).saturating_mul(u64::from(bits)) / 8;
+            if (src.len() as u64).saturating_mul(64) < need {
                 return Err(RawError::Corrupt(format!("an uncompressed chunk of {n} samples has only {} bytes", src.len())));
             }
             unpack_chunk(src, order, packing, cw, ch, cpp, bits, float, 1)
@@ -364,7 +285,13 @@ fn decode_chunk(
             let mcu = |v: usize| v.div_ceil(32).saturating_mul(32);
             let tile_budget =
                 mcu(cw).saturating_mul(mcu(ch)).saturating_mul(if cpp == 1 { 1 } else { 3 }).clamp(1, limits.max_lossy_tile_samples.max(1));
-            let (px, jw, jh, jc) = lossy_jpeg_with_tile(src, cpp, tile_budget, Some((cw, ch, vw, vh)))?;
+            let (px, jw, jh, jc) = lossy_jpeg(src, cpp, tile_budget)?;
+            // An edge tile's JPEG may be smaller than the nominal tile, but it has to cover the part of the tile
+            // inside the image: one that doesn't would leave a black region in a picture reported as decoded
+            // (Lienzo's and Toma's readers refuse a JPEG smaller than its tile; this keeps the edge case).
+            if jw < vw || jh < vh {
+                return Err(RawError::Corrupt(format!("a lossy JPEG of {jw} × {jh} does not cover the {vw} × {vh} of its tile inside the image")));
+            }
             // the buffer holds the rows the decoded JPEG covers (the caller zero-fills the tile's
             // remainder and reads only rows it fills): a tile-many-larger decoded JPEG does not
             // get the nominal tile's full buffer (storytold/lightcraft#1517)
@@ -452,34 +379,9 @@ const MAX_PADDING_FACTOR: usize = 32;
 #[cfg(feature = "dng")]
 const MAX_WRITER_TILE_SAMPLES: usize = 2048 * 2048;
 
-#[cfg(all(test, feature = "dng"))]
+#[cfg(feature = "dng")]
 /// Decode one baseline JPEG chunk to 8-bit samples: (samples, width, height, channels).
 pub(crate) fn lossy_jpeg(src: &[u8], cpp: usize, max_samples: usize) -> Result<(Vec<u8>, usize, usize, usize)> {
-    lossy_jpeg_with_tile(src, cpp, max_samples, None)
-}
-
-/// The width and height a baseline (lossy) JPEG declares in its frame header, read without
-/// decoding any scan; `None` when the header cannot be read.
-#[cfg(feature = "line-dng")]
-pub(crate) fn lossy_jpeg_dimensions(src: &[u8]) -> Option<(usize, usize)> {
-    use zune_core::bytestream::ZCursor;
-    use zune_core::options::DecoderOptions;
-    let opts = DecoderOptions::default().set_max_width(1 << 16).set_max_height(1 << 16).set_strict_mode(false);
-    let mut d = zune_jpeg::JpegDecoder::new_with_options(ZCursor::new(src), opts);
-    d.decode_headers().ok()?;
-    let info = d.info()?;
-    Some((usize::from(info.width), usize::from(info.height)))
-}
-
-/// Validate the actual frame before decode allocates its output. Edge tiles may store
-/// a smaller frame covering all visible samples or bounded whole-MCU padding.
-#[cfg(feature = "dng")]
-pub(crate) fn lossy_jpeg_with_tile(
-    src: &[u8],
-    cpp: usize,
-    max_samples: usize,
-    tile: Option<(usize, usize, usize, usize)>,
-) -> Result<(Vec<u8>, usize, usize, usize)> {
     use zune_core::bytestream::ZCursor;
     use zune_core::colorspace::ColorSpace;
     use zune_core::options::DecoderOptions;
@@ -491,27 +393,7 @@ pub(crate) fn lossy_jpeg_with_tile(
     d.decode_headers().map_err(|e| RawError::Corrupt(format!("lossy JPEG tile: {e}")))?;
     let info = d.info().ok_or_else(|| RawError::Corrupt("lossy JPEG tile without a header".into()))?;
     let (w, h) = (info.width as usize, info.height as usize);
-    if !matches!(cpp, 1 | 3) {
-        return Err(RawError::Unsupported(format!("lossy JPEG with {cpp} samples per pixel")));
-    }
-    if usize::from(info.components) != cpp {
-        return Err(RawError::Corrupt(format!("lossy JPEG has {} components, expected {cpp}", info.components)));
-    }
-    if let Some((cw, ch, vw, vh)) = tile {
-        if w < vw || h < vh {
-            return Err(RawError::Corrupt(format!("a lossy JPEG of {w} x {h} does not cover the {vw} x {vh} of its tile inside the image")));
-        }
-        // Writers can store a whole MCU around an edge tile. Keep the documented
-        // 32-pixel padding allowance without letting one tiny tile decode an arbitrary frame.
-        let mcu_extent = |value: usize| value.checked_add(31).map(|rounded| rounded / 32).and_then(|blocks| blocks.checked_mul(32));
-        let (Some(max_w), Some(max_h)) = (mcu_extent(cw), mcu_extent(ch)) else {
-            return Err(RawError::Corrupt("lossy JPEG tile dimensions overflow MCU padding".into()));
-        };
-        if w > max_w || h > max_h {
-            return Err(RawError::Corrupt(format!("a lossy JPEG of {w} x {h} exceeds its {max_w} x {max_h} MCU-padded tile dimensions")));
-        }
-    }
-    let c = cpp;
+    let c = if cpp == 1 { 1 } else { 3 };
     let out = w as u64 * h as u64 * c as u64;
     if w == 0 || h == 0 || out > max_samples as u64 {
         return Err(RawError::Corrupt(format!("a lossy JPEG of {w} × {h} × {c} would exceed the {max_samples} output samples allowed")));
@@ -551,14 +433,13 @@ fn unpack_chunk(
         let row_bytes = row_n * bp;
         let mut out = vec![0f32; row_n * ch];
         let mut rowbuf = vec![0u8; row_bytes];
-        let mut scratch = Vec::new();
         for y in 0..ch {
             let s = src.get(y * row_bytes..).unwrap_or(&[]);
             let len = s.len().min(row_bytes);
             rowbuf[..len].copy_from_slice(&s[..len]);
             rowbuf[len..].fill(0);
             let big = if fp {
-                undo_float_predictor(&mut rowbuf, row_n, bp, cpp * factor, &mut scratch);
+                undo_float_predictor(&mut rowbuf, row_n, bp, cpp * factor);
                 true
             } else {
                 if factor > 0 {
@@ -566,15 +447,16 @@ fn unpack_chunk(
                 }
                 order == ByteOrder::Big
             };
-            let dst = &mut out[y * row_n..(y + 1) * row_n];
-            let samples = rowbuf.chunks_exact(bp);
-            match (bp, big) {
-                (2, true) => dst.iter_mut().zip(samples).for_each(|(o, b)| *o = f16_to_f32(u16::from_be_bytes([b[0], b[1]]))),
-                (2, false) => dst.iter_mut().zip(samples).for_each(|(o, b)| *o = f16_to_f32(u16::from_le_bytes([b[0], b[1]]))),
-                (3, true) => dst.iter_mut().zip(samples).for_each(|(o, b)| *o = f24_to_f32(u32::from_be_bytes([0, b[0], b[1], b[2]]))),
-                (3, false) => dst.iter_mut().zip(samples).for_each(|(o, b)| *o = f24_to_f32(u32::from_le_bytes([b[0], b[1], b[2], 0]))),
-                (4, true) => dst.iter_mut().zip(samples).for_each(|(o, b)| *o = f32::from_be_bytes([b[0], b[1], b[2], b[3]])),
-                _ => dst.iter_mut().zip(samples).for_each(|(o, b)| *o = f32::from_le_bytes([b[0], b[1], b[2], b[3]])),
+            for (i, o) in out[y * row_n..(y + 1) * row_n].iter_mut().enumerate() {
+                let b = &rowbuf[i * bp..(i + 1) * bp];
+                *o = match (bp, big) {
+                    (2, true) => f16_to_f32(u16::from_be_bytes([b[0], b[1]])),
+                    (2, false) => f16_to_f32(u16::from_le_bytes([b[0], b[1]])),
+                    (3, true) => f24_to_f32(u32::from_be_bytes([0, b[0], b[1], b[2]])),
+                    (3, false) => f24_to_f32(u32::from_le_bytes([b[0], b[1], b[2], 0])),
+                    (4, true) => f32::from_be_bytes([b[0], b[1], b[2], b[3]]),
+                    _ => f32::from_le_bytes([b[0], b[1], b[2], b[3]]),
+                };
             }
         }
         return Ok(ChunkPx::F32(out));
@@ -583,7 +465,6 @@ fn unpack_chunk(
         return Err(RawError::Unsupported("floating-point predictor on integer data".into()));
     }
     let mut out = vec![0u16; row_n * ch];
-    let mut words = Vec::new();
     let (row_bytes, kind) = match (bits, packing) {
         (8, _) => (row_n, 0),
         (16, _) | (_, Packing::Word16) => (row_n * 2, 1),
@@ -599,7 +480,7 @@ fn unpack_chunk(
             0 => row.iter_mut().zip(s).for_each(|(o, &b)| *o = b as u16),
             1 => read_u16s(s, order, row),
             2 => unpack_msb(s, bits, row),
-            4 => unpack_words32_msb_with(s, order, bits, row, &mut words),
+            4 => unpack_words32_msb(s, order, bits, row),
             _ => unpack_lsb(s, bits, row),
         }
         if factor > 0 {
@@ -609,96 +490,10 @@ fn unpack_chunk(
                 }
             } else {
                 undo_diff_u16(row, cpp * factor);
-                // Horizontal differences wrap in the declared sample precision, not in
-                // the u16 container used by the unpacker (TIFF 6.0 Predictor 2).
-                if bits < 16 {
-                    let mask = ((1u32 << bits) - 1) as u16;
-                    row.iter_mut().for_each(|sample| *sample &= mask);
-                }
             }
         }
     }
     Ok(ChunkPx::U16(out))
-}
-
-#[cfg(test)]
-mod place_tests {
-    use super::*;
-
-    /// The serial per-sample copy `place_chunk` replaced: the oracle.
-    #[allow(clippy::too_many_arguments)]
-    fn reference(out: &mut [u16], c: &Chunk, v: &[u16], w: usize, h: usize, cpp: usize, planar: bool) {
-        let ccpp = if planar { 1 } else { cpp };
-        let (cw, ch) = (c.width as usize, c.height as usize);
-        let (x0, y0) = (c.x as usize, c.y as usize);
-        if x0 >= w || y0 >= h {
-            return;
-        }
-        for y in 0..ch.min(h - y0) {
-            for x in 0..cw.min(w - x0) {
-                for s in 0..ccpp {
-                    let src = (y * cw + x) * ccpp + s;
-                    let dst_s = if planar { c.plane as usize } else { s };
-                    if dst_s >= cpp {
-                        continue;
-                    }
-                    let dst = ((y0 + y) * w + x0 + x) * cpp + dst_s;
-                    if let (Some(o), Some(&s)) = (out.get_mut(dst), v.get(src)) {
-                        *o = s;
-                    }
-                }
-            }
-        }
-    }
-
-    fn chunk(x: u32, y: u32, width: u32, height: u32, plane: u16) -> Chunk {
-        Chunk { index: 0, x, y, width, height, plane, offset: 0, len: 0 }
-    }
-
-    /// Chunks that overlap (the later one wins), run past the image edge, hold fewer samples than their size, or name a
-    /// plane the image does not have, placed through bands of several heights, equal the serial copy.
-    #[test]
-    fn place_chunk_matches_the_serial_copy_for_odd_chunks() {
-        let (w, h) = (11, 9);
-        for cpp in [1usize, 3] {
-            for planar in [false, true] {
-                let ccpp = if planar { 1 } else { cpp };
-                let specs = [
-                    (0, 0, 8, 6, 0, 1u16),
-                    (4, 3, 8, 8, 0, 2), // overlaps the first and runs past both edges
-                    (4, 3, 8, 8, 0, 3), // the same place again, later wins
-                    (0, 5, 5, 4, 1, 4),
-                    (2, 2, 6, 6, 2, 5),
-                    (0, 0, 4, 4, 3, 6),  // plane 3: not an image plane for cpp <= 3
-                    (9, 0, 6, 12, 0, 7), // only two columns inside
-                    (20, 0, 4, 4, 0, 8), // right of the image
-                    (0, 0, 11, 9, 0, 9), // whole image, short source below
-                ];
-                let chunks: Vec<(Chunk, Vec<u16>)> = specs
-                    .iter()
-                    .map(|&(x, y, cw, ch, plane, val)| {
-                        let n = (cw * ch) as usize * ccpp;
-                        // the last chunk holds only 40 samples
-                        let n = if val == 9 { 40 } else { n };
-                        (chunk(x, y, cw, ch, plane), (0..n).map(|i| val * 100 + i as u16).collect())
-                    })
-                    .collect();
-                let mut want = vec![0u16; w * h * cpp];
-                for (c, v) in &chunks {
-                    reference(&mut want, c, v, w, h, cpp, planar);
-                }
-                for band_rows in [1usize, 2, 4, 9, 20] {
-                    let mut got = vec![0u16; w * h * cpp];
-                    for (bi, band) in got.chunks_mut(band_rows * w * cpp).enumerate() {
-                        for (c, v) in &chunks {
-                            place_chunk(band, bi * band_rows, c, v, w, h, cpp, planar);
-                        }
-                    }
-                    assert_eq!(got, want, "cpp {cpp} planar {planar} band rows {band_rows}");
-                }
-            }
-        }
-    }
 }
 
 #[cfg(test)]
@@ -730,11 +525,6 @@ mod lossy_tests {
             byte_counts: vec![256; 65_536],
         };
         let err = check_image(&file, &info, &Limits::default()).unwrap_err().to_string();
-        assert!(err.contains("cannot hold"), "{err}");
-        // A file shorter than its tile count must reach the same refusal: the table, not the byte-capped
-        // chunk list, says how many chunks the image declares (storytold/lightcraft#4165).
-        let short = vec![0u8; 8 + 256];
-        let err = check_image(&short, &info, &Limits::default()).unwrap_err().to_string();
         assert!(err.contains("cannot hold"), "{err}");
     }
 
@@ -1137,27 +927,4 @@ mod budget_tests {
             assert!(matches!(&err, RawError::Corrupt(m) if m.contains("8000 bytes of image data")), "{err:?}");
         }
     }
-
-    /// storytold/lightcraft#2554: tiled decoders decode the grid in groups of at most a quarter of the image (1 Mi samples at
-    /// least), each group at least one chunk, covering every chunk once and in order.
-    #[cfg(feature = "arw")]
-    #[test]
-    fn decode_groups_split_the_grid() {
-        let info = aliased(4096, 4096, 512, 64);
-        let chunks = info.chunks(64);
-        assert_eq!(chunks.len(), 64);
-        let groups = decode_groups(&chunks, 1, 4096 * 4096);
-        // a quarter of 16 Mi samples is 4 Mi: 16 tiles of 256 Ki samples per group
-        assert_eq!(groups.len(), 4);
-        assert!(groups.iter().all(|g| g.len() == 16));
-        assert_eq!(groups.first().map(|g| g.start), Some(0));
-        assert!(groups.windows(2).all(|p| p[0].end == p[1].start));
-        assert_eq!(groups.last().map(|g| g.end), Some(64));
-        // a tile larger than the budget is still a group of its own
-        let big = aliased(8192, 8192, 8192, 64);
-        assert_eq!(decode_groups(&big.chunks(64), 1, 1 << 20), vec![0..1]);
-    }
 }
-
-#[cfg(all(test, feature = "dng"))]
-mod compat_review_tests;

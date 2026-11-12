@@ -11,35 +11,9 @@ pub struct FontSet {
     pub latin: String,
     pub ea: String,
     pub cs: String,
-    /// The `panose`, `pitchFamily` and `charset` the file gives the Latin, East Asian and complex
-    /// script typefaces; `None` = the attribute is absent.
-    #[serde(skip_serializing_if = "TypefaceAttrs::is_empty")]
-    pub latin_attrs: TypefaceAttrs,
-    #[serde(skip_serializing_if = "TypefaceAttrs::is_empty")]
-    pub ea_attrs: TypefaceAttrs,
-    #[serde(skip_serializing_if = "TypefaceAttrs::is_empty")]
-    pub cs_attrs: TypefaceAttrs,
     /// Per-script typefaces (`a:font script="Arab" typeface="…"`), in document order.
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub scripts: Vec<ScriptFont>,
-}
-
-/// The font-matching attributes of a theme typeface (`a:latin`, `a:ea`, `a:cs`).
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(default, rename_all = "camelCase")]
-pub struct TypefaceAttrs {
-    /// The typeface name these attributes belong to; the writer drops them once the typeface changed.
-    pub typeface: String,
-    /// Ten hex byte pairs, as written.
-    pub panose: Option<String>,
-    pub pitch_family: Option<String>,
-    pub charset: Option<String>,
-}
-
-impl TypefaceAttrs {
-    pub fn is_empty(&self) -> bool {
-        self.panose.is_none() && self.pitch_family.is_none() && self.charset.is_none()
-    }
 }
 
 /// A theme font for one script (ISO 15924 tag, e.g. `Arab`).
@@ -79,17 +53,6 @@ pub struct FormatScheme {
     pub bg_fills: Vec<Fill>,
 }
 
-/// A colour slot written as a system colour (`<a:dk1><a:sysClr val="windowText" lastClr="000000"/>`).
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct SysColor {
-    pub slot: SchemeSlot,
-    /// The `val` (`windowText`, `window`…).
-    pub name: String,
-    /// The `lastClr`.
-    pub last: Rgba,
-}
-
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Theme {
@@ -97,14 +60,7 @@ pub struct Theme {
     pub colors: ColorScheme,
     pub fonts: FontScheme,
     pub format: FormatScheme,
-    /// The colour slots the file wrote as `a:sysClr` (`dk1` `windowText`, `lt1` `window`), in
-    /// document order. The writer keeps a slot as `a:sysClr` while its colour still equals
-    /// `last`; a slot whose colour was changed is written as `a:srgbClr`.
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub sys_colors: Vec<SysColor>,
-    /// Raw theme XML extras kept for round-trip, in document order: object defaults, extra
-    /// colour lists, custom colours (`a:custClrLst`) and the extension list (`a:extLst`, which
-    /// holds the theme family id).
+    /// Raw theme XML extras kept for round-trip (object defaults, extra colour lists).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub raw_extra: Option<String>,
 }
@@ -117,10 +73,9 @@ impl Default for Theme {
         let colors = ["000000", "FFFFFF", "1E2B3C", "EDEBE7", "2E6FD8", "F26B1D", "2EA36F", "8A5CD8", "D83F6B", "E3B21C", "2E6FD8", "7A5BA6"];
         Theme {
             name: "Theme".into(),
-            colors: ColorScheme::new("Default", colors.map(hex)),
+            colors: ColorScheme { name: "Default".into(), colors: colors.map(hex) },
             fonts: FontScheme::default(),
             format: default_format(),
-            sys_colors: Vec::new(),
             raw_extra: None,
         }
     }
@@ -154,8 +109,8 @@ pub fn default_format() -> FormatScheme {
                 GradientStop { pos: 0.0, color: ph().with(ColorTransform::LumMod(a)).with(ColorTransform::SatMod(103000)) },
                 GradientStop { pos: 1.0, color: ph().with(ColorTransform::LumMod(b)) },
             ],
-            shape: Some(GradientShape::Linear { angle: 90.0, scaled: false }),
-            rotate_with_shape: Some(true),
+            shape: GradientShape::Linear { angle: 90.0, scaled: false },
+            rotate_with_shape: true,
             flip: None,
         })
     };
@@ -226,13 +181,6 @@ mod tests {
         assert_eq!(partial.name, "X");
     }
 }
-
-/// The `a:ext` of a colour scheme that holds its extra named colours and explicit tint rows
-/// ([`ColorScheme::extra`], [`ColorScheme::tints`], [`ColorScheme::computed_tints`]). The URI and
-/// namespace are those of the files already written with it.
-pub const EXT_EXTRA_COLORS: &str = "{D3C7C0DE-0C0A-4E57-9A1E-5C0E0C0DEC01}";
-/// The namespace of the elements inside [`EXT_EXTRA_COLORS`].
-pub const NS_EXTRA_COLORS: &str = "urn:deckcraft:theme:extra-colors:1";
 
 mod read;
 mod write;

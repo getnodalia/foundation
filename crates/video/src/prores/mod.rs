@@ -18,9 +18,7 @@ mod encode;
 pub mod header;
 mod tables;
 
-pub use decode::{
-    DecodeLimits, DecodeOptions, decode_frame, decode_frame_into, decode_frame_into_with_limits, decode_frame_with, decode_frame_with_limits, probe,
-};
+pub use decode::{DecodeOptions, decode_frame, decode_frame_into, decode_frame_with, probe};
 pub use encode::{Encoder, EncoderConfig};
 pub use header::{FrameHeader, PictureHeader};
 

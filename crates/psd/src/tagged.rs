@@ -28,11 +28,7 @@ pub fn uses_long_length(version: Version, key: &[u8; 4]) -> bool {
 }
 
 /// A tagged block, stored raw.
-///
-/// A file parsed by [`PsdFile::from_source_deferring`](crate::PsdFile::from_source_deferring) may
-/// leave a large block's data in the source (`stored`, with `data` empty); equality compares the
-/// bytes wherever they are.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct TaggedBlock {
     /// `8BIM` or `8B64`.
@@ -46,35 +42,7 @@ pub struct TaggedBlock {
     /// layer blocks. Parsing yields `None` whenever
     /// the stored padding equals the default, so the model stays canonical.
     pub padding: Option<Vec<u8>>,
-    /// Where the data is when it was left in the source. (Not serialized: load it first.)
-    #[cfg_attr(feature = "serde", serde(skip))]
-    pub stored: Option<crate::source::Stored>,
 }
-
-impl PartialEq for TaggedBlock {
-    fn eq(&self, other: &Self) -> bool {
-        if self.signature != other.signature
-            || self.key != other.key
-            || self.padding != other.padding
-            || self.encoded_data_len() != other.encoded_data_len()
-        {
-            return false;
-        }
-        // The same bytes of the same source (a clone): equal without reading them, even when
-        // the source can no longer be read.
-        if let (Some(a), Some(b)) = (&self.stored, &other.stored)
-            && a.same_range(b)
-        {
-            return true;
-        }
-        match (self.encoded(), other.encoded()) {
-            (Ok(a), Ok(b)) => a == b,
-            _ => false,
-        }
-    }
-}
-
-impl Eq for TaggedBlock {}
 
 /// Layer section divider type (`lsct`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -170,7 +138,7 @@ pub enum BlockData<'a> {
 impl TaggedBlock {
     /// A new `8BIM` block with default padding.
     pub fn new(key: [u8; 4], data: Vec<u8>) -> Self {
-        TaggedBlock { signature: *b"8BIM", key, data, padding: None, stored: None }
+        TaggedBlock { signature: *b"8BIM", key, data, padding: None }
     }
 
     /// `true` for `MIB8` / `46B8`: the signatures [`crate::tiff`] gives a block whose data was
@@ -207,11 +175,6 @@ impl TaggedBlock {
     /// Typed view for known keys. `None` for keys without a typed parser,
     /// `Some(Err)` if a known key's data is malformed.
     pub fn parsed(&self) -> Option<Result<BlockData<'_>>> {
-        // Its views borrow `data`: a block still in the source must be loaded first, not read
-        // as empty.
-        if self.stored.is_some() {
-            return Some(Err(PsdError::invalid(format!("{}: block data is still in the source; load it first", self.key_str()))));
-        }
         let d = &self.data[..];
         let mut r = Reader::new(d);
         Some(match &self.key {
@@ -319,9 +282,7 @@ impl TaggedBlock {
     /// ("Additional Layer Information": Placed Layer, Placed Layer Data,
     /// Linked Layer, Object Based Effects Layer Info).
     pub fn check_structure(&self) -> Result<()> {
-        // A block left in the source (an embedded smart-object file) is checked from there.
-        let data = self.encoded()?;
-        let d = &data[..];
+        let d = &self.data[..];
         let mut r = Reader::new(d);
         match &self.key {
             b"PlLd" => {
@@ -358,7 +319,7 @@ impl TaggedBlock {
                     r.skip(pad as usize)?;
                 }
             }
-            b"FEid" | b"FXid" | b"FELS" => {
+            b"FEid" | b"FXid" => {
                 crate::filter_effects::FilterEffects::parse(d).map_err(|e| PsdError::invalid(format!("{}: {e}", self.key_str())))?;
                 return Ok(());
             }
@@ -372,26 +333,7 @@ impl TaggedBlock {
     }
 
     pub(crate) fn write(&self, out: &mut Vec<u8>, version: Version, alignment: usize) -> Result<()> {
-        Self::write_parts(out, self.signature, self.key, &self.encoded()?, self.padding.as_deref(), version, alignment)
-    }
-
-    /// The data: borrowed from `data`, or read from the source when it was left there.
-    pub fn encoded(&self) -> Result<std::borrow::Cow<'_, [u8]>> {
-        crate::source::encoded(&self.data, self.stored.as_ref())
-    }
-
-    /// Length of the data, wherever it is.
-    pub fn encoded_data_len(&self) -> u64 {
-        self.stored.as_ref().map_or(self.data.len() as u64, |s| s.len)
-    }
-
-    /// Reads data left in the source into `data`.
-    pub fn load(&mut self) -> Result<()> {
-        if let Some(s) = &self.stored {
-            self.data = s.read()?;
-            self.stored = None;
-        }
-        Ok(())
+        Self::write_parts(out, self.signature, self.key, &self.data, self.padding.as_deref(), version, alignment)
     }
 
     /// Writes a block from its parts (no owned [`TaggedBlock`] needed). `padding: None` writes
@@ -418,16 +360,14 @@ impl TaggedBlock {
 
     /// Serialized size in bytes as a layer block (two-byte alignment).
     pub fn encoded_len(&self, version: Version) -> usize {
-        usize::try_from(self.encoded_len_aligned(version, 2)).unwrap_or(usize::MAX)
+        self.encoded_len_aligned(version, 2)
     }
 
-    /// Serialized size in bytes as [`Self::write`] writes it with `alignment`. In `u64`: a
-    /// deferred PSB block can be longer than a 32-bit `usize`.
-    pub(crate) fn encoded_len_aligned(&self, version: Version, alignment: usize) -> u64 {
-        let l: u64 = if uses_long_length(version, &self.key) { 8 } else { 4 };
-        let n = self.encoded_data_len();
-        let p = self.padding.as_ref().map_or(Self::default_padding((n % alignment as u64) as usize, alignment), Vec::len);
-        (8 + l + p as u64).saturating_add(n)
+    /// Serialized size in bytes as [`Self::write`] writes it with `alignment`.
+    pub(crate) fn encoded_len_aligned(&self, version: Version, alignment: usize) -> usize {
+        let l = if uses_long_length(version, &self.key) { 8 } else { 4 };
+        let p = self.padding.as_ref().map_or(Self::default_padding(self.data.len(), alignment), Vec::len);
+        (8 + l + p).saturating_add(self.data.len())
     }
 }
 
@@ -513,19 +453,6 @@ pub(crate) fn is_sig(b: &[u8]) -> bool {
     b.starts_with(b"8BIM") || b.starts_with(b"8B64") || TaggedBlock::is_foreign_order_signature(b)
 }
 
-/// The channels a `brst` block (channel blending restrictions) leaves out of blending, as a bit
-/// mask: bit `i` for channel `i`. The block is a list of big-endian `u32` channel indices;
-/// indices above 31 and a trailing partial index are ignored.
-pub fn channel_restrictions(data: &[u8]) -> u32 {
-    data.as_chunks::<4>().0.iter().map(|c| u32::from_be_bytes(*c)).filter(|&i| i < 32).fold(0, |m, i| m | 1 << i)
-}
-
-/// The data of a `brst` block for the channels `mask` leaves out ([`channel_restrictions`]);
-/// `None` when every channel blends, which Photoshop writes as no block.
-pub fn channel_restrictions_data(mask: u32) -> Option<Vec<u8>> {
-    (mask != 0).then(|| (0..32u32).filter(|i| mask & 1 << i != 0).flat_map(u32::to_be_bytes).collect())
-}
-
 /// Reads tagged blocks until the reader is exhausted. Bytes that do not form
 /// a block (fewer than 12 bytes or no valid signature) are returned as
 /// trailing data.
@@ -533,39 +460,17 @@ pub(crate) fn read_blocks(r: &mut Reader<'_>, version: Version) -> Result<(Vec<T
     read_blocks_with(r, version, 2, |_, _, _, _, _| false)
 }
 
-/// [`read_blocks`] for a layer record's extra data, where a block whose length runs past the
-/// record is damage: it and what follows are kept as trailing bytes (written back verbatim), so
-/// the record keeps the blocks before it instead of failing, and with it every layer.
-pub(crate) fn read_record_blocks(r: &mut Reader<'_>, version: Version) -> Result<(Vec<TaggedBlock>, Vec<u8>)> {
-    read_blocks_impl(r, version, 2, true, |_, _, _, _, _| false)
-}
-
 /// The callback consumes selected payloads before they are copied into owned blocks.
 pub(crate) fn read_blocks_with(
     r: &mut Reader<'_>,
     version: Version,
     alignment: usize,
-    consume: impl FnMut(usize, [u8; 4], [u8; 4], &[u8], &Option<Vec<u8>>) -> bool,
-) -> Result<(Vec<TaggedBlock>, Vec<u8>)> {
-    read_blocks_impl(r, version, alignment, false, consume)
-}
-
-fn read_blocks_impl(
-    r: &mut Reader<'_>,
-    version: Version,
-    alignment: usize,
-    overlong_is_trailing: bool,
     mut consume: impl FnMut(usize, [u8; 4], [u8; 4], &[u8], &Option<Vec<u8>>) -> bool,
 ) -> Result<(Vec<TaggedBlock>, Vec<u8>)> {
     let mut blocks = Vec::new();
     loop {
         let rest = r.peek_rest();
         if rest.len() < 12 || !is_sig(rest) {
-            let trailing = rest.to_vec();
-            r.skip(rest.len())?;
-            return Ok((blocks, trailing));
-        }
-        if overlong_is_trailing && !block_fits(r, version) {
             let trailing = rest.to_vec();
             r.skip(rest.len())?;
             return Ok((blocks, trailing));
@@ -594,16 +499,9 @@ fn read_blocks_impl(
             Some(pad_bytes)
         };
         if !consume(blocks.len(), signature, key, data, &padding) {
-            blocks.push(TaggedBlock { signature, key, data: data.to_vec(), padding, stored: None });
+            blocks.push(TaggedBlock { signature, key, data: data.to_vec(), padding });
         }
     }
-}
-
-/// Whether the block at `r` (signature and key already checked present) fits in what remains.
-fn block_fits(r: &Reader<'_>, version: Version) -> bool {
-    let mut probe = r.clone();
-    let Ok(key) = probe.skip(4).and_then(|()| probe.array::<4>()) else { return false };
-    probe.len_field(uses_long_length(version, &key)).is_ok_and(|len| len <= probe.remaining() as u64)
 }
 
 pub(crate) fn write_blocks(out: &mut Vec<u8>, blocks: &[TaggedBlock], version: Version, alignment: usize) -> Result<()> {
@@ -625,14 +523,12 @@ pub(crate) fn write_blocks_to<W: std::io::Write + std::io::Seek + ?Sized>(
         out.small(|o| {
             o.put(&b.signature);
             o.put(&b.key);
-            o.put_len(b.encoded_data_len(), uses_long_length(version, &b.key))
+            o.put_len(b.data.len() as u64, uses_long_length(version, &b.key))
         })?;
-        // A block left in the source is copied from it piece by piece.
-        out.put_encoded(&b.data, b.stored.as_ref())?;
+        out.put(&b.data)?;
         match &b.padding {
             Some(p) => out.put(p)?,
-            // From the length's remainder: a PSB block can be longer than a 32-bit `usize`.
-            None => out.zeros(TaggedBlock::default_padding((b.encoded_data_len() % alignment as u64) as usize, alignment))?,
+            None => out.zeros(TaggedBlock::default_padding(b.data.len(), alignment))?,
         }
     }
     Ok(())
@@ -641,16 +537,6 @@ pub(crate) fn write_blocks_to<W: std::io::Write + std::io::Seek + ?Sized>(
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn channel_restrictions_round_trip_as_a_mask() {
-        let data = [0u32, 2, 40].iter().flat_map(|i| i.to_be_bytes()).chain([0, 0]).collect::<Vec<u8>>();
-        assert_eq!(channel_restrictions(&data), 0b101);
-        assert_eq!(channel_restrictions_data(0b101), Some([0u32, 2].iter().flat_map(|i| i.to_be_bytes()).collect()));
-        assert_eq!(channel_restrictions_data(0), None);
-        assert_eq!(channel_restrictions(&[]), 0);
-        assert_eq!(channel_restrictions(&channel_restrictions_data(u32::MAX).unwrap()), u32::MAX);
-    }
 
     fn rt(blocks: &[TaggedBlock], version: Version) -> Vec<u8> {
         let mut out = Vec::new();
@@ -794,19 +680,5 @@ mod tests {
         out.put_u32(100);
         out.put(&[0; 4]);
         assert!(read_blocks(&mut Reader::new(&out), Version::Psd).is_err());
-    }
-
-    #[test]
-    fn overlong_length_ends_a_records_blocks() {
-        let mut out = Vec::new();
-        write_blocks(&mut out, &[TaggedBlock::layer_id(1)], Version::Psd, 2).unwrap();
-        let damaged = out.len();
-        out.put(b"8BIMabcd");
-        out.put_u32(100);
-        out.put(&[0; 4]);
-        // The blocks before the damage survive; the damaged one and what follows stay as bytes.
-        let (blocks, trailing) = read_record_blocks(&mut Reader::new(&out), Version::Psd).unwrap();
-        assert_eq!(blocks, vec![TaggedBlock::layer_id(1)]);
-        assert_eq!(trailing, out[damaged..]);
     }
 }

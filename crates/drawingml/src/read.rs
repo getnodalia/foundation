@@ -121,7 +121,7 @@ pub fn pattern(f: &El) -> PatternFill {
 }
 
 pub fn gradient(f: &El) -> Gradient {
-    let stops: Vec<GradientStop> = f
+    let mut stops: Vec<GradientStop> = f
         .child(Local("gsLst"))
         .map(|l| {
             l.children(Local("gs"))
@@ -130,14 +130,15 @@ pub fn gradient(f: &El) -> Gradient {
                 .collect()
         })
         .unwrap_or_default();
+    stops.sort_by(|a, b| a.pos.total_cmp(&b.pos));
     let shape = if let Some(l) = f.child(Local("lin")) {
-        Some(GradientShape::Linear { angle: ang(l, "ang").unwrap_or(0.0), scaled: l.attr_local("scaled").and_then(value::to_bool).unwrap_or(false) })
+        GradientShape::Linear { angle: ang(l, "ang").unwrap_or(0.0), scaled: l.attr_local("scaled").and_then(value::to_bool).unwrap_or(false) }
     } else if let Some(p) = f.child(Local("path")) {
         let r = p.child(Local("fillToRect"));
         let g = |n: &str| r.and_then(|r| pct(r, n)).unwrap_or(0.0);
-        Some(GradientShape::Path { path: p.attr_local("path").unwrap_or("circle").to_string(), focus: [g("l"), g("t"), g("r"), g("b")] })
+        GradientShape::Path { path: p.attr_local("path").unwrap_or("circle").to_string(), focus: [g("l"), g("t"), g("r"), g("b")] }
     } else {
-        None
+        GradientShape::Linear { angle: 90.0, scaled: false }
     };
     let tile = f.child(Local("tileRect")).map(|r| [pct(r, "l"), pct(r, "t"), pct(r, "r"), pct(r, "b")].map(|v| v.unwrap_or(0.0).clamp(-10.0, 10.0)));
     Gradient {
@@ -145,7 +146,7 @@ pub fn gradient(f: &El) -> Gradient {
         stops,
         shape,
         flip: f.attr_local("flip").and_then(GradientFlip::from_xml),
-        rotate_with_shape: f.attr_local("rotWithShape").and_then(value::to_bool),
+        rotate_with_shape: f.attr_local("rotWithShape").and_then(value::to_bool).unwrap_or(true),
     }
 }
 
@@ -166,12 +167,6 @@ pub fn blip_fill(src: &mut dyn Source, bf: &El) -> Option<PictureFill> {
     {
         pf.artistic = Some(crate::style::Artistic { effect, original });
     }
-    pf.svg = blip.and_then(|b| b.child(Local("extLst"))).and_then(|extensions| {
-        extensions
-            .elements()
-            .filter(|extension| extension.local() == "ext" && extension.attr_local("uri") == Some("{96DAC541-7B7A-43D3-8B79-37D633B846F1}"))
-            .find_map(|extension| extension.child(Local("svgBlip")).and_then(|svg| media_ref(src, svg)))
-    });
     if let Some(b) = blip {
         for e in b.elements() {
             match e.local() {
@@ -623,11 +618,6 @@ pub fn list_style(src: &mut dyn Source, ls: &El) -> ListStyle {
     let mut out = ListStyle::default();
     for e in ls.elements() {
         let n = e.local();
-        if n == "defPPr" {
-            let (_, para, run) = ppr(src, e);
-            out.default_level = Some(Box::new(LevelStyle { para, run: run.unwrap_or_default() }));
-            continue;
-        }
         let Some(l) = n.strip_prefix("lvl").and_then(|r| r.strip_suffix("pPr")).and_then(|d| d.parse::<u8>().ok()) else { continue };
         if !(1..=9).contains(&l) {
             continue;

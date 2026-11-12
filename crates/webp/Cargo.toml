@@ -11,14 +11,11 @@ repository.workspace = true
 workspace = true
 
 [features]
-# Decoding every frame through the `image` crate's WebP decoder, with bounded memory.
-frames = ["dep:image"]
 # Lossy animations from RGBA frames through nodalia-video's VP8 key-frame encoder.
 vp8 = ["dep:nodalia-video"]
 
 [dependencies]
 thiserror = { workspace = true }
-image = { version = "0.25", default-features = false, features = ["webp"], optional = true }
 nodalia-video = { workspace = true, optional = true, features = ["vp8-encode"] }
 
 [dev-dependencies]

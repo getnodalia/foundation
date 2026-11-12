@@ -107,7 +107,6 @@ pub fn blip_fill(w: &mut Writer, out: &mut dyn Sink, tag: &str, pf: &PictureFill
     w.tag(tag).attr("rotWithShape", if pf.upright { "0" } else { "1" }).open();
     let adj = &pf.adjust;
     let has_kids = pf.alpha.is_some()
-        || pf.svg.is_some()
         || adj.brightness != 0.0
         || adj.contrast != 0.0
         || adj.grayscale
@@ -166,13 +165,6 @@ pub fn blip_fill(w: &mut Writer, out: &mut dyn Sink, tag: &str, pf: &PictureFill
             w.close();
             w.close();
             w.close();
-            w.close();
-            w.close();
-        }
-        if let Some(svg) = pf.svg.and_then(|id| out.media_rel(id, "image")) {
-            w.open("a:extLst", &[]);
-            w.tag("a:ext").attr("uri", "{96DAC541-7B7A-43D3-8B79-37D633B846F1}").open();
-            w.tag("asvg:svgBlip").attr("xmlns:asvg", "http://schemas.microsoft.com/office/drawing/2016/SVG/main").attr("r:embed", &svg).empty();
             w.close();
             w.close();
         }
@@ -302,10 +294,7 @@ fn shadow(w: &mut Writer, tag: &str, s: &crate::style::Shadow) {
 }
 
 fn gradient(w: &mut Writer, g: &crate::style::Gradient) {
-    w.tag("a:gradFill")
-        .attr_opt("flip", g.flip.map(GradientFlip::xml))
-        .attr_opt("rotWithShape", g.rotate_with_shape.map(|r| if r { "1" } else { "0" }))
-        .open();
+    w.tag("a:gradFill").attr_opt("flip", g.flip.map(GradientFlip::xml)).attr("rotWithShape", if g.rotate_with_shape { "1" } else { "0" }).open();
     // No stops: no `a:gsLst`, so the gradient keeps taking them from its style's fill.
     let mut stops = g.stops.clone();
     if stops.len() == 1 {
@@ -323,11 +312,8 @@ fn gradient(w: &mut Writer, g: &crate::style::Gradient) {
         w.close();
     }
     match &g.shape {
-        None => {}
-        Some(GradientShape::Linear { angle, scaled }) => {
-            w.tag("a:lin").attr("ang", ang(*angle)).attr("scaled", if *scaled { "1" } else { "0" }).empty()
-        }
-        Some(GradientShape::Path { path, focus }) => {
+        GradientShape::Linear { angle, scaled } => w.tag("a:lin").attr("ang", ang(*angle)).attr("scaled", if *scaled { "1" } else { "0" }).empty(),
+        GradientShape::Path { path, focus } => {
             let p = match path.as_str() {
                 "rect" | "shape" | "circle" => path.as_str(),
                 _ => "circle",
@@ -777,10 +763,6 @@ pub fn list_style(w: &mut Writer, out: &mut dyn Sink, tag: &str, ls: &ListStyle)
         return;
     }
     w.open(tag, &[]);
-    if let Some(l) = &ls.default_level {
-        let def = (l.run != RunProps::default()).then_some(&l.run);
-        ppr(w, out, "a:defPPr", None, &l.para, def);
-    }
     for (i, l) in ls.levels.iter().enumerate().take(9) {
         if let Some(l) = l {
             let t = format!("a:lvl{}pPr", i + 1);
@@ -892,39 +874,5 @@ mod tests {
         let last = Rgba::rgb(0x12, 0x34, 0x56);
         assert_eq!(write(ColorBase::System { name: "notAColor".into(), last }), r#"<a:sysClr val="windowText" lastClr="123456"/>"#);
         assert_eq!(write(ColorBase::System { name: "3dLight".into(), last }), r#"<a:sysClr val="3dLight" lastClr="123456"/>"#);
-    }
-
-    /// A gradient is written as it was read: its stops in file order, and no `a:lin`, `a:path` or
-    /// `rotWithShape` where the file had none (each app has its own default for them).
-    #[test]
-    fn a_gradient_writes_back_what_it_read() {
-        let src = br#"<a:gradFill xmlns:a="x"><a:gsLst><a:gs pos="100000"><a:srgbClr val="0000FF"/></a:gs><a:gs pos="0"><a:srgbClr val="FF0000"/></a:gs></a:gsLst></a:gradFill>"#;
-        let g = crate::read::gradient(&crate::xmlx::parse(src).unwrap());
-        assert_eq!((g.shape.clone(), g.rotate_with_shape), (None, None));
-        assert_eq!(g.stops.iter().map(|s| s.pos).collect::<Vec<_>>(), [1.0, 0.0], "file order");
-        assert_eq!(g.sorted_stops().iter().map(|s| s.pos).collect::<Vec<_>>(), [0.0, 1.0]);
-        let mut w = Writer::new();
-        gradient(&mut w, &g);
-        let out = w.finish();
-        assert!(out.starts_with("<a:gradFill>"), "{out}");
-        assert!(!out.contains("a:lin") && !out.contains("a:path"), "{out}");
-        assert!(out.find("0000FF") < out.find("FF0000"), "{out}");
-        let back = crate::read::gradient(&crate::xmlx::parse(out.replace("<a:gradFill>", r#"<a:gradFill xmlns:a="x">"#).as_bytes()).unwrap());
-        assert_eq!(back, g);
-        // Stated ones are kept.
-        let src = br#"<a:gradFill xmlns:a="x" rotWithShape="0"><a:lin ang="0" scaled="1"/></a:gradFill>"#;
-        let g = crate::read::gradient(&crate::xmlx::parse(src).unwrap());
-        assert_eq!((g.shape, g.rotate_with_shape), (Some(GradientShape::Linear { angle: 0.0, scaled: true }), Some(false)));
-    }
-
-    /// A model saved before `shape` and `rotateWithShape` were optional reads as it did.
-    #[test]
-    fn a_gradient_saved_before_reads_the_same() {
-        let old = r#"{"stops":[],"shape":{"kind":"linear","angle":90.0}}"#;
-        let g: crate::style::Gradient = serde_json::from_str(old).unwrap();
-        assert_eq!((g.shape, g.rotate_with_shape), (Some(GradientShape::Linear { angle: 90.0, scaled: false }), Some(true)));
-        let none = crate::style::Gradient { stops: vec![], shape: None, flip: None, rotate_with_shape: None, tile: [0.0; 4] };
-        let back: crate::style::Gradient = serde_json::from_str(&serde_json::to_string(&none).unwrap()).unwrap();
-        assert_eq!(back, none);
     }
 }

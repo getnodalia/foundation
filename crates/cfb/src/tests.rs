@@ -3,7 +3,6 @@
 
 use super::*;
 
-mod hostile;
 mod ported;
 
 fn pattern(n: usize, seed: u8) -> Vec<u8> {

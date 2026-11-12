@@ -103,7 +103,7 @@
 //! 1 and 3, and bit depths other than the ones above (no samples of any of them).
 
 use crate::huffman::{Bits, Huffman, diff};
-use crate::shared::{active_rows, white_from_data_sourced};
+use crate::shared::{active_rows, white_from_data};
 use crate::{
     BlackLevel, Camera, Cfa, ColorData, Limits, Mode, Opcode, OpcodeLists, Orientation, RawData, RawError, RawFormat, RawImage, Rect, Result,
 };
@@ -615,43 +615,28 @@ pub(crate) fn decode(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawIma
         }
         _ => Rect::new(0, 0, active.width, active.height),
     };
-    // Packed formats 2/5/7 are lossless sample containers: zero is an ordinary
-    // code, not evidence of a mapped-out photosite. The documented zero repair
-    // applies to the predictive format 4 and older word containers only.
-    if !data.is_empty() && matches!(encoding, Encoding::Words | Encoding::Blocks { kind: Block::Format4, .. }) {
+    if !data.is_empty() {
         fill_defects(&mut data, w, active);
     }
 
-    let cfa_code = ifd0.u16(CFA_PATTERN);
-    // RGGB is still usable when metadata is absent or unknown, but callers
-    // must be able to distinguish that fallback from a recorded sensor phase.
-    let assumed_cfa = !matches!(cfa_code, Some(1..=4));
-    let cfa = cfa(cfa_code.unwrap_or(1));
-    let read = BLACK_RGB.map(|tag| ifd0.f64(tag).filter(|v| v.is_finite() && *v >= 0.0));
-    let tags = read.map(|v| v.unwrap_or(0.0) as f32);
+    let cfa = cfa(ifd0.u16(CFA_PATTERN).unwrap_or(1));
+    let tags = BLACK_RGB.map(|tag| ifd0.f64(tag).filter(|v| v.is_finite() && *v >= 0.0).unwrap_or(0.0) as f32);
     let offset = match encoding {
         Encoding::Blocks { kind: Block::Format4 | Block::Format6 { .. }, .. } => CODEC_BLACK_OFFSET,
         _ => 0.0,
     };
-    let (rgb, black_source) = if tags.iter().all(|&v| v == 0.0) {
-        ([DEFAULT_BLACK; 3], crate::LevelSource::Fallback)
-    } else {
-        // a missing tag reads 0: the file stated only part of the level
-        let source = if read.iter().all(Option::is_some) { crate::LevelSource::Metadata } else { crate::LevelSource::Fallback };
-        (tags.map(|v| v + offset), source)
-    };
+    let rgb = if tags.iter().all(|&v| v == 0.0) { [DEFAULT_BLACK; 3] } else { tags.map(|v| v + offset) };
     // per CFA position, anchored at the active area
     let values = cfa.shifted(active.x, active.y).pattern.iter().map(|&c| rgb[c as usize]).collect();
     let black = BlackLevel { repeat_rows: 2, repeat_cols: 2, values, ..Default::default() };
     let full = ((1u32 << bits.clamp(1, 16)) - 1) as f32;
-    let (white, white_source) = if data.is_empty() {
+    let white = if data.is_empty() {
         // headers only (white isn't part of `RawInfo`): the recorded limit as a placeholder
-        let limit = LINEARITY_LIMIT.iter().filter_map(|&tag| ifd0.f64(tag)).map(|v| v as f32).filter(|v| *v > 0.0 && *v <= full).fold(full, f32::min);
-        (limit, crate::LevelSource::Unknown)
+        LINEARITY_LIMIT.iter().filter_map(|&tag| ifd0.f64(tag)).map(|v| v as f32).filter(|v| *v > 0.0 && *v <= full).fold(full, f32::min)
     } else {
-        white_from_data_sourced(&active_rows(&data, w, active), bits)
+        white_from_data(&active_rows(&data, w, active), bits)
     };
-    let (white, white_source) = if white > black.mean() { (white, white_source) } else { (full, crate::LevelSource::Fallback) };
+    let white = if white > black.mean() { white } else { full };
     let wb = match WB_RGB.map(|tag| ifd0.f64(tag)) {
         [Some(r), Some(g), Some(b)] if r > 0.0 && g > 0.0 && b > 0.0 => Some([(r / g) as f32, 1.0, (b / g) as f32]),
         _ => None,
@@ -672,14 +657,10 @@ pub(crate) fn decode(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawIma
         color: ColorData::default(),
         wb_multipliers: wb,
         linearized: false,
-        linearization_table: None,
         pixel_aspect: 1.0,
         opcodes: OpcodeLists { list3: distortion(ifd0, active).into_iter().collect(), ..Default::default() },
         camera: tiff.ifds.first().map(Camera::from_ifd0).unwrap_or_default(),
         cinema: Default::default(),
-        lens_metadata: Default::default(),
-        level_sources: crate::LevelSources { black: black_source, white: white_source },
-        notices: crate::RawNotices { assumed_cfa, ..Default::default() },
     };
     img.validate_for(mode)?;
     Ok(img)
@@ -1079,61 +1060,17 @@ mod tests {
     }
 
     #[test]
-    fn cfa_fallback_provenance_preserves_pixels_in_header_and_full_modes() {
-        let pixels: Vec<u16> = (0..72).map(|i| 17 + i * 113).collect();
-        let payload = pack(&pixels, 14);
-        for (code, expected, assumed) in [
-            (None, "RGGB", true),
-            (Some(0), "RGGB", true),
-            (Some(5), "RGGB", true),
-            (Some(u16::MAX), "RGGB", true),
-            (Some(1), "RGGB", false),
-            (Some(2), "GRBG", false),
-            (Some(3), "GBRG", false),
-            (Some(4), "BGGR", false),
-        ] {
-            let mut tags = vec![short(BITS, 14), short(RAW_FORMAT, 7)];
-            if let Some(code) = code {
-                tags.push(short(CFA_PATTERN, code));
-            }
-            let bytes = file(18, 4, &tags, &payload, &|off| vec![(RAW_OFFSET, Value::Long(vec![off]))]);
-            for mode in [Mode::Header, Mode::Full] {
-                let image = decode(&bytes, mode, &Limits::default()).unwrap();
-                assert_eq!((image.width, image.height), (18, 4));
-                assert_eq!(image.cfa.as_ref().unwrap().name(), expected, "code {code:?}");
-                assert_eq!(image.notices, crate::RawNotices { assumed_cfa: assumed, ..Default::default() }, "code {code:?}, {mode:?}");
-                assert_eq!(samples(&image), if mode == Mode::Full { pixels.as_slice() } else { &[] });
-            }
-        }
-    }
-
-    #[test]
-    fn lossless_packed_formats_preserve_zero_codes_inside_the_active_area() {
-        let (w, h) = (90usize, 12usize);
-        for (format, bits, rotated) in [(5u16, 12u32, true), (5, 14, true), (7, 14, false), (2, 12, false)] {
-            let mut px = vec![1000u16; w * h];
-            px[5 * w + 20] = 0;
-            let payload = pack(&px, bits);
-            let bytes = rw2(w as u16, h as u16, bits as u16, format, 100, &if rotated { rotate(payload) } else { payload });
-            assert_eq!(samples(&crate::decode(&bytes).unwrap()), px, "format {format}/{bits}");
-        }
-    }
-
-    #[test]
     fn levels_crop_defects_and_cfa() {
         let (w, h) = (90usize, 60usize);
         let mut px: Vec<u16> = (0..w * h).map(|i| 300 + (i % 7) as u16).collect();
-        // A saturation plateau sets the white level. In the older word container,
-        // isolated zeros inside the active area are documented mapped-out defects.
+        // a saturation plateau sets the white level; zeros inside the active area are defects
         px[10 * w..20 * w].fill(3900);
         px[30 * w + 40] = 0;
         px[1] = 0; // in the border: left alone
-        let mut tags = vec![short(CFA_PATTERN, 2), short(BITS, 12), short(COMPRESSION, 34828)];
+        let mut tags = vec![short(CFA_PATTERN, 2), short(BITS, 12), short(RAW_FORMAT, 5)];
         tags.extend([0x002f, 0x0030, 0x0031, 0x0032].iter().zip([12u16, 10, 52, 80]).map(|(&tag, v)| short(tag, v)));
         tags.extend(LINEARITY_LIMIT.map(|tag| short(tag, 2000))); // recorded limits are not used
-        // Compression 34828 stores left-justified samples in little-endian u16 words.
-        let words: Vec<u8> = px.iter().flat_map(|&v| (v << 4).to_le_bytes()).collect();
-        let bytes = file(w as u16, h as u16, &tags, &words, &|off| vec![(t::STRIP_OFFSETS, Value::Long(vec![off]))]);
+        let bytes = file(w as u16, h as u16, &tags, &rotate(pack(&px, 12)), &|off| vec![(RAW_OFFSET, Value::Long(vec![off]))]);
         let r = crate::decode(&bytes).unwrap();
         let d = samples(&r);
         assert_eq!(d[30 * w + 40], ((px[30 * w + 38] as u32 + px[30 * w + 42] as u32 + px[28 * w + 40] as u32 + px[32 * w + 40] as u32) / 4) as u16);
@@ -1148,51 +1085,6 @@ mod tests {
         tags.extend([0x002f, 0x0030, 0x0031, 0x0032].map(|tag| short(tag, 0))); // some bodies write zeros
         let bytes = file(w as u16, h as u16, &tags, &rotate(pack(&px, 12)), &|off| vec![(RAW_OFFSET, Value::Long(vec![off]))]);
         assert_eq!(crate::decode(&bytes).unwrap().crop, Rect::new(0, 0, w - 4, h - 2));
-    }
-
-    /// The black is `Metadata` only when all three `BLACK_RGB` tags were read: a missing one is a 0 the file never
-    /// stated, so the level is a fallback (its values stay as they were).
-    #[test]
-    fn black_source_needs_every_black_tag() {
-        let (w, h) = (90usize, 60usize);
-        let px: Vec<u16> = (0..w * h).map(|i| 300 + (i % 7) as u16).collect();
-        let decode = |black: &[(u16, u16)]| {
-            let mut tags = vec![short(CFA_PATTERN, 2), short(BITS, 12), short(RAW_FORMAT, 5)];
-            tags.extend(black.iter().map(|&(tag, v)| short(tag, v)));
-            crate::decode(&file(w as u16, h as u16, &tags, &rotate(pack(&px, 12)), &|off| vec![(RAW_OFFSET, Value::Long(vec![off]))])).unwrap()
-        };
-        let [r, g, b] = BLACK_RGB;
-        assert_eq!(decode(&[(r, 100), (g, 110), (b, 120)]).level_sources.black, crate::LevelSource::Metadata);
-        let partial = decode(&[(r, 100), (g, 110)]);
-        assert_eq!(partial.level_sources.black, crate::LevelSource::Fallback, "the blue black was never stated");
-        let mut values = partial.black.values.clone();
-        values.sort_by(f32::total_cmp);
-        assert_eq!(values, vec![0.0, 100.0, 110.0, 110.0], "the missing channel still reads 0");
-        assert_eq!(decode(&[]).level_sources.black, crate::LevelSource::Fallback);
-    }
-
-    /// A plateau at or below the black level can't be the white: the full range is used, a `Fallback`. A
-    /// headers-only decode reads no samples, so both sources are `Unknown`.
-    #[test]
-    fn white_source_of_a_plateau_below_the_black_and_of_headers_only() {
-        let (w, h) = (90usize, 60usize);
-        let mut px: Vec<u16> = (0..w * h).map(|i| 300 + (i % 7) as u16).collect();
-        px[10 * w..20 * w].fill(2500);
-        let make = |black: u16| {
-            let mut tags = vec![short(CFA_PATTERN, 2), short(BITS, 12), short(RAW_FORMAT, 5)];
-            tags.extend(BLACK_RGB.map(|tag| short(tag, black)));
-            file(w as u16, h as u16, &tags, &rotate(pack(&px, 12)), &|off| vec![(RAW_OFFSET, Value::Long(vec![off]))])
-        };
-        let r = crate::decode(&make(100)).unwrap();
-        assert!((2400.0..=2500.0).contains(&r.white_at(0)), "{}", r.white_at(0));
-        assert_eq!(r.level_sources, crate::LevelSources { black: crate::LevelSource::Metadata, white: crate::LevelSource::Inferred });
-        let r = crate::decode(&make(3000)).unwrap();
-        assert_eq!(r.white_at(0), 4095.0);
-        assert_eq!(r.level_sources, crate::LevelSources { black: crate::LevelSource::Metadata, white: crate::LevelSource::Fallback });
-        assert_eq!(
-            crate::decode_in(&make(100), crate::Mode::Header, &crate::Limits::default()).unwrap().level_sources,
-            crate::LevelSources::default()
-        );
     }
 
     /// Format 8 code tables as two cameras write them (16-bit DC-GH6; 14-bit DC-S5M2, whose codes for categories 15

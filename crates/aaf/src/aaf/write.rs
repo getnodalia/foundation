@@ -75,7 +75,6 @@ fn definition(class: Auid, id: Auid, name: &str) -> Obj {
 struct W<'a> {
     report: &'a mut Report,
     inexact: bool,
-    references: super::ReferenceOptions,
 }
 
 struct IdGen {
@@ -351,15 +350,9 @@ fn add_tape_mob(first: &Source, tape_id: [u8; 32], timecode: Option<(i64, FrameR
 }
 
 /// Serialise a composition document.
-pub(crate) fn write(
-    doc: &Document,
-    version: nodalia_cfb::Version,
-    identity: &Identity<'_>,
-    references: &super::ReferenceOptions,
-    report: &mut Report,
-) -> Result<Vec<u8>> {
+pub(crate) fn write(doc: &Document, version: nodalia_cfb::Version, identity: &Identity<'_>, report: &mut Report) -> Result<Vec<u8>> {
     let comp = doc.compositions.first().ok_or(Error::Empty)?;
-    let mut w = W { report, inexact: false, references: *references };
+    let mut w = W { report, inexact: false };
     let mut ids = IdGen::for_document(doc, comp);
     let MediaOutput { mut mobs, essence, master_ref } = write_media(doc, &mut w, &mut ids);
     let mut used_ops: Vec<Auid> = Vec::new();
@@ -367,8 +360,7 @@ pub(crate) fn write(
 
     // ---- nested compositions: a clip refers to one as it does to a master mob, through the
     // composition's first track of the clip's kind (a broken-out channel: that channel's track)
-    let rates = if references.source_slot_rate { doc.sources.iter().enumerate().map(|(i, s)| (i, source_rate(s))).collect() } else { HashMap::new() };
-    let mut refs = Refs { mobs: master_ref, rates };
+    let mut refs = Refs { mobs: master_ref, rates: HashMap::new() };
     let nested_ids: Vec<[u8; 32]> = doc.nested.iter().map(|_| ids.next()).collect();
     for (si, s) in doc.sources.iter().enumerate() {
         let Some((comp, id)) = s.nested.and_then(|n| Some((doc.nested.get(n)?, nested_ids.get(n)?))) else { continue };
@@ -801,13 +793,7 @@ fn descriptor(w: &mut W, s: &Source) -> Obj {
     d.set(pid::FILE_LENGTH, Value::Data(len.to_le_bytes().to_vec()));
     d.set(pid::CONTAINER_FORMAT, weak(path::CONTAINER_DEFS, container));
     if let Some(p) = &s.path {
-        let url = if nodalia_timeline::path::is_absolute(p) {
-            nodalia_timeline::path::path_to_file_url(p, false)
-        } else if w.references.encode_relative_locator {
-            nodalia_timeline::path::encode_uri_path(p)
-        } else {
-            p.clone()
-        };
+        let url = if nodalia_timeline::path::is_absolute(p) { nodalia_timeline::path::path_to_file_url(p, false) } else { p.clone() };
         d.set(pid::LOCATOR, Value::StrongVec(vec![Obj::new(cls::NETWORK_LOCATOR).data_prop(pid::URL_STRING, utf16z(&url))]));
     }
     d

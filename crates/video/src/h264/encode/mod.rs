@@ -1,7 +1,6 @@
 //! Clean-room, pure-Rust H.264/AVC encoder (ITU-T H.264), written from the public specification.
 //!
-//! - Profiles: Constrained Baseline (CAVLC, I/P), Main (CABAC, I/P/B) and High (CABAC, 8x8 transform, I/P/B), 4:2:0 8-bit;
-//!   High 10 (4:2:0, 8 to 10 bits, input via [`YuvFrame16`]) and the intra-only High 10 Intra.
+//! - Profiles: Constrained Baseline (CAVLC, I/P), Main (CABAC, I/P/B) and High (CABAC, 8x8 transform, I/P/B), 4:2:0 8-bit.
 //! - Intra 16x16 / 4x4 / 8x8 mode decision, hexagon motion search with quarter-sample refinement,
 //!   16x16/16x8/8x16/8x8 partitions, P_Skip, B-frames with spatial direct/B_Skip, in-loop deblocking.
 //! - Rate control: constant QP, constant quality (CRF-like), 1-pass ABR with VBV, 2-pass VBR.
@@ -32,7 +31,6 @@ mod lookahead;
 mod mbinfo;
 mod nal;
 mod picture;
-mod pixel;
 mod ratecontrol;
 mod slice;
 mod syntax;
@@ -49,7 +47,6 @@ use lookahead::{Complexity, LowRes};
 use mbinfo::MbInfo;
 use nal::{NAL_AUD, NAL_IDR, NAL_PPS, NAL_SEI, NAL_SLICE, NAL_SPS, Pps, SliceHeader, SliceType, Sps, Vui};
 use picture::{CHROMA_PAD, Frame, LUMA_PAD, RefPic, build_hpel};
-use pixel::{Depth, Pixel};
 use ratecontrol::RcKind;
 use slice::{Band, EncParams, FrameEnc, Lambdas, SliceEnc, SliceOut};
 use tables::NUM_CTX;
@@ -68,8 +65,6 @@ pub enum Error {
     BadFrame,
     #[error("presentation times must increase by a constant interval when B-frames are enabled")]
     BadTimestamp,
-    #[error("a 16-bit input frame needs an encoder configured with bit_depth above 8")]
-    DeepInput,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
@@ -81,16 +76,6 @@ pub enum Profile {
     /// High: CABAC, B-frames, 8x8 transform.
     #[default]
     High,
-    /// High 10 (profile_idc 110): High with 8- to 10-bit samples ([`EncoderConfig::bit_depth`]). With
-    /// [`EncoderConfig::intra_only`] the stream is High 10 Intra (constraint_set3_flag).
-    High10,
-}
-
-impl Profile {
-    /// High-profile tools (8x8 transform, the PPS extension) are on.
-    fn high(self) -> bool {
-        matches!(self, Profile::High | Profile::High10)
-    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
@@ -185,15 +170,6 @@ pub struct EncoderConfig {
     /// Requested level_idc (41 = level 4.1); None = the lowest level that fits. A level too low
     /// for the stream is raised to the one it needs.
     pub level: Option<u8>,
-    /// Sample bit depth, 8 (default) to 10. Above 8 needs [`Profile::High10`] and input through
-    /// [`Encoder::encode16`] (8-bit input is also accepted and scaled up exactly).
-    pub bit_depth: u8,
-    /// Every picture is an IDR (an all-intra intermediate): `keyint` and `bframes` are ignored, no
-    /// reference frames are kept, and High 10 streams are signalled as High 10 Intra.
-    pub intra_only: bool,
-    /// The program and version the identification SEI of the first picture names (`craft-h264enc`
-    /// and this crate's version by default): an application sets its own.
-    pub writer: String,
 }
 
 impl EncoderConfig {
@@ -220,9 +196,6 @@ impl EncoderConfig {
             content_light: None,
             aud: true,
             level: None,
-            bit_depth: 8,
-            intra_only: false,
-            writer: format!("craft-h264enc {}", env!("CARGO_PKG_VERSION")),
         }
     }
 }
@@ -235,31 +208,6 @@ pub struct YuvFrame<'a> {
     pub v: &'a [u8],
     pub y_stride: usize,
     pub uv_stride: usize,
-}
-
-/// A planar 4:2:0 input picture with samples at the configured [`EncoderConfig::bit_depth`] in the
-/// low bits of each `u16` (0..=1023 at 10 bits; larger values are clipped). Strides are in samples.
-#[derive(Clone, Copy, Debug)]
-pub struct YuvFrame16<'a> {
-    pub y: &'a [u16],
-    pub u: &'a [u16],
-    pub v: &'a [u16],
-    pub y_stride: usize,
-    pub uv_stride: usize,
-}
-
-/// The planes of one input picture.
-#[derive(Clone, Copy)]
-enum Source<'a> {
-    Eight(&'a YuvFrame<'a>),
-    Deep(&'a YuvFrame16<'a>),
-}
-
-/// One input row, 8- or 16-bit.
-#[derive(Clone, Copy)]
-enum Row<'a> {
-    Eight(&'a [u8]),
-    Deep(&'a [u16]),
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -278,13 +226,11 @@ pub struct Packet {
     pub dts: i64,
     pub keyframe: bool,
     pub frame_type: FrameType,
-    /// QP used for the picture (slice QPY; 0 for the negative QPs only higher bit depths have).
+    /// QP used for the picture (slice QP).
     pub qp: u8,
 }
 
-/// A reconstructed (decoded) picture, available when [`Encoder::set_recon_capture`] is on. Planes are
-/// tightly packed bytes: one per sample at 8 bits, two little-endian ones above (the layout of ffmpeg's
-/// `yuv420p10le`).
+/// A reconstructed (decoded) picture, available when [`Encoder::set_recon_capture`] is on.
 #[derive(Clone, Debug)]
 pub struct ReconFrame {
     pub pts: i64,
@@ -293,8 +239,8 @@ pub struct ReconFrame {
     pub v: Vec<u8>,
 }
 
-struct Input<P> {
-    frame: Frame<P>,
+struct Input {
+    frame: Frame,
     pts: i64,
     display: u64,
     cplx: Complexity,
@@ -302,7 +248,6 @@ struct Input<P> {
 }
 
 struct Pool {
-    /// Built for every thread count, also 1: rayon calls outside `install` run on the global pool (all cores).
     #[cfg(feature = "threads")]
     pool: Option<rayon::ThreadPool>,
 }
@@ -317,8 +262,7 @@ impl Pool {
     }
 }
 
-/// The encoder for one sample type: `u8` at 8 bits, `u16` above.
-struct Core<P> {
+pub struct Encoder {
     cfg: EncoderConfig,
     params: EncParams,
     sps: Sps,
@@ -331,13 +275,13 @@ struct Core<P> {
     cabac_pb: Box<[(i8, i8); NUM_CTX]>,
     rc: ratecontrol::RateControl,
     record_pass1: bool,
-    pending: VecDeque<Input<P>>,
+    pending: VecDeque<Input>,
     prev_lowres: Option<LowRes>,
     display_count: u64,
     last_idr: u64,
     idr_count: u32,
     next_frame_num: u32,
-    dpb: Vec<RefPic<P>>,
+    dpb: Vec<RefPic>,
     coded_count: u64,
     display_pts: VecDeque<i64>,
     dts_offset: Option<i64>,
@@ -346,16 +290,14 @@ struct Core<P> {
     last_pts: Option<i64>,
     pts_step: Option<i64>,
     held: Vec<Packet>,
-    frame_pool: Vec<Frame<P>>,
-    hpel_pool: Vec<[picture::Plane<P>; 3]>,
-    mbs_pool: Vec<Vec<MbInfo>>,
+    frame_pool: Vec<Frame>,
+    hpel_pool: Vec<[picture::Plane; 3]>,
     sei_sent: bool,
     slices: usize,
     pool: Pool,
     recon: Option<Vec<ReconFrame>>,
     ref_uid: u32,
     max_refs: usize,
-    depth: Depth,
 }
 
 const LOG2_MAX_FRAME_NUM: u32 = 8;
@@ -365,22 +307,22 @@ const LOG2_MAX_POC_LSB: u32 = 8;
 /// assumes the worst footage: about 3 bits per pixel at CRF 0 (Toma's CRF 0 exports of real
 /// camera footage measured 1.7 on average and 2.4 in their busiest second), halving every 6 steps
 /// (one doubling of the quantiser step). The default CRF 23 keeps 1080p30 at level 4.
-fn crf_level_kbps(crf: f32, crf_min: f32, mbw: usize, mbh: usize, fps: f64) -> u32 {
-    let crf = if crf.is_finite() { f64::from(crf.clamp(crf_min, 51.0)) } else { 23.0 };
+fn crf_level_kbps(crf: f32, mbw: usize, mbh: usize, fps: f64) -> u32 {
+    let crf = if crf.is_finite() { f64::from(crf.clamp(0.0, 51.0)) } else { 23.0 };
     let bpp = 3.0 * (-crf / 6.0).exp2();
     let pixels = (mbw as f64) * (mbh as f64) * 256.0;
     // a float-to-int `as` saturates, and NaN (a hostile fps) becomes 0
     (pixels * fps * bpp / 1000.0).ceil() as u32
 }
 
-impl<P: Pixel> Core<P> {
+impl Encoder {
     /// The settings that shaped the stream, x264-style (`key=value` separated by spaces), for the
     /// user_data_unregistered SEI: a file says how it was made (`strings`, `ffprobe -show_data`).
     fn options(&self) -> String {
         let c = &self.cfg;
         let rate = match c.rate {
             RateControl::Qp(q) => format!("rc=cqp qp={q}"),
-            RateControl::Crf(f) => format!("rc=crf crf={:.1}", f.clamp(-(self.depth.qp_offset as f32), 51.0)),
+            RateControl::Crf(f) => format!("rc=crf crf={:.1}", f.clamp(0.0, 51.0)),
             RateControl::Cbr { kbps } => format!("rc=cbr bitrate={kbps}"),
             RateControl::Vbr { target_kbps, max_kbps } => format!("rc=vbr bitrate={target_kbps} vbv_maxrate={max_kbps}"),
         };
@@ -393,8 +335,6 @@ impl<P: Pixel> Core<P> {
             Profile::Baseline => "baseline",
             Profile::Main => "main",
             Profile::High => "high",
-            Profile::High10 if c.intra_only => "high10intra",
-            Profile::High10 => "high10",
         };
         let preset = match c.preset {
             Preset::Speed => "speed",
@@ -402,23 +342,22 @@ impl<P: Pixel> Core<P> {
             Preset::Quality => "quality",
         };
         let level = self.sps.level_idc;
-        let depth = if self.depth.bits == 8 { String::new() } else { format!(" bitdepth={}", self.depth.bits) };
         format!(
-            "{rate}{pass} profile={profile} level={}.{}{depth} preset={preset} keyint={} bframes={} refs={} cabac={} 8x8dct={} slices={} aq={:.2} scenecut={}",
+            "{rate}{pass} profile={profile} level={}.{} preset={preset} keyint={} bframes={} refs={} cabac={} 8x8dct={} slices={} aq={:.2} scenecut={}",
             level / 10,
             level % 10,
             c.keyint,
             c.bframes,
             self.max_refs,
             u8::from(c.profile != Profile::Baseline),
-            u8::from(c.profile.high()),
+            u8::from(c.profile == Profile::High),
             self.slices,
             c.aq_strength,
             u8::from(c.scenecut),
         )
     }
 
-    fn new_with_extra_motion_search_starts(mut cfg: EncoderConfig, extra_motion_search_starts: bool) -> Result<Self, Error> {
+    pub fn new(mut cfg: EncoderConfig) -> Result<Self, Error> {
         if cfg.width == 0
             || cfg.height == 0
             || !cfg.width.is_multiple_of(2)
@@ -434,22 +373,15 @@ impl<P: Pixel> Core<P> {
         if cfg.bframes > 3 {
             return Err(Error::InvalidConfig("bframes must be 0..=3".into()));
         }
-        if !(8..=10).contains(&cfg.bit_depth) {
-            return Err(Error::InvalidConfig(format!("bit depth {} is not supported (8 to 10)", cfg.bit_depth)));
-        }
-        if cfg.bit_depth > 8 && cfg.profile != Profile::High10 {
-            return Err(Error::InvalidConfig(format!("bit depth {} needs the High 10 profile", cfg.bit_depth)));
-        }
-        if cfg.profile == Profile::Baseline || cfg.intra_only {
+        if cfg.profile == Profile::Baseline {
             cfg.bframes = 0;
         }
-        cfg.keyint = if cfg.intra_only { 1 } else { cfg.keyint.max(1) };
-        let depth = Depth::new(cfg.bit_depth);
+        cfg.keyint = cfg.keyint.max(1);
         let mbw = cfg.width.div_ceil(16) as usize;
         let mbh = cfg.height.div_ceil(16) as usize;
         let fps = cfg.fps_num as f64 / cfg.fps_den as f64;
         let cabac = cfg.profile != Profile::Baseline;
-        let high = cfg.profile.high();
+        let high = cfg.profile == Profile::High;
         let params = match cfg.preset {
             Preset::Speed => EncParams {
                 mbw,
@@ -468,8 +400,6 @@ impl<P: Pixel> Core<P> {
                 adaptive_t8: false,
                 always_intra: false,
                 cavlc_clamp: !cabac,
-                extra_motion_search_starts,
-                depth,
             },
             Preset::Balanced => EncParams {
                 mbw,
@@ -488,8 +418,6 @@ impl<P: Pixel> Core<P> {
                 adaptive_t8: high,
                 always_intra: false,
                 cavlc_clamp: !cabac,
-                extra_motion_search_starts,
-                depth,
             },
             Preset::Quality => EncParams {
                 mbw,
@@ -508,19 +436,9 @@ impl<P: Pixel> Core<P> {
                 adaptive_t8: high,
                 always_intra: true,
                 cavlc_clamp: !cabac,
-                extra_motion_search_starts,
-                depth,
             },
         };
-        let max_refs = if cfg.intra_only {
-            0
-        } else if cfg.bframes > 0 {
-            2
-        } else {
-            1
-        };
-        // QPY may go down to -QpBdOffset at higher bit depths.
-        let qp_min = -(depth.qp_offset as f32);
+        let max_refs = if cfg.bframes > 0 { 2 } else { 1 };
         if let Pass::Second(st) = &cfg.pass {
             let invalid =
                 st.frames.is_empty() || !st.fps.is_finite() || st.fps <= 0.0 || st.frames.iter().any(|f| !f.qscale.is_finite() || f.qscale <= 0.0);
@@ -550,7 +468,7 @@ impl<P: Pixel> Core<P> {
         }
         let (kbps_for_level, rc_kind, vbv) = match (&cfg.rate, &cfg.pass) {
             (RateControl::Qp(q), _) => (None, RcKind::Qp((*q).min(51)), (None, None)),
-            (RateControl::Crf(c), _) => (Some(crf_level_kbps(*c, qp_min, mbw, mbh, fps)), RcKind::Crf(c.clamp(qp_min, 51.0)), (None, None)),
+            (RateControl::Crf(c), _) => (Some(crf_level_kbps(*c, mbw, mbh, fps)), RcKind::Crf(c.clamp(0.0, 51.0)), (None, None)),
             (RateControl::Cbr { kbps }, Pass::Second(st)) => {
                 (Some(*kbps), ratecontrol::RateControl::plan_two_pass(st, *kbps), (Some(*kbps), Some(*kbps)))
             }
@@ -568,21 +486,13 @@ impl<P: Pixel> Core<P> {
                 (Some(*max_kbps), RcKind::Abr { kbps: *target_kbps }, (Some(*max_kbps), Some(buffer)))
             }
         };
-        // cpbBrVclFactor / 1000 (Table A-2): MaxBR scales by 1.25 for High and 3 for High 10.
-        let br_factor = match cfg.profile {
-            Profile::Baseline | Profile::Main => 1000,
-            Profile::High => 1250,
-            Profile::High10 => 3000,
-        };
-        let auto = nal::pick_level(mbw as u32, mbh as u32, fps, max_refs as u32, kbps_for_level, br_factor)
+        let auto = nal::pick_level(mbw as u32, mbh as u32, fps, max_refs as u32, kbps_for_level, high)
             .ok_or_else(|| Error::InvalidConfig("configuration exceeds H.264 level 6.2 limits".into()))?;
         let level = cfg.level.map_or(auto, |l| nal::level_at_least(l, auto));
         let (profile_idc, constraint) = match cfg.profile {
             Profile::Baseline => (66u8, 0xC0u8), // constraint_set0 + set1 => Constrained Baseline
             Profile::Main => (77, 0x40),
             Profile::High => (100, 0x00),
-            // constraint_set3_flag marks High 10 Intra (A.2.8).
-            Profile::High10 => (110, if cfg.intra_only { 0x10 } else { 0x00 }),
         };
         let reorder = if cfg.bframes > 0 { 1 } else { 0 };
         let sps = Sps {
@@ -596,7 +506,6 @@ impl<P: Pixel> Core<P> {
             log2_max_frame_num: LOG2_MAX_FRAME_NUM,
             log2_max_poc_lsb: LOG2_MAX_POC_LSB,
             max_num_ref_frames: max_refs as u32,
-            bit_depth: cfg.bit_depth,
             vui: Vui {
                 sar: cfg.sar,
                 video_full_range: cfg.color.full_range,
@@ -627,20 +536,12 @@ impl<P: Pixel> Core<P> {
             }
         };
         #[cfg(feature = "threads")]
-        let pool = Pool {
-            pool: Some(
-                rayon::ThreadPoolBuilder::new()
-                    .num_threads(threads)
-                    .build()
-                    .map_err(|e| Error::InvalidConfig(format!("cannot build the {threads}-thread pool: {e}")))?,
-            ),
-        };
+        let pool = Pool { pool: if threads > 1 { rayon::ThreadPoolBuilder::new().num_threads(threads).build().ok() } else { None } };
         #[cfg(not(feature = "threads"))]
         let pool = Pool {};
         let record_pass1 = cfg.pass == Pass::First;
-        let mut rc = ratecontrol::RateControl::new(rc_kind, fps, vbv.0, vbv.1);
-        rc.qp_min = f64::from(qp_min);
-        Ok(Core {
+        let rc = ratecontrol::RateControl::new(rc_kind, fps, vbv.0, vbv.1);
+        Ok(Encoder {
             params,
             sps,
             sps_nal,
@@ -668,14 +569,12 @@ impl<P: Pixel> Core<P> {
             held: Vec::new(),
             frame_pool: Vec::new(),
             hpel_pool: Vec::new(),
-            mbs_pool: Vec::new(),
             sei_sent: false,
             slices,
             pool,
             recon: None,
             ref_uid: 0,
             max_refs,
-            depth,
             cfg,
         })
     }
@@ -698,7 +597,7 @@ impl<P: Pixel> Core<P> {
 
     /// AVCDecoderConfigurationRecord (`avcC` box payload) for MP4 muxing (4-byte NAL lengths).
     pub fn avcc(&self) -> Vec<u8> {
-        nal::avcc(&self.sps_nal, &self.pps_nal, &self.sps)
+        nal::avcc(&self.sps_nal, &self.pps_nal, self.sps.profile_idc, self.sps.constraint_flags, self.sps.level_idc)
     }
 
     /// Track description for muxers (`CodecId::H264`, `avc1` tag, coded picture size, and `avcC` extradata).
@@ -729,18 +628,26 @@ impl<P: Pixel> Core<P> {
         Some(PassStats { frames: self.rc.pass1.clone(), fps: self.cfg.fps_num as f64 / self.cfg.fps_den as f64 })
     }
 
-    fn try_encode(&mut self, frame: Source, pts: i64) -> Result<Vec<Packet>, Error> {
+    /// Encode one picture. Returns zero or more packets in decoding order, or
+    /// [`Error::BadFrame`] if the planes are smaller than the configured size (same as
+    /// [`Encoder::try_encode`]), or [`Error::BadTimestamp`] if B-frames are enabled and `pts` does not
+    /// advance by the same positive interval as the previous pictures.
+    pub fn encode(&mut self, frame: &YuvFrame, pts: i64) -> Result<Vec<Packet>, Error> {
+        self.try_encode(frame, pts)
+    }
+
+    pub fn try_encode(&mut self, frame: &YuvFrame, pts: i64) -> Result<Vec<Packet>, Error> {
         let src = self.import(frame)?;
         self.check_pts(pts)?;
         let use_aq = self.cfg.aq_strength > 0.0 && !matches!(self.cfg.rate, RateControl::Qp(_));
-        let (mbw, mbh, strength, shift) = (self.params.mbw, self.params.mbh, self.cfg.aq_strength, self.depth.shift);
+        let (mbw, mbh, strength) = (self.params.mbw, self.params.mbh, self.cfg.aq_strength);
         let prev = self.prev_lowres.take();
         let analyse = || {
-            let lowres = LowRes::new(&src, shift);
+            let lowres = LowRes::new(&src);
             let cplx = lookahead::complexity(&lowres, prev.as_ref());
             (lowres, cplx)
         };
-        let aq_of = || if use_aq { lookahead::aq_offsets(&src, mbw, mbh, strength, shift) } else { Vec::new() };
+        let aq_of = || if use_aq { lookahead::aq_offsets(&src, mbw, mbh, strength) } else { Vec::new() };
         // the two analyses are independent: side by side, the pool's threads are not left idle
         // at the end of each
         #[cfg(feature = "threads")]
@@ -774,7 +681,8 @@ impl<P: Pixel> Core<P> {
         Ok(self.release(out, false))
     }
 
-    fn flush(&mut self) -> Vec<Packet> {
+    /// Encode all buffered pictures.
+    pub fn flush(&mut self) -> Vec<Packet> {
         let mut out = Vec::new();
         self.flush_minigop(&mut out);
         self.release(out, true)
@@ -824,7 +732,7 @@ impl<P: Pixel> Core<P> {
 
     fn flush_minigop(&mut self, out: &mut Vec<Packet>) {
         let Some(p) = self.pending.pop_back() else { return };
-        let bs: Vec<(Input<P>, SliceType, bool)> = self.pending.drain(..).map(|b| (b, SliceType::B, false)).collect();
+        let bs: Vec<(Input, SliceType, bool)> = self.pending.drain(..).map(|b| (b, SliceType::B, false)).collect();
         self.encode_batch(vec![(p, SliceType::P, false)], out);
         if !bs.is_empty() {
             // B-frames are non-reference pictures: encode them all concurrently.
@@ -832,44 +740,25 @@ impl<P: Pixel> Core<P> {
         }
     }
 
-    fn import(&mut self, f: Source) -> Result<Frame<P>, Error> {
+    fn import(&mut self, f: &YuvFrame) -> Result<Frame, Error> {
         let (w, h) = (self.cfg.width as usize, self.cfg.height as usize);
         let (cw, ch) = (w / 2, h / 2);
-        let (lens, ys, cs) = match f {
-            Source::Eight(f) => ([f.y.len(), f.u.len(), f.v.len()], f.y_stride, f.uv_stride),
-            Source::Deep(f) => ([f.y.len(), f.u.len(), f.v.len()], f.y_stride, f.uv_stride),
-        };
-        let fits = |len: usize, stride: usize, pw: usize, ph: usize| {
-            stride >= pw && stride.checked_mul(ph - 1).and_then(|n| n.checked_add(pw)).is_some_and(|n| len >= n)
-        };
-        if !(fits(lens[0], ys, w, h) && fits(lens[1], cs, cw, ch) && fits(lens[2], cs, cw, ch)) {
+        // `stride * (rows - 1) + width`, without overflow: a hostile stride must be an error, not a wrap.
+        let need = |stride: usize, width: usize, rows: usize| stride.checked_mul(rows - 1)?.checked_add(width);
+        let fits =
+            |plane: &[u8], stride: usize, width: usize, rows: usize| stride >= width && need(stride, width, rows).is_some_and(|n| plane.len() >= n);
+        if !(fits(f.y, f.y_stride, w, h) && fits(f.u, f.uv_stride, cw, ch) && fits(f.v, f.uv_stride, cw, ch)) {
             return Err(Error::BadFrame);
         }
-        if matches!(f, Source::Deep(_)) && self.depth.bits == 8 {
-            return Err(Error::DeepInput);
-        }
-        let depth = self.depth;
         let mut fr = self.new_frame();
-        for (k, (pl, stride, pw, ph)) in [(&mut fr.y, ys, w, h), (&mut fr.u, cs, cw, ch), (&mut fr.v, cs, cw, ch)].into_iter().enumerate() {
+        for (pl, src, stride, pw, ph) in
+            [(&mut fr.y, f.y, f.y_stride, w, h), (&mut fr.u, f.u, f.uv_stride, cw, ch), (&mut fr.v, f.v, f.uv_stride, cw, ch)]
+        {
             let aw = pl.w;
             for y in 0..pl.h {
                 let sy = y.min(ph - 1);
                 let o = pl.idx(0, y as isize);
-                let (a, b) = (sy * stride, sy * stride + pw);
-                let row = match (f, k) {
-                    (Source::Eight(f), 0) => Row::Eight(&f.y[a..b]),
-                    (Source::Eight(f), 1) => Row::Eight(&f.u[a..b]),
-                    (Source::Eight(f), _) => Row::Eight(&f.v[a..b]),
-                    (Source::Deep(f), 0) => Row::Deep(&f.y[a..b]),
-                    (Source::Deep(f), 1) => Row::Deep(&f.u[a..b]),
-                    (Source::Deep(f), _) => Row::Deep(&f.v[a..b]),
-                };
-                let dst = &mut pl.data[o..o + pw];
-                match row {
-                    // 8-bit samples scale up exactly: v << (BitDepth - 8).
-                    Row::Eight(r) => P::from_u8(dst, r, depth.shift),
-                    Row::Deep(r) => dst.iter_mut().zip(r).for_each(|(d, &s)| *d = P::of((s as i32).min(depth.max))),
-                }
+                pl.data[o..o + pw].copy_from_slice(&src[sy * stride..sy * stride + pw]);
                 let last = pl.data[o + pw - 1];
                 pl.data[o + pw..o + aw].fill(last);
             }
@@ -877,22 +766,11 @@ impl<P: Pixel> Core<P> {
         Ok(fr)
     }
 
-    fn new_frame(&mut self) -> Frame<P> {
+    fn new_frame(&mut self) -> Frame {
         self.frame_pool.pop().unwrap_or_else(|| Frame::new(self.params.mbw * 16, self.params.mbh * 16))
     }
 
-    fn new_mbs(&mut self) -> Vec<MbInfo> {
-        let n = self.params.mbw * self.params.mbh;
-        match self.mbs_pool.pop() {
-            Some(mut m) => {
-                m.fill(MbInfo::default());
-                m
-            }
-            None => vec![MbInfo::default(); n],
-        }
-    }
-
-    fn recycle(&mut self, f: Frame<P>) {
+    fn recycle(&mut self, f: Frame) {
         if self.frame_pool.len() < 8 {
             self.frame_pool.push(f);
         }
@@ -900,8 +778,8 @@ impl<P: Pixel> Core<P> {
 
     /// Encode a batch of pictures that do not reference each other (a single I/P picture, or the B-frames of a
     /// mini-GOP). Slices of all pictures in the batch are encoded in parallel.
-    fn encode_batch(&mut self, pics: Vec<(Input<P>, SliceType, bool)>, out: &mut Vec<Packet>) {
-        let mut jobs: Vec<Job<P>> = Vec::with_capacity(pics.len());
+    fn encode_batch(&mut self, pics: Vec<(Input, SliceType, bool)>, out: &mut Vec<Packet>) {
+        let mut jobs: Vec<Job> = Vec::with_capacity(pics.len());
         for (input, st, idr) in pics {
             let job = self.plan_job(input, st, idr, jobs.len());
             jobs.push(job);
@@ -915,9 +793,9 @@ impl<P: Pixel> Core<P> {
 
     /// Choose the final slice type and references of one picture, derive its quantiser and slice header,
     /// and allocate its reconstruction buffers. `queued` is the number of pictures already planned in the batch.
-    fn plan_job(&mut self, input: Input<P>, mut st: SliceType, idr: bool, queued: usize) -> Job<P> {
+    fn plan_job(&mut self, input: Input, mut st: SliceType, idr: bool, queued: usize) -> Job {
         if idr {
-            let old: Vec<RefPic<P>> = std::mem::take(&mut self.dpb);
+            let old: Vec<RefPic> = std::mem::take(&mut self.dpb);
             for r in old {
                 self.recycle_ref(r);
             }
@@ -947,15 +825,11 @@ impl<P: Pixel> Core<P> {
             _ => input.cplx.inter,
         } as f64;
         let qpf = self.rc.frame_qp(st, cplx, self.coded_count as usize + queued);
-        // Rate control works in QPY; the slice encoders in QP' = QPY + QpBdOffset (0..=51 + offset).
-        let off = self.depth.qp_offset;
-        let qp_lo = f64::from(-off);
-        let qpy = qpf.round().clamp(qp_lo, 51.0) as i32;
-        let qp = (qpy + off) as u8;
+        let qp = qpf.round().clamp(0.0, 51.0) as u8;
         let aq: Vec<i8> = if input.aq.is_empty() {
             Vec::new()
         } else {
-            input.aq.iter().map(|&o| ((qpf + o as f64).round().clamp(qp_lo, 51.0) as i32 - qpy) as i8).collect()
+            input.aq.iter().map(|&o| ((qpf + o as f64).round().clamp(0.0, 51.0) as i32 - qp as i32) as i8).collect()
         };
         let nal_ref_idc = if idr {
             3
@@ -976,20 +850,20 @@ impl<P: Pixel> Core<P> {
             log2_max_poc_lsb: LOG2_MAX_POC_LSB,
             l0_modification: None,
             cabac: self.params.cabac,
-            slice_qp: qpy,
+            slice_qp: qp as i32,
             pic_init_qp: 26,
             disable_deblocking: if self.slices > 1 { 2 } else { 0 },
             alpha_offset_div2: 0,
             beta_offset_div2: 0,
         };
         let rec = self.new_frame();
-        let mbs = self.new_mbs();
+        let mbs = vec![MbInfo::default(); self.params.mbw * self.params.mbh];
         Job { input, st, idr, qpf, qp, cplx, aq, hdr, nal_ref_idc, l0, l1, poc, rec: Some(rec), mbs, results: Vec::new() }
     }
 
     /// Encode all slices of the batch's pictures in parallel (with deblocking of each slice band), storing
     /// the results and reconstructions back into `jobs`.
-    fn encode_slices(&self, jobs: &mut [Job<P>]) {
+    fn encode_slices(&self, jobs: &mut [Job]) {
         // ---- parallel slice encoding (+ deblocking of each slice band)
         let (mbw, mbh) = (self.params.mbw, self.params.mbh);
         let n = self.slices;
@@ -997,10 +871,10 @@ impl<P: Pixel> Core<P> {
         let capture = self.recon.is_some();
         let mut slice_results: Vec<Vec<SliceOut>> = (0..jobs.len()).map(|_| Vec::new()).collect();
         // Every job carries its reconstruction buffer (`rec: Some(..)` above).
-        let mut bufs: Vec<(Frame<P>, Vec<MbInfo>)> = jobs.iter_mut().filter_map(|j| Some((j.rec.take()?, std::mem::take(&mut j.mbs)))).collect();
+        let mut bufs: Vec<(Frame, Vec<MbInfo>)> = jobs.iter_mut().filter_map(|j| Some((j.rec.take()?, std::mem::take(&mut j.mbs)))).collect();
         {
             let this = self;
-            let fencs: Vec<FrameEnc<P>> = jobs
+            let fencs: Vec<FrameEnc> = jobs
                 .iter()
                 .map(|j| FrameEnc {
                     p: &this.params,
@@ -1026,12 +900,11 @@ impl<P: Pixel> Core<P> {
                     beta_offset: 0,
                     chroma_qp_offset: this.params.chroma_qp_offset,
                     ref_ids: [j.l0.map_or(-1, |i| this.dpb[i].id as i32), j.l1.map_or(-1, |i| this.dpb[i].id as i32)],
-                    depth: this.depth,
                 })
                 .collect();
             let deblock: Vec<bool> = jobs.iter().map(|j| j.hdr.slice_type != SliceType::B || capture).collect();
-            type Task<'t, P> = (usize, usize, usize, usize, &'t mut [P], &'t mut [P], &'t mut [P], &'t mut [MbInfo]);
-            let mut tasks: Vec<Task<P>> = Vec::new();
+            type Task<'t> = (usize, usize, usize, usize, &'t mut [u8], &'t mut [u8], &'t mut [u8], &'t mut [MbInfo]);
+            let mut tasks: Vec<Task> = Vec::new();
             for (pi, (rec, mbs)) in bufs.iter_mut().enumerate() {
                 let ys = rec.y.stride;
                 let cs = rec.u.stride;
@@ -1054,7 +927,7 @@ impl<P: Pixel> Core<P> {
             }
             let ys = jobs_stride_y(mbw);
             let cs = jobs_stride_c(mbw);
-            let run = |(pi, k, r0, r1, y, u, v, m): Task<P>| -> (usize, usize, SliceOut) {
+            let run = |(pi, k, r0, r1, y, u, v, m): Task| -> (usize, usize, SliceOut) {
                 let out = SliceEnc::new(&fencs[pi], Band { y: &mut *y, u: &mut *u, v: &mut *v, ys, cs }, &mut *m, r0, r1, k as u16).encode();
                 if deblock[pi] {
                     let mut by = BandPlane { data: y, stride: ys, pad: LUMA_PAD };
@@ -1085,7 +958,7 @@ impl<P: Pixel> Core<P> {
     }
 
     /// Assemble the packet of one coded picture, update rate control and the reference state.
-    fn finalise_job(&mut self, job: Job<P>, out: &mut Vec<Packet>) {
+    fn finalise_job(&mut self, job: Job, out: &mut Vec<Packet>) {
         let Job { input, st, idr, qpf, qp, cplx, hdr: _, nal_ref_idc: _, l0: _, l1: _, poc, rec, mbs, results, aq: _ } = job;
         let Some(mut rec) = rec else { return };
         let is_ref = st != SliceType::B;
@@ -1105,7 +978,7 @@ impl<P: Pixel> Core<P> {
         }
         if !self.sei_sent {
             self.sei_sent = true;
-            let text = format!("{} - clean-room H.264 encoder - options: {}", self.cfg.writer, self.options());
+            let text = format!("craft-h264enc {} - clean-room H.264 encoder - options: {}", env!("CARGO_PKG_VERSION"), self.options());
             nals.push(nal::nal(0, NAL_SEI, &nal::sei_user_data_rbsp(&text)));
         }
         if idr && (self.cfg.mastering_display.is_some() || self.cfg.content_light.is_some()) {
@@ -1130,21 +1003,19 @@ impl<P: Pixel> Core<P> {
         }
         if let Some(rv) = self.recon.as_mut() {
             let (w, h) = (self.cfg.width as usize, self.cfg.height as usize);
-            let bytes = std::mem::size_of::<P>();
-            let mut y = Vec::with_capacity(w * h * bytes);
-            let mut u = Vec::with_capacity(w * h / 4 * bytes);
-            let mut v = Vec::with_capacity(w * h / 4 * bytes);
+            let mut y = Vec::with_capacity(w * h);
+            let mut u = Vec::with_capacity(w * h / 4);
+            let mut v = Vec::with_capacity(w * h / 4);
             rec.y.copy_out(w, h, &mut y);
             rec.u.copy_out(w / 2, h / 2, &mut u);
             rec.v.copy_out(w / 2, h / 2, &mut v);
             rv.push(ReconFrame { pts: input.pts, y, u, v });
         }
-        if is_ref && self.max_refs > 0 {
+        if is_ref {
             let hp = self.hpel_pool.pop();
-            let depth = self.depth;
             let hpel = self.pool.install(|| {
                 rec.extend_edges();
-                build_hpel(&rec.y, depth, hp)
+                build_hpel(&rec.y, hp)
             });
             self.ref_uid += 1;
             let rp = RefPic { frame: rec, hpel, mbs, poc, id: self.ref_uid };
@@ -1159,7 +1030,6 @@ impl<P: Pixel> Core<P> {
             self.next_frame_num = (self.next_frame_num + 1) % (1 << LOG2_MAX_FRAME_NUM);
         } else {
             self.recycle(rec);
-            self.recycle_mbs(mbs);
         }
         if idr {
             self.idr_count += 1;
@@ -1179,27 +1049,20 @@ impl<P: Pixel> Core<P> {
             }
         };
         self.recycle(input.frame);
-        out.push(Packet { data, pts: input.pts, dts: dts_base, keyframe: idr, frame_type, qp: (i32::from(qp) - self.depth.qp_offset).max(0) as u8 });
+        out.push(Packet { data, pts: input.pts, dts: dts_base, keyframe: idr, frame_type, qp });
     }
 
-    fn recycle_ref(&mut self, r: RefPic<P>) {
+    fn recycle_ref(&mut self, r: RefPic) {
         self.recycle(r.frame);
         if self.hpel_pool.len() < 4 {
             self.hpel_pool.push(r.hpel);
-        }
-        self.recycle_mbs(r.mbs);
-    }
-
-    fn recycle_mbs(&mut self, m: Vec<MbInfo>) {
-        if self.mbs_pool.len() < 8 {
-            self.mbs_pool.push(m);
         }
     }
 }
 
 /// One picture of a batch while it is planned, sliced and finalised.
-struct Job<P> {
-    input: Input<P>,
+struct Job {
+    input: Input,
     st: SliceType,
     idr: bool,
     qpf: f64,
@@ -1211,124 +1074,9 @@ struct Job<P> {
     l0: Option<usize>,
     l1: Option<usize>,
     poc: i32,
-    rec: Option<Frame<P>>,
+    rec: Option<Frame>,
     mbs: Vec<MbInfo>,
     results: Vec<SliceOut>,
-}
-
-/// The H.264 encoder. 8-bit streams run on 8-bit samples; High 10 streams above 8 bits on 16-bit ones.
-pub struct Encoder {
-    core: Cores,
-}
-
-/// Starting points considered by the integer motion search.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum MotionSearchStarts {
-    /// Include skip, zero and co-located vectors for 16x16 searches.
-    Extended,
-    /// Use only the skip seed and neighboring partition vector, matching the earlier Toma encoder.
-    SeedAndNeighbour,
-}
-
-enum Cores {
-    Eight(Box<Core<u8>>),
-    Deep(Box<Core<u16>>),
-}
-
-macro_rules! core {
-    ($s:expr, $c:ident => $e:expr) => {
-        match $s {
-            Cores::Eight($c) => $e,
-            Cores::Deep($c) => $e,
-        }
-    };
-}
-
-impl Encoder {
-    pub fn new(cfg: EncoderConfig) -> Result<Self, Error> {
-        Self::new_with_motion_search_starts(cfg, MotionSearchStarts::Extended)
-    }
-
-    /// Construct an encoder with an explicit motion-search start policy. Existing callers should
-    /// use [`Encoder::new`], which selects [`MotionSearchStarts::Extended`].
-    pub fn new_with_motion_search_starts(cfg: EncoderConfig, starts: MotionSearchStarts) -> Result<Self, Error> {
-        let extra = starts == MotionSearchStarts::Extended;
-        let core = if cfg.bit_depth > 8 {
-            Cores::Deep(Box::new(Core::new_with_extra_motion_search_starts(cfg, extra)?))
-        } else {
-            Cores::Eight(Box::new(Core::new_with_extra_motion_search_starts(cfg, extra)?))
-        };
-        Ok(Encoder { core })
-    }
-
-    pub fn config(&self) -> &EncoderConfig {
-        core!(&self.core, c => c.config())
-    }
-
-    /// Run `f` on the encoder's worker threads (the calling thread without the `threads`
-    /// feature). The pool is idle between pictures, so input preparation such as colour
-    /// conversion that runs here does not queue behind work on the global rayon pool.
-    pub fn install<R: Send>(&self, f: impl FnOnce() -> R + Send) -> R {
-        core!(&self.core, c => c.install(f))
-    }
-
-    /// The SPS and PPS NAL units (without start codes).
-    pub fn sps_pps(&self) -> (Vec<u8>, Vec<u8>) {
-        core!(&self.core, c => c.sps_pps())
-    }
-
-    /// AVCDecoderConfigurationRecord (`avcC` box payload) for MP4 muxing (4-byte NAL lengths).
-    pub fn avcc(&self) -> Vec<u8> {
-        core!(&self.core, c => c.avcc())
-    }
-
-    /// Track description for muxers (`CodecId::H264`, `avc1` tag, coded picture size, and `avcC` extradata).
-    pub fn codec_params(&self) -> CodecParams {
-        core!(&self.core, c => c.codec_params())
-    }
-
-    /// Number of frames the output is delayed by (B-frame reordering).
-    pub fn delay(&self) -> usize {
-        core!(&self.core, c => c.delay())
-    }
-
-    /// Enable capture of reconstructed pictures (for verification).
-    pub fn set_recon_capture(&mut self, on: bool) {
-        core!(&mut self.core, c => c.set_recon_capture(on))
-    }
-
-    /// Take the reconstructed pictures captured so far (coding order).
-    pub fn take_recon(&mut self) -> Vec<ReconFrame> {
-        core!(&mut self.core, c => c.take_recon())
-    }
-
-    /// First-pass statistics (only when configured with [`Pass::First`]).
-    pub fn pass_stats(&self) -> Option<PassStats> {
-        core!(&self.core, c => c.pass_stats())
-    }
-
-    /// Encode one 8-bit picture (scaled up exactly at higher bit depths). Returns zero or more packets
-    /// in decoding order, or [`Error::BadFrame`] if the planes are smaller than the configured size
-    /// (same as [`Encoder::try_encode`]), or [`Error::BadTimestamp`] if B-frames are enabled and `pts`
-    /// does not advance by the same positive interval as the previous pictures.
-    pub fn encode(&mut self, frame: &YuvFrame, pts: i64) -> Result<Vec<Packet>, Error> {
-        self.try_encode(frame, pts)
-    }
-
-    pub fn try_encode(&mut self, frame: &YuvFrame, pts: i64) -> Result<Vec<Packet>, Error> {
-        core!(&mut self.core, c => c.try_encode(Source::Eight(frame), pts))
-    }
-
-    /// Encode one picture with samples at the configured bit depth. [`Error::DeepInput`] for an 8-bit
-    /// encoder.
-    pub fn encode16(&mut self, frame: &YuvFrame16, pts: i64) -> Result<Vec<Packet>, Error> {
-        core!(&mut self.core, c => c.try_encode(Source::Deep(frame), pts))
-    }
-
-    /// Encode all buffered pictures.
-    pub fn flush(&mut self) -> Vec<Packet> {
-        core!(&mut self.core, c => c.flush())
-    }
 }
 
 fn jobs_stride_y(mbw: usize) -> usize {
@@ -1393,12 +1141,12 @@ mod tests {
     #[test]
     fn automatic_slicing_is_serial_without_threads() {
         let enc = Encoder::new(EncoderConfig::new(320, 240, 30, 1)).unwrap();
-        assert_eq!(core!(&enc.core, c => c.slices), 1);
+        assert_eq!(enc.slices, 1);
 
         let mut cfg = EncoderConfig::new(320, 240, 30, 1);
         cfg.slices = 4;
         let enc = Encoder::new(cfg).unwrap();
-        assert_eq!(core!(&enc.core, c => c.slices), 4, "explicit slice counts remain supported");
+        assert_eq!(enc.slices, 4, "explicit slice counts remain supported");
     }
 
     fn grey(w: usize, h: usize) -> (Vec<u8>, Vec<u8>, Vec<u8>) {
@@ -1468,31 +1216,5 @@ mod tests {
         assert_eq!(second.len(), 1);
         assert_eq!(count_sei(&first[0]), 2);
         assert_eq!(count_sei(&second[0]), 1);
-    }
-
-    /// A recycled `MbInfo` buffer must come back as all-default entries, whatever the previous picture left in it.
-    #[test]
-    fn recycled_mb_buffers_are_cleared() {
-        let mut core = Core::<u8>::new_with_extra_motion_search_starts(EncoderConfig::new(64, 48, 30, 1), true).unwrap();
-        let n = core.params.mbw * core.params.mbh;
-        let mut m = core.new_mbs();
-        assert_eq!(m.len(), n);
-        for (i, mb) in m.iter_mut().enumerate() {
-            mb.slice = 1 + i as u16;
-            mb.qp = 40;
-            mb.cbp = 0x2f;
-            mb.t8x8 = true;
-            mb.nnz = [7; 16];
-            mb.imodes = [3; 16];
-            mb.ref_idx = [[2; 4]; 2];
-            mb.mvd = [[[9; 2]; 16]; 2];
-        }
-        core.recycle_mbs(m);
-        assert_eq!(core.mbs_pool.len(), 1);
-        let again = core.new_mbs();
-        assert!(core.mbs_pool.is_empty(), "the recycled buffer is reused, not reallocated");
-        let want = format!("{:?}", MbInfo::default());
-        assert_eq!(again.len(), n);
-        assert!(again.iter().all(|mb| format!("{mb:?}") == want));
     }
 }

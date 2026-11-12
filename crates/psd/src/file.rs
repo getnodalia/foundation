@@ -190,18 +190,6 @@ impl PsdFile {
         want: impl FnOnce(&PsdFile) -> Result<bool>,
         recover: impl FnOnce(&PsdFile) -> bool,
     ) -> Result<(Self, Option<Result<Vec<u8>>>)> {
-        Self::from_bytes_and_merged_preflight_info(data, |file, _, _| want(file), recover)
-    }
-
-    /// [`Self::from_bytes_and_merged_preflight`] with the merged image's compression and
-    /// encoded byte length (excluding its two-byte compression field). The image itself is
-    /// still unread: `file.image_data` is empty. A missing compression field is `None`, and
-    /// its parse error is deferred until after preflight, so a refusal always takes precedence.
-    pub fn from_bytes_and_merged_preflight_info(
-        data: &[u8],
-        want: impl FnOnce(&PsdFile, Option<Compression>, u64) -> Result<bool>,
-        recover: impl FnOnce(&PsdFile) -> bool,
-    ) -> Result<(Self, Option<Result<Vec<u8>>>)> {
         let mut r = Reader::new(data);
         let header = Header::read(&mut r)?;
         let psb = header.version.is_psb();
@@ -271,8 +259,7 @@ impl PsdFile {
             image_data,
             write_as_psb: false,
         };
-        let compression = r.clone().u16().ok().map(Compression::from_u16);
-        let want = want(&file, compression, r.remaining().saturating_sub(2) as u64)?;
+        let want = want(&file)?;
         let merged = file.read_merged_section(&mut r, want, recover)?;
         Ok((file, merged))
     }
@@ -488,7 +475,7 @@ impl PsdFile {
         let (v, widen) = self.write_form();
         let psb = v.is_psb();
         let len_field = |long: bool| if long { 8u64 } else { 4 };
-        let blocks_len = |blocks: &[TaggedBlock]| blocks.iter().fold(0u64, |n, b| n.saturating_add(b.encoded_len_aligned(v, 4)));
+        let blocks_len = |blocks: &[TaggedBlock]| blocks.iter().fold(0u64, |n, b| n.saturating_add(b.encoded_len_aligned(v, 4) as u64));
         let body_len = |info: &LayerInfo| -> Result<u64> {
             let unpadded = info.unpadded_len_as(v, widen)?;
             let padding = info.padding.as_ref().map_or(unpadded % 2, |p| p.len() as u64);
@@ -1051,10 +1038,9 @@ mod write_tests {
                         let mut materialized = file.clone();
                         let mut data = Vec::new();
                         materialized.layer_info.take().unwrap().write_body(&mut data, version).unwrap();
-                        materialized.global_blocks.insert(
-                            index.min(materialized.global_blocks.len()),
-                            TaggedBlock { signature: *b"8B64", key, data, padding, stored: None },
-                        );
+                        materialized
+                            .global_blocks
+                            .insert(index.min(materialized.global_blocks.len()), TaggedBlock { signature: *b"8B64", key, data, padding });
                         materialized.layer_info_placement = LayerInfoPlacement::Section;
                         assert_eq!(actual, materialized.to_bytes().unwrap(), "{version:?} {key:?} {index}");
                     }

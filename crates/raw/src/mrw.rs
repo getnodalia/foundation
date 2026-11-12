@@ -23,9 +23,6 @@
 //!   reach on all eight samples.
 //! - `TTW` is a TIFF with IFD0 (orientation), Exif and the maker note; the preview JPEG sits in it with its first
 //!   byte overwritten (see `preview::scan_for_jpeg`).
-//!
-//! [`parse`] reads the block container on its own, for a caller that wants a block (the `TTW` Exif, say)
-//! without decoding the mosaic.
 use crate::{
     BlackLevel, Camera, Cfa, ColorData, Limits, Mode, OpcodeLists, Orientation, RawData, RawError, RawFormat, RawImage, Rect, Result, unpack,
 };
@@ -75,22 +72,22 @@ fn prd(b: &[u8]) -> Result<Prd> {
 
 /// The blocks and the offset of the sensor data in an MRW file.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Mrw<'a> {
+pub(crate) struct Mrw<'a> {
     /// `(name without the leading NUL, contents)`, in file order.
-    pub blocks: Vec<([u8; 3], &'a [u8])>,
+    pub(crate) blocks: Vec<([u8; 3], &'a [u8])>,
     /// Absolute offset of the sensor data.
-    pub data_offset: usize,
+    pub(crate) data_offset: usize,
 }
 
 impl<'a> Mrw<'a> {
     /// The first block called `name` (e.g. `b"PRD"`).
-    pub fn block(&self, name: &[u8; 3]) -> Option<&'a [u8]> {
+    pub(crate) fn block(&self, name: &[u8; 3]) -> Option<&'a [u8]> {
         self.blocks.iter().find(|(n, _)| n == name).map(|(_, d)| *d)
     }
 }
 
 /// At most this many blocks are walked (real files have four or five).
-pub const MAX_BLOCKS: usize = 64;
+const MAX_BLOCKS: usize = 64;
 
 fn be32(b: &[u8], at: usize) -> Option<usize> {
     let s = b.get(at..at.checked_add(4)?)?;
@@ -98,9 +95,8 @@ fn be32(b: &[u8], at: usize) -> Option<usize> {
 }
 
 /// Parse the block list of an MRW file. `None` when the magic is missing or the header length points past the
-/// file; a block that runs past the header is dropped together with everything after it, and at most
-/// [`MAX_BLOCKS`] blocks are read. Nothing is decoded and nothing is copied.
-pub fn parse(bytes: &[u8]) -> Option<Mrw<'_>> {
+/// file; a block that runs past the header is dropped together with everything after it.
+pub(crate) fn parse(bytes: &[u8]) -> Option<Mrw<'_>> {
     if !bytes.starts_with(b"\0MRM") {
         return None;
     }
@@ -131,7 +127,7 @@ pub(crate) fn decode(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawIma
         .and_then(|s| s.get(..need))
         .ok_or_else(|| RawError::Corrupt(format!("Mrw sensor data truncated (needs {need} bytes)")))?;
     let cfa = Cfa::bayer_static(p.cfa);
-    let (data, white, white_source) = if mode == Mode::Full {
+    let (data, white) = if mode == Mode::Full {
         let mut d = vec![0u16; n];
         if p.packed {
             unpack::unpack_msb(src, 12, &mut d);
@@ -141,10 +137,10 @@ pub(crate) fn decode(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawIma
                 *v = (*v).min(4095);
             }
         }
-        let (white, white_source) = crate::shared::white_from_data_sourced(&d, 12);
-        (RawData::U16(d), white, white_source)
+        let white = crate::shared::white_from_data(&d, 12);
+        (RawData::U16(d), white)
     } else {
-        (RawData::U16(Vec::new()), 4095.0, crate::LevelSource::Unknown)
+        (RawData::U16(Vec::new()), 4095.0)
     };
     let wb = m.block(b"WBG").and_then(|b| wb_from(b, &cfa));
     let tiff = m.block(b"TTW").and_then(|b| Tiff::parse(b).ok());
@@ -165,13 +161,9 @@ pub(crate) fn decode(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawIma
         color: ColorData::default(),
         wb_multipliers: wb,
         linearized: false,
-        linearization_table: None,
         opcodes: OpcodeLists::default(),
         camera: tiff.as_ref().and_then(|t| t.ifds.first()).map(Camera::from_ifd0).unwrap_or_default(),
         cinema: Default::default(),
-        lens_metadata: Default::default(),
-        level_sources: crate::LevelSources { black: crate::LevelSource::Fallback, white: white_source },
-        notices: crate::RawNotices::default(),
         pixel_aspect: 1.0,
     };
     img.validate_for(mode)?;
@@ -254,11 +246,6 @@ pub(crate) mod tests {
             assert_eq!(r.camera.make.as_deref(), Some("Minolta Co., Ltd."));
             let wb = r.wb_multipliers.unwrap();
             assert!((wb[0] - 408.0 / 256.0).abs() < 1e-6 && (wb[2] - 450.0 / 256.0).abs() < 1e-6, "{wb:?}");
-            assert_eq!(
-                r.level_sources,
-                crate::LevelSources { black: crate::LevelSource::Fallback, white: crate::LevelSource::Fallback },
-                "packed {packed}"
-            );
             assert_eq!(crate::probe_info(&f).unwrap(), r.info());
         }
     }
@@ -330,16 +317,5 @@ mod container_tests {
         for n in 0..f.len() {
             let _ = parse(&f[..n]);
         }
-    }
-
-    #[test]
-    fn at_most_max_blocks_are_read() {
-        let body: Vec<u8> = (0..MAX_BLOCKS + 6).flat_map(|_| block(b"PAD", &[0])).collect();
-        let mut f = b"\0MRM".to_vec();
-        f.extend_from_slice(&(body.len() as u32).to_be_bytes());
-        f.extend_from_slice(&body);
-        let m = parse(&f).unwrap();
-        assert_eq!(m.blocks.len(), MAX_BLOCKS);
-        assert_eq!(m.data_offset, f.len());
     }
 }

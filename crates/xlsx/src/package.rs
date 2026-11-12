@@ -3,16 +3,10 @@
 use nodalia_opc::{ContentTypes, LazyPackage, Rels};
 use nodalia_xml::{El, Options, UnknownEntity};
 
-use nodalia_drawingml::chart::Chart;
-use nodalia_drawingml::theme::Theme;
-
-use crate::drawing::Drawing;
-use crate::features::{Comments, NoteShape, Table};
-use crate::pivot::{CacheRecord, PivotCacheDefinition, PivotTableDefinition, read_record};
 use crate::sheet::{Row, RowReader, SheetPart};
 use crate::strings::StringItem;
 use crate::styles::Styles;
-use crate::workbook::{SheetEntry, SheetKind, Workbook};
+use crate::workbook::{SheetEntry, Workbook};
 use crate::{Error, Limits, Warnings, xlsb};
 
 /// Most bytes of `[Content_Types].xml` read from a binary workbook.
@@ -29,9 +23,6 @@ pub struct Package<'a> {
     binary: Option<ContentTypes>,
     workbook_rels: Option<Rels>,
     budget: xlsb::Budget,
-    /// What a binary workbook's formulas refer to, once its workbook part is read: `Some(None)`
-    /// when that couldn't be read (every formula keeps its saved result).
-    binary_links: Option<Option<xlsb::Links>>,
     /// Shared strings in a binary workbook, once counted: a cell's index is checked against it.
     binary_strings: Option<usize>,
 }
@@ -70,7 +61,6 @@ impl<'a> Package<'a> {
             binary,
             workbook_rels: None,
             budget: xlsb::Budget::default(),
-            binary_links: None,
             binary_strings: None,
         })
     }
@@ -100,10 +90,10 @@ impl<'a> Package<'a> {
         &mut self.opc
     }
 
-    /// The XML options parts are read with: the names of [`crate::ns::CANONICAL`], an undefined
-    /// entity kept as written, [`Limits::xml`].
+    /// The XML options parts are read with: local names, an undefined entity kept as written,
+    /// [`Limits::xml`].
     pub fn xml_options(&self) -> Options<'static> {
-        Options { unknown_entity: UnknownEntity::Literal, ..Options::canonical(&crate::ns::CANONICAL) }.with_limits(self.limits.xml)
+        Options { unknown_entity: UnknownEntity::Literal, ..Options::local() }.with_limits(self.limits.xml)
     }
 
     /// Part `part` as XML; `Ok(None)` when there is no such part.
@@ -149,14 +139,7 @@ impl<'a> Package<'a> {
         if self.binary.is_some() {
             let bytes = self.required(&self.workbook_part.clone())?;
             let rels = self.workbook_rels()?;
-            let (mut wb, mut links, names) = xlsb::workbook(&bytes, &rels, &self.limits, &self.budget, &mut self.warnings)?;
-            if let Some(links) = links.as_mut() {
-                self.index_tables(&wb, links)?;
-            }
-            // Names after tables: a name's formula may use a structured reference.
-            xlsb::read_names(&mut wb, names, links.as_mut(), &self.limits, &self.budget, &mut self.warnings);
-            self.binary_links = Some(links);
-            return Ok(wb);
+            return xlsb::workbook(&bytes, &rels, &self.limits, &self.budget, &mut self.warnings);
         }
         let options = self.xml_options();
         let root = match self.opc.read_xml(&self.workbook_part, &options)? {
@@ -199,15 +182,9 @@ impl<'a> Package<'a> {
             self.binary_strings = Some(strings.len());
             return Ok(strings);
         }
-        let rel = rels.first("sharedStrings").filter(|r| !r.external);
-        // Some older spreadsheet writers omit the workbook relationship but still emit the
-        // conventional shared-string part. The pre-OPC reader accepted that layout, so retain
-        // compatibility by checking the standard part name only when the relationship is absent.
-        let target = rel.map_or("xl/sharedStrings.xml", |r| r.target.as_str());
-        let Some(bytes) = self.opc.read(target)? else {
-            if rel.is_some() {
-                self.warn(format!("missing part {target}"));
-            }
+        let Some(rel) = rels.first("sharedStrings").filter(|r| !r.external) else { return Ok(Vec::new()) };
+        let Some(bytes) = self.opc.read(&rel.target)? else {
+            self.warn(format!("missing part {}", rel.target));
             return Ok(Vec::new());
         };
         let mut items = Vec::new();
@@ -225,28 +202,16 @@ impl<'a> Package<'a> {
         Ok(items)
     }
 
-    /// The styles part, `None` when the workbook has none. A damaged one is a warning and `None`;
-    /// only a limit is an error.
+    /// The styles part, `None` when the workbook has none (or is binary: its styles are not read).
     pub fn styles(&mut self) -> Result<Option<Styles>, Error> {
+        if self.binary.is_some() {
+            return Ok(None);
+        }
         let rels = self.workbook_rels()?;
         let Some(rel) = rels.first("styles").filter(|r| !r.external) else {
             self.warn("no styles part");
             return Ok(None);
         };
-        if let Some(types) = &self.binary {
-            let read = xlsb::check_type(types, &rel.target, xlsb::STYLES).and_then(|()| {
-                let bytes = self.opc.read(&rel.target)?.ok_or_else(|| xlsb::invalid(format!("missing part {}", rel.target)))?;
-                xlsb::styles(&bytes, &self.limits, &self.budget, &mut self.warnings)
-            });
-            return match read {
-                Ok(styles) => Ok(Some(styles)),
-                Err(Error::TooLarge(m)) => Err(Error::TooLarge(m)),
-                Err(e) => {
-                    self.warn(format!("skipped {}: {e}", rel.target));
-                    Ok(None)
-                }
-            };
-        }
         Ok(self.optional_xml(&rel.target.clone())?.map(Styles::read))
     }
 
@@ -263,13 +228,8 @@ impl<'a> Package<'a> {
                 Some(n) => n,
                 None => self.shared_strings()?.len(),
             };
-            // Formulas name sheets and functions through the workbook part.
-            if self.binary_links.is_none() {
-                self.workbook()?;
-            }
             let bytes = self.required(&part)?;
-            let links = self.binary_links.as_ref().and_then(Option::as_ref);
-            let mut sheet = xlsb::worksheet(&bytes, strings, links, &self.limits, &self.budget, &mut self.warnings, &mut each)?;
+            let mut sheet = xlsb::worksheet(&bytes, strings, &self.limits, &self.budget, &mut self.warnings, &mut each)?;
             sheet.part = part;
             return Ok(sheet);
         }
@@ -295,172 +255,6 @@ impl<'a> Package<'a> {
             SheetPart { part, root: root.unwrap_or_default(), rels, rows: rows.rows, dropped: rows.dropped, damaged, ..SheetPart::default() };
         sheet.lift();
         Ok(sheet)
-    }
-
-    /// The comments of a worksheet read by [`Package::sheet`]; `None` when it has none.
-    pub fn comments(&mut self, sheet: &SheetPart) -> Result<Option<Comments>, Error> {
-        let Some(rel) = sheet.rels.first("comments").filter(|r| !r.external) else { return Ok(None) };
-        Ok(self.optional_xml(&rel.target.clone())?.map(Comments::read))
-    }
-
-    /// The note shapes of a worksheet's legacy VML drawing: how its comments are shown.
-    pub fn note_shapes(&mut self, sheet: &SheetPart) -> Result<Vec<NoteShape>, Error> {
-        let Some(rel) = sheet.rels.first("vmlDrawing").filter(|r| !r.external) else { return Ok(Vec::new()) };
-        Ok(self.optional_xml(&rel.target.clone())?.map(|v| NoteShape::read_all(&v)).unwrap_or_default())
-    }
-
-    /// The drawing part of a worksheet read by [`Package::sheet`]: its name, the drawing, and its
-    /// relationships (charts, pictures). `None` when the sheet has none.
-    pub fn drawing(&mut self, sheet: &SheetPart) -> Result<Option<(String, Drawing, Rels)>, Error> {
-        let Some(rel) = sheet.rels.first("drawing").filter(|r| !r.external) else { return Ok(None) };
-        let part = rel.target.clone();
-        let Some(root) = self.optional_xml(&part)? else { return Ok(None) };
-        let rels = self.rels(&part)?;
-        Ok(Some((part, Drawing::read(&root), rels)))
-    }
-
-    /// The tables of a worksheet read by [`Package::sheet`], in the order of its `tableParts`
-    /// (its `BrtListPart`s in a binary workbook), each with its part name. A table part that does
-    /// not read is skipped with a warning.
-    pub fn tables(&mut self, sheet: &SheetPart) -> Result<Vec<(String, Table)>, Error> {
-        let mut out = Vec::new();
-        if self.binary.is_some() {
-            let rels = self.opc.rels(&sheet.part)?;
-            for id in &sheet.features.table_parts {
-                let Some(rel) = rels.by_id(id).filter(|r| !r.external && r.kind() == "table") else {
-                    self.warn(format!("XLSB: {}: a table part relationship is missing", sheet.part));
-                    continue;
-                };
-                let part = rel.target.clone();
-                let read = self.binary_part(&part, xlsb::TABLE).and_then(|bytes| {
-                    let links = self.binary_links.as_ref().and_then(Option::as_ref);
-                    xlsb::table(&bytes, links, &self.limits, &self.budget, &mut self.warnings)
-                });
-                match read {
-                    Ok(t) => out.push((part, t)),
-                    Err(Error::TooLarge(m)) => return Err(Error::TooLarge(m)),
-                    Err(e) => self.warn(format!("skipped {part}: {e}")),
-                }
-            }
-            return Ok(out);
-        }
-        for id in &sheet.features.table_parts {
-            let Some(rel) = sheet.rels.by_id(id).filter(|r| !r.external) else { continue };
-            let part = rel.target.clone();
-            match self.optional_xml(&part)?.map(|t| Table::read(&t)) {
-                Some(Some(t)) => out.push((part, t)),
-                Some(None) => self.warn(format!("skipped {part}: the table has no range")),
-                None => {}
-            }
-        }
-        Ok(out)
-    }
-
-    /// The pivot cache definition in `part` (a workbook relationship that
-    /// [`Workbook::pivot_caches`] names). `None`, with a warning, when it is missing or does not
-    /// read.
-    pub fn pivot_cache(&mut self, part: &str) -> Result<Option<PivotCacheDefinition>, Error> {
-        let Some(x) = self.optional_xml(part)? else { return Ok(None) };
-        let def = PivotCacheDefinition::read(&x);
-        if def.is_none() {
-            self.warn(format!("{part}: a pivot cache this crate does not read (OLAP data, or not a cache definition)"));
-        }
-        Ok(def)
-    }
-
-    /// The records of the pivot cache in `cache_part`, one at a time, so a cache of any size is
-    /// read without holding it. Nothing when it saved none.
-    pub fn pivot_records(&mut self, cache_part: &str, mut each: impl FnMut(CacheRecord) -> Result<(), Error>) -> Result<(), Error> {
-        let rels = self.opc.rels(cache_part)?;
-        let Some(part) = rels.first("pivotCacheRecords").filter(|r| !r.external).map(|r| r.target.clone()) else { return Ok(()) };
-        let Some(bytes) = self.opc.read(&part)? else {
-            self.warn(format!("missing part {part}"));
-            return Ok(());
-        };
-        let (_, err) = self.xml_options().parse_streaming_partial(&bytes, &["r"], |e| each(read_record(&e)).map_err(Stop::Caller));
-        match err {
-            Some(Stop::Caller(e)) => Err(e),
-            Some(Stop::Xml(e)) if e.is_limit() => Err(e.into()),
-            Some(Stop::Xml(e)) => {
-                self.warn(format!("{part} is damaged ({e}); its records were read up to there"));
-                Ok(())
-            }
-            None => Ok(()),
-        }
-    }
-
-    /// The PivotTables of a worksheet read by [`Package::sheet`], each with its part name and
-    /// the part of its cache: the one the table relates to, else the one `workbook` names by
-    /// its `cacheId`. A part that does not read is skipped with a warning.
-    pub fn pivot_tables(&mut self, workbook: &Workbook, sheet: &SheetPart) -> Result<Vec<(String, PivotTableDefinition, Option<String>)>, Error> {
-        let mut out = Vec::new();
-        for rel in sheet.rels.list.iter().filter(|r| r.kind() == "pivotTable" && !r.external) {
-            let Some(x) = self.optional_xml(&rel.target)? else { continue };
-            let Some(table) = PivotTableDefinition::read(&x) else {
-                self.warn(format!("skipped {}: not a PivotTable with a location", rel.target));
-                continue;
-            };
-            let own = self.opc.rels(&rel.target)?.first("pivotCacheDefinition").filter(|r| !r.external).map(|r| r.target.clone());
-            let cache = match own {
-                Some(c) => Some(c),
-                None => {
-                    let book = self.workbook_rels()?;
-                    let entry = workbook.pivot_caches.iter().find(|c| Some(c.cache_id) == table.cache_id);
-                    entry.and_then(|e| book.by_id(&e.rel_id)).filter(|r| !r.external).map(|r| r.target.clone())
-                }
-            };
-            out.push((rel.target.clone(), table, cache));
-        }
-        Ok(out)
-    }
-
-    /// A chart part (`c:chartSpace`, or `cx:chartSpace` of an Office 2016 chart) through
-    /// `nodalia-drawingml`. `None` when the part is missing or holds no chart it can read.
-    pub fn chart(&mut self, part: &str) -> Result<Option<Chart>, Error> {
-        let Some(bytes) = self.opc.read(part)? else {
-            self.warn(format!("missing part {part}"));
-            return Ok(None);
-        };
-        let chart = nodalia_drawingml::chart::read::read_chart_xml(&bytes).or_else(|| nodalia_drawingml::chart::chartex::read_chartex_xml(&bytes));
-        if chart.is_none() {
-            self.warn(format!("skipped {part}: not a chart that can be read"));
-        }
-        Ok(chart)
-    }
-
-    /// The workbook's theme (`a:theme`) through `nodalia-drawingml`; `None` when it has none.
-    pub fn theme(&mut self) -> Result<Option<Theme>, Error> {
-        let rels = self.workbook_rels()?;
-        let Some(rel) = rels.first("theme").filter(|r| !r.external) else { return Ok(None) };
-        let root = self.optional_xml(&rel.target.clone())?;
-        Ok(root.map(|r| nodalia_drawingml::theme::read_theme(&mut nodalia_drawingml::part::NoSource, &r)))
-    }
-
-    /// A part of a binary workbook, checked against its content type.
-    fn binary_part(&mut self, part: &str, content_type: &str) -> Result<Vec<u8>, Error> {
-        if let Some(types) = &self.binary {
-            xlsb::check_type(types, part, content_type)?;
-        }
-        self.required(part)
-    }
-
-    /// Indexes the table parts of a binary workbook's worksheets, for the structured references
-    /// in its formulas. A table part that does not read is left out with a warning: formulas
-    /// using it keep their saved results.
-    fn index_tables(&mut self, wb: &Workbook, links: &mut xlsb::Links) -> Result<(), Error> {
-        for entry in wb.sheets.iter().filter(|e| e.kind == SheetKind::Worksheet) {
-            let Some(part) = &entry.part else { continue };
-            let rels = self.opc.rels(part)?;
-            for rel in rels.list.iter().filter(|r| r.kind() == "table" && !r.external) {
-                let read = self.binary_part(&rel.target, xlsb::TABLE).and_then(|bytes| xlsb::index_table(links, &bytes, &self.limits, &self.budget));
-                match read {
-                    Ok(()) => {}
-                    Err(Error::TooLarge(m)) => return Err(Error::TooLarge(m)),
-                    Err(e) => self.warn(format!("XLSB: {} could not be read ({e}); formulas using its table keep their saved results", rel.target)),
-                }
-            }
-        }
-        Ok(())
     }
 
     fn required(&mut self, part: &str) -> Result<Vec<u8>, Error> {
