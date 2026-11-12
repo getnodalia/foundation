@@ -11,6 +11,7 @@ repository.workspace = true
 workspace = true
 
 [dependencies]
+nodalia-drawingml = { workspace = true }
 nodalia-opc = { workspace = true }
 nodalia-sheet = { workspace = true }
 nodalia-xml = { workspace = true }
