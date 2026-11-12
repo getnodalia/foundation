@@ -1,0 +1,11 @@
+kind = "app"
+categories = ["AudioVideo", "Video", "AudioVideoEditing"]
+icon = "assets/app-icon/hicolor/256x256/apps/dev.danielmiguelt.Toma.png"
+
+[linux.x86_64]
+asset = "toma-{version}-linux-x86_64.tar.gz"
+exec = "toma-{version}-linux-x86_64/bin/toma"
+
+[linux.aarch64]
+asset = "toma-{version}-linux-aarch64.tar.gz"
+exec = "toma-{version}-linux-aarch64/bin/toma"

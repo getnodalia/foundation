@@ -1,0 +1,18 @@
+[package]
+name = "toma-captions"
+description = "Toma captions: SRT, WebVTT, SCC, MCC, EBU STL and TTML/IMSC1/DFXP import/export, caption layout and burn-in rasterisation"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+toma-time = { workspace = true }
+toma-color = { workspace = true }
+toma-project = { workspace = true }
+toma-text = { workspace = true }
+nodalia-captions = { workspace = true }
+

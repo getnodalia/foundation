@@ -1,0 +1,56 @@
+[package]
+name = "toma-engine"
+description = "Toma engine façade: session, command registry, history, media pool"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[features]
+default = []
+# Speech-to-text with Whisper (candle, CPU). Off by default and in wasm builds.
+whisper = ["toma-speech/whisper"]
+# Speech-model downloads over HTTPS.
+speech-download = ["toma-speech/download"]
+# Natural voices for Text to Speech: Kokoro-82M on candle (CPU) and their download.
+neural-voices = ["toma-tts/kokoro", "speech-download"]
+
+[dependencies]
+toma-time = { workspace = true }
+toma-geom = { workspace = true }
+toma-color = { workspace = true }
+toma-frame = { workspace = true }
+toma-media = { workspace = true }
+nodalia-media = { workspace = true, features = ["mxf"] }
+toma-codecs = { workspace = true }
+toma-project = { workspace = true }
+toma-edit = { workspace = true }
+toma-render = { workspace = true }
+toma-scopes = { workspace = true }
+toma-text = { workspace = true }
+toma-audio-dsp = { workspace = true }
+toma-export = { workspace = true }
+toma-format = { workspace = true }
+toma-interchange = { workspace = true }
+toma-captions = { workspace = true }
+toma-speech = { workspace = true }
+toma-tts = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+log = { workspace = true }
+roxmltree = { workspace = true }
+chrono = { workspace = true }
+nodalia-docpath = { workspace = true }
+web-time = "1"
+
+[dev-dependencies]
+toma-testkit = { workspace = true }
+tempfile = "3"
+toma-audio-dsp = { workspace = true, features = ["test-util"] }
+toma-dng = { workspace = true, features = ["writer"] }
+toma-isobmff = { workspace = true }
+image = { version = "0.25", default-features = false, features = ["png", "gif"] }

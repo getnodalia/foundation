@@ -1,0 +1,37 @@
+[package]
+name = "toma-codecs"
+description = "Container + codec hub: MP4/MOV, Matroska, MXF, Ogg and MPEG TS/PS sources, image sequences, GOP-aware seeking, decoder registry, audio decoding"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+nodalia-audio = { workspace = true }
+nodalia-video = { workspace = true }
+toma-time = { workspace = true }
+toma-color = { workspace = true }
+toma-frame = { workspace = true }
+toma-media = { workspace = true }
+toma-isobmff = { workspace = true }
+toma-matroska = { workspace = true }
+nodalia-media = { workspace = true, features = ["avi", "mpegts", "mxf", "ogg"] }
+toma-bitstream = { workspace = true }
+toma-vp8 = { workspace = true }
+toma-prores = { workspace = true }
+toma-dnx = { workspace = true }
+rayon = { workspace = true }
+thiserror = { workspace = true }
+log = { workspace = true }
+# Decode timing counters (`gop_stats`); std's Instant panics on wasm32.
+web-time = "1"
+image = { version = "0.25", default-features = false, features = ["jpeg"] }
+# Bootstrap audio decoding (MPL-2.0, used unmodified); replaced by own decoders over time.
+symphonia = { version = "0.5.5", default-features = false, features = ["aac", "mp1", "mp2", "mp3", "flac", "alac", "pcm", "wav", "aiff", "ogg", "vorbis", "isomp4"] }
+
+[dev-dependencies]
+toma-testkit = { workspace = true }
+serde_json = { workspace = true }
