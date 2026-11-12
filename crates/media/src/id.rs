@@ -1,4 +1,4 @@
-//! Container and codec identifiers and codec parameters shared by the codec crates (craft-audio,
+//! Container and codec identifiers and codec parameters shared by the codec crates (nodalia-audio,
 //! and the video crate to come), so a file's container and codec are named the same way
 //! everywhere, and a codec is configured the same way whatever container its track came from.
 //!
@@ -36,6 +36,14 @@ pub enum Container {
     MpegAudio,
     /// A raw AC-3 or E-AC-3 stream.
     Ac3,
+    /// AVI (RIFF), including OpenDML.
+    Avi,
+    /// MXF (SMPTE ST 377-1): OP1a, OP-Atom.
+    Mxf,
+    /// MPEG-2 transport stream (TS, M2TS).
+    MpegTs,
+    /// MPEG-1/2 program stream (MPG, VOB).
+    MpegPs,
 }
 
 impl Container {
@@ -54,6 +62,10 @@ impl Container {
             Container::Adts => "ADTS",
             Container::MpegAudio => "MPEG audio",
             Container::Ac3 => "AC-3",
+            Container::Avi => "AVI",
+            Container::Mxf => "MXF",
+            Container::MpegTs => "MPEG-TS",
+            Container::MpegPs => "MPEG-PS",
         }
     }
 }
@@ -239,7 +251,8 @@ impl PcmFormat {
 /// |---|---|
 /// | AAC | `AudioSpecificConfig` |
 /// | Opus | the `OpusHead` identification header (RFC 7845 §5.1) |
-/// | Vorbis | the three headers, Xiph-laced |
+/// | Vorbis, Theora | the three headers, Xiph-laced |
+/// | Speex | the Speex header |
 /// | FLAC | `fLaC` followed by the metadata blocks (STREAMINFO first) |
 /// | ALAC | the magic cookie (`ALACSpecificConfig`) |
 /// | AC-3 / E-AC-3 | the MP4 `dac3` / `dec3` payload, or empty |
