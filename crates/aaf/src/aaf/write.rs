@@ -360,7 +360,7 @@ pub(crate) fn write(doc: &Document, version: nodalia_cfb::Version, identity: &Id
 
     // ---- nested compositions: a clip refers to one as it does to a master mob, through the
     // composition's first track of the clip's kind (a broken-out channel: that channel's track)
-    let mut refs = Refs { mobs: master_ref, rates: doc.sources.iter().enumerate().map(|(i, s)| (i, source_rate(s))).collect() };
+    let mut refs = Refs { mobs: master_ref, rates: HashMap::new() };
     let nested_ids: Vec<[u8; 32]> = doc.nested.iter().map(|_| ids.next()).collect();
     for (si, s) in doc.sources.iter().enumerate() {
         let Some((comp, id)) = s.nested.and_then(|n| Some((doc.nested.get(n)?, nested_ids.get(n)?))) else { continue };

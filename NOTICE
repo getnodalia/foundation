@@ -235,10 +235,10 @@ applications retain their own document-font selection and licensing policy.
 linesweeper
 
 linesweeper 0.5.0 (https://crates.io/crates/linesweeper/0.5.0), MIT OR Apache-2.0, is stored in
-vendor/linesweeper with its upstream license files and one local patch. Its manifest names Joe Neeman
+vendor/linesweeper with its upstream license files and no file changed. Its manifest names Joe Neeman
 as author, and its LICENSE-MIT reads "Copyright (c) 2018 Raph Levien". See
-vendor/linesweeper/README.craft.md and vendor/linesweeper/SOURCE.json for provenance, the local patch
-and the files left out.
+vendor/linesweeper/README.craft.md and vendor/linesweeper/SOURCE.json for provenance and the files
+left out.
 
 Platform lifecycle source provenance
 
@@ -279,6 +279,6 @@ and the average bit rate filled in. Those files are Apache-2.0 only.
 
 Nodalia
 
-This tree is nodalia-libs, made from storytold/craft-libs at 976eb51c59edb0a37f24105850f52d921c8518ee by renaming it
+This tree is nodalia-libs, made from storytold/craft-libs at d13ac58a15c45d618f25910772502e38c4ce1d4c by renaming it
 (scripts/nodalia_libs.py in https://github.com/getnodalia/foundation). Its code and assets keep the licences, copyright
 notices and credits above and in ATTRIBUTION.md, unchanged.

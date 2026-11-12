@@ -20,7 +20,6 @@
 pub mod color;
 pub mod guard;
 pub mod paths;
-pub mod preflight;
 pub mod sniff;
 pub mod svgz;
 #[cfg(feature = "tree")]
