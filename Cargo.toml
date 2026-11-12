@@ -35,7 +35,9 @@ nodalia-cms = { path = "crates/cms" }
 nodalia-crs = { path = "crates/crs" }
 nodalia-crw = { path = "crates/crw" }
 nodalia-csv = { path = "crates/csv" }
+nodalia-dav = { path = "crates/dav" }
 nodalia-dialogs = { path = "crates/dialogs" }
+nodalia-doc-binary = { path = "crates/doc-binary" }
 nodalia-docx = { path = "crates/docx" }
 nodalia-dxf = { path = "crates/dxf" }
 nodalia-drawingml = { path = "crates/drawingml" }
@@ -50,6 +52,7 @@ nodalia-font-catalog = { path = "crates/font-catalog" }
 nodalia-font-manager = { path = "crates/font-manager" }
 nodalia-font-store = { path = "crates/font-store" }
 nodalia-gainmap = { path = "crates/gainmap" }
+nodalia-flow = { path = "crates/flow" }
 nodalia-gcode = { path = "crates/gcode" }
 nodalia-gif = { path = "crates/gif" }
 nodalia-hdr = { path = "crates/hdr" }
@@ -69,10 +72,13 @@ nodalia-assuan = { path = "crates/assuan" }
 nodalia-kra = { path = "crates/kra" }
 nodalia-audio = { path = "crates/audio" }
 # No default features, so nodalia-audio's `encode` builds nodalia-media without `isobmff`.
+nodalia-latex = { path = "crates/latex" }
+nodalia-markdown = { path = "crates/markdown" }
 nodalia-math = { path = "crates/math" }
 nodalia-media = { path = "crates/media", default-features = false }
 nodalia-media-testkit = { path = "crates/media-testkit" }
 nodalia-midi = { path = "crates/midi" }
+nodalia-sf2 = { path = "crates/sf2" }
 nodalia-mime = { path = "crates/mime" }
 nodalia-odf = { path = "crates/odf" }
 nodalia-ods = { path = "crates/ods" }
@@ -83,6 +89,7 @@ nodalia-metafile = { path = "crates/metafile" }
 nodalia-offcrypto = { path = "crates/offcrypto" }
 nodalia-opc = { path = "crates/opc" }
 nodalia-ora = { path = "crates/ora" }
+nodalia-pptx = { path = "crates/pptx" }
 nodalia-penpot = { path = "crates/penpot" }
 nodalia-lienzo-format = { path = "crates/lienzo-format" }
 nodalia-plotter = { path = "crates/plotter" }
