@@ -27,17 +27,35 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
 
 - [`nodalia-platform`](crates/platform/README.md): optional native dialog lifecycle, Linux/BSD desktop appearance observation and browser download ownership; application policy stays in the apps.
 
+- [`nodalia-aep`](crates/aep/README.md): After Effects projects: the `.aep` (RIFX) and `.aepx`
+  container as a lossless chunk tree that writes back byte for byte, and a typed, read-only view
+  of compositions, layers, properties, keyframes, effects, masks, shapes, text and footage.
+  Clean room, from Pulso. Mapping onto an app's document stays in the app.
 - [`nodalia-ai-core`](crates/ai-core/README.md): the data model and contract for AI in the Craft Apps (connections, models, tools, requests, jobs, consent, history, route spec). Pure, no I/O, wasm-safe. Contract in [docs/ai-shared-layer.md](docs/ai-shared-layer.md).
 - [`nodalia-pdf`](crates/pdf/README.md): independently optional PDF parsing, interpretation, rasterization and guarded authoring. Apps retain layout, fonts, editing and export policy; writer-only consumers do not enable the shared reader.
 
+- [`nodalia-pdn`](crates/pdn/README.md): Paint.NET documents (`.pdn`, PDN3), read: the layer list, blend modes and chunked gzip pixel blocks, with a data-only MS-NRBF (.NET binary serialization) reader. From Lienzo.
+- [`nodalia-aaf`](crates/aaf/README.md): clean-room AAF (Edit Protocol, structured storage) and OMF Interchange 2.0 (Bento) readers and writers over one mob-style composition model with exact times, clip gain, markers, nested compositions and embedded PCM essence. From Toma.
+- [`nodalia-assuan`](crates/assuan/README.md): the Assuan protocol and gpg-agent's operations (key lookup, signing a digest, decrypting a session key) over any `Read + Write` stream, with a bounded canonical S-expression reader. No sockets; everything the agent sends is capped.
+- [`nodalia-affinity`](crates/affinity/README.md): bounded reader for native Affinity documents (`.af`, `.afdesign`, `.afphoto`, `.afpub`): archive, object stream and a neutral document model with layers, artboards, vectors, text, tables, images and masks. Read only; mapping onto an app's document stays in the app.
 - [`nodalia-atomic`](crates/atomic/README.md): Crash-safe atomic file writing and replacement with same-directory staging, directory fsync, Apple `F_FULLFSYNC` fallback, transient lock backoff, and fault injection for the Craft suite.
+- [`nodalia-captions`](crates/captions/README.md): caption and subtitle files behind one neutral
+  model (cues with exact tick times): SubRip, WebVTT, Scenarist SCC, MacCaption MCC, EBU STL and
+  TTML / IMSC1 / DFXP readers and writers, and CEA-608 / CEA-708 byte-pair coding. Carved from
+  Toma.
+- [`nodalia-cfb`](crates/cfb/README.md): clean-room Compound File Binary ([MS-CFB], OLE structured
+  storage) reader and writer: the container of legacy Office files, Outlook messages, encrypted
+  OOXML packages and AAF. Bounded on hostile input; what the streams hold stays with each format.
 - [`nodalia-cms`](crates/cms/README.md): pure-Rust ICC v2/v4 colour management: profile parsing
   and writing, transforms, rendering intents, black point compensation, soft proofing, gamut
   checks, 3D LUTs and built-in profiles (sRGB, Display P3, synthetic coated CMYK and others).
+- [`nodalia-crs`](crates/crs/README.md): Adobe Camera Raw settings (the `crs:` namespace of an XMP packet or `.xmp` sidecar, read through nodalia-metadata): the settings by name, numbers, tone curve points, local corrections and the crop, read and written. From Lienzo.
+- [`nodalia-codepage`](crates/codepage/README.md): legacy 8-bit code pages, one table each: the single-byte Windows pages, Mac OS Roman and fifteen DOS pages, keyed by Windows code page number, with the RTF/Word font charsets. nodalia-rtf, nodalia-dxf and nodalia-mime decode through it.
 - [`nodalia-crw`](crates/crw/README.md): clean-room Canon CRW (CIFF) raw decoder, from Luz:
   the heap container, the entropy coding derived by black-box analysis (frozen code tables), sensor
   black and white levels and as-shot white balance. The complete derivation record (plan, sources
   log, scripts, verification) is in `crates/crw/clean-room/`. Colour stays in each app.
+- [`nodalia-csv`](crates/csv/README.md): delimited text (CSV, TSV) and SYLK: encoding detection (UTF-8, UTF-16, Windows-1252 or Windows-1256), delimiter sniffing, a record parser with a cap on fields per record, field quoting for writers, and a SYLK (`.slk`) reader with R1C1 formulas rewritten to A1.
 - [`nodalia-dialogs`](crates/dialogs/README.md): native file and message dialogs that never block
   the event loop: queued requests shown at the end of the frame and answered on a later frame,
   free-standing Open and Folder panels and Save sheets on macOS, case-insensitive filters. What
@@ -48,9 +66,46 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
 - [`nodalia-docpath`](crates/docpath/src/lib.rs): decides whether a path or `file:` URL stored in a
   document may be opened. Paths stored in documents are followed only when they are local or on the
   document's own network share; other network paths, device paths and non-file URLs are refused.
+- [`nodalia-dpx`](crates/dpx/src/lib.rs): DPX (SMPTE ST 268) and Kodak Cineon frames, from Lienzo,
+  Toma and Pulso: header fields and code values at 8, 10, 12 and 16 bits in both byte
+  orders, filled and packed, RGB, RGBA, ABGR, luma and Y'CbCr descriptors, and a writer for both
+  formats. Bounded on hostile input. Colour conversion and orientation stay in each app.
+- [`nodalia-drawingml`](crates/drawingml/README.md): the DrawingML that PPTX, DOCX and XLSX share:
+  EMU units and `a:xfrm`, colours with theme slots and colour transforms, preset shape outlines
+  (`a:prstGeom`), custom geometry with guide formulas (`a:custGeom`) and preset text warps
+  (`a:prstTxWarp`). From Lámina. Takes `nodalia-xml` trees; packages stay with each format.
+- [`nodalia-eps`](crates/eps/README.md): Encapsulated PostScript files as a container: the binary
+  preview header (read and write), the DSC header comments and bounding boxes (also `(atend)`),
+  the EPSI preview bitmap, ASCII85 data, and telling EPS, PostScript and Illustrator files
+  (PostScript- or PDF-based) apart. No PostScript interpreter.
+- [`nodalia-docx`](crates/docx/README.md): DOCX (WordprocessingML) read and written on `nodalia-wordmodel`, with
+  Word XML (Flat OPC) and Word 2003 XML, password-protected packages and Restrict Editing hashes.
+  Letra's DOCX crate on `nodalia-opc`, `nodalia-xml` and `nodalia-offcrypto`.
+- [`nodalia-dxf`](crates/dxf/src/lib.rs): DXF tag reader and writer, from Forja: ASCII and
+  binary DXF as (group code, value) tags, split into sections and entities, with pre-2007 code
+  pages and version detection, and written back; and `model`, the drawing above the tags (header
+  variables, tables, blocks, layouts, entities) and its writer (R12 to 2018), merged from Forja's and Pluma's readers. Bounded
+  on hostile input. Mapping the model onto a document stays in each app.
 - [`nodalia-ecproj-format`](crates/ecproj-format/README.md): the envelope of Pulso `.ecproj`
   project files: `savedBy`, the schema version and its check, and the file object with the
   project and its saved view as type parameters. The project model stays in Pulso.
+- [`nodalia-fig`](crates/fig/README.md): clean-room reader and writer for the `.fig` container
+  (Figma Design and FigJam local copies): the ZIP archive, the chunked canvas with its kiwi schema
+  and message, images, and the vector network and geometry blobs. Bounded on hostile input.
+  Carved from Trama.
+- [`nodalia-epub`](crates/epub/README.md): EPUB packages: the OCF ZIP container, the package document (metadata, manifest, spine) and the navigation document, written as EPUB 3 (reflowable and fixed layout) and read (EPUB 2 and 3) with bounded entry sizes. Content documents are the caller's.
+- [`nodalia-figma-rest`](crates/figma-rest/README.md): typed model of the Figma REST API file JSON
+  (document tree, paints, effects, text styles, layout, component metadata), read and written with
+  serde without losing fields it has no name for. The neutral model the `.fig` and `.sketch`
+  readers map onto, with their extensions documented.
+- [`nodalia-ews`](crates/ews/README.md): the SOAP layer of Exchange Web Services, from MailCraft, without
+  sockets: the request envelope and an escaping element builder, and the answer envelope, faults
+  and response messages with their codes, read with `nodalia-xml`. The operations and everything
+  over HTTP stay in each app.
+- [`nodalia-exr`](crates/exr/src/lib.rs): OpenEXR pieces shared by Lienzo and Pulso: layer
+  and channel names, the channels that make a colour picture, and Cryptomatte IDs, metadata keys,
+  manifests and rank channels. The optional `decode` feature adds bounded part listing, flat
+  decoding (scan lines, tiles, every compression of the `exr` crate) and writing.
 - [`nodalia-font-catalog`](crates/font-catalog/README.md): the installed fonts on every platform
   (font folders, fontconfig and Flatpak host folders, CoreText, DirectWrite, the font store),
   lookup by family, style, localized, legacy, full and PostScript names, family loads shared
@@ -67,27 +122,139 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
 - [`nodalia-fonts-build`](crates/fonts-build/README.md): embeds the optional nodalia-fonts faces
   from an app's `build.rs` (`NODALIA_FONTS_DIR`, `NODALIA_FONTS_REQUIRED`, script filters) as a table
   of `EmbeddedFace`s. No dependencies; the app picks the faces.
+- [`nodalia-gainmap`](crates/gainmap/README.md): HDR gain maps, from Luz: the ISO 21496-1
+  metadata and Adobe `hdrgm` XMP (read and write), measuring a gain map from SDR and HDR
+  renditions, applying one, and Apple's legacy maps. Encoding and the container stay in each app.
+- [`nodalia-gcode`](crates/gcode/src/lib.rs): Grbl-style G-code writer: polylines in
+  millimetres to `G0`/`G1` moves with laser power and feed, for cutting lasers and plotters, as a
+  commented file or as bare lines for streaming. Its `grbl` module has the real-time command bytes
+  and the status and acknowledgement parsers.
+- [`nodalia-gif`](crates/gif/src/lib.rs): GIF block reader, from Lienzo: the logical screen,
+  every frame's position, delay, disposal and transparent colour, the loop count and the first
+  frame's colour table, without decompressing pixels. Tells an animation from a still and whether
+  a file can hold the picture it declares before a decoder runs.
+- [`nodalia-hdr`](crates/hdr/src/lib.rs): Radiance HDR (RGBE) picture reader, from Toma: flat,
+  old and new run-length scan lines and all eight axis orders, to linear float RGB. Scan lines are
+  validated before the picture is allocated.
+- [`nodalia-heif`](crates/heif/README.md): optional HEIF/HEIC still-image decoder, from Luz:
+  heic-rs reads the container and HEVC pictures, and this crate converts to 16-bit RGB to match
+  libheif (VUI range and matrix, chroma upsampling, `imir`, ICC on grid tiles). Also orientation,
+  alpha, EXIF/XMP and thumbnails. It never panics, and apps put it behind a non-default feature.
+- [`nodalia-html`](crates/html/README.md): the bottom layer of reading and writing HTML: a tolerant tokenizer (text, start tags, end tags; elements to drop or to read as raw text are options), character references with the legacy names browsers accept without `;`, escaping, and the character set a page declares. No tree, no CSS, no rendering.
 - [`nodalia-i18n`](crates/i18n/README.md): translations over the embedded nodalia-i18n catalogs:
   lookup with fallback (`pt-br` → `pt` → English), plurals, language names, the system locale and
   a pseudo locale. The catalogs stay a fully optional build input; apps keep `tl!` and their
   language setting.
+- [`nodalia-raw`](crates/raw/README.md): camera raw files, the file-format layer, from Luz with
+  what Lienzo's and Toma's readers added: container parsing and decompression to a neutral
+  raw image (samples, CFA, black and white levels, active area, crop, orientation, colour tags,
+  opcode lists, embedded previews), one Cargo feature per format. DNG reading and writing,
+  Hasselblad 3FR/FFF, Minolta MRW, Epson ERF, Mamiya MEF, Kodak DCS, Pentax PEF, Samsung SRW, Canon CR2, Nikon NEF/NRW, Panasonic RW2, Fujifilm RAF and Canon CRW (through
+  Hasselblad 3FR/FFF, Minolta MRW, Epson ERF, Mamiya MEF, Kodak DCS, Pentax PEF, Samsung SRW, Canon CR2, Nikon NEF/NRW, Panasonic RW2 and Canon CRW (through
+  Hasselblad 3FR/FFF, Minolta MRW, Epson ERF, Mamiya MEF, Kodak DCS, Pentax PEF, Samsung SRW, Canon CR2, Nikon NEF/NRW and Canon CRW (through
+  `nodalia-crw`) so far; demosaicing and everything after stay with the develop
+  pipeline.
+- [`nodalia-tga`](crates/tga/src/lib.rs): Truevision Targa, from Toma (reader) and Lienzo
+  (writer): true-colour, grayscale and colour-mapped pictures, raw or run-length encoded, any
+  origin, to RGBA8, and a run-length writer whose packets end with their scan line. Bounded on
+  hostile input.
+- [`nodalia-idml`](crates/idml/README.md): IDML (InDesign Markup Language) packages: the ZIP container read with bounded part sizes and lenient part names, `designmap.xml` with its includes in place, the `<Properties>` form on nodalia-xml elements, value codecs and the package writer; and InDesign Tagged Text, read and written.
+- [`nodalia-ical`](crates/ical/README.md): iCalendar (RFC 5545) building blocks, from MailCraft: content
+  lines, DATE/DATE-TIME values, durations, TEXT escaping, the common subset of recurrence rules,
+  and `VTIMEZONE` definitions read and written. No time-zone database; what events and to-dos
+  mean stays in each app. Bounded and panic-free on hostile input.
+- [`nodalia-stream-codecs`](crates/stream-codecs/README.md): byte-stream and bi-level image codecs that
+  PDF, PostScript and TIFF share: LZW, ASCII85, ASCIIHex, RunLength, TIFF and PNG predictors,
+  CCITT Group 3 and 4 decoding and Group 4 encoding, lossless JBIG2 encoding. Every
+  decoder is bounded and returns its partial output on damage. From Papel; a PDF filter chain
+  is built on it in `nodalia-pdf`.
+- [`nodalia-timeline`](crates/timeline/README.md): editorial timeline interchange: exact media time and SMPTE timecode, import/export reports, media path and `file://` URL handling, Avid Log Exchange (ALE) and CMX 3600 EDL documents, format detection. From Toma.
+- [`nodalia-metadata`](crates/metadata/README.md): photo metadata, from Luz: EXIF (read and write,
+  maker-note lens and focus point, every tag by name), IPTC-IIM, XMP packets (read, write, and a merge
+  that keeps what another program wrote), GPX track logs, and the blocks that carry them in JPEG, PNG,
+  WebP, TIFF-based, RAF and CR3 files. One `Metadata` model for all of them. Built on `nodalia-tiff`.
+- [`nodalia-tiff`](crates/tiff/README.md): TIFF and BigTIFF IFD reader and writer, from Luz:
+  every field type, the IFD chain, SubIFDs and Exif/GPS/Interop pointer IFDs, maker-note IFDs
+  (Canon, Nikon, Sony, Fujifilm, Olympus, Panasonic, Pentax), strip and tile layout. Bounded and
+  panic-free on hostile input. Pixel decompression stays with the callers.
+- [`nodalia-metafile`](crates/metafile/README.md): Windows metafiles, from Lámina, Letra and
+  Pluma: a WMF, EMF and EMF+ reader into a neutral picture (paths with line styles, pattern
+  fills, bitmaps, text, clip regions and clip paths) and, behind `write`, EMF and WMF writers.
+  Bounded and panic-free on hostile input. Mapping the picture onto a document stays in each app.
+- [`nodalia-psd`](crates/psd/README.md): Adobe Photoshop PSD and PSB reader and writer, from
+  Lienzo: a lossless format-level model (layers, masks, tagged blocks, image resources,
+  descriptors, all four compressions, lazy reading from a file) that writes an unmodified file
+  back byte for byte, a builder for new files, and the Photoshop resource files that share its
+  primitives (`.abr`, `.asl`, `.aco`, `.act`, `.ase`, `.grd`, `.pat`, `.atn`, `.csh`, `.shc`) and
+  the Photoshop blocks of a layered TIFF. Bounded and panic-free on hostile input. Compositing
+  and the mapping onto a document stay in each app.
+- [`nodalia-jmap`](crates/jmap/README.md): the JMAP protocol core (RFC 8620), from MailCraft, without
+  sockets: session, requests of method calls with back-references, responses, ids, address
+  templates, credentials and the judgement of HTTP answers, over any HTTP implementation. Bounded
+  on hostile answers; what a program asks and makes of the answers stays in it.
 - [`nodalia-jpeg`](crates/jpeg/README.md): clean-room decoder for 12-bit and arithmetic-coded
   JPEG (T.81 SOF0/SOF1 at 12 bits, SOF9, SOF10), from Lienzo, and a frame probe for routing.
   Metadata stays in each app.
+- [`nodalia-raster-codecs`](crates/raster-codecs/README.md): small raster formats, one module each,
+  from Lienzo: DDS (BC1 to BC3, read and write), DICOM, FITS (read and write), IFF/ILBM (read
+  and write), PCX, PNM/PAM/PFM (read and write) and XPM, into one flat image type. Bounded and
+  panic-free on hostile input. Colour, orientation and the document mapping stay in each app.
+- [`nodalia-kiwi`](crates/kiwi/README.md): clean-room decoder and encoder for the kiwi binary schema
+  format (the encoding inside `.fig` files): a schema of enums, structs and messages, and messages
+  decoded with it into a tree keyed by field name. Bounded on hostile input. Carved from Trama.
 - [`nodalia-keymap`](crates/keymap/README.md): keyboard bindings: chords and their text forms,
   scopes, conflicts, user overrides stored through nodalia-settings and import of other
   applications' shortcut sets. Command catalogs, file readers and the shortcut editor UI stay
   in each app.
+- [`nodalia-audio`](crates/audio/README.md): audio file I/O and codecs (WAV, AIFF, FLAC, AAC, Opus,
+  AC-3/E-AC-3, MP1/MP2, MP3 encoding), streaming and seeking, and packet decoding for any demuxer. See its
+  README for formats and features.
+- [`nodalia-math`](crates/math/README.md): equations as one tree (the Office Math object model) with its syntaxes, read and written: OMML, presentation MathML, LaTeX math and the UnicodeMath linear format.
 - [`nodalia-media`](crates/media/README.md): bit-level I/O (`bitstream`), clean-room MP4/MOV
-  (`isobmff`) and Matroska/WebM (`matroska`) demuxers and muxers, from Toma, and an ISO BMFF
-  box reader. Containers only; codecs stay in each app.
+  (`isobmff`), Matroska/WebM (`matroska`) and MXF (`mxf`) demuxers and muxers, Ogg (`ogg`), AVI (`avi`) and
+  MPEG-TS/PS (`mpegts`) demuxers, from Toma, and an ISO BMFF box reader. Containers only; codecs are in `nodalia-audio`, and
+  video codecs will go in a separate crate.
+- [`nodalia-lottie`](crates/lottie/README.md): Lottie (Bodymovin) JSON: the document model of
+  lottie-spec 1.0 (animation, assets, layers by type, shape items, masks, effects, text, markers)
+  with a bounded reader and a writer that keep what they do not know, and the encodings of its
+  values (keyframes, ease tangents, bezier paths, gradients, data URIs). From Pulso; mapping
+  onto an app's document stays in the app.
 - [`nodalia-menu`](crates/menu/README.md): an app's menus as a macOS menu bar: the Mac layout
   (app menu, Window, Help, system-key clashes), a platform backend trait, and key equivalents
   fed back to egui as the input egui-winit would have made. Commands and their enabled state
   stay in each app.
+- [`nodalia-mesh`](crates/mesh/README.md): 3D mesh file formats behind one neutral model (meshes
+  of polygons with per-corner indices, materials, a node hierarchy): STL, OBJ with MTL, PLY,
+  glTF 2.0 / GLB and 3MF, one feature each. Readers are bounded by `Limits`, never open a file themselves
+  glTF 2.0 / GLB and FBX, one feature each. Readers are bounded by `Limits`, never open a file themselves
+  and never panic. Carved from Pulso, Torno, TextureCraft and MaterialCraft.
+- [`nodalia-midi`](crates/midi/README.md): Standard MIDI Files: a bounded reader for formats 0, 1 and
+  2 and a format-1 writer, over a neutral model of notes and channel events in ticks at 960 per
+  quarter note. From SoundCraft.
+- [`nodalia-mime`](crates/mime/README.md): Internet messages and MIME, read and written: RFC 5322
+  header fields, MIME parts and multiparts, encoded-words, RFC 2231 parameters, base64 and
+  quoted-printable, character sets, address lists, dates, mbox files and the `multipart/related`
+  lookups of MHT web archives. What a message means (body, attachments, flags) stays in each app.
+- [`nodalia-odf`](crates/odf/README.md): OpenDocument packages (ODF 1.3 Part 2), read and written: the ZIP container with its `mimetype` and manifest within limits, password protection (AES-256-CBC with PBKDF2, as LibreOffice writes it) and flat single-file documents. The container only: what the XML inside means belongs to the readers of each document type.
+- [`nodalia-prc`](crates/prc/README.md): a reader for PRC (ISO 14739-1), the 3D model format of PDF 3D
+  annotations: container, bit-level primitives, schema, tessellations and the product tree as
+  placed, coloured triangle meshes and a model tree. Bounded on hostile input. From Papel;
+  rendering stays in the app.
+- [`nodalia-offcrypto`](crates/offcrypto/README.md): clean-room Office document cryptography ([MS-OFFCRYPTO]): password-encrypted OOXML packages on `nodalia-cfb` (agile and standard encryption read, with the integrity check enforced; agile written), unsupported schemes named, and the password hashes of document and sheet protection.
+- [`nodalia-ods`](crates/ods/README.md): OpenDocument spreadsheets (`.ods`, `.ots`) on `nodalia-odf`: the tables of `content.xml` with typed values, displayed text, formulas as text, style names, repeats expanded and merged cells, with dates and durations as serial numbers. Bounded cells, merges and text; strict XML.
+- [`nodalia-opc`](crates/opc/README.md): Open Packaging Conventions, the ZIP container of DOCX, XLSX and PPTX
+  files: bounded readers (every part up front, or on demand), part names, relationships, content
+  types and a deterministic package writer. What the parts hold stays with each format's crate.
 - [`nodalia-lienzo-format`](crates/lienzo-format/README.md): the envelope of Lienzo's `.pcraft`
   bundle: `Manifest<D>` with the document as a type parameter, `TileRef`, the entry paths, the
   manifest decode limits and the migration runner. The document model stays in Lienzo.
+- [`nodalia-penpot`](crates/penpot/README.md): clean-room reader and writer for the Penpot 2.x export
+  container (`.penpot`): the ZIP archive, its manifest, the per-file, per-page and per-shape JSON
+  members and media objects, as the JSON the file holds. Bounded on hostile input. Carved from
+  Trama.
+- [`nodalia-plotter`](crates/plotter/README.md): cutter and pen-plotter command languages: HP-GL,
+  DMPL and GP-GL (plain and the Silhouette dialect, three generations, registration marks) from a
+  job in millimetres, plus the Silhouette device queries and reply parsers. No I/O.
 - [`nodalia-print`](crates/print/README.md): PDF submission to CUPS and Windows, printer discovery,
   duplex/copies/colour and driver preferences. PDF generation stays in each app.
 - [`nodalia-proof`](crates/proof/README.md): proofing per language (spelling, suggestions, grammar,
@@ -96,18 +263,71 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   carry-over locales by default, the set `NODALIA_PROOF_EMBED` names otherwise (`en` for English
   only); other languages come from installed Language packs.
 
+- [`nodalia-pst`](crates/pst/README.md): Outlook personal folders files (`.pst`, [MS-PST]) read over any
+  `Read + Seek`, from MailCraft: the node database, property and table contexts, folders, messages,
+  recipients, attachments, attached messages and named properties, ANSI and Unicode, encoded or not,
+  with a password. Salvages damaged files. Bounded and panic-free on hostile input. What an item
+  means stays in each app.
+
 - [`nodalia-quit`](crates/quit/src/lib.rs): native macOS quit, egui close handling and an optional
   app menu. Unsaved-document decisions and save prompts stay in each app.
 
+- [`nodalia-rtf`](crates/rtf/README.md): Rich Text Format: a tokenizer, text decoding in the file's code pages
+  (`\uN`, `\'hh`, single-byte and East Asian multibyte pages), escaping and dates, and a reader and writer
+  for a small neutral model (paragraphs, character formatting, outline levels, tables).
 - [`nodalia-settings`](crates/settings/README.md): `config.toml` settings storage for every app: platform folders, portable mode and overrides, atomic saves while running, backup, damaged-file recovery and schema migrations. Policy in [docs/settings-storage.md](docs/settings-storage.md).
+- [`nodalia-sheet`](crates/sheet/README.md): spreadsheet vocabulary shared by `nodalia-xls`, `nodalia-xlsx` and `nodalia-ods`: cell positions and A1 text, cell values and error values, sheet-name quoting, Excel's built-in number formats and indexed colour palette. Not a file format; no dependencies.
+- [`nodalia-silhouette-studio`](crates/silhouette-studio/src/lib.rs): bounded, fail-closed reader for Silhouette Studio `.studio` and `.studio3` documents: outlines, line colours and page size in millimetres. Protected designs are refused.
+- [`nodalia-sketch`](crates/sketch/README.md): clean-room reader for the `.sketch` container (Sketch 48 and newer): the ZIP archive, the version cut, `document.json`, the pages in document order and images, as the JSON the file holds. Bounded on hostile input. Carved from Trama.
+- [`nodalia-svg`](crates/svg/src/lib.rs): SVG. `sniff` recognises SVG and SVGZ data; `svgz` unpacks
+  SVGZ within a byte limit, decodes UTF-8, UTF-16 and ISO 8859-1, and compresses; `guard` bounds
+  element nesting and entity expansion before any XML reader sees the text; `paths` reads geometry
+  (shapes, transforms, `<use>`/`<symbol>` instances and the CSS cascade as Bézier paths in
+  millimetres, each tagged by the caller); `color` parses CSS colours; `write` writes documents
+  (elements with escaping, path data, numbers). Feature `tree`: the full parser, usvg at the one
+  version every Craft app uses, re-exported behind an entry point that runs those checks first
+  (plus nesting with references followed, attribute counts, bounded embedded SVGs), and a budget
+  check for drawing a tree with resvg. Apps take usvg from here, not as their own dependency.
+- [`nodalia-svg-paths`](crates/svg-paths/src/lib.rs): the former name of `nodalia-svg`'s `paths`,
+  `color` and `write`; re-exports them for existing users.
 - [`nodalia-text`](crates/text/README.md): text processing below the composer. Its `hyphen` module finds
   hyphenation points, with a bundled US English dictionary and patterns and optional hypher patterns
   for 47 more languages (one cargo feature each).
 - [`nodalia-ui`](crates/ui/README.md): SVG catalogs, icon buttons, tabs, pane controls, transactional docking, print settings and theme helpers for egui frontends;
   assets, themes, localization and command handling stay in each app. Requires Rust 1.95 or later.
+- [`nodalia-vcard`](crates/vcard/README.md): vCard contacts, from MailCraft: vCard 2.1, 3.0 and 4.0 read
+  (legacy character sets, quoted-printable, labels and Apple label groups, `KEY` certificates and
+  OpenPGP public keys), vCard 3.0 written. Bounded and panic-free on hostile input. The mapping onto
+  an app's contact type stays in each app.
+
 - [`nodalia-pluma-format`](crates/pluma-format/README.md): the envelope of Pluma's
   `.vectorcraft` file: its members, versions, embedded images and the data after the JSON, with the
   document as a type parameter. The document and its migrations stay in Pluma.
+- [`nodalia-vectordrawable`](crates/vectordrawable/src/lib.rs): Android Vector Drawable writer: a model of
+  paths, groups, clip outlines, strokes and linear, radial and sweep gradients; the XML as Android
+  Studio formats it; and the mapping of a gradient on any affine frame to what a drawable can say.
+  What a drawable cannot draw is the caller's to bake in or leave out. No reader.
+- [`nodalia-web-api`](crates/web-api/README.md): the page command API every Craft web build offers its page — one
+  `window.<app>` shape (`request`, `execute`, `commands`, `docInspect`, `uiInspect`, `screenshot`) over the app's
+  JSON control channel.
+- [`nodalia-web-host`](crates/web-host/README.md): the host messages between a Craft app's web build and the page that hosts it (`?host=parent` or `data-host="page"`): one contract and one bridge for every app.
+- [`nodalia-webp`](crates/webp/src/lib.rs): the WebP container, from Pulso (reader) and
+  Lienzo (writer): canvas size, alpha and every animation frame's timing from the chunk
+  headers without decoding, and the RIFF container around an encoded VP8 frame with alpha, ICC,
+  EXIF and XMP chunks. The VP8 and VP8L codecs are not part of it.
+- [`nodalia-xls`](crates/xls/README.md): clean-room Excel 97-2003 workbook (`.xls`, BIFF8) reader: worksheets, cell values, formulas as A1 text (shared and array formulas included), cell formats with resolved palette colours, merged cells, column and row records, defined names, print areas and calculation settings, with limits on records, cells and text.
+- [`nodalia-wordmodel`](crates/wordmodel/README.md): a word-processing document model (stories, paragraphs,
+  runs, tables, sections, styles, numbering, fields, notes, comments, revisions, drawings, math): what the
+  text-format crates read into and write from. Letra's model without its editing code.
+- [`nodalia-xlsx`](crates/xlsx/README.md): Excel workbooks (`.xlsx`, `.xlsm`, SpreadsheetML, transitional and strict) and binary workbooks (`.xlsb`) on `nodalia-opc`: the workbook part, shared strings, the styles tables and worksheet rows streamed one at a time, with limits on the package, the XML and the binary records.
+- [`nodalia-ora`](crates/ora/README.md): OpenRaster documents (`.ora`): the ZIP archive and the `stack.xml` layer tree as written, read with bounded sizes and written. From Lienzo.
+- [`nodalia-y4m`](crates/y4m/src/lib.rs): YUV4MPEG2 (`.y4m`) reader, from Toma: the stream
+  header, colour space layouts at 8 to 16 bits, a frame index built from the `FRAME` lines without
+  loading the file, and plane access. Bounded on hostile input.
+- [`nodalia-kra`](crates/kra/README.md): Krita documents (`.kra`, `.krz`), read: the ZIP archive, the `maindoc.xml` node tree as written, and the tiled pixel files with their LZF compression, a tile at a time. From Lienzo.
+- [`nodalia-xcf`](crates/xcf/README.md): GIMP XCF images (`.xcf`, `.xcf.gz`), read: header, properties, parasites, layers with their item paths, channels, and tiled pixels (uncompressed, RLE, zlib) at every precision, under a caller's byte budget. From Lienzo.
+- [`nodalia-xml`](crates/xml/README.md): bounded XML for hostile input: an owned element tree with limits on size, depth, nodes and attributes, streaming of repeated elements, namespace handling (as written, by local name, or canonical prefixes by URI), escaping and a writer. No DTDs and no entity expansion.
+- [`nodalia-zip`](crates/zip/README.md): ZIP archives from untrusted files: an entry-count check before the archive is indexed (ZIP64 included), entry reads within per-entry and total budgets that count real bytes, duplicate-name detection, a strict structure preflight, and a deterministic stored/deflate writer. The shared ZIP layer for the package formats.
 - [Shared UI component audit](docs/ui-components-audit.md): source inventory, extraction priorities
   and compatibility boundaries across the Craft suite.
 - [Theme infrastructure](docs/theme-infrastructure.md): eight-app comparison and the small shared
