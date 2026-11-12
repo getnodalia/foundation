@@ -1,0 +1,23 @@
+[package]
+name = "nodalia-latex"
+description = "LaTeX documents read and written: the everyday subset (sections, lists, tables, math, formatting, links) to and from the nodalia-flow model, and a standalone article that compiles with any TeX distribution."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+nodalia-flow = { workspace = true }
+nodalia-math = { workspace = true }
+# Text that names no encoding: BOM, UTF-16, UTF-8, else the legacy encoding it looks like.
+nodalia-mime = { workspace = true, features = ["detect"] }
+nodalia-wordmodel = { workspace = true }
+
+[dev-dependencies]
+nodalia-markdown = { workspace = true }
+
+proptest = { workspace = true }
