@@ -9,6 +9,9 @@ name: Release tag
 #   - `<notes-dir>/vX.Y.Z.md`, the hand-written release notes, exists (and passes `notes-check`),
 #     or `notes-command` prints the notes, for an app that keeps them in a CHANGELOG.
 #
+# When the version is already tagged, it instead copies the notes into that release if they
+# differ, so notes added or fixed after a release reach its page with a merge, not by hand.
+#
 # Then it tags the pushed commit, creates a draft release whose body is that notes file, and
 # reports `created: 'true'`. The caller builds its packages with the tag (`workflow_call`: a tag
 # made with GITHUB_TOKEN starts no other workflow) and finishes with `release-publish.yml`.
@@ -138,19 +141,36 @@ jobs:
             echo "$VERSION is a development version: nothing to release."
             exit 0
           fi
-          if gh api "repos/$REPO/git/ref/tags/$TAG" >/dev/null 2>&1; then
-            echo "$TAG is already tagged: nothing to release."
-            exit 0
-          fi
           if [[ -n "$NOTES_COMMAND" ]]; then
             notes="$RUNNER_TEMP/$TAG.md"
             bash -c "$NOTES_COMMAND" >"$notes"
-            if [[ -z "$(tr -d '[:space:]' <"$notes")" ]]; then
-              echo "::notice::$TAG is not tagged and its notes command printed nothing: write the notes to release it."
-              exit 0
+            [[ -n "$(tr -d '[:space:]' <"$notes")" ]] || rm -f "$notes"
+          fi
+          if gh api "repos/$REPO/git/ref/tags/$TAG" >/dev/null 2>&1; then
+            # Notes written or corrected after the tag still reach its release, so the page never
+            # keeps a stub. Only the body changes: no tag, package or publish step runs.
+            if [[ -s "$notes" ]] && gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+              current="$(gh release view "$TAG" --repo "$REPO" --json body --jq .body)"
+              if [[ "$current" != "$(cat "$notes")" ]]; then
+                if [[ -n "$NOTES_CHECK" ]] && ! bash "$NOTES_CHECK" "$TAG"; then
+                  echo "::warning::$TAG's notes fail $NOTES_CHECK: its release text is left as it is."
+                else
+                  gh release edit "$TAG" --repo "$REPO" --notes-file "$notes" >/dev/null
+                  echo "$TAG is already tagged: its release text now matches $notes."
+                  echo "### $NAME $VERSION: release text updated" >>"$GITHUB_STEP_SUMMARY"
+                  exit 0
+                fi
+              fi
             fi
-          elif [[ ! -f "$notes" ]]; then
-            echo "::notice::$TAG is not tagged and has no $notes: write the notes to release it."
+            echo "$TAG is already tagged: nothing to release."
+            exit 0
+          fi
+          if [[ ! -s "$notes" ]]; then
+            if [[ -n "$NOTES_COMMAND" ]]; then
+              echo "::notice::$TAG is not tagged and its notes command printed nothing: write the notes to release it."
+            else
+              echo "::notice::$TAG is not tagged and has no $notes: write the notes to release it."
+            fi
             exit 0
           fi
           if [[ -n "$NOTES_CHECK" ]]; then
