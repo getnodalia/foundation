@@ -121,8 +121,9 @@ jobs:
         env:
           LINES: ${{ inputs.env }}
         run: |
+          # An `if`, not `[ ] &&`: a blank last line would end the loop, and the step, with status 1.
           printf '%s\n' "$LINES" | while IFS= read -r line; do
-            [ -n "$line" ] && echo "$line" >> "$GITHUB_ENV"
+            if [ -n "$line" ]; then echo "$line" >> "$GITHUB_ENV"; fi
           done
 
       - name: Free disk space
