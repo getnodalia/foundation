@@ -24,6 +24,10 @@ on:
       fonts-ref:
         type: string
         default: ""
+      i18n-repository:
+        description: "Repository with the translations build input, checked out at craft-i18n.rev when the repo has one; empty skips it"
+        type: string
+        default: ""
       timeout-minutes:
         type: number
         default: 240
@@ -48,6 +52,23 @@ jobs:
           ref: ${{ inputs.fonts-ref }}
           path: .nodalia/fonts
           persist-credentials: false
+      - name: Read translations pin
+        id: i18n
+        shell: bash
+        env:
+          I18N_REPOSITORY: ${{ inputs.i18n-repository }}
+        run: |
+          if [ -n "$I18N_REPOSITORY" ] && [ -f craft-i18n.rev ]; then
+            echo "rev=$(tr -d '[:space:]' < craft-i18n.rev)" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check out translations build input
+        if: steps.i18n.outputs.rev != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ inputs.i18n-repository }}
+          ref: ${{ steps.i18n.outputs.rev }}
+          path: .nodalia/i18n
+          persist-credentials: false
       - name: Build and test in the VM
         uses: vmactions/freebsd-vm@811efaaac0668df8bfb8308c3ec997b5ab50037b # v1.6.0
         env:
@@ -66,6 +87,15 @@ jobs:
           run: |
             set -e
             if [ -d .nodalia/fonts ]; then
-              export CRAFT_FONTS_DIR="$PWD/.nodalia/fonts"
+              export CRAFT_FONTS_DIR="$PWD/.nodalia/fonts" CRAFT_FONTS_REQUIRED=1
             fi
-            bash -c "$COMMAND"
+            if [ -d .nodalia/i18n ]; then
+              export CRAFT_I18N_DIR="$PWD/.nodalia/i18n" CRAFT_I18N_REQUIRED=1
+            fi
+            # Tests run as an ordinary user: root is never refused a file, so a test that expects
+            # "permission denied" fails as root, and a bug root would hide goes unseen.
+            pw useradd nodalia-test -m -s /bin/sh
+            chown -R nodalia-test "$PWD"
+            d="$PWD"
+            while [ "$d" != / ]; do chmod o+x "$d"; d=$(dirname "$d"); done
+            HOME=/home/nodalia-test su -m nodalia-test -c 'bash -c "$COMMAND"'
