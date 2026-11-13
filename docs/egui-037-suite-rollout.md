@@ -117,7 +117,7 @@ unit. winit remains 0.30.13 and wgpu remains 30 unless a separately justified ch
    `nodalia-quit`/`nodalia-window` and all relevant optional features. The current shared workspace
    has no binary/example targets; excluded vendor examples retain their separate disposition.
    Add narrowly justified shared helpers and their
-   regressions. Port `nodalia-ai-egui` in parallel once its dependency contracts are fixed.
+   regressions. Port `craft-ai-egui` in parallel once its dependency contracts are fixed.
 5. Port each application in its own reviewable PR series. Atomic compatibility changes include
    manifests, lockfiles, source adaptations and harness changes; never land an intermediate
    dependency bump that leaves main unbuildable. Eleven nodalia-ui consumers adopt the capture

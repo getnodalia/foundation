@@ -7,7 +7,18 @@ use super::{Align, Arc, Cell, Document, FBlock, FTable, Fmt, Inline, Kind, model
 
 /// Escape text for Markdown (inline context).
 pub fn escape(s: &str) -> String {
-    crate::escaping::escape(s, false)
+    let mut out = String::with_capacity(s.len() + 8);
+    for c in s.chars() {
+        match c {
+            '\\' | '`' | '*' | '_' | '[' | ']' | '<' | '>' | '~' | '|' | '&' => {
+                out.push('\\');
+                out.push(c);
+            }
+            '\u{000C}' | '\u{000E}' => {}
+            _ => out.push(c),
+        }
+    }
+    out
 }
 
 /// Escape what would start a block at the beginning of a line. Leading spaces are kept, but at

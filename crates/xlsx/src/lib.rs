@@ -35,7 +35,7 @@
 //!
 //! ```
 //! # fn main() -> Result<(), nodalia_xlsx::Error> {
-//! # let bytes = nodalia_xlsx::testing::workbook(&[("Prices", r#"<row r="1"><c r="A1" t="s"><v>0</v></c><c r="B1"><v>2.5</v></c></row>"#)], &["Tea"])?;
+//! # let bytes = nodalia_xlsx::testing::workbook(&[("Prices", r#"<row r="1"><c r="A1" t="s"><v>0</v></c><c r="B1"><v>2.5</v></c></row>"#)], &["Tea"]);
 //! let mut package = nodalia_xlsx::Package::open(&bytes, &nodalia_xlsx::Limits::default())?;
 //! let workbook = package.workbook()?;
 //! let strings = package.shared_strings()?;
@@ -60,7 +60,6 @@ mod richdata;
 mod sheet;
 mod strings;
 mod styles;
-#[cfg(any(test, feature = "test-support"))]
 #[doc(hidden)]
 pub mod testing;
 mod workbook;
@@ -76,8 +75,8 @@ pub use document::{Document, DrawingPart, KeptPart, PivotCachePart, PivotTablePa
 pub use drawing::{Anchor, Drawing, Item, Marker, ObjectKind, Placement};
 pub use features::{
     Break, CfRule, Cfvo, ColorScale, Comment, Comments, ConditionalFormatting, DataBar, DataValidation, DataValidations, Features, HeaderFooter,
-    Hyperlink, IconSet, NoteShape, PageMargins, PageSetup, Pane, Print, PrintOptions, Selection, SheetFormat, SheetView, Table, TableColumn,
-    TableStyleInfo, notes_vml, parse_sqref, range_ref,
+    Hyperlink, IconSet, NoteShape, PageMargins, PageSetup, Pane, Print, PrintOptions, Selection, SheetView, Table, TableColumn, TableStyleInfo,
+    notes_vml, parse_sqref, range_ref,
 };
 pub use package::{Package, is_xlsb};
 pub use pivot::{
@@ -146,10 +145,6 @@ pub struct Limits {
     pub binary_cells: usize,
     /// Bytes of decoded text (shared and inline strings) in a binary workbook, over all its parts.
     pub binary_text: usize,
-    /// Bytes of decoded formula text in a binary workbook, over all its sheets. A cell formula
-    /// may hold 16 KB of tokens, so without a total a million cells of long formulas would cost
-    /// gigabytes; past it, formulas keep their saved results (the file still opens).
-    pub binary_formula_text: usize,
 }
 
 impl Default for Limits {
@@ -161,7 +156,6 @@ impl Default for Limits {
             binary_records: 40_000_000,
             binary_cells: 4_000_000,
             binary_text: 256 << 20,
-            binary_formula_text: 128 << 20,
         }
     }
 }

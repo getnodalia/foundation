@@ -20,11 +20,6 @@ mod tables;
 mod transform;
 mod writer;
 
-#[cfg(all(feature = "av1-large-encode", not(target_arch = "wasm32")))]
-mod large;
-#[cfg(all(feature = "av1-large-encode", not(target_arch = "wasm32")))]
-pub use large::{BufferedPacket, LargeEncoder};
-
 use bitw::obu;
 use nodalia_media::bitstream::BitWriter;
 use nodalia_media::isobmff::Av1Config;
@@ -605,13 +600,8 @@ impl Encoder {
 
     /// Encodes one frame.
     pub fn encode(&mut self, frame: &Frame) -> Result<Packet, Error> {
-        self.encode_with_key(frame, false)
-    }
-
-    /// Encodes one frame, optionally forcing a keyframe regardless of `keyint`.
-    pub fn encode_with_key(&mut self, frame: &Frame, force_key: bool) -> Result<Packet, Error> {
         self.check_frame(frame)?;
-        let key = force_key || self.frame_num.is_multiple_of(self.cfg.keyint.max(1) as u64);
+        let key = self.frame_num.is_multiple_of(self.cfg.keyint.max(1) as u64);
         let src = self.load_source(frame);
         let (frame_obu, rf) = match self.cfg.rate {
             RateControl::ConstantQ(q) => self.encode_frame(&src, key, q.max(1)),

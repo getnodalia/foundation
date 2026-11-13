@@ -36,9 +36,6 @@ mod limits;
 mod migrate;
 mod read;
 
-/// Lossless brush-tip envelope used by Lienzo preset libraries.
-pub mod tip;
-
 use serde::{Deserialize, Serialize};
 
 pub use limits::{

@@ -106,9 +106,6 @@ pub enum GraphicItem {
         stroke: Option<Rgb>,
         #[serde(default)]
         stroke_width: f32,
-        /// Opacity of `fill`, 0 to 1.
-        #[serde(default = "opaque")]
-        alpha: f32,
     },
     /// A path: polygons, pie slices, line series.
     Path {
@@ -118,9 +115,7 @@ pub enum GraphicItem {
         #[serde(default)]
         stroke_width: f32,
     },
-    /// One line of text in `rect`, aligned horizontally by `align`, centred vertically; `angle`
-    /// degrees clockwise turns the text about `rect`'s centre as it is drawn (chart axis titles
-    /// turn the vertical axis's title -90°, reading upwards, as Word does).
+    /// One line of text in `rect`, aligned horizontally by `align`, centred vertically.
     Text {
         rect: [f32; 4],
         text: String,
@@ -132,8 +127,6 @@ pub enum GraphicItem {
         align: TextAlign,
         #[serde(default)]
         font: Option<String>,
-        #[serde(default)]
-        angle: f32,
     },
     /// A picture (`Document::media` key) stretched into `rect`.
     Image { rect: [f32; 4], media: String },
@@ -155,8 +148,4 @@ pub enum PathSeg {
     Line(f32, f32),
     Cubic(f32, f32, f32, f32, f32, f32),
     Close,
-}
-
-fn opaque() -> f32 {
-    1.0
 }

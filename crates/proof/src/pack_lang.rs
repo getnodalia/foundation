@@ -1,7 +1,6 @@
 //! Proofing for any language by its locale ([`crate::ProofLang::Pack`]): its Hunspell dictionary (the
 //! dictionaries folder, then an installed Language pack, then the system's), read by the shared
-//! affix engine. Most use default suggestion tuning and no grammar rules; French locales add
-//! the spelling tuning and conservative typography in [`crate::fr`] without a separate cache.
+//! affix engine, with default suggestion tuning and no grammar rules.
 //!
 //! The loaded dictionaries share a memory budget ([`MAX_LOADED_BYTES`], estimated from their
 //! files); the one used least recently goes first, but never one used during the current
@@ -338,9 +337,6 @@ pub(crate) fn is_correct(word: &str, locale: PackLocale, opts: &crate::Options) 
     if other_script(w, &scripts) {
         return true;
     }
-    if locale.primary() == "fr" {
-        return crate::fr::check(&d, w, opts);
-    }
     let known = |w: &str| d.check(w) || crate::in_user_dictionary(&w.to_lowercase());
     if w.contains('-') && !known(w) {
         return w.split('-').all(|p| p.chars().count() <= 1 || known(p));
@@ -354,7 +350,7 @@ pub(crate) fn suggest(word: &str, max: usize, locale: PackLocale) -> Vec<String>
     if d.is_empty() {
         return Vec::new();
     }
-    if locale.primary() == "fr" { crate::fr::suggest_in(&d, word, max) } else { crate::affix_suggest::suggest_in(&d, word, max, &Tuning::DEFAULT) }
+    crate::affix_suggest::suggest_in(&d, word, max, &Tuning::DEFAULT)
 }
 
 /// The pack locales whose hyphenation patterns serve a [`crate::ProofLang::Pack`] language: the locale,

@@ -2,7 +2,7 @@
 
 use crate::color::{ColorScheme, Rgba, SchemeSlot};
 use crate::style::{ColorBase, Effects};
-use crate::theme::{FontScheme, FontSet, FormatScheme, ScriptFont, SysColor, Theme, TypefaceAttrs, default_format};
+use crate::theme::{FontScheme, FontSet, FormatScheme, ScriptFont, Theme, default_format};
 
 use nodalia_xml::{El, Local};
 
@@ -21,12 +21,7 @@ fn font_set(e: Option<&El>) -> FontSet {
                 .collect()
         })
         .unwrap_or_default();
-    let attrs = |n: &str| {
-        let c = e.and_then(|e| e.child(Local(n)));
-        let at = |a: &str| c.and_then(|c| c.attr_local(a)).map(String::from);
-        TypefaceAttrs { typeface: at("typeface").unwrap_or_default(), panose: at("panose"), pitch_family: at("pitchFamily"), charset: at("charset") }
-    };
-    FontSet { latin: tf("latin"), ea: tf("ea"), cs: tf("cs"), latin_attrs: attrs("latin"), ea_attrs: attrs("ea"), cs_attrs: attrs("cs"), scripts }
+    FontSet { latin: tf("latin"), ea: tf("ea"), cs: tf("cs"), scripts }
 }
 
 pub fn read_theme(src: &mut dyn Source, root: &El) -> Theme {
@@ -38,10 +33,7 @@ pub fn read_theme(src: &mut dyn Source, root: &El) -> Theme {
             if let Some(c) = cs.child(Local(slot.xml_name())).and_then(dml::color) {
                 let rgb = match c.base {
                     ColorBase::Rgb { rgb } => rgb,
-                    ColorBase::System { name, last } => {
-                        t.sys_colors.push(SysColor { slot, name, last });
-                        last
-                    }
+                    ColorBase::System { last, .. } => last,
                     ColorBase::Preset { name } => crate::color::preset(&name).unwrap_or(Rgba::BLACK),
                     ColorBase::Scheme { .. } => continue,
                 };
@@ -98,7 +90,7 @@ pub fn read_theme(src: &mut dyn Source, root: &El) -> Theme {
     }
     let extra: String = root
         .elements()
-        .filter(|e| ["objectDefaults", "extraClrSchemeLst", "custClrLst", "extLst"].iter().any(|n| e.is(Local(n))))
+        .filter(|e| e.is(Local("objectDefaults")) || e.is(Local("extraClrSchemeLst")))
         .filter(|e| !crate::xmlx::has_rel_refs(e))
         .map(|e| src.keep(e))
         .collect();

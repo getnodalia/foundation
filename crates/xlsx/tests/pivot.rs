@@ -60,7 +60,6 @@ fn with_pivots() -> Vec<u8> {
         ("xl/pivotCache/pivotCacheRecords1.xml", RECORDS.as_bytes()),
         ("xl/pivotCache/pivotCacheDefinition2.xml", OLAP.as_bytes()),
     ])
-    .unwrap()
 }
 
 #[test]
@@ -161,7 +160,7 @@ fn pivots_round_trip() {
 
 #[test]
 fn a_new_pivot_table() {
-    let mut doc = read(&nodalia_xlsx::testing::workbook(&[("Data", r#"<row r="1"><c r="A1"><v>1</v></c></row>"#), ("Report", "")], &[]).unwrap());
+    let mut doc = read(&nodalia_xlsx::testing::workbook(&[("Data", r#"<row r="1"><c r="A1"><v>1</v></c></row>"#), ("Report", "")], &[]));
     let values = [CacheValue::Number(1.0), CacheValue::Number(2.0)];
     let definition = PivotCacheDefinition {
         refresh_on_load: Some(true),
