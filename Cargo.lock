@@ -1705,6 +1705,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "craft-materialx"
+version = "0.1.0"
+dependencies = [
+ "craft-xml",
+ "thiserror 2.0.21",
+]
+
+[[package]]
 name = "craft-math"
 version = "0.1.0"
 dependencies = [
@@ -1883,6 +1891,18 @@ dependencies = [
  "craft-zip",
  "thiserror 2.0.21",
  "zip",
+]
+
+[[package]]
+name = "craft-pcraft-bundle"
+version = "0.1.0"
+dependencies = [
+ "blake3",
+ "craft-atomic",
+ "craft-pcraft-format",
+ "craft-zip",
+ "ruzstd",
+ "thiserror 2.0.21",
 ]
 
 [[package]]
@@ -2106,6 +2126,8 @@ dependencies = [
 name = "craft-raster-codecs"
 version = "0.1.0"
 dependencies = [
+ "base64 0.23.1",
+ "image",
  "rayon",
  "thiserror 2.0.21",
 ]
@@ -2186,6 +2208,15 @@ dependencies = [
  "serde_json",
  "thiserror 2.0.21",
  "zip",
+]
+
+[[package]]
+name = "craft-stencilcraft-format"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "thiserror 2.0.21",
 ]
 
 [[package]]
