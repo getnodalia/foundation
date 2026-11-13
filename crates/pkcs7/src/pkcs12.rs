@@ -184,12 +184,6 @@ impl Cipher {
     }
 }
 
-/// Whether `a` and `b` are equal, in time that depends only on their lengths: the MAC is derived
-/// from the password, so it is compared without stopping at the first differing byte.
-fn same(a: &[u8], b: &[u8]) -> bool {
-    a.len() == b.len() && a.iter().zip(b).fold(0u8, |acc, (x, y)| acc | (x ^ y)) == 0
-}
-
 fn hmac(alg: DigestAlg, key: &[u8], data: &[u8]) -> Result<Vec<u8>, Error> {
     fn run<D: hmac::EagerHash>(key: &[u8], data: &[u8]) -> Result<Vec<u8>, Error>
     where
@@ -417,8 +411,7 @@ pub fn open(bytes: &[u8], password: &str) -> Result<DigitalId, Error> {
         let key_len = alg.digest(&[]).len();
         let iterations = budget.spend(alg, iterations, key_len)?;
         let key = pkcs12_kdf(alg, &bmp(password), &salt, 3, iterations, key_len);
-        let computed = hmac(alg, &key, &content)?;
-        if !same(&computed, &expected) {
+        if hmac(alg, &key, &content)? != *expected {
             return Err(Error::WrongPassword);
         }
     }

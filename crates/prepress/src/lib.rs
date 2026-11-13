@@ -12,8 +12,6 @@ pub mod flatten;
 pub mod ink;
 pub mod marks;
 pub mod output;
-#[cfg(feature = "flatten")]
-pub mod pdfx1a;
 pub mod plates;
 
 pub use cms::{CmsConversion, ProfileError};
