@@ -6,7 +6,8 @@ name: Release tag
 #
 #   - the manifest's version is a release version (not a `-dev` pre-release),
 #   - `vX.Y.Z` is not a tag yet,
-#   - `<notes-dir>/vX.Y.Z.md`, the hand-written release notes, exists (and passes `notes-check`).
+#   - `<notes-dir>/vX.Y.Z.md`, the hand-written release notes, exists (and passes `notes-check`),
+#     or `notes-command` prints the notes, for an app that keeps them in a CHANGELOG.
 #
 # Then it tags the pushed commit, creates a draft release whose body is that notes file, and
 # reports `created: 'true'`. The caller builds its packages with the tag (`workflow_call`: a tag
@@ -34,6 +35,10 @@ on:
         default: docs/release-notes
       notes-check:
         description: "Script run with the tag that fails on incomplete notes, e.g. scripts/check-release-notes.sh; empty: the file must only be non-empty"
+        type: string
+        default: ""
+      notes-command:
+        description: "Shell command that prints the version's notes (TAG and VERSION are set), e.g. its CHANGELOG section; replaces `notes-dir`. Printing nothing means the version has no notes yet"
         type: string
         default: ""
     outputs:
@@ -124,6 +129,7 @@ jobs:
           PRERELEASE: ${{ steps.version.outputs.prerelease }}
           NOTES_DIR: ${{ inputs.notes-dir }}
           NOTES_CHECK: ${{ inputs.notes-check }}
+          NOTES_COMMAND: ${{ inputs.notes-command }}
         run: |
           set -euo pipefail
           echo "created=false" >>"$GITHUB_OUTPUT"
@@ -136,7 +142,14 @@ jobs:
             echo "$TAG is already tagged: nothing to release."
             exit 0
           fi
-          if [[ ! -f "$notes" ]]; then
+          if [[ -n "$NOTES_COMMAND" ]]; then
+            notes="$RUNNER_TEMP/$TAG.md"
+            bash -c "$NOTES_COMMAND" >"$notes"
+            if [[ -z "$(tr -d '[:space:]' <"$notes")" ]]; then
+              echo "::notice::$TAG is not tagged and its notes command printed nothing: write the notes to release it."
+              exit 0
+            fi
+          elif [[ ! -f "$notes" ]]; then
             echo "::notice::$TAG is not tagged and has no $notes: write the notes to release it."
             exit 0
           fi
