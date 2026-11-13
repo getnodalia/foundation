@@ -46,6 +46,14 @@ on:
         description: "KEY=VALUE lines added to every leg's environment"
         type: string
         default: ""
+      linux-env:
+        description: "KEY=VALUE lines for Linux legs only"
+        type: string
+        default: ""
+      windows-env:
+        description: "KEY=VALUE lines for Windows legs only"
+        type: string
+        default: ""
       free-disk-space:
         description: "Remove unused toolchains from the Linux image before building"
         type: boolean
@@ -116,10 +124,13 @@ jobs:
         run: echo "CRAFT_I18N_DIR=$GITHUB_WORKSPACE/.nodalia/i18n" >> "$GITHUB_ENV"
 
       - name: Caller environment
-        if: inputs.env != ''
+        if: inputs.env != '' || inputs.linux-env != '' || inputs.windows-env != ''
         shell: bash
         env:
-          LINES: ${{ inputs.env }}
+          LINES: |
+            ${{ inputs.env }}
+            ${{ runner.os == 'Linux' && inputs.linux-env || '' }}
+            ${{ runner.os == 'Windows' && inputs.windows-env || '' }}
         run: |
           # An `if`, not `[ ] &&`: a blank last line would end the loop, and the step, with status 1.
           printf '%s\n' "$LINES" | while IFS= read -r line; do

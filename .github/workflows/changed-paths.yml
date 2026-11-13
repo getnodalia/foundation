@@ -1,0 +1,72 @@
+name: Changed paths
+
+# Reusable: tells a caller whether a pull request or push touched any of the given paths, so an
+# expensive job (a Windows leg, say) runs only when it can be affected. Any other event, or a pull
+# request carrying `label`, always matches.
+on:
+  workflow_call:
+    inputs:
+      paths:
+        description: "Bash glob patterns, one per line, against repository-relative paths (`*` also matches `/`)"
+        type: string
+        required: true
+      label:
+        description: "A pull request label that matches whatever changed; empty: none"
+        type: string
+        default: ""
+    outputs:
+      matched:
+        description: "'true' when a changed path matches, the label is set, or the event is neither a pull request nor a push"
+        value: ${{ jobs.changes.outputs.matched }}
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    name: Changed paths
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      matched: ${{ steps.match.outputs.matched }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          filter: blob:none
+      - name: Match
+        id: match
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+          LABEL: ${{ inputs.label }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          BEFORE: ${{ github.event.before }}
+          PATTERNS: ${{ inputs.paths }}
+        run: |
+          set -euo pipefail
+          answer() { echo "matched=$1" >> "$GITHUB_OUTPUT"; echo "matched=$1: $2"; exit 0; }
+          case "$EVENT" in
+            pull_request)
+              if [ -n "$LABEL" ] && jq -e --arg l "$LABEL" 'index($l) != null' <<< "${LABELS:-[]}" > /dev/null; then
+                answer true "label $LABEL"
+              fi
+              base=$(git merge-base "$PR_BASE" HEAD) ;;
+            push)
+              if [ -z "${BEFORE//0/}" ] || ! git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+                answer true "no previous commit to compare with"
+              fi
+              base=$BEFORE ;;
+            *) answer true "event $EVENT" ;;
+          esac
+          while IFS= read -r file; do
+            while IFS= read -r pattern; do
+              pattern=${pattern#"${pattern%%[![:space:]]*}"}
+              [ -n "$pattern" ] || continue
+              # shellcheck disable=SC2053 # the pattern is a glob on purpose
+              if [[ $file == $pattern ]]; then answer true "$file matches $pattern"; fi
+            done <<< "$PATTERNS"
+          done < <(git diff --name-only "$base" HEAD)
+          answer false "no changed path matches"
