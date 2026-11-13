@@ -16,9 +16,10 @@
 //! ```
 //!
 //! [`DocumentFields`] owns the JSON field names, required and defaulted fields, and the
-//! flattening rule. Its generic form lets an application use its typed domain values directly,
-//! while keeping the wire schema and JSON encoding here. The crate does not open files or set a
-//! file-size policy; callers handle bounded file I/O. [`File::read_from`] parses from a reader.
+//! flattening rule. Its values are JSON because the consuming app owns the document model,
+//! domain validation, and conversion between that model and the wire fields. The crate does not
+//! open files or set a file-size policy; callers handle bounded file I/O. [`File::read_from`]
+//! lets callers parse from a reader without first buffering source bytes in a string.
 
 use serde::de::{self, IgnoredAny, MapAccess, SeqAccess, Visitor};
 use serde::{Deserialize, Deserializer, Serialize};
@@ -36,96 +37,62 @@ pub const FORMAT_VERSION: u64 = 1;
 pub const HEADER_KEY: &str = "stencilcraft";
 
 /// Wire fields in the flattened native document object.
-///
-/// The type parameters are the consuming app's typed model values. Field names, required fields,
-/// version-1 defaults, and omission of default canvas values remain owned by this crate.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(bound(
-    serialize = "Board: Serialize, Kerf: Serialize, Layers: Serialize, Image: Serialize, BoardSetup: Serialize + Default + PartialEq, Pages: Serialize + Default + PartialEq, Guides: Serialize + Default + PartialEq, Grid: Serialize + Default + PartialEq, Snap: Serialize + Default + PartialEq, Groups: Serialize + Default + PartialEq, Meta: Serialize + Default + PartialEq",
-    deserialize = "Board: Deserialize<'de>, Kerf: Deserialize<'de>, Layers: Deserialize<'de>, Image: Deserialize<'de>, BoardSetup: Deserialize<'de> + Default, Pages: Deserialize<'de> + Default, Guides: Deserialize<'de> + Default, Grid: Deserialize<'de> + Default, Snap: Deserialize<'de> + Default, Groups: Deserialize<'de> + Default, Meta: Deserialize<'de> + Default"
-))]
-pub struct DocumentFields<
-    Board = Value,
-    Kerf = Value,
-    Layers = Value,
-    Image = Value,
-    BoardSetup = Option<Value>,
-    Pages = Option<Value>,
-    Guides = Option<Value>,
-    Grid = Option<Value>,
-    Snap = Option<Value>,
-    Groups = Option<Value>,
-    Meta = Option<Value>,
-> {
+pub struct DocumentFields {
     /// Required millimetre artboard dimensions.
-    pub board: Board,
+    pub board: Value,
     /// Required kerf settings.
-    pub kerf: Kerf,
+    pub kerf: Value,
     /// Required drawing layers.
-    pub layers: Layers,
+    pub layers: Value,
     /// Next document object id; absent in early version 1 files, where it defaults to 1.
     #[serde(rename = "next-shape-id", default = "default_next_shape_id")]
     pub next_shape_id: u64,
     /// Embedded raster images; absent in early version 1 files, where it defaults to empty.
     #[serde(default)]
-    pub images: Vec<Image>,
+    pub images: Vec<Value>,
     /// Optional canvas page setup, omitted when absent.
-    #[serde(rename = "board-setup", default, skip_serializing_if = "is_default")]
-    pub board_setup: BoardSetup,
+    #[serde(rename = "board-setup", default, skip_serializing_if = "Option::is_none")]
+    pub board_setup: Option<Value>,
     /// Optional pages, omitted when absent.
-    #[serde(default, skip_serializing_if = "is_default")]
-    pub pages: Pages,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pages: Option<Value>,
     /// Optional guides, omitted when absent.
-    #[serde(default, skip_serializing_if = "is_default")]
-    pub guides: Guides,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub guides: Option<Value>,
     /// Optional grid settings, omitted when absent.
-    #[serde(default, skip_serializing_if = "is_default")]
-    pub grid: Grid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub grid: Option<Value>,
     /// Optional snap settings, omitted when absent.
-    #[serde(default, skip_serializing_if = "is_default")]
-    pub snap: Snap,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub snap: Option<Value>,
     /// Optional groups, omitted when absent.
-    #[serde(default, skip_serializing_if = "is_default")]
-    pub groups: Groups,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub groups: Option<Value>,
     /// Optional user metadata, omitted when absent.
-    #[serde(default, skip_serializing_if = "is_default")]
-    pub meta: Meta,
-}
-
-fn is_default<T: Default + PartialEq>(value: &T) -> bool {
-    value == &T::default()
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub meta: Option<Value>,
 }
 
 fn default_next_shape_id() -> u64 {
     1
 }
 
-/// A native document and its flattened, typed wire fields.
+/// A native document and its flattened wire fields.
 #[derive(Debug, Clone, PartialEq)]
-pub struct File<T = DocumentFields> {
-    /// Typed document fields after the shared codec has checked the header and schema.
-    pub document: T,
+pub struct File {
+    /// The fields after the header have been parsed, with app-domain objects still encoded as
+    /// JSON values.
+    pub document: DocumentFields,
 }
 
-impl<T> File<T> {
+impl File {
     /// Builds a native document from its wire fields.
-    pub fn new(document: T) -> Self {
+    pub fn new(document: DocumentFields) -> Self {
         Self { document }
     }
 
-    /// Writes the current format header and flattened wire fields as indented JSON.
-    pub fn to_json_pretty(&self) -> Result<String, Error>
-    where
-        T: Serialize,
-    {
-        let raw = RawFileRef { header: HeaderRef { name: FORMAT_NAME, version: FORMAT_VERSION }, document: &self.document };
-        let value = serde_json::to_value(raw).map_err(Error::Json)?;
-        serde_json::to_string_pretty(&value).map_err(Error::Json)
-    }
-}
-
-impl File<DocumentFields> {
-    /// Parses JSON, validates the format header and version, then reads the untyped wire fields.
+    /// Parses JSON, validates the format header and version, then reads the wire fields.
     pub fn read(text: &str) -> Result<Self, Error> {
         let wire: RawWire = serde_json::from_str(text).map_err(Error::Json)?;
         Self::from_wire(wire)
@@ -151,40 +118,15 @@ impl File<DocumentFields> {
         if version != FORMAT_VERSION {
             return Err(Error::Version { found: version, supported: FORMAT_VERSION });
         }
-        let raw: RawFile<DocumentFields> = serde_json::from_value(Value::Object(wire.fields)).map_err(|source| Error::Document { source })?;
+        let raw: RawFile = serde_json::from_value(Value::Object(wire.fields)).map_err(|source| Error::Document { source })?;
         Ok(Self { document: raw.document })
     }
-}
 
-impl<T> File<T>
-where
-    T: for<'de> Deserialize<'de>,
-{
-    /// Parses JSON into a typed document model after validating the shared format header.
-    pub fn read_typed(text: &str) -> Result<Self, Error> {
-        let wire: RawWire = serde_json::from_str(text).map_err(Error::Json)?;
-        Self::from_typed_wire(wire)
-    }
-
-    /// Parses JSON from a reader into a typed document model.
-    pub fn read_typed_from(reader: impl Read) -> Result<Self, Error> {
-        let wire: RawWire = serde_json::from_reader(reader).map_err(Error::Json)?;
-        Self::from_typed_wire(wire)
-    }
-
-    fn from_typed_wire(wire: RawWire) -> Result<Self, Error> {
-        let header = wire.fields.get(HEADER_KEY).and_then(Value::as_object).ok_or(Error::NotStencilCraft)?;
-        if header.get("name").and_then(Value::as_str) != Some(FORMAT_NAME) {
-            return Err(Error::NotStencilCraft);
-        }
-        let Some(version) = header.get("version").and_then(Value::as_u64) else {
-            return Err(Error::NotStencilCraft);
-        };
-        if version != FORMAT_VERSION {
-            return Err(Error::Version { found: version, supported: FORMAT_VERSION });
-        }
-        let raw: RawFile<T> = serde_json::from_value(Value::Object(wire.fields)).map_err(|source| Error::Document { source })?;
-        Ok(Self { document: raw.document })
+    /// Writes the current format header and flattened wire fields as indented JSON.
+    pub fn to_json_pretty(&self) -> Result<String, Error> {
+        let raw = RawFileRef { header: HeaderRef { name: FORMAT_NAME, version: FORMAT_VERSION }, document: &self.document };
+        let value = serde_json::to_value(raw).map_err(Error::Json)?;
+        serde_json::to_string_pretty(&value).map_err(Error::Json)
     }
 }
 
@@ -195,11 +137,11 @@ struct Header {
 }
 
 #[derive(Debug, Deserialize)]
-struct RawFile<T = DocumentFields> {
+struct RawFile {
     #[serde(rename = "stencilcraft")]
     _header: Header,
     #[serde(flatten)]
-    document: T,
+    document: DocumentFields,
 }
 
 /// A top-level streaming visitor that stores only fields owned by this wire schema.
@@ -335,11 +277,11 @@ struct HeaderRef<'a> {
 }
 
 #[derive(Serialize)]
-struct RawFileRef<'a, T> {
+struct RawFileRef<'a> {
     #[serde(rename = "stencilcraft")]
     header: HeaderRef<'a>,
     #[serde(flatten)]
-    document: &'a T,
+    document: &'a DocumentFields,
 }
 
 /// A file was malformed, belongs to another format, or uses an unsupported version.
@@ -364,7 +306,6 @@ pub enum Error {
 mod tests {
     use std::io::{self, Cursor, Read};
 
-    use serde::{Deserialize, Serialize};
     use serde_json::{Value, json};
 
     use super::{DocumentFields, Error, FORMAT_VERSION, File};
@@ -469,44 +410,5 @@ mod tests {
     fn separates_json_errors_from_wire_schema_errors() {
         assert!(matches!(File::read("{"), Err(Error::Json(_))));
         assert!(matches!(File::read(r#"{"stencilcraft":{"name":"stencilcraft","version":1}}"#), Err(Error::Document { .. })));
-    }
-
-    #[derive(Debug, PartialEq, Serialize, Deserialize)]
-    struct TypedBoard {
-        width_mm: f64,
-        height_mm: f64,
-    }
-
-    #[derive(Debug, PartialEq, Serialize, Deserialize)]
-    struct TypedFields {
-        board: TypedBoard,
-        #[serde(default, rename = "board-setup", skip_serializing_if = "Option::is_none")]
-        board_setup: Option<TypedBoard>,
-    }
-
-    fn typed_fields() -> TypedFields {
-        TypedFields { board: TypedBoard { width_mm: 100.0, height_mm: 150.0 }, board_setup: None }
-    }
-
-    #[test]
-    fn typed_readers_round_trip_typed_fields_and_preserve_header_errors() -> Result<(), Error> {
-        let file = File::new(typed_fields());
-        let text = file.to_json_pretty()?;
-        assert!(!text.contains("board-setup"));
-        assert_eq!(File::read_typed(&text)?, file);
-        assert_eq!(File::read_typed_from(Cursor::new(text.as_bytes()))?, file);
-
-        let malformed = r#"{"stencilcraft":{"name":"stencilcraft","version":1},"board":"wrong"}"#;
-        assert!(matches!(File::<TypedFields>::read_typed(malformed), Err(Error::Document { .. })));
-        assert!(matches!(File::<TypedFields>::read_typed_from(Cursor::new(malformed)), Err(Error::Document { .. })));
-
-        let wrong_header = r#"{"stencilcraft":{"name":"other","version":1},"board":{}}"#;
-        assert!(matches!(File::<TypedFields>::read_typed(wrong_header), Err(Error::NotStencilCraft)));
-        assert!(matches!(File::<TypedFields>::read_typed_from(Cursor::new(wrong_header)), Err(Error::NotStencilCraft)));
-
-        let future_version = r#"{"stencilcraft":{"name":"stencilcraft","version":2},"board":{}}"#;
-        assert!(matches!(File::<TypedFields>::read_typed(future_version), Err(Error::Version { found: 2, supported: 1 })));
-        assert!(matches!(File::<TypedFields>::read_typed_from(Cursor::new(future_version)), Err(Error::Version { found: 2, supported: 1 })));
-        Ok(())
     }
 }

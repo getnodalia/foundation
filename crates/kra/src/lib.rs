@@ -247,10 +247,7 @@ impl Image {
             limits: nodalia_xml::Limits { max_input: MAX_MAINDOC, max_depth: MAX_XML_DEPTH, ..nodalia_xml::Limits::DEFAULT },
             ..nodalia_xml::Options::local().strict()
         };
-        let root = options.parse(maindoc).map_err(|e| match e {
-            nodalia_xml::Error::Doctype => invalid("maindoc.xml: a document type with an internal DTD subset is not accepted"),
-            other => invalid(format!("maindoc.xml: {other}")),
-        })?;
+        let root = options.parse(maindoc).map_err(|e| invalid(format!("maindoc.xml: {e}")))?;
         let image = root.child("IMAGE").ok_or_else(|| invalid("maindoc.xml has no IMAGE"))?;
         let side = |a: &str| -> Result<u32> {
             let v = number(image, a, 0.0)?;

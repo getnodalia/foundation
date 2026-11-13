@@ -24,9 +24,7 @@ pub struct FrameLimits {
     pub max_frames: usize,
     /// Most bytes of kept pictures (4 bytes a pixel each). Default 1 GiB.
     pub max_bytes: u64,
-    /// Largest canvas (logical screen) in bytes at 4 bytes a pixel. Default 512 MiB. This is a
-    /// pre-decode canvas check; image 0.25.10's WebP decoder does not enforce its working-buffer
-    /// allocations through the `ImageDecoder::set_limits` hook.
+    /// Largest canvas (logical screen) in bytes at 4 bytes a pixel. Default 512 MiB.
     pub max_canvas_bytes: u64,
     /// Merge a frame identical to the one before into it (its delay added). Default off.
     pub merge_identical: bool,
@@ -100,7 +98,10 @@ pub fn read_frames(bytes: &[u8], limits: &FrameLimits) -> Result<Animation, Fram
         return Err(FrameError::LimitExceeded(format!("a {}x{} canvas is over {} bytes", info.width, info.height, limits.max_canvas_bytes)));
     }
     let malformed = |e: image::ImageError| FrameError::Malformed(e.to_string());
-    let decoder = WebPDecoder::new(Cursor::new(bytes)).map_err(malformed)?;
+    let mut decoder = WebPDecoder::new(Cursor::new(bytes)).map_err(malformed)?;
+    let mut il = image::Limits::default();
+    il.max_alloc = Some(limits.max_canvas_bytes.saturating_mul(2));
+    decoder.set_limits(il).map_err(malformed)?;
     let (width, height) = decoder.dimensions();
     if !decoder.has_animation() {
         let mut rgba = vec![0u8; usize::try_from(canvas).map_err(|_| FrameError::LimitExceeded("canvas".into()))?];
