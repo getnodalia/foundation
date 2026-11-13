@@ -12,7 +12,7 @@ on:
       packages:
         description: "FreeBSD packages the build needs, besides rust, git and pkgconf"
         type: string
-        default: "libxkbcommon wayland libX11 libXcursor libXrandr libXi libxcb mesa-libs vulkan-loader fontconfig freetype2 alsa-lib dejavu"
+        default: "libxkbcommon wayland libX11 libXcursor libXrandr libXi libxcb mesa-libs mesa-dri vulkan-loader gtk3 fontconfig freetype2 alsa-lib dejavu"
       command:
         description: "Build and test command run in the VM from the repository root"
         type: string
