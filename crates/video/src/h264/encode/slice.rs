@@ -47,8 +47,6 @@ pub struct EncParams {
     pub always_intra: bool,
     /// Maximum CAVLC level magnitude (Baseline).
     pub cavlc_clamp: bool,
-    /// Whether the 16x16 motion search tries skip, zero and co-located starts.
-    pub extra_motion_search_starts: bool,
     pub depth: Depth,
 }
 

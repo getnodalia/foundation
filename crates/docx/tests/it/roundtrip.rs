@@ -269,7 +269,6 @@ fn styles_and_lists_round_trip() {
         locked: true,
         default: false,
         table: None,
-        ..Default::default()
     });
     Arc::make_mut(&mut d.styles).upsert(Style {
         id: "MyStyleChar".into(),

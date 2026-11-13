@@ -1,9 +1,10 @@
 # nodalia-raster-codecs
 
-Compatibility facade for the small raster-format modules in older Craft app versions. The
-format readers and writers are implemented once in [`nodalia-image-codecs`](../image-codecs/README.md);
-these modules forward calls and adapt the older `Image` and `Limits` types. The `common` RGBA
-image facade also delegates to that crate.
+Small raster image formats for the Craft apps, from Lienzo's `photocraft-codecs`: one module
+per format, one implementation of each. Decoders take untrusted bytes and `Limits`, check the
+declared size before allocating, and never panic. No `unsafe`; it builds for
+`wasm32-unknown-unknown`. Dependencies: `thiserror`, and `rayon` on native targets (the DDS
+encoder compresses rows of blocks in parallel).
 
 ```toml
 nodalia-raster-codecs = { git = "https://github.com/getnodalia/foundation", rev = "<commit>" }
@@ -34,8 +35,9 @@ assert_eq!(image.data(), &[0, 255]);
 let bytes = pnm::encode(&image)?;
 ```
 
-The module sniffers and the `dds`/`fits` additional-image queries forward to shared detection and
-metadata inspection in `nodalia-image-codecs`.
+Each module has a `looks_like_*` (or `is_dicom`) sniffer for the format's signature. `dds` and
+`fits` also have `has_additional_images`, which says without decoding whether a file holds
+more than the one image `decode` returns (cube faces, array slices, further HDUs).
 
 `xpm::x11_color_rgb` also looks up exact normalized X11 names as RGB channels in `0..=1`.
 It accepts only 1–64 lowercase ASCII letters or digits, without normalization, XPM-only aliases,
