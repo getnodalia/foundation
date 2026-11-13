@@ -13,6 +13,10 @@ on:
         description: "Directories searched for .desktop and AppStream metainfo files"
         type: string
         default: "packaging data"
+      extra-checks-script:
+        description: "A repository script for app-specific packaging checks, run with bash; empty runs none"
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -85,3 +89,17 @@ jobs:
             done < <(find "$p" \( -name '*.metainfo.xml' -o -name '*.appdata.xml' \) -type f -print0)
           done
           exit $status
+
+  app-checks:
+    name: App-specific packaging checks
+    if: inputs.extra-checks-script != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Run the script
+        env:
+          SCRIPT: ${{ inputs.extra-checks-script }}
+        run: bash -- "$SCRIPT"
