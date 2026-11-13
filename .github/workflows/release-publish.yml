@@ -1,0 +1,56 @@
+name: Release publish
+
+# Reusable: publishes a draft release once the caller's packaging jobs have attached their files,
+# the last step after `release-tag.yml`. Run it with `needs:` on every packaging job, so a failed
+# platform leaves the release a draft for a maintainer to look at. A stable version becomes the
+# repository's latest release; a pre-release does not.
+#
+# The caller's job needs `permissions: contents: write`.
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: "The draft release's tag, e.g. v0.4.0"
+        type: string
+        required: true
+      require-assets:
+        description: "Fail instead of publishing a release with no files attached"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish the release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Publish
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag }}
+          REQUIRE_ASSETS: ${{ inputs.require-assets }}
+        run: |
+          set -euo pipefail
+          read -r draft prerelease assets < <(gh release view "$TAG" --repo "$REPO" \
+            --json isDraft,isPrerelease,assets --jq '"\(.isDraft) \(.isPrerelease) \(.assets | length)"')
+          if [[ "$draft" != true ]]; then
+            echo "$TAG is already published."
+            exit 0
+          fi
+          if [[ "$REQUIRE_ASSETS" == true && "$assets" -eq 0 ]]; then
+            echo "::error::$TAG has no files attached; it stays a draft."
+            exit 1
+          fi
+          latest=true
+          [[ "$prerelease" == true ]] && latest=false
+          gh release edit "$TAG" --repo "$REPO" --draft=false --latest="$latest"
+          url="$(gh release view "$TAG" --repo "$REPO" --json url --jq .url)"
+          echo "Published $url with $assets files"
+          echo "### Published [$TAG]($url) with $assets files" >>"$GITHUB_STEP_SUMMARY"

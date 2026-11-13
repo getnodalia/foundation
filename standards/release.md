@@ -7,20 +7,62 @@
   `x.y.z` for macOS alone, and the release notes say so.
 - When an app has a meaningful batch of changes, cut a release and update the website and README
   to match.
-- Tags `vX.Y.Z` are pushed by a maintainer (agents cannot push tags). The release workflow builds
-  from the tagged commit.
+- Nobody pushes tags by hand. A release starts when a version bump lands on the default branch
+  with its hand-written notes, `docs/release-notes/vX.Y.Z.md`: Foundation's `release-tag.yml`
+  tags that commit and drafts the release with the notes as its body (see the pipeline below).
 
 ## Release pipeline (layer 3 of [ci.md](ci.md))
 
-1. Resolve the version from the manifest; fail if the tag and the manifest disagree.
-2. Build each platform from the same commit on standard runners.
+1. On every push to the default branch, `release-tag.yml` reads the version from the manifest. When
+   it is a release version, is not tagged yet and has its notes file, it tags the pushed commit
+   and creates a **draft** release whose body is the notes file. Otherwise it does nothing.
+2. The same run calls the app's packaging workflows with the tag (`workflow_call`; a tag pushed
+   with `GITHUB_TOKEN` starts no other workflow). Each builds from the tagged commit on standard
+   runners and fails if the tag and the manifest disagree.
 3. Smoke-test each artifact: install or unpack it on a clean runner and launch the binary
    (`--version` or a headless run).
 4. SHA-256 checksums for every artifact; attest provenance where supported.
-5. Upload to a **draft** GitHub release on the app's own repository.
-6. A maintainer reviews the draft and publishes.
+5. Upload to the draft release on the app's own repository.
+6. `release-publish.yml` runs after every packaging job and publishes the draft. If any platform
+   failed, the release stays a draft for a maintainer to look at.
 7. After publishing: download the published assets, verify checksums, and check the website's
    download buttons resolve to them.
+
+The caller, in each app (`.github/workflows/release-auto.yml`):
+
+```yaml
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: release-auto
+  cancel-in-progress: false
+jobs:
+  tag:
+    permissions:
+      contents: write
+    uses: getnodalia/foundation/.github/workflows/release-tag.yml@<sha>
+    with:
+      name: Lienzo
+      notes-check: scripts/check-release-notes.sh
+  linux:
+    needs: tag
+    if: needs.tag.outputs.created == 'true'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release-linux.yml
+    with:
+      tag: ${{ needs.tag.outputs.tag }}
+  publish:
+    needs: [tag, linux]
+    permissions:
+      contents: write
+    uses: getnodalia/foundation/.github/workflows/release-publish.yml@<sha>
+    with:
+      tag: ${{ needs.tag.outputs.tag }}
+```
 
 A failed platform blocks the draft unless the workflow has an explicit, documented
 "draft without platform X" input that a maintainer chose for that run.

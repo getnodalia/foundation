@@ -1,0 +1,158 @@
+name: Release tag
+
+# Reusable: turns a version that reached the default branch into a tag and a draft GitHub release,
+# so nobody has to push a tag by hand. Call it on every push to the default branch; it does
+# nothing unless all of these hold:
+#
+#   - the manifest's version is a release version (not a `-dev` pre-release),
+#   - `vX.Y.Z` is not a tag yet,
+#   - `<notes-dir>/vX.Y.Z.md`, the hand-written release notes, exists (and passes `notes-check`).
+#
+# Then it tags the pushed commit, creates a draft release whose body is that notes file, and
+# reports `created: 'true'`. The caller builds its packages with the tag (`workflow_call`: a tag
+# made with GITHUB_TOKEN starts no other workflow) and finishes with `release-publish.yml`.
+#
+# The caller's job needs `permissions: contents: write`.
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: "Product name for the release title, e.g. Lienzo (title: 'Lienzo 0.4.0')"
+        type: string
+        required: true
+      manifest:
+        description: "File holding the version: Cargo.toml ([workspace.package] or [package]), package.json, or a plain VERSION file"
+        type: string
+        default: Cargo.toml
+      version-command:
+        description: "Shell command that prints the version instead of reading `manifest`; empty: read the manifest"
+        type: string
+        default: ""
+      notes-dir:
+        description: "Folder of the release notes, one vX.Y.Z.md per version"
+        type: string
+        default: docs/release-notes
+      notes-check:
+        description: "Script run with the tag that fails on incomplete notes, e.g. scripts/check-release-notes.sh; empty: the file must only be non-empty"
+        type: string
+        default: ""
+    outputs:
+      created:
+        description: "'true' when this run created the tag and the draft release"
+        value: ${{ jobs.tag.outputs.created }}
+      tag:
+        description: "The version tag, e.g. v0.4.0 (set whenever the version could be read)"
+        value: ${{ jobs.tag.outputs.tag }}
+      version:
+        description: "The version without the leading v"
+        value: ${{ jobs.tag.outputs.version }}
+      prerelease:
+        description: "'true' when the version has a pre-release part (0.4.0-rc.1)"
+        value: ${{ jobs.tag.outputs.prerelease }}
+
+permissions:
+  contents: read
+
+jobs:
+  tag:
+    name: Tag the release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      created: ${{ steps.release.outputs.created }}
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Version
+        id: version
+        shell: bash
+        env:
+          MANIFEST: ${{ inputs.manifest }}
+          VERSION_COMMAND: ${{ inputs.version-command }}
+        run: |
+          set -euo pipefail
+          if [[ -n "$VERSION_COMMAND" ]]; then
+            version="$(bash -c "$VERSION_COMMAND")"
+          else
+            case "$(basename "$MANIFEST")" in
+              Cargo.toml)
+                # [workspace.package] wins over [package], as in Cargo itself.
+                version="$(awk '
+                  /^\[/ { s = $0; next }
+                  $1 == "version" && (s == "[workspace.package]" || s == "[package]") {
+                    v = $0; sub(/^[^=]*=[[:space:]]*"/, "", v); sub(/".*/, "", v); found[s] = v
+                  }
+                  END { print (found["[workspace.package]"] != "" ? found["[workspace.package]"] : found["[package]"]) }
+                ' "$MANIFEST")" ;;
+              package.json)
+                version="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' "$MANIFEST")" ;;
+              *)
+                version="$(tr -d '[:space:]' <"$MANIFEST")" ;;
+            esac
+          fi
+          version="${version#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "::error::'$version' is not a SemVer version"
+            exit 1
+          fi
+          prerelease=false
+          [[ "$version" == *-* ]] && prerelease=true
+          {
+            echo "version=$version"
+            echo "tag=v$version"
+            echo "prerelease=$prerelease"
+          } >>"$GITHUB_OUTPUT"
+          echo "Version $version"
+
+      - name: Tag and draft the release
+        id: release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          NAME: ${{ inputs.name }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+          NOTES_DIR: ${{ inputs.notes-dir }}
+          NOTES_CHECK: ${{ inputs.notes-check }}
+        run: |
+          set -euo pipefail
+          echo "created=false" >>"$GITHUB_OUTPUT"
+          notes="$NOTES_DIR/$TAG.md"
+          if [[ "$VERSION" == *-dev* ]]; then
+            echo "$VERSION is a development version: nothing to release."
+            exit 0
+          fi
+          if gh api "repos/$REPO/git/ref/tags/$TAG" >/dev/null 2>&1; then
+            echo "$TAG is already tagged: nothing to release."
+            exit 0
+          fi
+          if [[ ! -f "$notes" ]]; then
+            echo "::notice::$TAG is not tagged and has no $notes: write the notes to release it."
+            exit 0
+          fi
+          if [[ -n "$NOTES_CHECK" ]]; then
+            bash "$NOTES_CHECK" "$TAG"
+          elif [[ -z "$(tr -d '[:space:]' <"$notes")" ]]; then
+            echo "::error file=$notes::$notes is empty."
+            exit 1
+          fi
+
+          gh api -X POST "repos/$REPO/git/refs" -f "ref=refs/tags/$TAG" -f "sha=$SHA" >/dev/null
+          echo "Tagged $SHA as $TAG"
+          args=(--repo "$REPO" --draft --verify-tag --title "$NAME $VERSION" --notes-file "$notes")
+          [[ "$PRERELEASE" == true ]] && args+=(--prerelease)
+          if ! gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            gh release create "$TAG" "${args[@]}"
+          fi
+          echo "created=true" >>"$GITHUB_OUTPUT"
+          echo "### $NAME $VERSION: tagged and drafted" >>"$GITHUB_STEP_SUMMARY"
