@@ -12,6 +12,9 @@ name: Release tag
 # When the version is already tagged, it instead copies the notes into that release if they
 # differ, so notes added or fixed after a release reach its page with a merge, not by hand.
 #
+# With `retag-draft` (for a manual rerun after a packaging fix), a tag whose release is still an
+# unpublished draft moves to the current commit and the release is built again from there.
+#
 # Then it tags the pushed commit, creates a draft release whose body is that notes file, and
 # reports `created: 'true'`. The caller builds its packages with the tag (`workflow_call`: a tag
 # made with GITHUB_TOKEN starts no other workflow) and finishes with `release-publish.yml`.
@@ -44,6 +47,10 @@ on:
         description: "Shell command that prints the version's notes (TAG and VERSION are set), e.g. its CHANGELOG section; replaces `notes-dir`. Printing nothing means the version has no notes yet"
         type: string
         default: ""
+      retag-draft:
+        description: "Move the tag to this commit when its release is still an unpublished draft, then build again (a release whose packaging failed and was fixed after the tag). A published release is never touched"
+        type: boolean
+        default: false
     outputs:
       created:
         description: "'true' when this run created the tag and the draft release"
@@ -133,6 +140,7 @@ jobs:
           NOTES_DIR: ${{ inputs.notes-dir }}
           NOTES_CHECK: ${{ inputs.notes-check }}
           NOTES_COMMAND: ${{ inputs.notes-command }}
+          RETAG_DRAFT: ${{ inputs.retag-draft }}
         run: |
           set -euo pipefail
           echo "created=false" >>"$GITHUB_OUTPUT"
@@ -145,6 +153,19 @@ jobs:
             notes="$RUNNER_TEMP/$TAG.md"
             bash -c "$NOTES_COMMAND" >"$notes"
             [[ -n "$(tr -d '[:space:]' <"$notes")" ]] || rm -f "$notes"
+          fi
+          if [[ "$RETAG_DRAFT" == true ]] && gh api "repos/$REPO/git/ref/tags/$TAG" >/dev/null 2>&1; then
+            tagged="$(gh api "repos/$REPO/commits/$TAG" --jq .sha)"
+            draft="$(gh release view "$TAG" --repo "$REPO" --json isDraft --jq .isDraft 2>/dev/null || echo none)"
+            if [[ "$tagged" != "$SHA" && "$draft" == true ]]; then
+              # Nobody has downloaded an unpublished draft, so its tag can move to the fixed commit.
+              gh api -X DELETE "repos/$REPO/git/refs/tags/$TAG" >/dev/null
+              gh release edit "$TAG" --repo "$REPO" --target "$SHA" >/dev/null
+              echo "$TAG was on $tagged with an unpublished draft: moving it to $SHA."
+            elif [[ "$tagged" != "$SHA" ]]; then
+              echo "::error::$TAG is on $tagged and its release is not a draft ($draft): a published release keeps its tag."
+              exit 1
+            fi
           fi
           if gh api "repos/$REPO/git/ref/tags/$TAG" >/dev/null 2>&1; then
             # Notes written or corrected after the tag still reach its release, so the page never

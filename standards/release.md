@@ -34,6 +34,12 @@ The caller, in each app (`.github/workflows/release-auto.yml`):
 on:
   push:
     branches: [main]
+  # A draft whose packaging failed: fix it, then run this by hand with retag-draft.
+  workflow_dispatch:
+    inputs:
+      retag-draft:
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -47,6 +53,7 @@ jobs:
     with:
       name: Lienzo
       notes-check: scripts/check-release-notes.sh
+      retag-draft: ${{ inputs.retag-draft == true }}
   linux:
     needs: tag
     if: needs.tag.outputs.created == 'true'
@@ -63,6 +70,10 @@ jobs:
     with:
       tag: ${{ needs.tag.outputs.tag }}
 ```
+
+When a platform fails and the fix lands after the tag, run the caller by hand on the fixed commit
+with `retag-draft`: while the release is still a draft, its tag moves to that commit and every
+platform builds again. A published release keeps its tag.
 
 A failed platform blocks the draft unless the workflow has an explicit, documented
 "draft without platform X" input that a maintainer chose for that run.
