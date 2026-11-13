@@ -8,7 +8,7 @@ on:
       release:
         description: "FreeBSD release for the VM"
         type: string
-        default: "15.0"
+        default: "15.1"
       packages:
         description: "FreeBSD packages the build needs, besides rust, git and pkgconf"
         type: string
