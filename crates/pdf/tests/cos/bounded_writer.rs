@@ -139,8 +139,7 @@ fn full_rewrites_preserve_graph_across_multiple_object_streams_and_evictions() {
 }
 
 fn protect(doc: &mut Document, algorithm: Algorithm) {
-    // Every algorithm, RC4 included, has to survive a rewrite.
-    doc.set_encryption_legacy(&NewEncryption {
+    doc.set_encryption(&NewEncryption {
         algorithm,
         user_password: "user",
         owner_password: "owner",

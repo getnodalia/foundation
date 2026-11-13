@@ -10,10 +10,6 @@ repository.workspace = true
 [lints]
 workspace = true
 
-[features]
-# `testing`: a writer of small BIFF8 workbooks, plain or encrypted, for the tests of crates that read them.
-test-support = []
-
 [dependencies]
 nodalia-cfb = { workspace = true }
 nodalia-sheet = { workspace = true }
@@ -25,5 +21,4 @@ miniz_oxide = "0.9"
 thiserror = { workspace = true }
 
 [dev-dependencies]
-nodalia-xls = { path = ".", features = ["test-support"] }
 miniz_oxide = "0.9"

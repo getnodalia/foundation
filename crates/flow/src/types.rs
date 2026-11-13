@@ -170,9 +170,8 @@ pub struct Img {
     pub w: f32,
     pub h: f32,
     pub alt: String,
-    /// Placement and drawing metadata for formats that keep it (ODT). `None` is inline;
-    /// `Some` may also be inline, retaining rotation, mirroring or explicit stacking order.
-    /// The Float wrap, not the Option, determines anchoring.
+    /// How a floating picture is placed and wrapped, for formats that keep it (ODT); `None`: in
+    /// line with the text.
     pub float: Option<Box<nodalia_wordmodel::para::Float>>,
     /// The embedded object this picture shows, kept whole (ODT only; see [`OdfObject`]).
     pub object: Option<Arc<OdfObject>>,
@@ -677,8 +676,6 @@ pub struct Para {
     pub kind: Kind,
     pub list: Option<ListInfo>,
     pub align: Option<Align>,
-    /// The paragraph reads right to left (OOXML `w:bidi`, RTF `\rtlpar`).
-    pub rtl: bool,
     pub page_break: bool,
     /// Keep the paragraph on the same page as the next one (ODT `fo:keep-with-next`).
     pub keep_next: bool,

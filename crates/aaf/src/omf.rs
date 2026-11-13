@@ -21,7 +21,7 @@
 //! transition's name) are not in the specification; they were first written by Toma and keep
 //! their names so that existing files read back.
 
-pub mod bento;
+pub(crate) mod bento;
 mod read;
 mod write;
 
