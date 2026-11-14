@@ -7,7 +7,7 @@ text of the GitHub release, so people reading the release page see exactly this 
 
 - Bumping `version` in `[workspace.package]` of `Cargo.toml` needs `docs/release-notes/vX.Y.Z.md`
   in the same pull request, or the **Release notes are written** check fails
-  (`scripts/check-release-notes.sh`, also run by the release workflows before building anything).
+  (`scripts/check-release-notes.sh`, also run by `release-auto.yml` before it tags).
 - Merging the version bump releases it: **Release from main** (`release-auto.yml`) tags the
   merge, creates the release with this file as its text, builds the Linux, macOS and Windows
   packages and publishes the release once all of them are attached. Nobody pushes a tag by hand.
