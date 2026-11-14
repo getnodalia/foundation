@@ -93,7 +93,9 @@ locale handling and fallback order: Lienzo uses its text and preference crates; 
 uses `vectorcraft_text`; Pliego and Letra use their font crates; Papel adds script
 and system fallback; Luz uses its engine catalog; Toma and Pulso use their text
 crates and local font discovery. Pliego also configures named Arabic shaping families.
-These dependencies and font assets stay outside `nodalia-ui`.
+Those dependencies and the font files stay in the apps. What they had in common, the fallback
+order and the system-font fallback, is `nodalia_ui::fonts` (see the
+[nodalia-ui README](../crates/ui/README.md#ui-fonts)); each app hands it the faces it embeds.
 
 Theme references occur throughout panels, menus and tools, with local visual/spacing overrides
 in every app. A source search alone cannot turn this into a percentage of correctly themed UI:
@@ -128,7 +130,7 @@ Examples worth preserving or reviewing separately:
   customize backgrounds and slider widths.
 
 This extraction preserves those choices. It does not certify whole-app accessibility or theme
-consistency, and it does not move font installation into the shared crate.
+consistency. Font installation is separate from theme application: `nodalia_ui::fonts` handles it.
 
 ## Migration and validation
 

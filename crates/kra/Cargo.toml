@@ -1,0 +1,21 @@
+[package]
+name = "nodalia-kra"
+description = "Krita documents (.kra, .krz): the ZIP archive, the maindoc.xml node tree, and the tiled pixel files with their LZF compression, read with bounded sizes."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+nodalia-xml = { workspace = true }
+thiserror = { workspace = true }
+nodalia-zip = { workspace = true }
+
+[dev-dependencies]
+# The tests build archives, hostile ones included, by hand.
+zip = { version = "9", default-features = false, features = ["deflate-flate2"] }
+nodalia-zip = { workspace = true, features = ["test-support"] }
