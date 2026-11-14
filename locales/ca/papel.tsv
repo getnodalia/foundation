@@ -4045,56 +4045,5 @@ calendar weekday	We	dc.
 	− Page {p}	− Pàgina {p}
 	−Bin	−Bin
 	−LOC	−LOC
-# The rows above that name the app, under its Nodalia name, Papel.
-	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Un logotip o un nom a l'esquerra de les pestanyes, on una barra de títol en mostraria un: el de Papel o el de la teva empresa.
-	A PNG or SVG file. It is read from this place each time Papel starts.	Un fitxer PNG o SVG. Es llegeix des d'aquesta ubicació cada vegada que s'inicia Papel.
-	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Una signatura que forma part del contingut d'una pàgina, com en una pàgina escanejada, no és un camp ni una anotació, de manera que no es pot eliminar tota sola, i el Papel no esborra parts d'una pàgina per amagar-la. Per treure-la, censureu aquesta àrea (Censura) o, si la signatura és una imatge independent, suprimiu la imatge amb Edita un PDF.
-	About Papel	Quant a Papel
-	Combine files in Papel…	Combina fitxers a Papel…
-	Convert to PDF with Papel	Converteix a PDF amb Papel
-	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Els fitxers que obris a Papel apareixen aquí. Deixa anar un PDF en qualsevol lloc per obrir-lo.
-	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Des del Finder: selecciona els fitxers, fes clic amb el botó dret > Accions ràpides > Combine files in Papel. No hi surt? Activa-ho una vegada a Accions ràpides > Personalitza.
-	Hide Papel	Amaga el Papel
-	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Obre un missatge nou sense el fitxer, i Papel et mostrarà {name} a la seva carpeta perquè l'adjuntis tu mateix.
-	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	La pàgina {page} conté més contingut del que Papel pot llegir: una part no es dibuixa, i només una part del seu text es pot cercar o copiar.
-	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Les pàgines que fan servir tipus de lletra Type 3 s'imprimeixen com a imatges, perquè Windows pot tancar Papel mentre les imprimeix. Les altres pàgines s'imprimeixen com sempre.
-	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Part d'aquesta pàgina no es mostra: el seu contingut supera el màxim que Papel dibuixa per a una pàgina.
-	Papel can't check this signature yet: {}.	Papel encara no pot comprovar aquesta signatura: {}.
-	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel no s'ha tancat amb normalitat. Aquests documents tenien canvis desats automàticament:
-	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel dibuixa sense processador gràfic, de manera que pot anar lent. Pot ajudar actualitzar el controlador gràfic.
-	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	El Papel conserva el que estaves fent. Quan el selector de fitxers funcioni, tria Torna-ho a provar.
-	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	El Papel cerca les biblioteques que instal·len els fabricants dels dispositius. Trieu-ne una només si no es troba el dispositiu.
-	Papel on GitHub	Papel a GitHub
-	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	El Papel obre la pàgina del proveïdor, on inicieu la sessió amb el CPF, el PIN i un codi d'un sol ús.
-	Papel web page	Pàgina web de Papel
-	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel funciona sense connexió. Sense telemetria, sense compte i sense processament al núvol tret que afegeixis un proveïdor.
-	Papel {c} is up to date.	Papel {c} està actualitzat.
-	Papel {v} is available.	Papel {v} està disponible.
-	Papel's own	El de Papel
-	Quit Papel	Surt del Papel
-	Reopen the files that were open when Papel last closed	Reobre els fitxers que eren oberts l'última vegada que es va tancar Papel
-	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Signa un full de paper blanc i fes-ne una foto amb llum intensa i uniforme (utilitza el flaix). Tria la foto o deixa-la anar aquí: Papel troba la signatura i elimina el paper.
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	El reconeixement de text no està instal·lat: falten els seus fitxers de model. Reinstal·la Papel o defineix PDFCRAFT_MODELS amb la carpeta que els conté.
-	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.
-	The Dock shows it the next time Papel opens.	El Dock la mostrarà la propera vegada que s'obri el Papel.
-	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Els tipus de lletra amb què escriu Papel no poden dibuixar “{c}” ({code}), de manera que es mostra com a ? a tots els visors de PDF. El text es desa.
-	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	El formulari demana que s'enviï a {u}; Papel no envia dades de formularis. Desa el document per conservar les dades introduïdes.
-	The key is in the macOS Keychain, which may ask to allow Papel to use it.	La clau és al clauer de macOS, que pot demanar permís perquè Papel la utilitzi.
-	The key is in the Windows certificate store, which may ask to allow Papel to use it.	La clau és al magatzem de certificats de Windows, que pot demanar permís perquè Papel la utilitzi.
-	The PIN goes only to the card; Papel doesn't keep it.	El PIN només va a la targeta; el Papel no el desa.
-	The signer's certificate has critical extensions Papel does not recognize ({}).	El certificat del signant té extensions crítiques que Papel no reconeix ({}).
-	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	els models de reconeixement de text no estan instal·lats (reinstal·la Papel o defineix PDFCRAFT_MODELS amb la carpeta que els conté)
-	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	El tipus de lletra d'aquest camp no pot dibuixar “{c}” ({code}), de manera que Papel hi mostra un ?. El valor es desa i altres visors de PDF tornen a dibuixar el camp a partir d'ell.
-	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Aquest formulari també conté dades XFA, que Papel encara no llegeix. Pots emplenar-ne els camps, però Acrobat pot mostrar els valors XFA.
-	This form has too many fields, or a field name too long, for Papel to read them all. Any signature among the rest is not listed, so the document is treated as signed.	Aquest formulari té massa camps, o un nom de camp massa llarg, perquè Papel els pugui llegir tots. Cap signatura d'entre la resta no apareix a la llista, de manera que el document es tracta com a signat.
-	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Aquest és un formulari XFA dinàmic, que Papel encara no pot mostrar. El que veus és la pàgina de substitució del fitxer.
-	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	aquest servei de signatura no es pot fer servir: necessita iniciar la sessió amb OAuth en un navegador, cosa que Papel encara no admet
-	Welcome to Papel	Et donem la benvinguda a Papel
-	Your default email app can't take a file from Papel.	L'aplicació de correu predeterminada no pot rebre un fitxer de Papel.
-	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} envia el formulari a {url}; Papel no envia dades de formularis. Desa el document per conservar les dades introduïdes.
-	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} pàgines contenen més contingut del que Papel pot llegir, començant per la pàgina {page}: algunes parts no es dibuixen, i només una part del seu text es pot cercar o copiar.
-	{program} can't take a file from Papel.	{program} no pot rebre un fitxer de Papel.
-	{who} in this document tried to open an address Papel won't open: {e}.	{who} d'aquest document ha intentat obrir una adreça que Papel no obre: {e}.
-	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} d'aquest document ha intentat obrir una adreça que Papel no obre: {e}. Als documents només s'hi poden obrir enllaços web (http, https) i de correu electrònic (mailto).
 	This document's script is asking	L'script d'aquest document pregunta
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Aquesta sol·licitud prové del document, no de Papel. Introduïu una contrasenya només si confieu en aquest document.

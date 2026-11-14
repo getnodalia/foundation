@@ -3033,42 +3033,6 @@ signature pad	Type	ພິມ
 	− Page {p}	− ໜ້າ {p}
 	−Bin	−Bin
 	−LOC	−LOC
-# The rows above that name the app, under its Nodalia name, Papel.
-	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	ໂລໂກ້ ຫຼື ຊື່ ຢູ່ທາງຊ້າຍຂອງແທັບ, ບ່ອນທີ່ແຖບຫົວຂໍ້ຈະສະແດງ: ຂອງ Papel ເອງ ຫຼື ຂອງບໍລິສັດທ່ານ.
-	A PNG or SVG file. It is read from this place each time Papel starts.	ໄຟລ໌ PNG ຫຼື SVG. ມັນຈະຖືກອ່ານຈາກບ່ອນນີ້ທຸກຄັ້ງທີ່ Papel ເລີ່ມຕົ້ນ.
-	About Papel	ກ່ຽວກັບ Papel
-	Combine files in Papel…	ຮວມໄຟລ໌ໃນ Papel…
-	Convert to PDF with Papel	ປ່ຽນເປັນ PDF ດ້ວຍ Papel
-	Files you open in Papel appear here. Drop a PDF anywhere to open it.	ໄຟລ໌ທີ່ທ່ານເປີດໃນ Papel ຈະສະແດງຢູ່ນີ້. ລາກໄຟລ໌ PDF ມາວາງບ່ອນໃດກໍໄດ້ເພື່ອເປີດ.
-	Hide Papel	ເຊື່ອງ Papel
-	Part of this page isn't shown: its content goes past the most Papel draws for one page.	ບາງສ່ວນຂອງໜ້ານີ້ບໍ່ໄດ້ສະແດງ: ເນື້ອຫາຂອງມັນເກີນຂີດສູງສຸດທີ່ Papel ແຕ້ມສຳລັບໜຶ່ງໜ້າ.
-	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel ບໍ່ໄດ້ປິດລົງຢ່າງປົກກະຕິ. ເອກະສານເຫຼົ່ານີ້ມີການປ່ຽນແປງທີ່ຖືກບັນທຶກອັດຕະໂນມັດໄວ້:
-	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel ກຳລັງແຕ້ມສະແດງຜົນໂດຍບໍ່ໃຊ້ໜ່ວຍປະມວນຜົນກຣາບຟິກ, ເຊິ່ງອາດເຮັດໃຫ້ຊ້າ. ການອັບເດດໄດຣເວີກຣາບຟິກອາດຊ່ວຍໄດ້.
-	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel ຊອກຫາຫ້ອງສະໝຸດທີ່ຜູ້ຜະລິດອຸປະກອນຕິດຕັ້ງ. ເລືອກອັນໜຶ່ງສະເພາະເມື່ອບໍ່ພົບອຸປະກອນຂອງທ່ານ.
-	Papel on GitHub	Papel ເທິງ GitHub
-	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel ເປີດໜ້າຂອງຜູ້ໃຫ້ບໍລິການ ເຊິ່ງທ່ານເຂົ້າສູ່ລະບົບດ້ວຍ CPF, PIN ແລະ ລະຫັດໃຊ້ຄັ້ງດຽວ.
-	Papel web page	ໜ້າເວັບ Papel
-	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel ເຮັດວຽກແບບອອບລາຍ. ບໍ່ມີການສົ່ງຂໍ້ມູນການໃຊ້ງານ, ບໍ່ຕ້ອງມີບັນຊີ ແລະ ບໍ່ມີການປະມວນຜົນເທິງຄລາວ ເວັ້ນເສຍແຕ່ທ່ານຈະເພີ່ມຜູ້ໃຫ້ບໍລິການ.
-	Papel {c} is up to date.	Papel {c} ເປັນເວີຊັນລ່າສຸດແລ້ວ.
-	Papel {v} is available.	ມີ Papel {v} ພ້ອມໃຫ້ໃຊ້ງານແລ້ວ.
-	Papel's own	ຂອງ Papel ເອງ
-	Quit Papel	ອອກຈາກ Papel
-	Reopen the files that were open when Papel last closed	ເປີດໄຟລ໌ທີ່ເຄີຍເປີດຢູ່ຕອນປິດ Papel ຄັ້ງຫຼ້າສຸດຄືນໃໝ່
-	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	ເຊັນລົງໃນເຈ້ຍສີຂາວ ແລະ ຖ່າຍຮູບໃນບ່ອນທີ່ມີແສງສະຫວ່າງພຽງພໍ ແລະ ສະໝ່ຳສະເໝີ (ໃຊ້ແຟລຊ). ເລືອກຮູບ ຫຼື ລາກມາວາງຢູ່ນີ້: Papel ຈະກວດຫາລາຍເຊັນ ແລະ ລຶບພື້ນເຈ້ຍອອກ.
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	ການຮັບຮູ້ຂໍ້ຄວາມຍັງບໍ່ໄດ້ຮັບການຕິດຕັ້ງ: ໄຟລ໌ໂມເດວສູນຫາຍ. ກະລຸນາຕິດຕັ້ງ Papel ຄືນໃໝ່ ຫຼື ຕັ້ງຄ່າ PDFCRAFT_MODELS ໄປຫາໂຟນເດີທີ່ບັນຈຸໄຟລ໌ດັ່ງກ່າວ.
-	The Dock shows it the next time Papel opens.	Dock ຈະສະແດງມັນໃນເທື່ອຕໍ່ໄປທີ່ Papel ເປີດ.
-	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	ຟອນທີ່ Papel ໃຊ້ຂຽນບໍ່ສາມາດສະແດງ “{c}” ({code}) ໄດ້, ດັ່ງນັ້ນມັນຈຶ່ງສະແດງເປັນ ? ໃນທຸກໂປຣແກຣມອ່ານ PDF. ຂໍ້ຄວາມຖືກບັນທຶກໄວ້ແລ້ວ.
-	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	ຟອມຮ້ອງຂໍໃຫ້ສົ່ງໄປທີ່ {u}; Papel ບໍ່ໄດ້ສົ່ງຂໍ້ມູນຟອມ. ກະລຸນາບັນທຶກເອກະສານເພື່ອຮັກສາສິ່ງທີ່ທ່ານປ້ອນໄວ້.
-	The key is in the macOS Keychain, which may ask to allow Papel to use it.	ກະແຈຢູ່ໃນ macOS Keychain, ເຊິ່ງອາດຈະຖາມເພື່ອອະນຸຍາດໃຫ້ Papel ໃຊ້ງານ.
-	The key is in the Windows certificate store, which may ask to allow Papel to use it.	ກະແຈຢູ່ໃນ Windows Certificate Store, ເຊິ່ງອາດຈະຖາມເພື່ອອະນຸຍາດໃຫ້ Papel ໃຊ້ງານ.
-	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	ໂມເດວການຮັບຮູ້ຂໍ້ຄວາມຍັງບໍ່ໄດ້ຕິດຕັ້ງ (ຕິດຕັ້ງ Papel ຄືນໃໝ່, ຫຼື ຕັ້ງຄ່າ PDFCRAFT_MODELS ໄປຫາໂຟນເດີທີ່ບັນຈຸໂມເດວ)
-	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	ຟອນຂອງຊ່ອງນີ້ບໍ່ສາມາດສະແດງ “{c}” ({code}) ໄດ້, ດັ່ງນັ້ນ Papel ຈຶ່ງສະແດງ ? ແທນ. ຄ່ານີ້ຖືກບັນທຶກໄວ້ ແລະ ໂປຣແກຣມອ່ານ PDF ອື່ນໆຈະແຕ້ມສະແດງຜົນຊ່ອງຂໍ້ມູນຄືນໃໝ່ຈາກຄ່ານັ້ນ.
-	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	ຟອມນີ້ຍັງມີຂໍ້ມູນ XFA ທີ່ Papel ຍັງບໍ່ສາມາດອ່ານໄດ້. ທ່ານສາມາດຕື່ມຂໍ້ມູນລົງໃນຊ່ອງໄດ້, ແຕ່ Acrobat ອາດຈະສະແດງຄ່າ XFA ແທນ.
-	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	ນີ້ແມ່ນຟອມ XFA ແບບໄດນາມິກ ເຊິ່ງ Papel ຍັງບໍ່ສາມາດສະແດງຜົນໄດ້. ສິ່ງທີ່ທ່ານເຫັນແມ່ນໜ້າຕົວແທນຊົ່ວຄາວຂອງໄຟລ໌.
-	Welcome to Papel	ຍິນດີຕ້ອນຮັບສູ່ Papel
-	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} ສົ່ງຟອມໄປທີ່ {url}; Papel ບໍ່ໄດ້ສົ່ງຂໍ້ມູນຟອມ. ກະລຸນາບັນທຶກເອກະສານເພື່ອຮັກສາສິ່ງທີ່ທ່ານປ້ອນໄວ້.
-	{who} in this document tried to open an address Papel won't open: {e}.	{who} ໃນເອກະສານນີ້ພະຍາຍາມເປີດທີ່ຢູ່ທີ່ Papel ບໍ່ສາມາດເປີດໄດ້: {e}.
-	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} ໃນເອກະສານນີ້ພະຍາຍາມເປີດທີ່ຢູ່ທີ່ Papel ບໍ່ສາມາດເປີດໄດ້: {e}. ສະເພາະລິ້ງເວັບ (http, https) ແລະ ອີເມວ (mailto) ເທົ່ານັ້ນທີ່ສາມາດເປີດຈາກເອກະສານໄດ້.
 	This document's script is asking	ສະຄຣິບຂອງເອກະສານນີ້ກຳລັງຖາມ
 	Document: {name}	ເອກະສານ: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	ຄຳຂໍນີ້ມາຈາກເອກະສານ, ບໍ່ແມ່ນຈາກ Papel. ໃສ່ລະຫັດຜ່ານສະເພາະເມື່ອທ່ານໄວ້ວາງໃຈເອກະສານນີ້ເທົ່ານັ້ນ.

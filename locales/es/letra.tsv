@@ -176,7 +176,6 @@
 	Arabic	Árabe
 	Arch Down	Arco hacia abajo
 	Arch Up	Arco hacia arriba
-	Arrange All	Organizar todo
 	Arrange\nAll	Organizar\ntodo
 	Article I.	Artículo I.
 	Artistic Effects	Efectos artísticos
@@ -1344,7 +1343,6 @@
 	No icons match your search.	Ningún icono coincide con la búsqueda.
 	No Markup	Sin marcas
 	No model credits were built into this copy.	Esta copia no incluye créditos de modelos.
-	No other Letra windows are open.	No hay otras ventanas de Letra abiertas.
 	No Outline	Sin contorno
 	No Paragraph Space	Sin espacio entre párrafos
 	No printers found. Configure a system printer or export a PDF.	No se encontraron impresoras. Configura una impresora en el sistema o exporta un PDF.
@@ -2062,10 +2060,7 @@
 	Swap footnotes and endnotes	Intercambiar notas al pie y notas finales
 	Swedish	Sueco
 	Switch Modes	Cambiar de modo
-	Switch Windows	Cambiar ventanas
 	Switch\nModes	Cambiar\nde modo
-	Switch\nWindows	Cambiar\nventanas
-	Synchronous Scrolling	Desplazamiento sincrónico
 	Synonyms	Sinónimos
 	Tab	Tabulador
 	Tab Character	Carácter de tabulación
@@ -2301,7 +2296,6 @@ preview	Title	Título
 	Vertical Dots	Puntos verticales
 	View Alt Text…	Ver texto alternativo…
 	View Gridlines	Ver líneas de cuadrícula
-	View Side by Side	Ver en paralelo
 	View State	Estado de vista
 	View › Focus hides everything but your words. I'll wait outside.	Vista › Modo concentración oculta todo menos tus palabras. Te espero fuera.
 	Views	Vistas
@@ -2521,176 +2515,6 @@ preview	Title	Título
 	Uruguay	Uruguay
 	Venezuela	Venezuela
 	South Africa	Sudáfrica
-	A free word processor, written in Rust.	Un procesador de textos libre, escrito en Rust.
-	Back	Atrás
-	Licences	Licencias
-	MIT OR Apache-2.0. Includes open-source work by other authors; see NOTICE.	MIT OR Apache-2.0. Incluye trabajo de código abierto de otros autores; consulta NOTICE.
-	Part of Nodalia	Parte de Nodalia
-	Report a problem	Informar de un problema
-	Source code	Código fuente
-	Window controls:	Controles de ventana:
-	‹ About Letra	‹ Acerca de Letra
-	Keyboard shortcuts	Atajos de teclado
-	Check for updates…	Buscar actualizaciones…
-	About Letra	Acerca de Letra
-	Quit	Salir
-	Main menu	Menú principal
-	Screen paper color:	Color del papel en pantalla:
-	Document background	Fondo del documento
-	Soft green	Verde suave
-	Warm cream	Crema cálido
-	Soft gray	Gris suave
-	Status bar count:	Recuento en la barra de estado:
-	You can also right-click the count in the status bar to change it.	También puedes hacer clic derecho en el recuento de la barra de estado para cambiarlo.
-	No new sources in that file	No hay fuentes nuevas en ese archivo
-	Imported 1 source	Se importó 1 fuente
-	Imported {n} sources	Se importaron {n} fuentes
-	The spelling dictionary for {language} couldn't be read, so it isn't checked. File: {file}. Reason: {reason}	No se pudo leer el diccionario ortográfico de {language}, así que no se revisa. Archivo: {file}. Motivo: {reason}
-	No spelling dictionary for {language} is installed, so it isn't checked. Letra looks for the Hunspell dictionary {name} in the LETRA_DICTIONARIES folder and in the usual system locations.	No hay ningún diccionario ortográfico de {language} instalado, así que no se revisa. Letra busca el diccionario Hunspell {name} en la carpeta LETRA_DICTIONARIES y en las ubicaciones habituales del sistema.
-	{language} (dictionary unreadable)	{language} (diccionario ilegible)
-	Shown in substitute fonts. Click for details.	Se muestra con fuentes sustitutas. Haz clic para ver los detalles.
-	Not installed — shown as	No instalada: se muestra como
-	Text Size	Tamaño del texto
-	{chars} characters	{chars} caracteres
-	{selected} of {chars} characters	{selected} de {chars} caracteres
-	{chars} characters (no spaces)	{chars} caracteres (sin espacios)
-	{selected} of {chars} characters (no spaces)	{selected} de {chars} caracteres (sin espacios)
-	Updates are off in this window: Letra was started with another program's AppImage settings. Start Letra from its own menu entry to update it.	Las actualizaciones están desactivadas en esta ventana: Letra se inició con los ajustes de AppImage de otro programa. Inicia Letra desde su propia entrada de menú para actualizarla.
-	Update check is not supported in the web browser.	La búsqueda de actualizaciones no está disponible en el navegador web.
-	The document or selection changed. Check again to continue.	El documento o la selección han cambiado. Vuelve a revisar para continuar.
-	The spelling and grammar check is complete.	La revisión de ortografía y gramática ha terminado.
-	Not in Dictionary	No está en el diccionario
-	Suggestions	Sugerencias
-	Change…	Cambiar…
-	Add to AutoCorrect	Añadir a Autocorrección
-	AutoCorrect Options…	Opciones de autocorrección…
-	More options	Más opciones
-	Change to:	Cambiar a:
-	{n} MB	{n} MB
-	{n} KB	{n} KB
-	Couldn't get the list of languages: {error}	No se pudo obtener la lista de idiomas: {error}
-	Couldn't install: {error}	No se pudo instalar: {error}
-	Only you can turn on downloading: click the button yourself. Agents can install once it is on.	Solo tú puedes activar la descarga: haz clic en el botón tú mismo. Los agentes pueden instalar una vez activada.
-	Couldn't turn on downloading: {error}	No se pudo activar la descarga: {error}
-	Couldn't remove: {error}	No se pudo quitar: {error}
-	{language} proofing isn't installed.	La revisión de {language} no está instalada.
-	Installing… {percent}%	Instalando… {percent}%
-	Install ({size})	Instalar ({size})
-	Getting the list of languages…	Obteniendo la lista de idiomas…
-	Installing turns on downloading of fonts and Language packs from GitHub.	Instalar activa la descarga de fuentes y paquetes de idioma desde GitHub.
-	Install	Instalar
-	Licence: {licence}. Source: {source}	Licencia: {licence}. Origen: {source}
-	Language packs come from a test source: {source}	Los paquetes de idioma vienen de un origen de prueba: {source}
-	Language packs aren't available in the browser.	Los paquetes de idioma no están disponibles en el navegador.
-	Language packs need the font store folder, and there is none on this computer.	Los paquetes de idioma necesitan la carpeta del almacén de fuentes, y no hay ninguna en este equipo.
-	Installed	Instalado
-	Downloading is off. Clicking Add a language… or Install turns it on: Letra then downloads language packs and fonts from GitHub.	La descarga está desactivada. Al hacer clic en «Añadir un idioma…» o «Instalar» se activa: Letra descargará entonces paquetes de idioma y fuentes desde GitHub.
-	Get the list of languages again	Volver a obtener la lista de idiomas
-	The spelling and hyphenation data Letra uses, and their licences.	Los datos de ortografía y separación silábica que usa Letra, y sus licencias.
-	Cancellation could not be confirmed here. The printer driver may still be processing the job. If it appears in the system's print queue, cancel it there.	No se pudo confirmar aquí la cancelación. Puede que el controlador de la impresora siga procesando el trabajo. Si aparece en la cola de impresión del sistema, cancélalo allí.
-	Printing cancelled. Nothing was sent to the printer.	Impresión cancelada. No se envió nada a la impresora.
-	Cancel printing	Cancelar impresión
-	Pages in the range	Páginas del intervalo
-	Pages per sheet	Páginas por hoja
-	Booklets: duplex on the short edge. Blank pages are added at the end.	Folletos: impresión a doble cara por el borde corto. Se añaden páginas en blanco al final.
-	Scale to paper size	Ajustar al tamaño del papel
-	Sheet {page} of {pages}	Hoja {page} de {pages}
-	Previous sheet	Hoja anterior
-	Next sheet	Hoja siguiente
-	Screen only. Document backgrounds, printing and exports keep their colours. Dark page and explicit Read Mode colours take precedence.	Solo en pantalla. Los fondos del documento, la impresión y las exportaciones conservan sus colores. La página oscura y los colores explícitos del Modo lectura tienen prioridad.
-	Show the Start screen when Letra starts	Mostrar la pantalla de inicio al abrir Letra
-	On: Letra opens on File › Home, with a blank document, the templates and your recent documents. Off: it opens a blank document.	Activado: Letra se abre en Archivo › Inicio, con un documento en blanco, las plantillas y tus documentos recientes. Desactivado: abre un documento en blanco.
-	{language}: {file} (unreadable: {reason})	{language}: {file} (ilegible: {reason})
-	Spanish (Latin America)	Español (Latinoamérica)
-	Spanish (Uruguay)	Español (Uruguay)
-	AutoSave documents you have saved in Letra	Guardar automáticamente los documentos que hayas guardado en Letra
-	{language}: Letra doesn't check spelling or grammar in this language yet.	{language}: Letra aún no revisa la ortografía ni la gramática en este idioma.
-	Every command is available to scripts and AI agents: run `letra-cli mcp` for an MCP server, or start the app with `--control <port>` for the JSON control channel.	Todos los comandos están disponibles para scripts y agentes de IA: ejecuta `letra-cli mcp` para un servidor MCP, o inicia la aplicación con `--control <port>` para el canal de control JSON.
-	Display server:	Servidor de pantalla:
-	Opens Settings › Default apps, where you choose Letra for .docx and the other document types.	Abre Ajustes › Aplicaciones predeterminadas, donde eliges Letra para .docx y los demás tipos de documento.
-	Opens .docx, .doc, .rtf and .odt files and Word templates with Letra from now on.	A partir de ahora abre con Letra los archivos .docx, .doc, .rtf y .odt y las plantillas de Word.
-	Make Letra the default for Word documents…	Hacer de Letra la aplicación predeterminada para documentos de Word…
-	To open Word documents with Letra by default: select one in Finder, choose File › Get Info, pick Letra under Open with, then click Change All.	Para abrir documentos de Word con Letra por defecto: selecciona uno en el Finder, elige Archivo › Obtener información, elige Letra en Abrir con y haz clic en Cambiar todo.
-	The system file dialog isn't available, so Letra shows its own. To get the system dialog, install a file chooser portal (such as xdg-desktop-portal-gtk) or zenity.	El cuadro de diálogo de archivos del sistema no está disponible, así que Letra muestra el suyo. Para usar el del sistema, instala un portal de selección de archivos (como xdg-desktop-portal-gtk) o zenity.
-	Folder path	Ruta de la carpeta
-	No items to show.	No hay elementos que mostrar.
-	File type	Tipo de archivo
-	Crop on the page works on unturned pictures: set Rotation to 0° first, or use the crop boxes	Recortar en la página funciona con imágenes sin girar: pon antes Rotación a 0° o usa los cuadros de recorte
-	Restore opens an unsaved copy. Your original file stays unchanged.	Restaurar abre una copia sin guardar. Tu archivo original no cambia.
-	Recovery is disabled while this document has a password.	La recuperación está desactivada mientras este documento tenga contraseña.
-	Local recovery is unavailable or still loading.	La recuperación local no está disponible o aún se está cargando.
-	No recovery copies.	No hay copias de recuperación.
-	Recovery copy	Copia de recuperación
-	Discard…	Descartar…
-	Continue without restoring	Continuar sin restaurar
-	Remove from list	Quitar de la lista
-	Clear all	Borrar todo
-	Browse in Letra…	Explorar en Letra…
-	Open a file with Letra's own browser when the system file dialog doesn't appear.	Abre un archivo con el explorador propio de Letra cuando no aparezca el cuadro de diálogo de archivos del sistema.
-	Advanced Properties…	Propiedades avanzadas…
-	View and edit the document's custom properties.	Ver y editar las propiedades personalizadas del documento.
-	Removed {name} from the recent list	Se quitó {name} de la lista de recientes
-	Removed {count} documents from the recent list	Se quitaron {count} documentos de la lista de recientes
-	In Default apps, choose Letra for the document types you want it to open.	En Aplicaciones predeterminadas, elige Letra para los tipos de documento que quieras que abra.
-	Letra is now the default app for Word documents.	Letra es ahora la aplicación predeterminada para documentos de Word.
-	Couldn't make Letra the default: {error}	No se pudo hacer de Letra la aplicación predeterminada: {error}
-	Couldn't save {name}, so it is still open and nothing was lost: {error}	No se pudo guardar {name}, así que sigue abierto y no se ha perdido nada: {error}
-	Wait for the print job to finish submitting before closing.	Espera a que termine de enviarse el trabajo de impresión antes de cerrar.
-	Could not save the preferences: {error}	No se pudieron guardar las preferencias: {error}
-	Sepia	Sepia
-	Inverse	Inverso
-	Page color	Color de página
-	No other Letra windows are open.	No hay otras ventanas de Letra abiertas.
-	Set the colors in the Text Pane to use custom colors.	Configura los colores en el Panel de texto para usar colores personalizados.
-	Type a size in any unit, such as 3 cm or 300 px.	Escribe un tamaño en cualquier unidad, como 3 cm o 300 px.
-	{paper}   {width} × {height}	{paper}   {width} × {height}
-	Pane Options	Opciones del panel
-	Dock Left	Acoplar a la izquierda
-	Dock Right	Acoplar a la derecha
-	Float	Flotante
-	Move Pane: {title}	Mover panel: {title}
-	Resize Pane	Cambiar tamaño del panel
-	Enter bookmark name:	Escribe el nombre del marcador:
-	Type a page number, or +2 / -1.	Escribe un número de página, o +2 / -1.
-	Property names are 1–{max} characters.	Los nombres de propiedad tienen de 1 a {max} caracteres.
-	Property values are at most {max} bytes.	Los valores de propiedad tienen como máximo {max} bytes.
-	Only text properties can be changed.	Solo se pueden cambiar las propiedades de texto.
-	Select a property to change.	Selecciona una propiedad para cambiarla.
-	This document has no custom properties.	Este documento no tiene propiedades personalizadas.
-	Text properties only: Word's number, date and yes-no types aren't offered.	Solo propiedades de texto: no se ofrecen los tipos de número, fecha y sí/no de Word.
-	Macro name:	Nombre de la macro:
-	There are no macros yet. Record one to add it here.	Aún no hay macros. Graba una para añadirla aquí.
-	Run	Ejecutar
-	Stop Recording	Detener grabación
-	Record…	Grabar…
-	Shape color	Color de la forma
-	Style Color	Color del estilo
-	*Bold* and _italic_ as real formatting	*Negrita* y _cursiva_ como formato real
-	Add a period with double-space	Añadir punto con doble espacio
-	Built-in Heading styles	Estilos de título integrados
-	Set left- and first-indent with tabs and backspaces	Establecer sangría izquierda y de primera línea con tabulaciones y retrocesos
-	Automatically add words to list (First Letter)	Añadir palabras a la lista automáticamente (Primera letra)
-	Automatically add words to list (INitial CAps)	Añadir palabras a la lista automáticamente (DOs MAyúsculas)
-	Select a place in this document:	Selecciona un lugar de este documento:
-	Top of the Document	Principio del documento
-	Bookmarks	Marcadores
-	Find “{text}” in the document	Buscar «{text}» en el documento
-	Letra	Letra
-	Discard the recovery copy of {name}?	¿Descartar la copia de recuperación de {name}?
-	This cannot be undone. Your original file stays unchanged.	No se puede deshacer. Tu archivo original no cambia.
-	Keep the password somewhere safe: without it nobody, Letra included, can open the document. Leave both boxes empty to remove the password.	Guarda la contraseña en un lugar seguro: sin ella nadie, ni siquiera Letra, puede abrir el documento. Deja ambos cuadros vacíos para quitar la contraseña.
-	{field}, record {n}	{field}, registro {n}
-	Hidden text is not shown unless you display it.	El texto oculto no se muestra a menos que lo muestres.
-	The number must be a divisor of {max}.	El número debe ser un divisor de {max}.
-	Corporate Author	Autor corporativo
-	Reference type:	Tipo de referencia:
-	Insert reference to:	Insertar referencia a:
-	For which item:	Para qué elemento:
-	Nothing of this type in the document.	No hay nada de este tipo en el documento.
-	Current Document	Documento actual
-	Column Edge	Borde de columna
-	{font} isn't installed on this computer, so its text is shown in {shown}. Line breaks and page count can differ from where the document was made. If you have the font file, add it with Add Font… at the end of this list.	{font} no está instalada en este equipo, así que su texto se muestra en {shown}. Los saltos de línea y el número de páginas pueden diferir de donde se creó el documento. Si tienes el archivo de la fuente, añádelo con Añadir fuente… al final de esta lista.
-	{name} options	Opciones de {name}
 
 # Descriptive feature names; legacy rows remain for earlier app pins.
 	Diagram	Diagrama

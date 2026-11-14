@@ -151,7 +151,6 @@
 	Arch Down	Арка вниз
 	Arch Up	Арка вгору
 	Area	Області
-	Arrange All	Упорядкувати все
 	Arrange\nAll	Упорядкувати\nвсі
 	Article I.	Стаття I.
 	Artistic Effects	Художні ефекти
@@ -1195,7 +1194,6 @@
 	No limit	Без обмеження
 	No Markup	Без позначок
 	No model credits were built into this copy.	Ця збірка не містить відомостей про моделі.
-	No other Letra windows are open.	Інших вікон Letra не відкрито.
 	No Outline	Без контуру
 	No Paragraph Space	Без інтервалу між абзацами
 	No printers found. Configure a system printer or export a PDF.	Принтерів не знайдено. Налаштуйте системний принтер або експортуйте PDF.
@@ -1850,10 +1848,7 @@
 	Swap footnotes and endnotes	Поміняти виноски й кінцеві виноски
 	Swedish	Шведська
 	Switch Modes	Перемкнути режими
-	Switch Windows	Перемкнути вікна
 	Switch\nModes	Перемкнути\nрежими
-	Switch\nWindows	Перемкнути\nвікна
-	Synchronous Scrolling	Синхронне прокручування
 	Synonyms	Синоніми
 	Tab Character	Символ табуляції
 	Tab character	Символ табуляції
@@ -2061,7 +2056,6 @@
 	View	Вигляд
 	View Alt Text…	Переглянути альтернативний текст…
 	View Gridlines	Показати лінії сітки
-	View Side by Side	Переглянути поруч
 	View State	Стан вигляду
 	View › Focus hides everything but your words. I'll wait outside.	Вигляд › Зосередження приховує все, крім ваших слів. Я почекаю за дверима.
 	Views	Вигляди
@@ -2275,27 +2269,6 @@
 	Uruguay	Уругвай
 	Venezuela	Венесуела
 	South Africa	Південна Африка
-	A free word processor, written in Rust.	Вільний текстовий редактор, написаний на Rust.
-	Back	Назад
-	Licences	Ліцензії
-	MIT OR Apache-2.0. Includes open-source work by other authors; see NOTICE.	MIT OR Apache-2.0. Містить відкриту роботу інших авторів; див. NOTICE.
-	Part of Nodalia	Частина Nodalia
-	Report a problem	Повідомити про проблему
-	Source code	Вихідний код
-	Window controls:	Кнопки вікна:
-	‹ About Letra	‹ Про Letra
-	Keyboard shortcuts	Сполучення клавіш
-	Check for updates…	Перевірити оновлення…
-	About Letra	Про Letra
-	Quit	Вийти
-	Main menu	Головне меню
-	Screen paper color:	Колір паперу на екрані:
-	Document background	Тло документа
-	Soft green	М'який зелений
-	Warm cream	Теплий кремовий
-	Soft gray	М'який сірий
-	Status bar count:	Лічильник у рядку стану:
-	You can also right-click the count in the status bar to change it.	Також можна клацнути правою кнопкою на лічильнику в рядку стану, щоб змінити його.
 
 # Descriptive feature names; legacy rows remain for earlier app pins.
 	Diagram	Схема
