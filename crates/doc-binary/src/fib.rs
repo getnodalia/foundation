@@ -138,9 +138,7 @@ impl Fib {
         }
         let w_ident = u16le(0);
         if w_ident == 0xA5DC {
-            // `read` sends Word 6.0/95 streams to `word6` before this FIB is parsed. This keeps any
-            // other caller from reading one with the Word 97 layout, which it doesn't have.
-            return Err(DocbinError::NotWord("a Word 6.0/95 file doesn't have the Word 97 FIB layout".into()));
+            return Err(DocbinError::NotWord("Word 6.0/95 format, only Word 97-2003 is supported".into()));
         }
         if w_ident != W_IDENT {
             return Err(DocbinError::NotWord(format!("magic 0x{w_ident:04X}, expected 0x{W_IDENT:04X}")));

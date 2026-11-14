@@ -19,5 +19,3 @@ thiserror = { workspace = true }
 proptest = { workspace = true }
 # A second XML reader for the tests: checks of written TTML, and the comparison in tests/it/ttml_xml_views.rs.
 roxmltree = "0.21"
-# ffmpeg as the reference for the ASS tests (tests/it/ass.rs).
-nodalia-media-testkit = { workspace = true }

@@ -3,4 +3,3 @@
 mod lenient;
 mod sequence;
 mod smf;
-mod sync;

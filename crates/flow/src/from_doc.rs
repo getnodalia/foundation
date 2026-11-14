@@ -342,20 +342,6 @@ fn rich_inlines(doc: &Document, o: &InlineObject, f: &Fmt, opts: FlowOpts) -> Op
     })
 }
 
-/// The freeform a `w` × `h` frame shape with border `corner` (see
-/// [`nodalia_wordmodel::connector::frame_width`]) draws: its outline clockwise and its hole the
-/// other way, so the hole stays empty under either fill rule.
-fn frame_freeform(corner: Option<u32>, w: f32, h: f32) -> nodalia_wordmodel::freeform::Freeform {
-    use nodalia_wordmodel::freeform::{FreePath, Freeform};
-    let (w, h) = (nodalia_wordmodel::geom::finite(w).max(0.0), nodalia_wordmodel::geom::finite(h).max(0.0));
-    let t = nodalia_wordmodel::connector::frame_width(corner, w, h);
-    let mut paths = vec![FreePath { pts: vec![[0.0, 0.0], [w, 0.0], [w, h], [0.0, h]], closed: true }];
-    if w - 2.0 * t > 0.0 && h - 2.0 * t > 0.0 {
-        paths.push(FreePath { pts: vec![[t, t], [t, h - t], [w - t, h - t], [w - t, t]], closed: true });
-    }
-    Freeform { w, h, paths, ..Default::default() }
-}
-
 /// Comment `c` (a reply to `parent`) of `doc` as a flow comment: its text holds no comments or
 /// notes of its own.
 /// The flow inline for picture, shape or group `o` of `doc` (a member of groups `depth` deep),
@@ -372,12 +358,8 @@ fn drawing_inline(doc: &Document, o: &InlineObject, opts: FlowOpts, depth: usize
         {
             // A connector stays one in formats that glue them (ODT, with boxes); elsewhere it is a
             // straight line.
-            // A frame (a border with a hole), which the other formats have no shape for, is the
-            // freeform it draws: its outline and, wound the other way, its hole.
-            let frame = (*kind == ShapeKind::Frame).then(|| std::sync::Arc::new(frame_freeform(extra.corner, *w, *h)));
             let kind = match kind {
                 ShapeKind::StraightConnector | ShapeKind::ElbowConnector | ShapeKind::CurvedConnector if !opts.boxes => ShapeKind::Line,
-                ShapeKind::Frame => ShapeKind::Freeform,
                 k => *k,
             };
             let inner = FlowOpts { notes: false, comments: false, boxes: false, ..opts };
@@ -401,7 +383,7 @@ fn drawing_inline(doc: &Document, o: &InlineObject, opts: FlowOpts, depth: usize
                     Box::new(crate::Chain { name: format!("Frame{id}"), next })
                 }),
             };
-            let path = frame.or_else(|| freeform.clone()).filter(|_| kind == ShapeKind::Freeform);
+            let path = freeform.clone().filter(|_| kind == ShapeKind::Freeform);
             Some(Inline::Shape { kind, w: w * sx, h: h * sy, float: kept_float(float), blocks, look, path })
         }
         InlineObject::Image { media, w, h, alt, float, ole, crop, .. } => {
@@ -511,8 +493,6 @@ fn flow_paras_in(doc: &Document, p: &Paragraph, opts: FlowOpts) -> Vec<Para> {
         kind,
         list,
         align: p.props.align,
-        // Direction can come from the paragraph's style (`w:bidi` in the style's pPr).
-        rtl: doc.styles.resolve_para(&p.props).bidi,
         page_break: p.props.page_break_before.unwrap_or(false),
         keep_next: p.props.keep_next.unwrap_or(false),
         inlines: Vec::new(),
@@ -556,7 +536,6 @@ fn flow_paras_in(doc: &Document, p: &Paragraph, opts: FlowOpts) -> Vec<Para> {
                         kind,
                         list: None,
                         align: p.props.align,
-                        rtl: out.rtl,
                         page_break: true,
                         keep_next: p.props.keep_next.unwrap_or(false),
                         inlines: Vec::new(),
@@ -679,10 +658,7 @@ fn flow_paras_in(doc: &Document, p: &Paragraph, opts: FlowOpts) -> Vec<Para> {
             {
                 (li.list, li.label) = (0, None);
             }
-            // Direction resolved like the current paragraph's: the old properties' own `w:bidi`, else
-            // the style's.
-            let rtl = doc.styles.resolve_para(&c.old).bidi;
-            let old = Para { kind, list, align: c.old.align, rtl, page_break: c.old.page_break_before.unwrap_or(false), ..Default::default() };
+            let old = Para { kind, list, align: c.old.align, page_break: c.old.page_break_before.unwrap_or(false), ..Default::default() };
             Box::new(FmtChange { mark: rev_mark(doc, c.rev), old })
         });
     }
@@ -773,7 +749,7 @@ fn graphic_group(
                 let inline = Inline::Shape { kind: *kind, w: rect[2] * sx, h: rect[3] * sy, float: None, blocks: Vec::new(), look, path: None };
                 Some(Member { x: rect[0] * sx, y: rect[1] * sy, inline })
             }
-            GraphicItem::Text { rect, text, size, color, bold, align, font, .. } if finite(rect) && !text.trim().is_empty() => {
+            GraphicItem::Text { rect, text, size, color, bold, align, font } if finite(rect) && !text.trim().is_empty() => {
                 let size = if size.is_finite() { size.clamp(1.0, 400.0) } else { 11.0 };
                 // One line, centred vertically in its place as the graphic draws it.
                 let line = size * 1.2;
