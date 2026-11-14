@@ -78,6 +78,28 @@ platform builds again. A published release keeps its tag.
 A failed platform blocks the draft unless the workflow has an explicit, documented
 "draft without platform X" input that a maintainer chose for that run.
 
+### The same files in every app
+
+Every app releases through the same files, copied from [`templates/`](../templates/):
+
+| File | Template | What changes per app |
+|---|---|---|
+| `.github/workflows/release-auto.yml` | `templates/workflows/release-auto.yml` | product name, default branch, packaging jobs |
+| `.github/workflows/release-notes.yml` | `templates/workflows/release-notes.yml` | default branch |
+| `scripts/check-release-notes.sh` | `templates/scripts/check-release-notes.sh` | `app=` (package prefix); how the version is read, for a manifest other than `Cargo.toml` |
+| `docs/release-notes/README.md` | `templates/release-notes/README.md` | the app's name |
+| `.github/workflows/release-{linux,macos,windows}.yml` | the app's own | built with `workflow_call` input `tag`, fail when it disagrees with the manifest |
+
+*Release notes are written* (the `check` job of `release-notes.yml`) is a **required check**: it
+fails a pull request that bumps the version without complete notes, or that adds or edits an
+incomplete notes file. After a merge, the same workflow copies a changed notes file into the
+release of its tag. There is no other way to release: no `release` branch, no workflow started by
+pushing a tag.
+
+A release that ships on some platforms or editions only (a macOS-only patch) passes
+`latest: false` to `release-publish.yml`, so installed copies on the other platforms keep the
+newest release that has their package.
+
 ## Platforms
 
 | Platform | Artifacts | Notes |

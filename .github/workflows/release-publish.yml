@@ -3,7 +3,9 @@ name: Release publish
 # Reusable: publishes a draft release once the caller's packaging jobs have attached their files,
 # the last step after `release-tag.yml`. Run it with `needs:` on every packaging job, so a failed
 # platform leaves the release a draft for a maintainer to look at. A stable version becomes the
-# repository's latest release; a pre-release does not.
+# repository's latest release; a pre-release does not, and neither does a release the caller marks
+# `latest: false` (a patch for one platform or edition only, which installed copies on the other
+# platforms must not see as their newest release).
 #
 # The caller's job needs `permissions: contents: write`.
 on:
@@ -15,6 +17,10 @@ on:
         required: true
       require-assets:
         description: "Fail instead of publishing a release with no files attached"
+        type: boolean
+        default: true
+      latest:
+        description: "Mark a stable version as the repository's latest release; false for a release that ships on some platforms only"
         type: boolean
         default: true
 
@@ -36,6 +42,7 @@ jobs:
           REPO: ${{ github.repository }}
           TAG: ${{ inputs.tag }}
           REQUIRE_ASSETS: ${{ inputs.require-assets }}
+          MARK_LATEST: ${{ inputs.latest }}
         run: |
           set -euo pipefail
           read -r draft prerelease assets < <(gh release view "$TAG" --repo "$REPO" \
@@ -49,7 +56,7 @@ jobs:
             exit 1
           fi
           latest=true
-          [[ "$prerelease" == true ]] && latest=false
+          [[ "$prerelease" == true || "$MARK_LATEST" != true ]] && latest=false
           gh release edit "$TAG" --repo "$REPO" --draft=false --latest="$latest"
           url="$(gh release view "$TAG" --repo "$REPO" --json url --jq .url)"
           echo "Published $url with $assets files"
