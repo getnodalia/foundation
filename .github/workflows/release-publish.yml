@@ -42,7 +42,7 @@ jobs:
           REPO: ${{ github.repository }}
           TAG: ${{ inputs.tag }}
           REQUIRE_ASSETS: ${{ inputs.require-assets }}
-          LATEST: ${{ inputs.latest }}
+          MARK_LATEST: ${{ inputs.latest }}
         run: |
           set -euo pipefail
           read -r draft prerelease assets < <(gh release view "$TAG" --repo "$REPO" \
@@ -56,7 +56,7 @@ jobs:
             exit 1
           fi
           latest=true
-          [[ "$prerelease" == true || "$LATEST" != true ]] && latest=false
+          [[ "$prerelease" == true || "$MARK_LATEST" != true ]] && latest=false
           gh release edit "$TAG" --repo "$REPO" --draft=false --latest="$latest"
           url="$(gh release view "$TAG" --repo "$REPO" --json url --jq .url)"
           echo "Published $url with $assets files"
