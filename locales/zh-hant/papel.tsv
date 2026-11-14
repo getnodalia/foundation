@@ -3718,56 +3718,6 @@ document scrollbar width	Wide	寬
 	…or paste the raw text here; # headings, - bullets	…或在此貼上原始文字；# 標題，- 項目符號
 	− Page {p}	− 第 {p} 頁
 	−LOC	刪除行
-# The rows above that name the app, under its Nodalia name, Papel.
-	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	在分頁左側、標題列通常顯示的位置放一個標誌或名稱：Papel 自己的，或你公司的。
-	A PNG or SVG file. It is read from this place each time Papel starts.	一個 PNG 或 SVG 檔案。每次 Papel 啟動時都從此位置讀取。
-	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	屬於頁面內容一部分的簽章（例如掃描頁面上的簽章）既不是欄位也不是註解，因此無法單獨移除，Papel 也不會為了隱藏它而擦除頁面的某些部分。若要去除它，請遮蔽該區域（遮蔽），如果簽章是一張獨立的影像，也可以用「編輯 PDF」刪除該影像。
-	About Papel	關於 Papel
-	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	下次啟動 Papel 時生效。如果視窗在支援 G-SYNC、FreeSync 或其他可變更新率的顯示器上閃爍，請選擇 OpenGL。
-	Ask to make Papel the default PDF app	詢問是否將 Papel 設為預設 PDF 應用程式
-	Choose Papel for .pdf files in Windows Settings.	請在 Windows 設定中為 .pdf 檔案選擇 Papel。
-	Combine files in Papel…	在 Papel 中合併檔案…
-	Convert to PDF with Papel	使用 Papel 轉換為 PDF
-	Files you open in Papel appear here. Drop a PDF anywhere to open it.	在 Papel 開啟過的檔案會顯示在這裡。將 PDF 拖曳至視窗即可開啟。
-	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	在 Finder 中：選取檔案，然後按右鍵 > 快速動作 > “Combine files in Papel”。沒有列出？請在「快速動作 > 自訂」中開啟一次。
-	Hide Papel	隱藏 Papel
-	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	匈牙利語 OCR 需要桌面應用程式、Tesseract 5 和 hun 語言模型。安裝後請重新啟動 Papel。
-	Make Papel your default PDF app?	將 Papel 設為預設 PDF 應用程式？
-	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	請開啟一封不含附件的新郵件，Papel 會在資料夾中顯示 {name}，讓你自行附加。
-	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	第 {page} 頁的內容超過 Papel 能讀取的量：其中一部分沒有畫出，文字也只有部分能搜尋或複製。
-	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	使用 Type 3 字型的頁面會以影像列印，因為列印這些頁面時 Windows 可能會關閉 Papel。其他頁面照常列印。
-	Part of this page isn't shown: its content goes past the most Papel draws for one page.	此頁面的部分內容未顯示：其內容超出了 Papel 為單一頁面繪製的上限。
-	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel 未正常關閉。以下文件的更改已自動儲存：
-	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel 正在不使用圖形處理器的情況下繪製，因此可能較慢。更新顯示卡驅動程式可能會有幫助。
-	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel 會尋找裝置廠商安裝的程式庫。只有找不到您的裝置時才需要選擇。
-	Papel on GitHub	GitHub 上的 Papel
-	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel 會開啟提供者頁面，您在該頁面以 CPF、PIN 和一次性驗證碼登入。
-	Papel web page	Papel 網頁
-	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel 可離線使用，不收集遙測資料，也不需要帳號。只有在您新增服務供應商後，才會使用雲端處理。
-	Papel {v} is available.	Papel {v} 可用。
-	Papel's own	Papel 自己的
-	Quit Papel	結束 Papel
-	Reopen the files that were open when Papel last closed	重新開啟上次關閉 Papel 時開啟的檔案
-	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	在白紙上簽名，並在明亮、均勻的光線下拍照（使用閃光燈）。選擇相片或將其拖放到此處：Papel 會找到簽名並去除紙張背景。
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	未安裝文字辨識：缺少模型檔案。請重新安裝 Papel，或將 PDFCRAFT_MODELS 設定為包含這些檔案的資料夾。
-	The Dock shows it the next time Papel opens.	下次開啟 Papel 時，Dock 會顯示此圖示。
-	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papel 寫入時使用的字型無法顯示「{c}」（{code}），因此它在所有 PDF 閱讀器中都會顯示為 ?。文字已儲存。
-	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	該表單請求送出到{u}；Papel 不傳送表單資料。請儲存文件以保留填寫內容。
-	The key is in the macOS Keychain, which may ask to allow Papel to use it.	金鑰位於 macOS 鑰匙串中，系統可能會詢問是否允許 Papel 使用它。
-	The key is in the Windows certificate store, which may ask to allow Papel to use it.	金鑰位於 Windows 憑證存放區中，系統可能會詢問是否允許 Papel 使用它。
-	The module's tokens hold no digital ID Papel can sign with.	模組的權杖中沒有 Papel 可用來簽名的數位 ID。
-	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	尚未安裝文字辨識模型（請重新安裝 Papel，或將 PDFCRAFT_MODELS 設定為包含這些模型的資料夾）
-	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	此欄位的字型無法顯示「{c}」（{code}），Papel 會在該處顯示 ?。值已儲存，其他 PDF 閱讀器會依據該值重新繪製此欄位。
-	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	此表單還包含 XFA 資料，Papel 暫不讀取。您可以填寫欄位，但 Acrobat 可能顯示 XFA 值。
-	This installation is owned by a Debian package. Use your system software manager to update Papel.	此安裝由 Debian 套件管理。請使用系統軟體管理員更新 Papel。
-	This installation is owned by an RPM package. Use your system software manager to update Papel.	此安裝由 RPM 套件管理。請使用系統軟體管理員更新 Papel。
-	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	這是動態 XFA 表單，Papel 暫無法顯示。您看到的是檔案的佔位頁面。
-	Use your system software manager to update Papel.	請使用系統軟體管理員更新 Papel。
-	Welcome to Papel	歡迎使用 Papel
-	Your default email app can't take a file from Papel.	預設郵件應用程式無法從 Papel 接收檔案。
-	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} 將表單送出到{url}；Papel 不傳送表單資料。請儲存文件以保留填寫內容。
-	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	有 {n} 頁的內容超過 Papel 能讀取的量（最先是第 {page} 頁）：其中部分沒有畫出，文字也只有部分能搜尋或複製。
-	{program} can't take a file from Papel.	{program} 無法從 Papel 接收檔案。
 	This document's script is asking	此文件的指令碼正在詢問
 	Document: {name}	文件：{name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	此要求來自文件，而非 Papel。只有在您信任此文件時才輸入密碼。

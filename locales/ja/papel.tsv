@@ -3819,62 +3819,6 @@ document scrollbar width	Wide	太い
 	…or paste the raw text here; # headings, - bullets	…または未整形テキストをここに貼り付け（# 見出し、- 箇条書き）
 	− Page {p}	− {p} ページ
 	−LOC	−LOC
-# The rows above that name the app, under its Nodalia name, Papel.
-	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	タブの左側、タイトルバーが表示する位置に出すロゴや名前。Papel のもの、または会社のものを指定できます。
-	A PNG or SVG file. It is read from this place each time Papel starts.	PNG または SVG ファイル。Papel の起動のたびにこの場所から読み込まれます。
-	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	スキャンしたページのようにページの内容の一部になっている署名は、フィールドでも注釈でもないため、それだけを削除することはできません。また Papel は署名を隠すためにページの一部を消すことはしません。取り除くには、その範囲を墨消し（墨消し）するか、署名が独立した画像の場合は「PDF を編集」で画像を削除してください。
-	About Papel	Papel について
-	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Papel の次回起動時に適用されます。G-SYNC、FreeSync などの可変リフレッシュレートのディスプレイでウィンドウがちらつく場合は、OpenGL を選択してください。
-	Ask to make Papel the default PDF app	Papel を既定の PDF アプリにするか確認する
-	Choose Papel for .pdf files in Windows Settings.	Windows の設定で .pdf ファイルに Papel を選択してください。
-	Combine files in Papel…	Papel でファイルを結合…
-	Convert to PDF with Papel	Papel で PDF に変換
-	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papel で開いたファイルがここに表示されます。PDF をウィンドウにドロップして開くこともできます。
-	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Finder から：ファイルを選択し、右クリック → クイックアクション → “Combine files in Papel”。表示されない場合は、クイックアクション → カスタマイズで一度オンにしてください。
-	Hide Papel	Papelを非表示
-	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	ハンガリー語OCRには、デスクトップアプリ、Tesseract 5、hun言語モデルが必要です。インストール後にPapelを再起動してください。
-	Make Papel your default PDF app?	Papel を既定の PDF アプリにしますか？
-	No plugins installed yet. Install a .wasm plug-in to extend Papel.	プラグインはまだインストールされていません。.wasm プラグインをインストールして Papel を拡張してください。
-	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	ファイルなしで新しいメッセージを開いてください。Papel が {name} をフォルダーに表示するので、ご自身で添付できます。
-	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	ページ {page} の内容は Papel が読み取れる量を超えています。一部が描画されず、検索やコピーができるのはその文字の一部だけです。
-	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Type 3 フォントを使うページは画像として印刷されます。そのまま印刷すると Windows が Papel を終了させることがあるためです。ほかのページは通常どおり印刷されます。
-	Part of this page isn't shown: its content goes past the most Papel draws for one page.	このページの一部は表示されていません。内容が、Papel が 1 ページに描画できる上限を超えています。
-	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel が正常に終了しませんでした。次の文書の変更内容が自動保存されています:
-	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel はグラフィックプロセッサーを使わずに描画しているため、動作が遅くなることがあります。グラフィックドライバーを更新すると改善する場合があります。
-	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel は作業中の内容を保持しています。ファイル選択が使えるようになったら、再試行を選んでください。
-	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel はデバイスのメーカーがインストールするライブラリを探します。デバイスが見つからない場合のみ選択してください。
-	Papel on GitHub	GitHub の Papel
-	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel がプロバイダーのページを開きます。CPF、PIN、ワンタイムコードでサインインしてください。
-	Papel web page	Papel の Web 版
-	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel はオフラインで動作します。使用状況の送信やアカウント登録はありません。サービス提供元を追加しない限り、クラウド処理も行いません。
-	Papel {v} is available.	Papel {v} が利用できます。
-	Papel's own	Papel のもの
-	Quit Papel	Papelを終了
-	Reopen the files that were open when Papel last closed	前回 Papel を閉じたときに開いていたファイルを再度開く
-	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	白い紙に署名し、明るく均一な光の下で写真を撮ってください（フラッシュを使用）。写真を選択するか、ここにドロップしてください。Papel が署名を見つけ、紙の部分を取り除きます。
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	テキスト認識がインストールされていません。モデルファイルがありません。Papel を再インストールするか、PDFCRAFT_MODELS にモデルファイルのあるフォルダーを設定してください。
-	The Dock shows it the next time Papel opens.	Dock には次に Papel を開いたときに表示されます。
-	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papel が書き込みに使うフォントでは「{c}」（{code}）を表示できないため、どの PDF ビューアーでも ? と表示されます。テキストは保存されています。
-	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	フォームは {u} への送信を要求していますが、Papel はフォームデータを送信しません。入力内容を保持するには文書を保存してください。
-	The key is in the macOS Keychain, which may ask to allow Papel to use it.	鍵は macOS のキーチェーンに保存されています。Papel に使用を許可するか確認される場合があります。
-	The key is in the Windows certificate store, which may ask to allow Papel to use it.	鍵は Windows の証明書ストアに保存されています。Papel に使用を許可するか確認される場合があります。
-	The module's tokens hold no digital ID Papel can sign with.	このモジュールのトークンには、Papel で署名できるデジタル ID がありません。
-	The PIN goes only to the card; Papel doesn't keep it.	PIN はカードにのみ送られ、Papel には保存されません。
-	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	テキスト認識モデルがインストールされていません（Papel を再インストールするか、PDFCRAFT_MODELS にモデルのあるフォルダーを設定してください）
-	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	このフィールドのフォントでは「{c}」（{code}）を表示できないため、Papel では ? と表示されます。値は保存され、他の PDF ビューアーではこの値からフィールドが再描画されます。
-	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	このフォームには Papel がまだ読み取れない XFA データも含まれます。フィールドには入力できますが、Acrobat は代わりに XFA の値を表示する場合があります。
-	This installation is owned by a Debian package. Use your system software manager to update Papel.	このインストールはDebianパッケージが管理しています。システムのソフトウェア管理ツールでPapelを更新してください。
-	This installation is owned by an RPM package. Use your system software manager to update Papel.	このインストールはRPMパッケージが管理しています。システムのソフトウェア管理ツールでPapelを更新してください。
-	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	この文書は動的 XFA フォームで、Papel はまだ表示できません。現在はファイルの代替ページを表示しています。
-	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	この署名サービスは使用できません: ブラウザーでの OAuth サインインが必要ですが、Papel はまだ対応していません
-	Use your system software manager to update Papel.	システムのソフトウェア管理ツールでPapelを更新してください。
-	Welcome to Papel	Papel へようこそ
-	Your default email app can't take a file from Papel.	既定のメールアプリは Papel からファイルを受け取れません。
-	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} はフォームを {url} に送信しますが、Papel はフォームデータを送信しません。入力内容を保持するには文書を保存してください。
-	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} ページ（最初はページ {page}）の内容が Papel の読み取れる量を超えています。一部が描画されず、検索やコピーができるのはその文字の一部だけです。
-	{program} can't take a file from Papel.	{program} は Papel からファイルを受け取れません。
-	{who} in this document tried to open an address Papel won't open: {e}.	この文書内の{who}が、Papel では開けないアドレスを開こうとしました：{e}。
-	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	この文書内の{who}が、Papel では開けないアドレスを開こうとしました：{e}。文書から開けるのは、ウェブ（http、https）とメール（mailto）のリンクだけです。
 	This document's script is asking	この文書のスクリプトからの質問
 	Document: {name}	文書: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	この要求は Papel ではなく文書から送られています。この文書を信頼できる場合にのみパスワードを入力してください。
