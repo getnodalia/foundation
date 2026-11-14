@@ -11,6 +11,5 @@ repository.workspace = true
 workspace = true
 
 [dependencies]
-nodalia-xml = { workspace = true }
 miniz_oxide = "0.8"
 thiserror = { workspace = true }

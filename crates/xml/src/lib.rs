@@ -25,7 +25,6 @@
 #[doc = include_str!("../README.md")]
 struct ReadmeExamples;
 
-pub mod dtd;
 mod read;
 mod tree;
 pub mod value;
