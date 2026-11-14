@@ -3645,62 +3645,6 @@ document scrollbar width	Wide	Široka
 	…or paste the raw text here; # headings, - bullets	…ali sem prilepite surovo besedilo; # naslovi, - seznami
 	− Page {p}	− Stran {p}
 	−LOC	−LOC
-# The rows above that name the app, under its Nodalia name, Papel.
-	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Logotip ali ime levo od zavihkov, kjer bi ga pokazala naslovna vrstica: Papelov ali vašega podjetja.
-	A PNG or SVG file. It is read from this place each time Papel starts.	Datoteka PNG ali SVG. Prebere se s tega mesta ob vsakem zagonu Papela.
-	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Podpis, ki je del vsebine strani (na primer na skenirani strani), ni polje ali opomba, zato ga ni mogoče odstraniti samostojno, Papel pa ne briše delov strani, da bi ga skril. Če ga želite odstraniti, počrnite to območje (Počrni) ali, če je podpis samostojna slika, sliko izbrišite z Uredi PDF.
-	About Papel	O programu Papel
-	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Velja ob naslednjem zagonu programa Papel. Izberite OpenGL, če okno utripa na zaslonu z G-SYNC, FreeSync ali drugo spremenljivo hitrostjo osveževanja.
-	Ask to make Papel the default PDF app	Vprašaj za nastavitev programa Papel kot privzetega programa za PDF
-	Choose Papel for .pdf files in Windows Settings.	V nastavitvah sistema Windows za datoteke .pdf izberite Papel.
-	Combine files in Papel…	Združi datoteke v programu Papel…
-	Convert to PDF with Papel	Pretvori v PDF s programom Papel
-	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Datoteke, ki jih odprete v Papelu, se prikažejo tukaj. Spustite PDF kamor koli, da ga odprete.
-	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	V Finderju: izberite datoteke, nato desni klik > Hitra dejanja > “Combine files in Papel”. Ga ni? Enkrat ga vklopite v Hitra dejanja > Prilagodi.
-	Hide Papel	Skrij Papel
-	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	Madžarski OCR zahteva namizno aplikacijo s Tesseract 5 in jezikovnim modelom hun. Po namestitvi znova zaženite Papel.
-	Make Papel your default PDF app?	Želite nastaviti Papel kot privzeti program za PDF?
-	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Vtičniki še niso nameščeni. Namestite vtičnik .wasm, da razširite Papel.
-	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Odprite novo sporočilo brez nje in Papel bo prikazal {name} v njeni mapi, da jo priložite sami.
-	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Stran {page} vsebuje več vsebine, kot je Papel lahko prebere: del ni narisan, najti ali kopirati pa je mogoče le del njenega besedila.
-	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Strani, ki uporabljajo pisave Type 3, se natisnejo kot slike, ker lahko Windows med njihovim tiskanjem zapre Papel. Druge strani se natisnejo kot običajno.
-	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Del te strani ni prikazan: njena vsebina presega največ, kar Papel nariše za eno stran.
-	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel se ni zaprl običajno. Ti dokumenti so imeli samodejno shranjene spremembe:
-	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel riše brez grafičnega procesorja, zato je lahko počasen. Pomaga lahko posodobitev grafičnega gonilnika.
-	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel hrani, kar ste delali. Ko bo izbirnik datotek deloval, izberite Poskusi znova.
-	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel išče knjižnice, ki jih namestijo proizvajalci naprav. Izberite jo le, če vaše naprave ne najde.
-	Papel on GitHub	Papel na GitHubu
-	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel odpre stran ponudnika, kjer se prijavite s CPF, kodo PIN in enkratno kodo.
-	Papel web page	Spletna stran Papel
-	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel deluje brez povezave. Brez telemetrije, brez računa in brez obdelave v oblaku, razen če dodate ponudnika.
-	Papel {v} is available.	Na voljo je Papel {v}.
-	Papel's own	Papelov
-	Quit Papel	Končaj Papel
-	Reopen the files that were open when Papel last closed	Ponovno odpri datoteke, ki so bile odprte ob zadnjem zaprtju Papela
-	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Podpišite se na list belega papirja in ga fotografirajte v močni, enakomerni svetlobi (uporabite bliskavico). Izberite fotografijo ali jo spustite sem: Papel poišče podpis in odstrani papir.
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Prepoznavanje besedila ni nameščeno: manjkajo datoteke njegovih modelov. Ponovno namestite Papel ali nastavite PDFCRAFT_MODELS na mapo, v kateri so.
-	The Dock shows it the next time Papel opens.	Dock jo bo pokazal ob naslednjem odprtju Papela.
-	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Pisave, s katerimi piše Papel, ne morejo prikazati »{c}« ({code}), zato se v vseh pregledovalnikih PDF prikaže kot ?. Besedilo se shrani.
-	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Obrazec želi biti oddan na {u}; Papel ne pošilja podatkov obrazcev. Shranite dokument, da obdržite svoje vnose.
-	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Ključ je v macOS Keychain, ki lahko zahteva dovoljenje, da ga Papel uporabi.
-	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Ključ je v shrambi potrdil Windows, ki lahko zahteva dovoljenje, da ga Papel uporabi.
-	The module's tokens hold no digital ID Papel can sign with.	Žetoni modula ne vsebujejo digitalne identitete, s katero bi Papel lahko podpisal.
-	The PIN goes only to the card; Papel doesn't keep it.	PIN gre samo na kartico; Papel ga ne shrani.
-	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	modeli za prepoznavanje besedila niso nameščeni (ponovno namestite Papel ali nastavite PDFCRAFT_MODELS na mapo, v kateri so)
-	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Pisava tega polja ne more prikazati »{c}« ({code}), zato Papel namesto njega prikaže ?. Vrednost se shrani, drugi pregledovalniki PDF pa polje znova narišejo iz nje.
-	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Ta obrazec vsebuje tudi podatke XFA, ki jih Papel še ne bere. Polja lahko izpolnite, vendar Acrobat morda prikaže vrednosti XFA.
-	This installation is owned by a Debian package. Use your system software manager to update Papel.	To namestitev upravlja paket Debian. Papel posodobite v sistemskem upravljalniku programske opreme.
-	This installation is owned by an RPM package. Use your system software manager to update Papel.	To namestitev upravlja paket RPM. Papel posodobite v sistemskem upravljalniku programske opreme.
-	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	To je dinamični obrazec XFA, ki ga Papel še ne more prikazati. Tisto, kar vidite, je nadomestna stran datoteke.
-	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	te storitve za podpisovanje ni mogoče uporabiti: zahteva prijavo OAuth v brskalniku, ki je Papel še ne podpira
-	Use your system software manager to update Papel.	Papel posodobite v sistemskem upravljalniku programske opreme.
-	Welcome to Papel	Dobrodošli v Papelu
-	Your default email app can't take a file from Papel.	Vaš privzeti e-poštni program ne more sprejeti datoteke iz Papel.
-	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} odda obrazec na {url}; Papel ne pošilja podatkov obrazcev. Shranite dokument, da obdržite svoje vnose.
-	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} strani vsebuje več vsebine, kot je Papel lahko prebere, prva je stran {page}: deli niso narisani, najti ali kopirati pa je mogoče le del njihovega besedila.
-	{program} can't take a file from Papel.	{program} ne more sprejeti datoteke iz Papel.
-	{who} in this document tried to open an address Papel won't open: {e}.	{who} v tem dokumentu je poskusil odpreti naslov, ki ga Papel ne odpre: {e}.
-	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} v tem dokumentu je poskusil odpreti naslov, ki ga Papel ne odpre: {e}. Iz dokumentov se odpirajo samo spletne (http, https) in e-poštne (mailto) povezave.
 	This document's script is asking	Skript tega dokumenta sprašuje
 	Document: {name}	Dokument: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Ta zahteva prihaja iz dokumenta, ne iz programa Papel. Geslo vnesite le, če temu dokumentu zaupate.
