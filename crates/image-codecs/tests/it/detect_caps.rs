@@ -62,7 +62,6 @@ fn default_build_formats_all_symmetric() {
         Format::Dpx,
         Format::Cineon,
         Format::Iff,
-        Format::JpegLs,
     ];
     for f in expected {
         assert!(caps(f).read && caps(f).write, "{f:?}");
@@ -70,15 +69,10 @@ fn default_build_formats_all_symmetric() {
 }
 
 #[test]
-fn avif_is_readable_only_with_the_decode_feature() {
-    assert_eq!(caps(Format::Avif).read, cfg!(all(feature = "avif-decode", not(target_arch = "wasm32"))));
+fn avif_never_readable() {
+    assert!(!caps(Format::Avif).read);
     assert_eq!(caps(Format::Avif).write, cfg!(feature = "avif"));
-    let header = decode_as(Format::Avif, b"\0\0\0\x1cftypavif");
-    if caps(Format::Avif).read {
-        assert!(matches!(header, Err(CodecError::Malformed { .. })), "{header:?}");
-    } else {
-        assert!(matches!(header, Err(CodecError::Unsupported { .. })), "{header:?}");
-    }
+    assert!(matches!(decode_as(Format::Avif, b"\0\0\0\x1cftypavif"), Err(CodecError::Unsupported { .. })));
 }
 
 #[test]
@@ -224,21 +218,6 @@ fn detect_magic_iff() {
     assert_eq!(detect(b"FORM\0\0\0\x14AIFF"), None);
     assert!(decode_as(Format::Iff, b"FORM\0\0\0\x14ILBM").is_err());
 }
-#[test]
-fn detect_magic_jpeg_ls() {
-    use nodalia_image_codecs::{ChannelLayout, EncodeOptions, Image, encode};
-    let img = Image::from_u8(5, 3, ChannelLayout::Gray, (0..15).collect()).unwrap();
-    let bytes = encode(&img, Format::JpegLs, &EncodeOptions::default()).unwrap();
-    assert_eq!(detect(&bytes), Some(Format::JpegLs));
-    assert_eq!(from_extension("scan.JLS"), Some(Format::JpegLs));
-    assert_eq!(decode(&bytes).unwrap().data(), img.data());
-    assert!(!ASYMMETRIC_EXCEPTIONS.iter().any(|(f, _)| *f == Format::JpegLs));
-    assert_eq!(Format::JpegLs.max_dimensions(), Some((65535, 65535)));
-    // Plain JPEG still is JPEG: SOI, then a baseline frame header.
-    assert_eq!(detect(&[0xFF, 0xD8, 0xFF, 0xC0, 0, 11]), Some(Format::Jpeg));
-    assert!(decode_as(Format::JpegLs, &[0xFF, 0xD8, 0xFF, 0xF7]).is_err());
-}
-
 #[test]
 fn detect_magic_avif() {
     assert_eq!(detect(b"\0\0\0\x1cftypavif\0\0\0\0avifmif1miaf"), Some(Format::Avif));

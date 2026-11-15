@@ -120,10 +120,6 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   pages and version detection, and written back; and `model`, the drawing above the tags (header
   variables, tables, blocks, layouts, entities) and its writer (R12 to 2018), merged from Forja's and Pluma's readers. Bounded
   on hostile input. Mapping the model onto a document stays in each app.
-- [`nodalia-lamina-format`](crates/lamina-format/README.md): the Lámina `.deckcraft` package:
-  identity and sniffing, the `presentation.json` envelope with the presentation as a type
-  parameter, NaN-safe JSON and the reader for older files with `null` numbers, member names and
-  compression, and bounded, budgeted member reads. The presentation model and its mapping stay in Lámina.
 - [`nodalia-dwg`](crates/dwg/README.md): bounded byte-level DWG↔DXF conversion with diagnostics,
   capped output and an optional child-process worker; the `acadrust` dependency remains isolated
   behind bytes and is unavailable on wasm32 and FreeBSD/aarch64.

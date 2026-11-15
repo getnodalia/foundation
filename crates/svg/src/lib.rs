@@ -18,10 +18,7 @@
 #![forbid(unsafe_code)]
 
 pub mod color;
-pub mod drawing_write;
 pub mod guard;
-pub mod neutral_document;
-pub mod path_data;
 pub mod paths;
 pub mod preflight;
 pub mod sniff;

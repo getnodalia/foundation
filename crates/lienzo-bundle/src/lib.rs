@@ -370,8 +370,7 @@ impl DirectoryBundleWriter {
     /// Saves an entry set incrementally. Existing objects are reused only after a hash check;
     /// unchanged file signatures may skip checks until they enter the rolling verification
     /// window. The manifest is atomically published last, then stale previews and objects are
-    /// collected while the bundle lock is held. Collection is best-effort after publication:
-    /// inaccessible or unsafe leftovers cannot turn a committed save into a reported failure.
+    /// collected while the bundle lock is held.
     pub fn save_directory(&mut self, root: &Path, bundle: ZipBundleWriter) -> Result<DirectoryStats> {
         if !bundle.entries.contains_key(nodalia_lienzo_format::MANIFEST) {
             return Err(Error::InvalidBundle("manifest not set".into()));
@@ -402,10 +401,6 @@ impl DirectoryBundleWriter {
                 Err(std::fs::TryLockError::Error(_)) => break None,
             }
         };
-        // A known unsafe manifest cannot be published. Refuse it before writing objects or
-        // previews, and still recheck immediately before publication below.
-        let manifest_path = root.join(nodalia_lienzo_format::MANIFEST);
-        refuse_symlink(&manifest_path)?;
         self.generation = self.generation.saturating_add(1);
         let generation = self.generation;
         let recheck = self.rolling_recheck(&bundle.entries);
@@ -454,33 +449,43 @@ impl DirectoryBundleWriter {
         }
 
         let manifest = bundle.entries.get(nodalia_lienzo_format::MANIFEST).ok_or_else(|| Error::InvalidBundle("manifest not set".into()))?;
+        let manifest_path = root.join(nodalia_lienzo_format::MANIFEST);
         refuse_symlink(&manifest_path)?;
         nodalia_atomic::atomic_write(&manifest_path, manifest).map_err(io_error)?;
         stats.written = stats.written.saturating_add(1);
 
-        // The durable manifest is the commit boundary. Cleanup owns only canonical regular
-        // object files and previews; leave unsafe, inaccessible or locked leftovers for later.
+        let mut removed_paths = Vec::new();
         for kind in [nodalia_lienzo_format::TILES_DIR, nodalia_lienzo_format::BLOBS_DIR] {
             let dir = root.join(kind);
-            if !cleanup_directory(&dir) {
+            if !dir.exists() {
                 continue;
             }
-            let Ok(entries) = fs::read_dir(&dir) else { continue };
-            for entry in entries {
-                let Ok(entry) = entry else { continue };
+            refuse_symlink(&dir)?;
+            for entry in fs::read_dir(&dir).map_err(io_error)? {
+                let entry = entry.map_err(io_error)?;
                 let name = entry.file_name();
                 let path = format!("{kind}/{}", name.to_string_lossy());
-                if is_object_path(&path) && !bundle.entries.contains_key(&path) && remove_cleanup_file(&entry.path()) {
+                if is_object_path(&path) && !bundle.entries.contains_key(&path) {
+                    let metadata = fs::symlink_metadata(entry.path()).map_err(io_error)?;
+                    if metadata.file_type().is_symlink() || !metadata.is_file() {
+                        return Err(Error::InvalidBundle(format!("refusing to collect non-file object {path}")));
+                    }
+                    fs::remove_file(entry.path()).map_err(io_error)?;
+                    removed_paths.push(path);
                     stats.removed = stats.removed.saturating_add(1);
                 }
             }
         }
         for path in [nodalia_lienzo_format::THUMB, nodalia_lienzo_format::COMPOSITE, nodalia_lienzo_format::FULL_COMPOSITE] {
             if !bundle.entries.contains_key(path) {
-                let _ = remove_cleanup_file(&root.join(path));
+                let target = root.join(path);
+                refuse_symlink(&target)?;
+                if fs::symlink_metadata(&target).is_ok() {
+                    fs::remove_file(&target).map_err(io_error)?;
+                }
             }
         }
-        self.verified.retain(|path, _| bundle.entries.contains_key(path));
+        self.verified.retain(|path, _| bundle.entries.contains_key(path) && !removed_paths.contains(path));
         Ok(stats)
     }
 
@@ -505,32 +510,7 @@ impl DirectoryBundleWriter {
 }
 
 fn is_object_path(path: &str) -> bool {
-    valid_object_path(path)
-}
-
-/// Do not traverse symlinked object/preview directories, including Windows junctions.
-fn cleanup_directory(path: &Path) -> bool {
-    fs::symlink_metadata(path).is_ok_and(|metadata| metadata.is_dir() && !cleanup_link(&metadata))
-}
-
-fn cleanup_link(metadata: &fs::Metadata) -> bool {
-    #[cfg(windows)]
-    {
-        use std::os::windows::fs::MetadataExt;
-        metadata.file_attributes() & 0x400 != 0 // FILE_ATTRIBUTE_REPARSE_POINT includes junctions.
-    }
-    #[cfg(not(windows))]
-    {
-        metadata.file_type().is_symlink()
-    }
-}
-
-/// Cleanup never follows or removes a directory/link and never reports a post-commit failure.
-fn remove_cleanup_file(path: &Path) -> bool {
-    if path.parent().is_none_or(|parent| !cleanup_directory(parent)) {
-        return false;
-    }
-    fs::symlink_metadata(path).is_ok_and(|metadata| metadata.is_file() && !cleanup_link(&metadata)) && fs::remove_file(path).is_ok()
+    path.starts_with("tiles/") || path.starts_with("blobs/")
 }
 
 fn file_signature(path: &Path) -> Result<Option<FileSignature>> {
