@@ -11,8 +11,6 @@ rust-version = "1.95"
 repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
-nodalia-shx = { path = "crates/shx" }
-nodalia-http-url = { path = "crates/http-url" }
 nodalia-usd = { path = "crates/usd" }
 nodalia-smime = { path = "crates/smime" }
 nodalia-ber = { path = "crates/ber" }
@@ -42,7 +40,6 @@ bytemuck = "1"
 kurbo = "0.13"
 thiserror = "2"
 nodalia-gzip = { path = "crates/gzip" }
-nodalia-celdas-format = { path = "crates/celdas-format" }
 nodalia-aaf = { path = "crates/aaf" }
 nodalia-atomic = { path = "crates/atomic" }
 nodalia-captions = { path = "crates/captions" }
@@ -73,7 +70,6 @@ nodalia-doc = { path = "crates/doc" }
 nodalia-docpath = { path = "crates/docpath" }
 nodalia-dpx = { path = "crates/dpx" }
 nodalia-dwg = { path = "crates/dwg" }
-nodalia-fcproj-format = { path = "crates/fcproj-format" }
 nodalia-ecproj-format = { path = "crates/ecproj-format" }
 nodalia-figma-rest = { path = "crates/figma-rest" }
 nodalia-exr = { path = "crates/exr" }
@@ -97,7 +93,6 @@ nodalia-indd = { path = "crates/indd" }
 nodalia-jmap = { path = "crates/jmap" }
 nodalia-ical = { path = "crates/ical" }
 nodalia-jpeg = { path = "crates/jpeg" }
-nodalia-control-protocol = { path = "crates/control-protocol" }
 nodalia-jsonrpc = { path = "crates/jsonrpc" }
 nodalia-mcp = { path = "crates/mcp" }
 nodalia-jxl = { path = "crates/jxl" }

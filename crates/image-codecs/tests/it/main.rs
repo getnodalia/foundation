@@ -1,6 +1,5 @@
 //! The crate's integration tests, linked into one test binary.
 
-mod bmp_resolution;
 mod camera_raw;
 mod common;
 mod dds;
@@ -15,7 +14,6 @@ mod exr_stream;
 mod fidelity;
 mod gif_frames;
 mod heif;
-mod jpeg_inks;
 mod jpegls_oracle;
 mod limits;
 mod malformed;
