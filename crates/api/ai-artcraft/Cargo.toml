@@ -1,0 +1,25 @@
+[package]
+name = "nodalia-ai-artcraft"
+description = "ArtCraft Omni API-key image and video provider for Craft AI"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+nodalia-ai-core.workspace = true
+nodalia-ai-http.workspace = true
+nodalia-ai-media = { path = "../../foundation/ai-media", package = "nodalia-ai-media" }
+url = "2"
+serde_json.workspace = true
+ureq = { version = "3", default-features = false, features = ["rustls"] }
+uuid = { version = "1", features = ["v4"] }
+
+[dev-dependencies]
+serde_json.workspace = true
+png = "0.18"
+
+[lints]
+workspace = true

@@ -1,0 +1,24 @@
+"""Deliberate-bug cases for group `ns`: built-in file discovery, the setup plan and installation.
+
+Loaded by mutation_check.py. Each case breaks one rule and names the test that should notice.
+All transfers are scripted localhost or tiny cached test files.
+Format: (name, file, old, new, package, test target, test filter).
+"""
+NS = [
+    ('native-option-without-engine-is-actionable', 'crates/app/ai-client/src/picker_groups.rs', 'if client.has_adapter(provider) {', 'if true {', 'nodalia-ai-client', 'picker_native', 'the_builtin_model_only_offers_setup'),
+    ('native-files-mixed-across-directories', 'crates/app/ai-client/src/folders/native.rs', 'candidates.entry(dir.to_owned())', 'candidates.entry(root.to_owned())', 'nodalia-ai-client', 'folders', 'native_files_in_separate_directories'),
+    ('native-default-allows-linked-folder', 'crates/app/ai-client/src/folders/native.rs', '.find(|f| f.default && f.origin == FolderOrigin::Chosen)', '.find(|f| f.default)', 'nodalia-ai-client', 'folders', 'native_downloads_go_only'),
+    ('native-unusable-recipe-allowed', 'crates/app/ai-client/src/folders/native.rs', '.engine_recipe(provider)\n        .and_then(|recipe| {', '.locals\n        .first()\n        .and_then(|recipe| {', 'nodalia-ai-client', 'native_install', 'an_unusable'),
+    ('native-discovery-fails-on-a-gone-folder', 'crates/app/ai-client/src/folders/native.rs', 'Err(ScanError::NotAFolder) => continue,', 'Err(ScanError::NotAFolder) => return Err(AiError::invalid("gone")),', 'nodalia-ai-client', 'folders', 'has_gone'),
+    ('native-cancel-before-start-ignored', 'crates/app/ai-client/src/folders/native.rs', 'if request.cancel.load(Ordering::Relaxed) {', 'if false {', 'nodalia-ai-client', 'native_install', 'cancelled_before_start'),
+    ('native-licence-skipped', 'crates/app/ai-client/src/folders/native.rs', '    if !request.licences_accepted\n        && route\n            .models\n            .iter()\n            .any(|model| model.licence.accept_required)\n    {', '    if false {', 'nodalia-ai-client', 'native_download', 'declining_a_licence'),
+    ('native-cached-install-not-rehashed', 'crates/app/ai-client/src/folders/native.rs', 'verify_file(&path, model, request.cancel, &mut progress)?;', 'let _ = path;', 'nodalia-ai-client', 'folders', 'native_install_requires_licence'),
+    ('native-existing-files-not-rehashed', 'crates/app/ai-client/src/folders/native.rs', '        verify_file(&directory.join(&file.filename), file, cancel, &mut |p| {\n            progress(index, p)\n        })?;', '        let _ = (index, file, cancel, &mut *progress);', 'nodalia-ai-client', 'native_install', 'existing_files_are_hashed'),
+    ('native-recipe-filename-can-escape', 'crates/app/ai-client/src/folders/native.rs', 'if route.models.iter().any(|file| {', 'if false && route.models.iter().any(|file| {', 'nodalia-ai-client', 'native_install', 'a_recipe_filename_cannot_escape'),
+    ('native-scan-lists-any-small-file', 'crates/local/ai-comfy-env/src/model_folder_scan.rs', '!(is_model_file(&name) || is_known)', '!(is_model_file(&name) || true)', 'nodalia-ai-comfy-env', 'lib', 'a_known_bundle_file'),
+    ('native-scan-known-name-ignores-size', 'crates/local/ai-comfy-env/src/model_folder_scan.rs', 'k.size == meta.len() && k.filename.eq_ignore_ascii_case(&name)', 'k.filename.eq_ignore_ascii_case(&name)', 'nodalia-ai-comfy-env', 'lib', 'a_known_bundle_file'),
+    ('native-known-bundle-file-counted-unrecognised', 'crates/local/ai-comfy-env/src/model_folder_scan.rs', '} else if basis.is_none() {', '} else {', 'nodalia-ai-comfy-env', 'lib', 'a_known_bundle_file'),
+    ('native-picker-hides-setup-when-the-file-is-gone', 'crates/app/ai-client/src/picker_groups.rs', '.is_some_and(|file| Path::new(file).is_file())', '.is_some()', 'nodalia-ai-client', 'picker_native', 'file_is_gone'),
+    ('native-picker-matches-any-connection-of-the-runtime', 'crates/app/ai-client/src/picker_groups.rs', '&& c.id.as_str() == native_connection_id(feature, provider)', '&& true', 'nodalia-ai-client', 'picker_native', 'another_model'),
+    ('native-picker-ignores-the-model-id', 'crates/app/ai-client/src/picker_groups.rs', '&& m.id.as_str() == current)', '&& true)', 'nodalia-ai-client', 'picker_native', 'older_model'),
+]
