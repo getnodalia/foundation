@@ -64,14 +64,12 @@ mod codepage;
 pub mod compression;
 pub mod csh;
 pub mod descriptor;
-pub mod displace_map;
 pub mod engine_data;
 pub mod error;
 pub mod file;
 pub mod filter_effects;
 #[cfg(any(test, feature = "testgen"))]
 pub mod fixtures;
-pub mod flat;
 pub mod float;
 pub mod grd;
 pub mod hdr;
