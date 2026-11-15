@@ -1,7 +1,7 @@
 //! The `fonts/manifest.txt` format, shared by `build.rs` and the library (`#[path]`-included by
-//! both, so it has no dependencies). The same parser reads the opt-in
-//! `fonts/simplified-chinese-manifest.txt`. Apps that read a manifest from their own `build.rs`
-//! can copy this file.
+//! both, so it has no dependencies). The same parser reads the opt-in `fonts/latin-manifest.txt`
+//! and `fonts/simplified-chinese-manifest.txt`. Apps that read a manifest from their own
+//! `build.rs` can copy this file.
 
 /// One line of the manifest.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -67,6 +67,12 @@ const FIELDS: [&str; 8] = [
 ];
 
 /// Parse the whole manifest. Blank lines and `#` comments are skipped; line numbers are 1-based.
+///
+/// # Errors
+///
+/// Returns `ManifestError::FieldCount` when a line does not contain exactly eight fields,
+/// `ManifestError::EmptyField` when a required field is empty, and
+/// `ManifestError::BadSha256` when the digest is not 64 lower-case hexadecimal digits.
 pub fn parse_manifest(text: &str) -> Result<Vec<Entry>, ManifestError> {
     let mut out = Vec::new();
     for (i, raw) in text.lines().enumerate() {
