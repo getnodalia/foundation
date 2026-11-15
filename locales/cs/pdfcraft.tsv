@@ -4172,3 +4172,63 @@ document scrollbar width	Wide	Široký
 	…or paste the raw text here; # headings, - bullets	…nebo sem vložte zdrojový text; # nadpisy, - odrážky
 	− Page {p}	− Stránka {p}
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Logo nebo název vlevo od karet, kde by je zobrazil záhlaví okna: vlastní Papel, nebo vaší firmy.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Soubor PNG nebo SVG. Načítá se z tohoto místa při každém spuštění Papel.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Podpis, který je součástí obsahu stránky, například na naskenované stránce, není pole ani poznámka, a proto ho nelze odstranit samostatně. Papel nemaže části stránky, aby ho skryl. Chcete-li ho odstranit, začerněte tuto oblast (Začernění), nebo pokud je podpis samostatný obrázek, smažte obrázek pomocí Upravit PDF.
+	About Papel	O aplikaci Papel
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Projeví se při příštím spuštění Papel. Pokud okno bliká na displeji s G-SYNC, FreeSync nebo jinou proměnnou obnovovací frekvencí, zvolte OpenGL.
+	Ask to make Papel the default PDF app	Ptát se na nastavení Papel jako výchozí aplikace pro PDF
+	Choose Papel for .pdf files in Windows Settings.	V nastavení Windows vyberte Papel pro soubory .pdf.
+	Combine files in Papel…	Sloučit soubory v Papel…
+	Convert to PDF with Papel	Převést do PDF pomocí Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Zde se zobrazí soubory, které otevřete v Papelu. Soubor PDF otevřete přetažením kamkoli do okna.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Ve Finderu: vyberte soubory, pak pravé tlačítko > Rychlé akce > “Combine files in Papel”. Chybí? Jednou ji zapněte v Rychlé akce > Přizpůsobit.
+	Hide Papel	Skrýt Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	Maďarské OCR vyžaduje desktopovou aplikaci s Tesseract 5 a jazykovým modelem hun. Po instalaci restartujte Papel.
+	Make Papel your default PDF app?	Nastavit Papel jako výchozí aplikaci pro PDF?
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Zatím nejsou nainstalovány žádné pluginy. Nainstalujte plugin .wasm a rozšiřte Papel.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Otevřete novou zprávu bez něj a Papel zobrazí {name} v jeho složce, abyste jej mohli přiložit sami.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Stránka {page} obsahuje více obsahu, než Papel dokáže přečíst: část se nevykreslí a vyhledat nebo zkopírovat lze jen část jejího textu.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Stránky, které používají písma Type 3, se tisknou jako obrázky, protože Windows může při jejich tisku Papel zavřít. Ostatní stránky se tisknou jako obvykle.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Část této stránky není zobrazena: její obsah přesahuje maximum, které Papel vykreslí pro jednu stránku.
+	Papel can't check this signature yet: {}.	Papel zatím nedokáže tento podpis ověřit: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel nebyl řádně ukončen. V těchto dokumentech byly změny, které se automaticky uložily:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel vykresluje bez grafického procesoru, takže může být pomalý. Pomoci může aktualizace grafického ovladače.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel uchovává rozpracovanou práci. Až bude výběr souborů fungovat, zvolte Zkusit znovu.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel hledá knihovny, které instalují výrobci zařízení. Vyberte knihovnu jen tehdy, když se vaše zařízení nenajde.
+	Papel on GitHub	Papel na GitHubu
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel otevře stránku poskytovatele, kde se přihlásíte pomocí CPF, kódu PIN a jednorázového kódu.
+	Papel web page	Webová stránka Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel funguje offline. Žádná telemetrie, žádný účet a žádné zpracování v cloudu, pokud nepřidáte poskytovatele.
+	Papel {v} is available.	Je k dispozici Papel {v}.
+	Papel's own	Vlastní Papel
+	Quit Papel	Ukončit Papel
+	Reopen the files that were open when Papel last closed	Znovu otevřít soubory, které byly otevřené při posledním zavření aplikace Papel
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Podepište se na bílý list papíru a vyfoťte ho při jasném, rovnoměrném světle (použijte blesk). Vyberte fotografii nebo ji sem přetáhněte: Papel najde podpis a odstraní papír.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Rozpoznávání textu není nainstalováno: chybí soubory jeho modelů. Přeinstalujte Papel nebo nastavte PDFCRAFT_MODELS na složku, ve které jsou.
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	Certifikát {} má kritická rozšíření, která Papel nezná, proto se nepoužije k ručení za {}.
+	The Dock shows it the next time Papel opens.	Dock ji zobrazí při příštím otevření Papelu.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Písma, kterými Papel píše, neumí zobrazit „{c}“ ({code}), proto se ve všech prohlížečích PDF zobrazí jako ?. Text se uloží.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Formulář žádá o odeslání na {u}; Papel data formulářů neodesílá. Své údaje zachováte uložením dokumentu.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Klíč je v Klíčence systému macOS, která se může zeptat, zda Papelu povolit jeho použití.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Klíč je v úložišti certifikátů Windows, které se může zeptat, zda Papelu povolit jeho použití.
+	The module's tokens hold no digital ID Papel can sign with.	Tokeny modulu neobsahují žádné digitální ID, kterým může Papel podepisovat.
+	The PIN goes only to the card; Papel doesn't keep it.	PIN jde pouze do karty; Papel si jej neukládá.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	Certifikát podepisující osoby má kritická rozšíření, která Papel nezná ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	modely pro rozpoznávání textu nejsou nainstalované (přeinstalujte Papel nebo nastavte PDFCRAFT_MODELS na složku, ve které jsou)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Písmo tohoto pole neumí zobrazit „{c}“ ({code}), proto Papel místo něj ukazuje ?. Hodnota se uloží a jiné prohlížeče PDF pole podle ní překreslí.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Tento formulář obsahuje také data XFA, která Papel zatím nečte. Pole můžete vyplnit, ale Acrobat může místo nich zobrazit hodnoty XFA.
+	This form has too many fields, or a field name too long, for Papel to read them all. Any signature among the rest is not listed, so the document is treated as signed.	Tento formulář má příliš mnoho polí nebo příliš dlouhý název pole, než aby je Papel mohl přečíst všechna. Případný podpis mezi ostatními se v seznamu nezobrazí, takže se s dokumentem zachází jako s podepsaným.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Tuto instalaci spravuje balíček Debianu. Aktualizujte Papel ve správci softwaru.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Tuto instalaci spravuje balíček RPM. Aktualizujte Papel ve správci softwaru.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Toto je dynamický formulář XFA, který Papel zatím neumí zobrazit. Vidíte zástupnou stránku souboru.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	tuto podpisovou službu nelze použít: vyžaduje přihlášení OAuth v prohlížeči, které Papel zatím nepodporuje
+	Use your system software manager to update Papel.	Aktualizujte Papel ve správci softwaru.
+	Welcome to Papel	Vítá vás Papel
+	Your default email app can't take a file from Papel.	Výchozí e-mailová aplikace nemůže převzít soubor z Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} odesílá formulář na {url}; Papel data formulářů neodesílá. Své údaje zachováte uložením dokumentu.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} stránek obsahuje více obsahu, než Papel dokáže přečíst, první je stránka {page}: jejich části se nevykreslí a vyhledat nebo zkopírovat lze jen část jejich textu.
+	{program} can't take a file from Papel.	{program} nemůže převzít soubor z Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	Pokus o otevření adresy, kterou Papel neotevře ({who} v tomto dokumentu): {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Pokus o otevření adresy, kterou Papel neotevře ({who} v tomto dokumentu): {e}. Z dokumentů se otevírají jen webové (http, https) a e-mailové (mailto) odkazy.

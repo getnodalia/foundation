@@ -3854,3 +3854,60 @@ document scrollbar width	Wide	Rộng
 	… and {} more on this page	… và thêm {} trên trang này
 	− Page {p}	− Trang {p}
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Một logo hoặc tên ở bên trái các thẻ, nơi thanh tiêu đề thường hiển thị: của Papel hoặc của công ty bạn.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Một tệp PNG hoặc SVG. Tệp được đọc từ vị trí này mỗi lần Papel khởi động.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Chữ ký là một phần nội dung của trang, ví dụ trên trang được quét, không phải là trường hay chú thích nên không thể gỡ riêng, và Papel không xóa một phần trang để che nó. Để bỏ nó đi, hãy xóa nội dung nhạy cảm ở vùng đó (Xóa nội dung nhạy cảm), hoặc nếu chữ ký là một hình ảnh riêng thì xóa hình ảnh bằng Chỉnh sửa một PDF.
+	About Papel	Giới thiệu Papel
+	Combine files in Papel…	Kết hợp tệp trong Papel…
+	Convert to PDF with Papel	Chuyển sang PDF bằng Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Các tệp bạn mở trong Papel sẽ xuất hiện ở đây. Thả một PDF vào bất kỳ đâu để mở.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Từ Finder: chọn tệp, rồi bấm chuột phải > Tác vụ nhanh > “Combine files in Papel”. Không thấy? Bật một lần trong Tác vụ nhanh > Tùy chỉnh.
+	Hide Papel	Ẩn Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	OCR tiếng Hungary yêu cầu ứng dụng máy tính với Tesseract 5 và mô hình ngôn ngữ hun. Khởi động lại Papel sau khi cài đặt.
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Chưa cài đặt plugin nào. Hãy cài đặt plugin .wasm để mở rộng Papel.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Mở một thư mới không có tệp, và Papel sẽ hiển thị {name} trong thư mục của nó để bạn tự đính kèm.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Trang {page} chứa nhiều nội dung hơn mức Papel có thể đọc: một phần không được vẽ, và chỉ có thể tìm hoặc sao chép một phần văn bản của trang.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Các trang dùng phông chữ Type 3 được in dưới dạng hình ảnh, vì Windows có thể đóng Papel khi in các trang này. Các trang khác được in như bình thường.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Một phần của trang này không được hiển thị: nội dung vượt quá mức tối đa mà Papel vẽ cho một trang.
+	Papel can't check this signature yet: {}.	Papel chưa thể kiểm tra chữ ký này: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel không đóng bình thường. Các tài liệu này có thay đổi đã được tự động lưu:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel đang vẽ mà không có bộ xử lý đồ họa, nên có thể chậm. Cập nhật trình điều khiển đồ họa có thể giúp ích.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel đang giữ lại việc bạn đang làm. Khi trình chọn tệp hoạt động, hãy chọn Thử lại.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel tìm các thư viện mà nhà sản xuất thiết bị cài đặt. Chỉ chọn một thư viện nếu không tìm thấy thiết bị của bạn.
+	Papel on GitHub	Papel trên GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel mở trang của nhà cung cấp, nơi bạn đăng nhập bằng CPF, mã PIN và mã dùng một lần.
+	Papel web page	Trang web Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel hoạt động ngoại tuyến. Không thu thập dữ liệu sử dụng, không cần tài khoản, và không xử lý đám mây trừ khi bạn thêm nhà cung cấp.
+	Papel {v} is available.	Papel {v} đã có sẵn.
+	Papel's own	Của Papel
+	Plugins are sandboxed WebAssembly packages. They survive Papel updates as long as their API version is supported.	Plugin là các gói WebAssembly chạy trong sandbox. Chúng vẫn hoạt động sau khi cập nhật Papel miễn là phiên bản API của chúng còn được hỗ trợ.
+	Quit Papel	Thoát Papel
+	Reopen the files that were open when Papel last closed	Mở lại các tệp đã mở khi Papel đóng lần trước
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Hãy ký lên một tờ giấy trắng và chụp ảnh dưới ánh sáng sáng, đều (dùng đèn flash). Chọn ảnh hoặc thả vào đây: Papel sẽ tìm chữ ký và loại bỏ phần giấy.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Tính năng nhận dạng văn bản chưa được cài đặt: thiếu các tệp mô hình. Hãy cài đặt lại Papel, hoặc đặt PDFCRAFT_MODELS thành thư mục chứa chúng.
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	Chứng chỉ của {} có các phần mở rộng quan trọng mà Papel không nhận ra, nên nó không được dùng để bảo chứng cho {}.
+	The Dock shows it the next time Papel opens.	Dock sẽ hiển thị biểu tượng này vào lần mở Papel tiếp theo.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Phông chữ mà Papel dùng để ghi không thể vẽ “{c}” ({code}), nên nó hiển thị là ? trong mọi trình xem PDF. Văn bản vẫn được lưu.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Biểu mẫu yêu cầu được gửi đến {u}; Papel không gửi dữ liệu biểu mẫu. Hãy lưu tài liệu để giữ các mục bạn đã nhập.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Khóa nằm trong macOS Keychain, nơi có thể yêu cầu cho phép Papel sử dụng nó.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Khóa nằm trong kho chứng chỉ Windows, nơi có thể yêu cầu cho phép Papel sử dụng nó.
+	The module's tokens hold no digital ID Papel can sign with.	Các token của mô-đun không chứa Digital ID nào mà Papel có thể dùng để ký.
+	The PIN goes only to the card; Papel doesn't keep it.	Mã PIN chỉ được gửi tới thẻ; Papel không lưu nó.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	Chứng chỉ của người ký có các phần mở rộng quan trọng mà Papel không nhận ra ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	các mô hình nhận dạng văn bản chưa được cài đặt (hãy cài đặt lại Papel, hoặc đặt PDFCRAFT_MODELS thành thư mục chứa chúng)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Phông chữ của trường này không thể vẽ “{c}” ({code}), nên Papel hiển thị ? thay thế. Giá trị vẫn được lưu, và các trình xem PDF khác vẽ lại trường từ giá trị đó.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Biểu mẫu này còn chứa dữ liệu XFA mà Papel chưa đọc được. Bạn có thể điền các trường của nó, nhưng Acrobat có thể hiển thị giá trị XFA thay thế.
+	This form has too many fields, or a field name too long, for Papel to read them all. Any signature among the rest is not listed, so the document is treated as signed.	Biểu mẫu này có quá nhiều trường, hoặc tên trường quá dài, nên Papel không đọc hết được. Chữ ký trong các trường còn lại không được liệt kê, vì vậy tài liệu được coi là đã ký.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Bản cài đặt này do gói Debian quản lý. Hãy dùng trình quản lý phần mềm hệ thống để cập nhật Papel.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Bản cài đặt này do gói RPM quản lý. Hãy dùng trình quản lý phần mềm hệ thống để cập nhật Papel.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Đây là biểu mẫu XFA động, mà Papel chưa thể hiển thị. Những gì bạn thấy là trang giữ chỗ của tệp.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	không thể dùng dịch vụ ký này: dịch vụ yêu cầu đăng nhập OAuth trong trình duyệt, điều mà Papel chưa hỗ trợ
+	Use your system software manager to update Papel.	Hãy dùng trình quản lý phần mềm hệ thống để cập nhật Papel.
+	Welcome to Papel	Chào mừng đến với Papel
+	Your default email app can't take a file from Papel.	Ứng dụng email mặc định của bạn không thể nhận tệp từ Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} gửi biểu mẫu đến {url}; Papel không gửi dữ liệu biểu mẫu. Hãy lưu tài liệu để giữ các mục bạn đã nhập.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} trang chứa nhiều nội dung hơn mức Papel có thể đọc, bắt đầu từ trang {page}: một số phần không được vẽ, và chỉ có thể tìm hoặc sao chép một phần văn bản của các trang đó.
+	{program} can't take a file from Papel.	{program} không thể nhận tệp từ Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} trong tài liệu này đã cố mở một địa chỉ mà Papel sẽ không mở: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} trong tài liệu này đã cố mở một địa chỉ mà Papel sẽ không mở: {e}. Chỉ các liên kết web (http, https) và email (mailto) mới được mở từ tài liệu.

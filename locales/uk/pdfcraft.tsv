@@ -3680,3 +3680,60 @@ document scrollbar width	Wide	Широка
 	…or paste the raw text here; # headings, - bullets	…або вставте сюди вхідний текст; # заголовки, - списки
 	− Page {p}	− Сторінка {p}
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Логотип або назва ліворуч від вкладок, там, де їх показав би рядок заголовка: Papel або вашої компанії.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Файл PNG або SVG. Читається з цього місця під час кожного запуску Papel.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Підпис, що є частиною вмісту сторінки (наприклад, на сканованій сторінці), не є ні полем, ні приміткою, тому його не можна вилучити окремо, а Papel не стирає частини сторінки, щоб його приховати. Щоб прибрати його, вилучіть вміст цієї ділянки («Вилучити вміст») або, якщо підпис — окреме зображення, видаліть його за допомогою «Редагувати PDF».
+	About Papel	Про Papel
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Застосовується під час наступного запуску Papel. Виберіть OpenGL, якщо вікно мерехтить на дисплеї з G-SYNC, FreeSync або іншою змінною частотою оновлення.
+	Ask to make Papel the default PDF app	Запитувати про призначення Papel типовою програмою для PDF
+	Choose Papel for .pdf files in Windows Settings.	Виберіть Papel для файлів .pdf у параметрах Windows.
+	Combine files in Papel…	Об’єднати файли в Papel…
+	Convert to PDF with Papel	Перетворити на PDF за допомогою Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Тут з’являються файли, які ви відкриваєте в Papel. Перетягніть PDF будь-куди, щоб відкрити його.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	У Finder: виберіть файли, потім правий клік > Швидкі дії > “Combine files in Papel”. Немає в списку? Увімкніть один раз у Швидкі дії > Налаштувати.
+	Hide Papel	Сховати Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	Для угорського OCR потрібна настільна програма з Tesseract 5 і мовною моделлю hun. Після встановлення перезапустіть Papel.
+	Make Papel your default PDF app?	Зробити Papel типовою програмою для PDF?
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Плагіни ще не встановлено. Встановіть .wasm-плагін, щоб розширити Papel.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Відкрийте новий лист без файла, і Papel покаже {name} у його теці, щоб ви вклали його самі.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Сторінка {page} містить більше вмісту, ніж Papel може прочитати: частину не намальовано, а знайти чи скопіювати можна лише частину її тексту.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Сторінки зі шрифтами Type 3 друкуються як зображення, бо Windows може закрити Papel під час їх друку. Інші сторінки друкуються як зазвичай.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Частину цієї сторінки не показано: її вміст перевищує максимум, який Papel малює для однієї сторінки.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel завершив роботу некоректно. Зміни цих документів було автоматично збережено:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel малює без графічного процесора, тому може працювати повільно. Оновлення графічного драйвера може допомогти.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel зберігає те, над чим ви працювали. Коли вибір файлів запрацює, виберіть «Спробувати ще раз».
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel шукає бібліотеки, які встановлюють виробники пристроїв. Вибирайте бібліотеку, лише якщо ваш пристрій не знайдено.
+	Papel on GitHub	Papel на GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel відкриває сторінку постачальника, де ви входите за допомогою CPF, PIN-коду та одноразового коду.
+	Papel web page	Вебсторінка Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel працює офлайн. Без телеметрії, облікового запису та хмарної обробки, якщо ви не додасте постачальника.
+	Papel {v} is available.	Доступна версія Papel {v}.
+	Papel's own	Papel
+	Plugins are sandboxed WebAssembly packages. They survive Papel updates as long as their API version is supported.	Плагіни — це ізольовані пакети WebAssembly. Вони зберігаються після оновлень Papel, доки підтримується їхня версія API.
+	Quit Papel	Вийти з Papel
+	Reopen the files that were open when Papel last closed	Знову відкривати файли, які були відкриті під час останнього закриття Papel
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Розпишіться на аркуші білого паперу та сфотографуйте його за яскравого рівномірного освітлення (зі спалахом). Виберіть фото або перетягніть його сюди: Papel знайде підпис і прибере папір.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Розпізнавання тексту не встановлено: бракує файлів моделей. Перевстановіть Papel або задайте в PDFCRAFT_MODELS теку, у якій вони лежать.
+	The Dock shows it the next time Papel opens.	Dock покаже його під час наступного відкриття Papel.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Шрифти, якими пише Papel, не можуть відобразити «{c}» ({code}), тому в усіх програмах перегляду PDF на його місці буде ?. Текст збережено.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Форма запитує надсилання до {u}; Papel не надсилає дані форми. Збережіть документ, щоб зберегти введені дані.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Ключ у В’язці ключів macOS, яка може запитати дозвіл на його використання Papel.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Ключ у сховищі сертифікатів Windows, яке може запитати дозвіл на його використання Papel.
+	The module's tokens hold no digital ID Papel can sign with.	Токени модуля не містять цифрового посвідчення, яким Papel може підписувати.
+	The PIN goes only to the card; Papel doesn't keep it.	PIN-код передається лише картці; Papel його не зберігає.
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	моделі розпізнавання тексту не встановлено (перевстановіть Papel або задайте в PDFCRAFT_MODELS теку, у якій вони лежать)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Шрифт цього поля не може відобразити «{c}» ({code}), тому Papel показує на його місці ?. Значення збережено, і інші програми перегляду PDF перемалюють поле за ним.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Ця форма також містить дані XFA, які Papel ще не читає. Ви можете заповнювати поля, але Acrobat може показувати натомість значення XFA.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Це встановлення належить пакету Debian. Оновіть Papel у системному менеджері програм.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Це встановлення належить пакету RPM. Оновіть Papel у системному менеджері програм.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Це динамічна форма XFA, яку Papel ще не може відобразити. Ви бачите сторінку-заглушку файлу.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	цю службу підписування не можна використати: вона потребує входу через OAuth у браузері, якого Papel поки не підтримує
+	Use your system software manager to update Papel.	Оновіть Papel у системному менеджері програм.
+	Welcome to Papel	Вітаємо в Papel
+	Your default email app can't take a file from Papel.	Типовий поштовий застосунок не може прийняти файл із Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} надсилає форму до {url}; Papel не надсилає дані форми. Збережіть документ, щоб зберегти введені дані.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} сторінок містять більше вмісту, ніж Papel може прочитати, першою є сторінка {page}: частини не намальовано, а знайти чи скопіювати можна лише частину їхнього тексту.
+	{program} can't take a file from Papel.	{program} не може прийняти файл із Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} у цьому документі намагається відкрити адресу, яку Papel не відкриває: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} у цьому документі намагається відкрити адресу, яку Papel не відкриває: {e}. З документів відкриваються лише вебпосилання (http, https) та посилання на електронну пошту (mailto).
