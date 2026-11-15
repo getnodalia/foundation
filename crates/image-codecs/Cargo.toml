@@ -13,10 +13,6 @@ workspace = true
 [features]
 corpus = []
 default = []
-# Opt in to threaded AVIF encoding without enabling AVIF (or assembly) by itself.
-threads = ["ravif?/threading", "rav1e?/threading"]
-sgi = []
-sunraster = []
 avif = ["image/avif", "dep:ravif", "dep:rav1e", "dep:avif-serialize"]
 heif = ["dep:nodalia-heif"]
 # AVIF decode: nodalia-video's clean-room pure-Rust AV1 decoder. Native targets only (on wasm32 a
@@ -39,7 +35,6 @@ zune-core = "0.5"
 jpeg-encoder = "0.6"
 nodalia-jpeg = { workspace = true }
 nodalia-metadata = { workspace = true }
-nodalia-tiff = { workspace = true }
 zune-jpegxl = { version = "=0.5.2", default-features = false, features = ["std"] }
 nodalia-heif = { workspace = true, optional = true }
 ravif = { version = "0.13", default-features = false, optional = true }

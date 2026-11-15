@@ -41,13 +41,8 @@ pub(super) fn widest(items: &[String], size: f32) -> f32 {
     items.iter().map(|s| text_w(s, size)).fold(0.0, f32::max)
 }
 
-/// Text in `rect`; `angle` degrees clockwise turns it about the rect's centre (axis titles).
 pub(super) fn text(out: &mut Vec<GraphicItem>, rect: Rect, s: &str, size: f32, align: TextAlign, bold: bool) {
-    text_angle(out, rect, s, size, align, bold, 0.0);
-}
-
-pub(super) fn text_angle(out: &mut Vec<GraphicItem>, rect: Rect, s: &str, size: f32, align: TextAlign, bold: bool, angle: f32) {
-    out.push(GraphicItem::Text { rect: rect.arr(), text: s.to_string(), size, color: TEXT, bold, align, font: None, angle });
+    out.push(GraphicItem::Text { rect: rect.arr(), text: s.to_string(), size, color: TEXT, bold, align, font: None });
 }
 
 /// Text centred on `cx` with its top at `y`.

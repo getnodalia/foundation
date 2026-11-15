@@ -5,9 +5,6 @@
 #![forbid(unsafe_code)]
 #![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
 
-/// Bounded single-block Crate LZ4 compression.
-pub mod compress;
-
 /// Bounded Crate integer delta arrays.
 pub mod integers;
 

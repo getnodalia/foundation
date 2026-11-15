@@ -16,14 +16,13 @@ stl = []
 obj = []
 ply = []
 gltf = ["dep:serde_json"]
-fbx = ["dep:miniz_oxide", "dep:nodalia-zip"]
+fbx = ["dep:miniz_oxide"]
 threemf = ["dep:nodalia-opc", "dep:nodalia-xml"]
 
 [dependencies]
 serde_json = { workspace = true, optional = true }
 # zlib-compressed arrays in binary FBX.
 miniz_oxide = { version = "0.9", optional = true }
-nodalia-zip = { workspace = true, optional = true }
 # 3MF is an OPC package of XML parts.
 nodalia-opc = { workspace = true, optional = true }
 nodalia-xml = { workspace = true, optional = true }

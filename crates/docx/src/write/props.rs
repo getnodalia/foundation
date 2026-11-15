@@ -261,12 +261,10 @@ pub fn ppr_inner(w: &mut W, p: &ParaProps, framed: bool, num_change: Option<&Cha
     toggle(w, "w:pageBreakBefore", p.page_break_before);
     write_frame(w, p, framed);
     toggle(w, "w:widowControl", p.widow_control);
-    if p.numbering.is_some() || num_change.is_some() {
+    if let Some(nr) = p.numbering {
         w.open("w:numPr", &[]);
-        if let Some(nr) = p.numbering {
-            w.val("w:ilvl", &n(nr.level.min(8) as i64));
-            w.val("w:numId", &n(nr.num as i64));
-        }
+        w.val("w:ilvl", &n(nr.level.min(8) as i64));
+        w.val("w:numId", &n(nr.num as i64));
         if let Some(a) = num_change {
             let refs: Vec<(&str, &str)> = a.iter().map(|(k, v)| (*k, v.as_str())).collect();
             w.empty("w:numberingChange", &refs);
