@@ -70,7 +70,9 @@ pub(crate) fn decode(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawIma
     let (w, h) = (info.width as usize, info.height as usize);
     let n = w.checked_mul(h).filter(|n| *n > 0 && *n <= limits.samples()).ok_or(RawError::Limit("image too large"))?;
     let cfa = match (raw.u64s(t::CFA_REPEAT_PATTERN_DIM).as_deref(), raw.bytes(t::CFA_PATTERN_EP)) {
-        (Some([2, 2]), Some(p)) if p.len() == 4 && p.iter().all(|&c| c <= 2) => Cfa { width: 2, height: 2, pattern: p.to_vec() },
+        (Some([2, 2]), Some(p)) if p.len() == 4 && p.iter().all(|&c| c <= 2) => {
+            Cfa { width: 2, height: 2, pattern: p.to_vec(), origin_x: 0, origin_y: 0 }
+        }
         _ => return Err(RawError::Unsupported("Mef raw without a 2x2 CFAPattern".into())),
     };
     let preview = rgb_preview(&tiff, bytes);
@@ -101,7 +103,7 @@ pub(crate) fn decode(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawIma
     }
     let mut d = vec![0u16; n];
     crate::unpack::unpack_msb(src, 12, &mut d);
-    let white = crate::shared::white_from_data(&d, 12);
+    let (white, white_source) = crate::shared::white_from_data_sourced(&d, 12);
     let black = BlackLevel::uniform(0.0);
     let data = if mode == Mode::Full { RawData::U16(d) } else { RawData::U16(Vec::new()) };
     let orientation = raw.u16(t::ORIENTATION).or_else(|| tiff.ifds.first().and_then(|i| i.u16(t::ORIENTATION))).unwrap_or(1);
@@ -124,6 +126,9 @@ pub(crate) fn decode(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawIma
         opcodes: OpcodeLists::default(),
         camera: tiff.ifds.first().map(Camera::from_ifd0).unwrap_or_default(),
         cinema: Default::default(),
+        lens_metadata: Default::default(),
+        level_sources: crate::LevelSources { black: crate::LevelSource::Fallback, white: white_source },
+        notices: crate::RawNotices::default(),
         pixel_aspect: 1.0,
     };
     img.validate_for(mode)?;
@@ -217,6 +222,8 @@ mod tests {
         assert_eq!(r.data, RawData::U16(px));
         assert_eq!(r.orientation, Orientation::from_exif(6));
         assert_eq!(r.crop, Rect::new(0, 0, 16, 6));
+        // the format's black is a constant 0; no plateau
+        assert_eq!(r.level_sources, crate::LevelSources { black: crate::LevelSource::Fallback, white: crate::LevelSource::Fallback });
         assert_eq!(crate::probe_info(&f).unwrap(), r.info());
     }
 

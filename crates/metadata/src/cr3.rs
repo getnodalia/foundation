@@ -313,7 +313,15 @@ fn moov<'a>(bytes: &'a [u8], m: &BoxRef, out: &mut Cr3<'a>, budget: &mut usize) 
                         }
                         _ => continue,
                     };
-                    out.cmt[slot] = bytes.get(c.body..c.end);
+                    // a damaged CMTn gives way to a later readable one; the first readable one stays
+                    let readable = |b: Option<&[u8]>| b.is_some_and(|b| nodalia_tiff::Tiff::parse(b).is_ok());
+                    let body = bytes.get(c.body..c.end);
+                    if let Some(kept) = out.cmt.get_mut(slot)
+                        && !readable(*kept)
+                        && (kept.is_none() || readable(body))
+                    {
+                        *kept = body;
+                    }
                 }
             }
             b"trak" => {
@@ -343,28 +351,70 @@ fn trak(bytes: &[u8], t: &BoxRef, budget: &mut usize) -> Option<Cr3Track> {
         }
     }
     let stbl = stbl?;
-    let (mut kind, mut size, mut offset) = (None, None, None);
+    let (mut kind, mut size, mut offset, mut mapping, mut sample_count) = (None, None, None, None, 0);
     for b in boxes(bytes, stbl.body, stbl.end, budget) {
         let body = bytes.get(b.body..b.end)?;
         match &b.kind {
             // full box: version/flags, entry count, entries
             b"stsd" if be32(body, 4)? > 0 => kind = boxes(bytes, b.body + 8, b.end, budget).first().map(|e| sample_entry(bytes, e, budget)),
+            b"stsc" => {
+                // Only the first sample is exposed. It must map chunk 1 to
+                // the first sample description; don't trust offsets without
+                // that mapping, or a damaged/raw track could become a JPEG.
+                // A malformed mapping invalidates sample data, not the track's
+                // identity: dropping the largest raw track could select a reduced
+                // raw successfully and disguise corruption in the main image.
+                mapping = (|| {
+                    let count = be32(body, 4)? as usize;
+                    if be32(body, 0)? != 0 || count == 0 || count > body.len().saturating_sub(8) / 12 {
+                        return None;
+                    }
+                    Some((be32(body, 8)?, be32(body, 12)?, be32(body, 16)?))
+                })();
+            }
             // version/flags, sample_size (0 = per-sample table), count, sizes
             b"stsz" => {
-                size = match be32(body, 4)? {
-                    0 if be32(body, 8)? > 0 => be32(body, 12),
-                    0 => None,
-                    n if be32(body, 8)? > 0 => Some(n),
+                // A truncated size table invalidates data without hiding a known track.
+                sample_count = be32(body, 8).unwrap_or(0);
+                size = match be32(body, 4) {
+                    // A first entry cannot justify an incomplete per-sample
+                    // table, nor an impossible constant-size sample count.
+                    Some(0) if sample_count > 0 && sample_count as usize <= body.len().saturating_sub(12) / 4 => be32(body, 12),
+                    Some(n)
+                        if n > 0
+                            && sample_count > 0
+                            && u64::from(n).checked_mul(u64::from(sample_count)).is_some_and(|total| total <= bytes.len() as u64) =>
+                    {
+                        Some(n)
+                    }
                     _ => None,
                 }
             }
-            b"co64" if be32(body, 4)? > 0 => offset = be64(body, 8).and_then(|v| usize::try_from(v).ok()),
-            b"stco" if be32(body, 4)? > 0 => offset = be32(body, 8).map(|v| v as usize),
+            // Missing or truncated offset-table counts deny sample access, but the known
+            // track must remain available to the largest-raw-track selector.
+            b"co64" => {
+                offset = match be32(body, 4) {
+                    Some(count) if count > 0 && count as usize <= body.len().saturating_sub(8) / 8 => {
+                        be64(body, 8).and_then(|v| usize::try_from(v).ok())
+                    }
+                    _ => None,
+                };
+            }
+            b"stco" => {
+                offset = match be32(body, 4) {
+                    Some(count) if count > 0 && count as usize <= body.len().saturating_sub(8) / 4 => be32(body, 8).map(|v| v as usize),
+                    _ => None,
+                };
+            }
             _ => {}
         }
     }
-    let data = match (offset, size) {
-        (Some(o), Some(s)) if o.checked_add(s as usize).is_some_and(|e| e <= bytes.len()) => Some((o, s as usize)),
+    let data = match (offset, size, mapping) {
+        (Some(o), Some(s), Some((1, samples, 1)))
+            if samples > 0 && samples <= sample_count && o.checked_add(s as usize).is_some_and(|e| e <= bytes.len()) =>
+        {
+            Some((o, s as usize))
+        }
         _ => None,
     };
     Some(Cr3Track { kind: kind?, data })
@@ -487,6 +537,13 @@ mod tests {
         bx(b"CRAW", &b)
     }
     fn trak(entry: Vec<u8>, offset: u64, size: u32) -> Vec<u8> {
+        let stsc = [1u32, 1, 1, 1].into_iter().flat_map(u32::to_be_bytes).collect::<Vec<_>>();
+        trak_with_mapping(entry, offset, size, &stsc)
+    }
+    fn trak_with_mapping(entry: Vec<u8>, offset: u64, size: u32, mapping: &[u8]) -> Vec<u8> {
+        trak_with_table(entry, offset, size, b"stsc", mapping)
+    }
+    fn trak_with_table(entry: Vec<u8>, offset: u64, size: u32, table: &[u8; 4], payload: &[u8]) -> Vec<u8> {
         let mut stsd = 1u32.to_be_bytes().to_vec();
         stsd.extend(entry);
         let mut stsz = 0u32.to_be_bytes().to_vec();
@@ -494,7 +551,15 @@ mod tests {
         stsz.extend(size.to_be_bytes());
         let mut co64 = 1u32.to_be_bytes().to_vec();
         co64.extend(offset.to_be_bytes());
-        let stbl = [full(b"stsd", &stsd), full(b"stsz", &stsz), full(b"co64", &co64)].concat();
+        let stsc = [1u32, 1, 1, 1].into_iter().flat_map(u32::to_be_bytes).collect::<Vec<_>>();
+        let offsets = if table == b"stco" { full(b"stco", payload) } else { full(b"co64", if table == b"co64" { payload } else { &co64 }) };
+        let stbl = [
+            full(b"stsd", &stsd),
+            full(b"stsc", if table == b"stsc" { payload } else { &stsc }),
+            full(b"stsz", if table == b"stsz" { payload } else { &stsz }),
+            offsets,
+        ]
+        .concat();
         bx(b"trak", &bx(b"mdia", &bx(b"minf", &bx(b"stbl", &stbl))))
     }
     fn tiff_with(tag: u16, v: nodalia_tiff::Value) -> Vec<u8> {
@@ -536,6 +601,97 @@ mod tests {
     }
 
     #[test]
+    fn first_sample_requires_a_complete_valid_sample_to_chunk_mapping() {
+        let file = |track: Vec<u8>| {
+            let mut file = bx(b"ftyp", b"crx \0\0\0\x01crx isom");
+            file.extend(bx(b"moov", &track));
+            file.resize(4112, 0);
+            file
+        };
+        let valid = trak(craw(16, 16, &bx(b"JPEG", &[0; 4])), 4096, 16);
+        assert_eq!(parse_cr3(&file(valid.clone())).unwrap().tracks[0].data, Some((4096, 16)));
+        let at = valid.windows(4).position(|bytes| bytes == b"stsc").unwrap();
+        // Missing table, impossible first chunk, zero samples, a different
+        // description and a count that extends beyond this box all deny data.
+        for (field, value) in [(0, u32::from_be_bytes(*b"xxxx")), (8, 0), (8, 2), (12, 0), (12, 2), (16, 0), (16, 2), (4, u32::MAX)] {
+            let mut damaged = valid.clone();
+            let offset = if field == 0 { at } else { at + 4 + field };
+            damaged[offset..offset + 4].copy_from_slice(&value.to_be_bytes());
+            let bytes = file(damaged);
+            let parsed = parse_cr3(&bytes).unwrap();
+            assert_eq!(parsed.tracks.len(), 1, "invalid mapping must not erase an identifiable track");
+            assert_eq!(parsed.tracks[0].kind, Cr3TrackKind::Jpeg);
+            assert!(parsed.tracks[0].data.is_none());
+        }
+        for entry in [craw(16, 16, &[]), craw(16, 16, &bx(b"CMP1", &[0xff, 0x10, 0, 0x30]))] {
+            let bytes = file(trak(entry, 4096, 16));
+            let parsed = parse_cr3(&bytes).unwrap();
+            assert!(!matches!(parsed.tracks[0].kind, Cr3TrackKind::Jpeg));
+        }
+    }
+
+    #[test]
+    fn truncated_sample_mapping_preserves_larger_raw_track_identity_and_valid_reduced_track() {
+        let reduced = trak(craw(4, 4, &bx(b"CMP1", &compression_payload(0))), 4096, 16);
+        for table in [b"stsc", b"stsz", b"co64", b"stco"] {
+            for payload in [Vec::new(), vec![0; 4], 1u32.to_be_bytes().to_vec()] {
+                // full() supplies version/flags; an empty payload leaves only
+                // those four bytes, with the table's required count missing.
+                let main = trak_with_table(craw(8, 4, &bx(b"CMP1", &compression_payload(0))), 4112, 32, table, &payload);
+                for main_first in [false, true] {
+                    let tracks = if main_first { [main.clone(), reduced.clone()].concat() } else { [reduced.clone(), main.clone()].concat() };
+                    let mut file = bx(b"ftyp", b"crx \0\0\0\x01crx isom");
+                    file.extend(bx(b"moov", &tracks));
+                    file.resize(4144, 0);
+                    let parsed = parse_cr3(&file).unwrap();
+                    assert_eq!(parsed.tracks.len(), 2, "truncated {table:?} cannot hide the larger track");
+                    let (main, reduced) = if main_first { (&parsed.tracks[0], &parsed.tracks[1]) } else { (&parsed.tracks[1], &parsed.tracks[0]) };
+                    assert!(matches!(reduced.kind, Cr3TrackKind::Raw { width: 4, height: 4, .. }));
+                    assert_eq!(reduced.data, Some((4096, 16)));
+                    assert!(matches!(main.kind, Cr3TrackKind::Raw { width: 8, height: 4, cmp1: Some(_), .. }));
+                    assert!(main.data.is_none());
+                    assert!(main.compression(&file).is_some(), "only sample location is invalid");
+                }
+            }
+            let mut offsets = 1u32.to_be_bytes().to_vec();
+            offsets.extend(4112u64.to_be_bytes());
+            let valid = match table {
+                b"stsc" => [1u32, 1, 1, 1].into_iter().flat_map(u32::to_be_bytes).collect::<Vec<_>>(),
+                b"stsz" => [0u32, 1, 32].into_iter().flat_map(u32::to_be_bytes).collect(),
+                b"stco" => [1u32, 4112].into_iter().flat_map(u32::to_be_bytes).collect(),
+                _ => offsets,
+            };
+            let main = trak_with_table(craw(8, 4, &bx(b"CMP1", &compression_payload(0))), 4112, 32, table, &valid);
+            for main_first in [false, true] {
+                let tracks = if main_first { [main.clone(), reduced.clone()].concat() } else { [reduced.clone(), main.clone()].concat() };
+                let mut file = bx(b"ftyp", b"crx \0\0\0\x01crx isom");
+                file.extend(bx(b"moov", &tracks));
+                file.resize(4144, 0);
+                let parsed = parse_cr3(&file).unwrap();
+                assert_eq!(parsed.tracks.len(), 2);
+                let main = &parsed.tracks[if main_first { 0 } else { 1 }];
+                assert_eq!(main.data, Some((4112, 32)), "complete valid {table:?} stays usable");
+            }
+        }
+    }
+
+    #[test]
+    fn first_sample_size_requires_a_complete_bounded_sample_table() {
+        let valid = trak(craw(16, 16, &bx(b"JPEG", &[0; 4])), 4096, 16);
+        let at = valid.windows(4).position(|bytes| bytes == b"stsz").unwrap();
+        for (constant, count, accepted) in [(0u32, 1u32, true), (16, 1, true), (0, 2, false), (0, u32::MAX, false), (16, u32::MAX, false)] {
+            let mut track = valid.clone();
+            track[at + 8..at + 12].copy_from_slice(&constant.to_be_bytes());
+            track[at + 12..at + 16].copy_from_slice(&count.to_be_bytes());
+            let mut file = bx(b"ftyp", b"crx \0\0\0\x01crx isom");
+            file.extend(bx(b"moov", &track));
+            file.resize(4112, 0);
+            let parsed = parse_cr3(&file).unwrap();
+            assert_eq!(parsed.tracks[0].data, accepted.then_some((4096, 16)), "size {constant}, count {count}");
+        }
+    }
+
+    #[test]
     fn hevc_preview_is_distinct_from_an_equal_size_raw_track() {
         let preview = trak(craw(6000, 4000, &bx(b"HEVC", &[0; 4])), 4096, 16);
         let reduced = trak(craw(1624, 1080, &bx(b"CMP1", &compression_payload(0))), 4112, 16);
@@ -571,6 +727,28 @@ mod tests {
         file.extend(bx(b"moov", &trak(craw(6000, 4000, &bx(b"free", &[])), 4096, 16)));
         file.resize(4112, 0);
         assert!(matches!(parse_cr3(&file).unwrap().tracks[0].kind, Cr3TrackKind::Raw { cmp1: None, .. }));
+    }
+
+    /// A damaged CMT2 before a readable one: the readable one is read, and a later one doesn't
+    /// replace it. A damaged CMT2 with nothing better stays (merged_exif then leaves it out).
+    #[test]
+    fn a_damaged_cmt_box_gives_way_to_a_later_readable_one() {
+        use nodalia_tiff::{Value, tags as t};
+        let file = |cmts: &[(&[u8; 4], Vec<u8>)]| {
+            let canon = uuid(&CANON_UUID, &cmts.iter().flat_map(|(k, b)| bx(k, b)).collect::<Vec<u8>>());
+            [bx(b"ftyp", b"crx \0\0\0\x01crx isom"), bx(b"moov", &canon)].concat()
+        };
+        let cmt1 = tiff_with(t::MAKE, Value::Ascii("Canon".into()));
+        let damaged = b"II*\0\xff\xff\0\0".to_vec();
+        let iso = |v| tiff_with(t::ISO_SPEED, Value::Short(vec![v]));
+        let f = file(&[(b"CMT1", cmt1.clone()), (b"CMT2", damaged.clone()), (b"CMT2", iso(800)), (b"CMT2", iso(100))]);
+        let c = parse_cr3(&f).unwrap();
+        assert_eq!(c.cmt[1], Some(iso(800).as_slice()));
+        assert_eq!(crate::read_exif(&merged_exif(&c).unwrap()).iso, Some(800));
+        let only_damaged = file(&[(b"CMT1", cmt1), (b"CMT2", damaged.clone())]);
+        let c = parse_cr3(&only_damaged).unwrap();
+        assert_eq!(c.cmt[1], Some(damaged.as_slice()));
+        assert_eq!(crate::read_exif(&merged_exif(&c).unwrap()).make.as_deref(), Some("Canon"));
     }
 
     #[test]
@@ -684,7 +862,10 @@ mod tests {
         let mut file = bx(b"ftyp", b"crx \0\0\0\x01crx isom");
         file.extend(bx(b"moov", &bx(b"trak", &bx(b"mdia", &bx(b"minf", &bx(b"stbl", &stbl))))));
         file.resize(512, 0);
-        assert!(parse_cr3(&file).unwrap().tracks.is_empty());
+        let parsed = parse_cr3(&file).unwrap();
+        assert_eq!(parsed.tracks.len(), 1, "a truncated table must not hide the identifiable raw track");
+        assert!(matches!(parsed.tracks[0].kind, Cr3TrackKind::Raw { width: 16, height: 16, .. }));
+        assert!(parsed.tracks[0].data.is_none(), "the empty stsz must not borrow size bytes from the following co64 box");
     }
 
     #[test]

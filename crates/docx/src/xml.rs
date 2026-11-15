@@ -373,6 +373,7 @@ fn parse_with(bytes: &[u8], extra: &[(&'static str, &str)], strict: bool) -> Res
         max_depth: MAX_DEPTH + 1,
         // Text stretches count as nodes too: two for each element.
         max_nodes: 2 * MAX_ELEMENTS,
+        max_elements: MAX_ELEMENTS,
         max_attrs: MAX_ATTRS,
         max_attrs_total: 2 * MAX_ELEMENTS,
     };
@@ -399,6 +400,20 @@ fn from_tree(e: nodalia_xml::El) -> El {
         }
     }
     El { name: e.name, attrs: e.attrs, kids }
+}
+
+/// This module's tree as `nodalia-xml`'s, for the shared readers (`nodalia-drawingml`, `nodalia-math`)
+/// that take one. Both use the canonical prefixes.
+// shortcut: copies the subtree; goes when the reader reads nodalia_xml::El directly.
+pub(crate) fn to_craft(e: &El) -> nodalia_xml::El {
+    let mut out = nodalia_xml::El { name: e.name.clone(), attrs: e.attrs.clone(), children: Vec::with_capacity(e.kids.len()) };
+    for k in &e.kids {
+        out.children.push(match k {
+            Node::El(c) => nodalia_xml::Node::El(to_craft(c)),
+            Node::Text(t) => nodalia_xml::Node::Text(t.clone()),
+        });
+    }
+    out
 }
 
 /// Is `c` allowed in XML 1.0 text?

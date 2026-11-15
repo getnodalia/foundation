@@ -12,6 +12,73 @@ use nodalia_tiff::{Ifd, Tiff, makernote};
 pub enum PreviewColorSpace {
     Srgb,
     AdobeRgb,
+    ProPhoto,
+}
+
+/// A decoded DNG JPEG XL preview. Pixel samples use the declared bit depth and colour space.
+#[derive(Clone, Debug, PartialEq)]
+pub struct DecodedPreview {
+    pub width: u32,
+    pub height: u32,
+    pub bits: u32,
+    pub rgb: Vec<u16>,
+    pub color_space: Option<PreviewColorSpace>,
+}
+
+/// Decode the largest usable rendered JPEG XL preview in a DNG, within `limits`.
+#[cfg(feature = "jxl")]
+pub fn embedded_jxl_preview(bytes: &[u8], limits: &crate::Limits) -> Option<DecodedPreview> {
+    use nodalia_tiff::image::chunk_bytes;
+    use nodalia_tiff::tags as t;
+    let tiff = Tiff::parse(bytes).ok()?;
+    let ifd0 = tiff.ifds.first()?;
+    if !ifd0.contains(t::DNG_VERSION) {
+        return None;
+    }
+    let mut candidates: Vec<_> = tiff
+        .all_ifds()
+        .into_iter()
+        .filter_map(|ifd| {
+            if ifd.u32(t::NEW_SUBFILE_TYPE)? & 1 == 0
+                || ifd.u16(t::COMPRESSION)? != t::compression::JPEG_XL
+                || ifd.u16(t::SAMPLES_PER_PIXEL)? != 3
+                || !matches!(ifd.u16(t::PHOTOMETRIC), Some(t::photometric::RGB | t::photometric::YCBCR))
+            {
+                return None;
+            }
+            let info = ifd.image().ok()?;
+            let chunk = info.single_chunk(bytes.len() as u64)?;
+            chunk_bytes(bytes, &chunk)?;
+            Some((u64::from(info.width) * u64::from(info.height), ifd, info))
+        })
+        .collect();
+    candidates.sort_by_key(|(area, _, _)| std::cmp::Reverse(*area));
+    for (_, ifd, info) in candidates {
+        let samples = usize::from(info.samples_per_pixel);
+        let pixels = usize::try_from(info.width).ok()?.checked_mul(usize::try_from(info.height).ok()?)?;
+        if pixels.checked_mul(samples)? > limits.samples() {
+            continue;
+        }
+        let Ok(crate::RawData::U16(rgb)) = crate::tiffraw::read_image(bytes, &info, tiff.order, crate::tiffraw::Packing::Msb, limits) else {
+            continue;
+        };
+        if rgb.len() != pixels.checked_mul(3)? {
+            continue;
+        }
+        let color_space = match ifd.u16(50970).or_else(|| ifd0.u16(50970)) {
+            Some(2) => Some(PreviewColorSpace::Srgb),
+            Some(3) => Some(PreviewColorSpace::AdobeRgb),
+            Some(4) => Some(PreviewColorSpace::ProPhoto),
+            _ => None,
+        };
+        return Some(DecodedPreview { width: info.width, height: info.height, bits: u32::from(info.bits()), rgb, color_space });
+    }
+    None
+}
+
+#[cfg(not(feature = "jxl"))]
+pub fn embedded_jxl_preview(_: &[u8], _: &crate::Limits) -> Option<DecodedPreview> {
+    None
 }
 
 /// The colour space the raw says its embedded JPEG is in, for a JPEG that declares none itself (no ICC profile,
@@ -22,7 +89,7 @@ pub enum PreviewColorSpace {
 /// the Exif and DCF specifications), not for a DNG. This is a fallback only: a JPEG's own ICC/EXIF colour
 /// declaration takes precedence.
 pub fn embedded_preview_color_space(bytes: &[u8]) -> Option<PreviewColorSpace> {
-    let tiff = Tiff::parse(bytes).ok()?;
+    let Ok(tiff) = Tiff::parse(bytes) else { return cr3_color_space(bytes) };
     let make = tiff.ifds.first()?.string(t::MAKE).unwrap_or_default();
     let exif = tiff.exif()?;
     if make.to_ascii_uppercase().starts_with("NIKON")
@@ -48,6 +115,24 @@ pub fn embedded_preview_color_space(bytes: &[u8]) -> Option<PreviewColorSpace> {
     }
 }
 
+/// A CR3 keeps its EXIF and maker note in `CMT2`/`CMT3` TIFF blocks and its JPEGs carry no EXIF; a body shot in
+/// Adobe RGB writes ColorSpace Uncalibrated (0xFFFF) with no Interoperability IFD (storytold/lightcraft#2654), so the Canon
+/// maker note says which, else an EXIF ColorSpace of sRGB is taken.
+#[cfg(feature = "cr3")]
+fn cr3_color_space(bytes: &[u8]) -> Option<PreviewColorSpace> {
+    let cr3 = nodalia_metadata::cr3::parse_cr3(bytes)?;
+    let first = |i: usize| cr3.cmt[i].and_then(|b| Tiff::parse(b).ok()).and_then(|t| t.ifds.into_iter().next());
+    if let Some(space) = first(2).and_then(|mn| canon_color_space(&mn)) {
+        return Some(space);
+    }
+    (first(1)?.u16(0xA001)? == 1).then_some(PreviewColorSpace::Srgb)
+}
+
+#[cfg(not(feature = "cr3"))]
+fn cr3_color_space(_: &[u8]) -> Option<PreviewColorSpace> {
+    None
+}
+
 fn canon_color_space(note: &Ifd) -> Option<PreviewColorSpace> {
     match note.u16(0x00b4)? {
         1 => Some(PreviewColorSpace::Srgb),
@@ -64,6 +149,22 @@ fn nikon_color_space(bytes: &[u8], tiff: &Tiff, exif: &Ifd, make: &str) -> Optio
         2 => Some(PreviewColorSpace::AdobeRgb),
         _ => None,
     }
+}
+
+/// Whether the camera optimised its embedded JPEG's dynamic range with local tone mapping that the raw data doesn't
+/// carry: Sony's Dynamic Range Optimizer (maker note `0xb025`). Such a JPEG is brighter in its darker regions than
+/// the raw developed with the camera's global tone curve. `Some(false)` when the file says it was off, `None` when
+/// it doesn't say (other makers, notes without the tag, undocumented values).
+#[cfg(feature = "arw")]
+pub fn embedded_preview_dynamic_range_optimized(bytes: &[u8]) -> Option<bool> {
+    let tiff = Tiff::parse(bytes).ok()?;
+    let make = tiff.ifds.first()?.string(t::MAKE)?;
+    if !make.trim().to_ascii_uppercase().starts_with("SONY") {
+        return None;
+    }
+    let e = tiff.exif()?.get(t::MAKER_NOTE)?;
+    let mn = makernote::parse_makernote(bytes, e.offset, e.count() as u64, tiff.order, &make)?;
+    crate::arw::dynamic_range_optimizer(&mn)
 }
 
 /// The first frame (SOF) marker of a JPEG and its position, from the marker segments before the first scan.
@@ -209,7 +310,17 @@ fn candidates<'a>(data: &'a [u8], ifd: &Ifd, base: u64, out: &mut Vec<&'a [u8]>,
 /// The largest embedded preview, if any: a JPEG, or (DNG 1.7) a JPEG XL file, or for a Hasselblad 3FR / FFF, which
 /// has no JPEG, its uncompressed RGB preview wrapped as a baseline TIFF.
 pub fn embedded_preview(bytes: &[u8]) -> Option<Vec<u8>> {
-    preview_covering(bytes, None)
+    preview_covering(bytes, None, false)
+}
+
+/// Largest embedded JPEG preview, excluding DNG JPEG XL previews.
+pub fn embedded_jpeg_preview(bytes: &[u8]) -> Option<Vec<u8>> {
+    preview_covering(bytes, None, true)
+}
+
+/// Smallest embedded JPEG of the largest preview's shape whose long edge covers `min_edge`, or the largest JPEG.
+pub fn embedded_jpeg_preview_covering(bytes: &[u8], min_edge: u32) -> Option<Vec<u8>> {
+    preview_covering(bytes, Some(min_edge), true)
 }
 
 /// The smallest embedded JPEG whose long edge is at least `min_edge` and that looks like a copy of the largest preview
@@ -217,7 +328,7 @@ pub fn embedded_preview(bytes: &[u8]) -> Option<Vec<u8>> {
 /// grey mask or depth map), else [`embedded_preview`]. Only TIFF-based raws keep several: an A7R VI's 1616 × 1080
 /// preview is 0.3 MB beside its 9984 × 6656 one (5.6 MB), so a stand-in up to 1616 px decodes about a twentieth of the data.
 pub fn embedded_preview_covering(bytes: &[u8], min_edge: u32) -> Option<Vec<u8>> {
-    preview_covering(bytes, Some(min_edge))
+    preview_covering(bytes, Some(min_edge), false)
 }
 
 /// Of the DCT JPEGs in `found`, the one with the shortest long edge of at least `min_edge` with `largest`'s aspect
@@ -239,11 +350,29 @@ fn smallest_covering<'a>(found: &[&'a [u8]], largest: &[u8], min_edge: u32) -> O
         .map(|(s, _)| s)
 }
 
-fn preview_covering(bytes: &[u8], min_edge: Option<u32>) -> Option<Vec<u8>> {
+fn preview_covering(bytes: &[u8], min_edge: Option<u32>, jpeg_only: bool) -> Option<Vec<u8>> {
     if bytes.starts_with(b"FUJIFILMCCD-RAW") {
         return raf_jpeg(bytes).filter(|j| is_dct_jpeg(j)).map(|j| trim_eoi(j).to_vec());
     }
     let format = crate::probe(bytes);
+    #[cfg(feature = "cr3")]
+    if format == Some(crate::RawFormat::Cr3) {
+        // a Canon CR3 keeps its full-size JPEG beside a 1620 px `PRVW` (and a 160 px `THMB`): a
+        // thumbnail decodes the small copy, not 45 MP of JPEG (about 150 ms a photo, the grid's
+        // "popcorn" on a folder of R5 / R5 C raws)
+        // (without a JPEG track, the largest box is the picture's shape: the boxes alone may hold several)
+        if let Some(min) = min_edge {
+            let mut found = cr3_preview_box_list(bytes);
+            let full = cr3_full_jpeg(bytes);
+            found.extend(full);
+            if let Some(largest) = full.or_else(|| largest_by_pixels(&found))
+                && let Some(j) = smallest_covering(&found, largest, min)
+            {
+                return Some(trim_eoi(j).to_vec());
+            }
+        }
+        return cr3_preview(bytes).map(|j| trim_eoi(j).to_vec());
+    }
     if matches!(format, Some(crate::RawFormat::Crw | crate::RawFormat::Mrw | crate::RawFormat::X3f)) {
         return scan_for_jpeg(bytes);
     }
@@ -268,8 +397,13 @@ fn preview_covering(bytes: &[u8], min_edge: Option<u32>) -> Option<Vec<u8>> {
             }
         }
     }
+    // Olympus: the CameraSettings preview
+    #[cfg(feature = "orf")]
+    if let Some(p) = crate::orf::preview(bytes) {
+        found.push(p);
+    }
     bound_candidates(&mut found, bytes.len());
-    let largest = found.iter().copied().filter(|s| is_dct_jpeg(s) || is_jxl(s)).max_by_key(|s| s.len());
+    let largest = found.iter().copied().filter(|s| is_dct_jpeg(s) || (!jpeg_only && is_jxl(s))).max_by_key(|s| s.len());
     let best = min_edge
         .zip(largest)
         .and_then(|(min, big)| smallest_covering(&found, big, min))
@@ -498,6 +632,141 @@ fn scan_with_budget(data: &[u8], budget: usize) -> (Option<Vec<u8>>, u64) {
         Some(jpeg)
     });
     (jpeg, walked)
+}
+
+/// Canon CR3: the full-size JPEG track (see `nodalia_metadata::cr3`), else the `PRVW` / `THMB` boxes.
+#[cfg(feature = "cr3")]
+fn cr3_preview(bytes: &[u8]) -> Option<&[u8]> {
+    cr3_full_jpeg(bytes).or_else(|| cr3_preview_boxes(bytes))
+}
+
+/// A CR3's full-size JPEG track, when it holds a DCT JPEG.
+#[cfg(feature = "cr3")]
+fn cr3_full_jpeg(bytes: &[u8]) -> Option<&[u8]> {
+    let cr3 = nodalia_metadata::cr3::parse_cr3(bytes)?;
+    // An unusable preview track must not hide a later usable one. Share the marker budget
+    // across candidates so overlapping hostile track ranges cannot cause quadratic walks.
+    let mut work = CR3_MAX_WALK;
+    cr3.tracks.iter().filter(|t| t.kind == nodalia_metadata::cr3::Cr3TrackKind::Jpeg).find_map(|t| {
+        let (at, len) = t.data?;
+        let jpeg = bytes.get(at..at.checked_add(len)?)?;
+        first_frame_within(jpeg, &mut work).filter(|(m, _)| matches!(m, 0xc0..=0xc2)).map(|_| jpeg)
+    })
+}
+
+/// Marker-walk budget of the CR3 fallback: candidates can overlap (each claiming the rest of the file) and
+/// [`is_dct_jpeg`] walks each marker by marker, so walking every candidate would be quadratic in file size.
+/// The `THMB`/`PRVW` previews this finds are far below the cap together; once it is spent the scan stops.
+#[cfg(feature = "cr3")]
+const CR3_MAX_WALK: usize = 8 << 20;
+
+/// Canon CR3 (ISO base media file): the `PRVW` box (Laurent Clévy's CR3 notes; layout confirmed on a CC0
+/// sample) is `u32 size, "PRVW", u32 0, u16 ?, u16 width, u16 height, u16 ?, u32 jpeg length, JPEG`; the smaller
+/// `THMB` box has the same shape. Returns the larger valid one.
+#[cfg(feature = "cr3")]
+fn cr3_preview_boxes(bytes: &[u8]) -> Option<&[u8]> {
+    largest_by_pixels(&cr3_preview_box_list(bytes))
+}
+
+/// Of `found`, the JPEG with the longest edge in pixels (a smaller picture can take more bytes); the
+/// first of equals. CodeRabbit on #3077.
+#[cfg(feature = "cr3")]
+fn largest_by_pixels<'a>(found: &[&'a [u8]]) -> Option<&'a [u8]> {
+    let long = |j: &[u8]| jpeg_frame(j).map_or(0, |(w, h, _)| w.max(h));
+    found.iter().copied().rev().max_by_key(|j| long(j))
+}
+
+/// The valid JPEGs of a CR3's `PRVW` and `THMB` boxes, every one: a file may carry more than one
+/// `PRVW`, and the smallest that covers a size is picked from them all.
+#[cfg(feature = "cr3")]
+fn cr3_preview_box_list(bytes: &[u8]) -> Vec<&[u8]> {
+    let mut out: Vec<&[u8]> = Vec::new();
+    let mut walked = 0usize;
+    // the boxes sit outside the media data: only the rest of the file is searched (the media data
+    // is most of the file, and a thumbnail is asked for every photo in view)
+    let file = bytes;
+    // (every top-level `mdat` is left out, not only the first: a PRVW-shaped JPEG in media data is not a
+    // preview; CodeRabbit on #3583)
+    let media = cr3_media_data(file);
+    let whole_file = media.is_empty();
+    let mut regions: Vec<&[u8]> = Vec::new();
+    let mut from = 0usize;
+    for (start, end) in media {
+        if start >= from {
+            regions.extend(file.get(from..start));
+        }
+        from = from.max(end);
+    }
+    regions.extend(file.get(from..));
+    for tag in [b"PRVW", b"THMB"] {
+        // the whole file searched (its media data not found): the first valid box of a kind only, as
+        // the declared one comes before the media data and a later look-alike must not win
+        let mut taken = false;
+        for &bytes in &regions {
+            if whole_file && taken {
+                break;
+            }
+            let mut from = 0;
+            while let Some(i) = bytes.get(from..).and_then(|s| s.windows(4).position(|w| w == tag)).map(|p| p + from) {
+                from = i + 4;
+                let Some(start) = i.checked_sub(4) else { continue };
+                // (the sizes are the file's: checked, a 32-bit build must not wrap them)
+                let be32 = |at: usize| bytes.get(at..at.checked_add(4)?).map(|s| u32::from_be_bytes([s[0], s[1], s[2], s[3]]) as usize);
+                let (Some(size), Some(len)) = (be32(start), start.checked_add(20).and_then(be32)) else { continue };
+                let (Some(j), Some(box_end)) = (start.checked_add(24), start.checked_add(size.max(24))) else { continue };
+                let Some(end) = j.checked_add(len).filter(|e| len >= 4 && *e <= box_end && *e <= bytes.len()) else { continue };
+                let Some(jpeg) = bytes.get(j..end) else { continue };
+                // One that doesn't fit the budget left is skipped; a smaller one later may still fit.
+                if walked.saturating_add(jpeg.len()) > CR3_MAX_WALK {
+                    continue;
+                }
+                walked = walked.saturating_add(jpeg.len());
+                if is_dct_jpeg(jpeg) {
+                    out.push(jpeg);
+                    taken = true;
+                    if whole_file {
+                        break;
+                    }
+                    // (past it: a tag inside its JPEG is not another box)
+                    from = end;
+                }
+            }
+        }
+    }
+    out
+}
+
+/// Where a CR3's top-level `mdat` boxes lie (`start..end` each, `end` clamped to the file, in file
+/// order): the media data, most of the file. Empty when there is none, or the boxes stop making sense
+/// before the first. The metadata and the small previews are in the other top-level boxes.
+#[cfg(feature = "cr3")]
+fn cr3_media_data(bytes: &[u8]) -> Vec<(usize, usize)> {
+    let mut out = Vec::new();
+    let _ = cr3_media_walk(bytes, &mut out);
+    out
+}
+
+/// [`cr3_media_data`]'s walk of the top-level boxes; `None` where they stop making sense.
+#[cfg(feature = "cr3")]
+fn cr3_media_walk(bytes: &[u8], out: &mut Vec<(usize, usize)>) -> Option<()> {
+    let be32 = |at: usize| bytes.get(at..at.checked_add(4)?).map(|s| u64::from(u32::from_be_bytes([s[0], s[1], s[2], s[3]])));
+    let be64 = |at: usize| bytes.get(at..at.checked_add(8)?).map(|s| u64::from_be_bytes([s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]]));
+    let mut at = 0usize;
+    for _ in 0..64 {
+        let size = be32(at)?;
+        let len = match size {
+            // (a box running to the end of the file)
+            0 => u64::try_from(bytes.len().saturating_sub(at)).unwrap_or(u64::MAX),
+            1 => be64(at.checked_add(8)?)?,
+            n => n,
+        };
+        let next = usize::try_from(len).ok().filter(|l| *l >= 8).and_then(|l| at.checked_add(l));
+        if bytes.get(at.checked_add(4)?..at.checked_add(8)?) == Some(b"mdat".as_slice()) {
+            out.push((at, next.unwrap_or(bytes.len()).min(bytes.len())));
+        }
+        at = next.filter(|n| *n < bytes.len())?;
+    }
+    None
 }
 
 fn trim_eoi(s: &[u8]) -> &[u8] {

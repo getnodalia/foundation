@@ -33,6 +33,9 @@
 //! | `nef` | Nikon NEF and NRW: uncompressed, packed, Nikon's Huffman coding (lossless and lossy, 12 and 14 bits), small raw |
 //! | `rw2` | Panasonic RW2, Leica RWL and the older Panasonic / Leica RAW: packed, formats 4 and 6, format 8 prefix-coded strips, 16-bit words |
 //! | `raf` | Fujifilm RAF: uncompressed Bayer and X-Trans, Fujifilm's lossless and lossy compression, lens corrections |
+//! | `orf` | Olympus / OM System ORF: uncompressed 16-bit, 12-bit packed and two-field layouts, 16-byte blocks; compressed refused |
+//! | `arw` | Sony ARW (and SR2 / SRF containers): uncompressed, ARW2, lossless JPEG tiles, ARW6, the encrypted SR2SubIFD, lens corrections |
+//! | `cr3` | Canon CR3: CRX lossless Bayer and C-RAW (lossy), through nodalia-metadata's CR3 container |
 //! | `pef` | Pentax PEF: uncompressed (packed or 16-bit words) and Pentax's Huffman coding (compression 65535) |
 //! | `srw` | Samsung SRW: the uncompressed variants (compression 32769 words, 32770 at 12 bits packed) |
 //! | `hasselblad` | Hasselblad 3FR and FFF (and other CFA TIFFs in the DNG layout without a DNG version): uncompressed and Hasselblad's lossless JPEG; implies `dng` |
@@ -55,8 +58,14 @@
 
 #[cfg(feature = "cr2")]
 mod cr2;
+#[cfg(feature = "cr3")]
+mod cr3;
 #[cfg(feature = "crw")]
 mod crw;
+#[cfg(feature = "cr3")]
+mod crx;
+#[cfg(feature = "cr3")]
+mod crx_wavelet;
 #[cfg(feature = "dng")]
 mod dng;
 #[cfg(feature = "dng")]
@@ -67,6 +76,18 @@ pub mod gaintable;
 #[cfg(feature = "hasselblad")]
 mod hasselblad;
 // (the Huffman difference decoder Pentax, Nikon, Panasonic and Sony codings share)
+#[cfg(feature = "arw")]
+mod arw;
+#[cfg(feature = "arw")]
+mod arw6;
+#[cfg(feature = "arw")]
+mod arw6_curve;
+#[cfg(all(test, feature = "arw"))]
+mod arw6_testenc;
+#[cfg(feature = "arw")]
+mod arw_lens;
+#[cfg(feature = "arw")]
+mod arw_lens_rm6;
 #[allow(dead_code)]
 mod huffman;
 #[cfg(feature = "jxl")]
@@ -74,11 +95,16 @@ mod jxl;
 pub mod kelvin;
 #[cfg(feature = "kodak")]
 mod kodak;
+pub mod lens_metadata;
 pub mod ljpeg;
+/// Optimized lossless JPEG decoder for streams with line-aligned restarts.
+pub mod ljpeg_lines;
+#[cfg(feature = "arw")]
+mod llvc;
 #[cfg(feature = "mef")]
 mod mef;
 #[cfg(feature = "mrw")]
-mod mrw;
+pub mod mrw;
 #[cfg(feature = "nef")]
 mod nef;
 #[cfg(feature = "nef")]
@@ -86,6 +112,8 @@ mod nef_lens;
 #[cfg(feature = "nef")]
 mod nefc;
 pub mod opcodes;
+#[cfg(feature = "orf")]
+mod orf;
 #[cfg(feature = "pef")]
 mod pef;
 mod preview;
@@ -100,6 +128,9 @@ mod rafc;
 mod rw2;
 #[cfg(feature = "dng")]
 pub mod semantic;
+pub mod sparse;
+#[cfg(feature = "arw")]
+mod sr2;
 // (the TIFF pixel plumbing every TIFF-based maker shares; DNG is its only user so far)
 #[allow(dead_code)] // each maker uses some of these helpers; which are live depends on the features
 mod shared;
@@ -112,10 +143,13 @@ mod unpack;
 
 #[cfg(feature = "dng")]
 pub use dngwrite::{DngCompression, DngWriteOptions, write_dng};
+pub use lens_metadata::LensMetadata;
 pub use opcodes::{Opcode, OpcodeLists};
+#[cfg(feature = "arw")]
+pub use preview::embedded_preview_dynamic_range_optimized;
 pub use preview::{
-    PREVIEW_PREFIX, PreviewColorSpace, PreviewRange, bounded_preview, embedded_preview, embedded_preview_color_space, embedded_preview_covering,
-    embedded_preview_from_range,
+    DecodedPreview, PREVIEW_PREFIX, PreviewColorSpace, PreviewRange, bounded_preview, embedded_jpeg_preview, embedded_jpeg_preview_covering,
+    embedded_jxl_preview, embedded_preview, embedded_preview_color_space, embedded_preview_covering, embedded_preview_from_range,
 };
 #[cfg(feature = "dng")]
 pub use semantic::{SemanticMask, semantic_masks};
@@ -210,7 +244,7 @@ pub(crate) fn checked_pixel_count(width: u64, height: u64) -> Option<u64> {
 }
 
 /// Exif `CFAPattern` (in the Exif IFD), which the Pentax family states its layout with.
-const EXIF_CFA_PATTERN: u16 = 0xa302;
+pub(crate) const EXIF_CFA_PATTERN: u16 = 0xa302;
 
 /// How the stored rows and columns map onto the upright picture: the eight Exif `Orientation` values.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -351,6 +385,9 @@ impl RawFormat {
             || (matches!(self, RawFormat::Nef | RawFormat::Nrw) && cfg!(feature = "nef"))
             || (self == RawFormat::Rw2 && cfg!(feature = "rw2"))
             || (self == RawFormat::Raf && cfg!(feature = "raf"))
+            || (self == RawFormat::Orf && cfg!(feature = "orf"))
+            || (self == RawFormat::Arw && cfg!(feature = "arw"))
+            || (self == RawFormat::Cr3 && cfg!(feature = "cr3"))
             || (self == RawFormat::Pef && cfg!(feature = "pef"))
             || (self == RawFormat::Srw && cfg!(feature = "srw"))
     }
@@ -601,6 +638,20 @@ pub fn probe_info(bytes: &[u8]) -> Result<RawInfo> {
     probe_info_with(bytes, &Limits::default())
 }
 
+/// Orientation of a supported raw, read through the same format parser as [`probe_info`].
+pub fn orientation(bytes: &[u8]) -> Option<u16> {
+    if let Ok(info) = probe_info(bytes) {
+        return Some(info.orientation.to_exif());
+    }
+    // A damaged/unsupported pixel IFD must not hide usable orientation metadata from preview
+    // fallback. CR3 keeps IFD0 in its CMT1 box; TIFF-based raws keep it at the file start.
+    #[cfg(feature = "cr3")]
+    if probe(bytes) == Some(RawFormat::Cr3) {
+        return cr3::orientation(bytes);
+    }
+    nodalia_tiff::Tiff::parse(bytes).ok()?.ifds.first()?.u16(nodalia_tiff::tags::ORIENTATION).or(Some(1))
+}
+
 /// [`probe_info`] within `limits`: a file that declares more than they allow fails as [`decode_with`] would.
 pub fn probe_info_with(bytes: &[u8], limits: &Limits) -> Result<RawInfo> {
     decode_in(bytes, Mode::Header, limits).map(RawImage::into_info)
@@ -618,6 +669,17 @@ pub(crate) enum Mode {
 
 #[cfg_attr(not(any(feature = "dng", feature = "crw")), allow(unused_variables))]
 fn decode_in(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawImage> {
+    let mut raw = decode_format(bytes, mode, limits)?;
+    if mode == Mode::Header {
+        // the samples weren't read, so no source a decoder reported for a measured level holds
+        raw.level_sources = LevelSources::default();
+    }
+    Ok(raw)
+}
+
+fn decode_format(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawImage> {
+    // (unused when every format feature is off)
+    let _ = (mode, limits);
     match probe(bytes).ok_or(RawError::NotRaw)? {
         #[cfg(feature = "dng")]
         RawFormat::Dng => dng::decode(bytes, mode, limits),
@@ -641,6 +703,12 @@ fn decode_in(bytes: &[u8], mode: Mode, limits: &Limits) -> Result<RawImage> {
         RawFormat::Rw2 => rw2::decode(bytes, mode, limits),
         #[cfg(feature = "raf")]
         RawFormat::Raf => raf::decode(bytes, mode, limits),
+        #[cfg(feature = "orf")]
+        RawFormat::Orf => orf::decode(bytes, mode, limits),
+        #[cfg(feature = "arw")]
+        RawFormat::Arw => arw::decode(bytes, mode, limits),
+        #[cfg(feature = "cr3")]
+        RawFormat::Cr3 => cr3::decode(bytes, mode, limits),
         #[cfg(feature = "pef")]
         RawFormat::Pef => pef::decode(bytes, mode, limits),
         #[cfg(feature = "srw")]
@@ -671,6 +739,10 @@ pub struct RawInfo {
     /// CinemaDNG frame tags (empty for a still).
     #[serde(default)]
     pub cinema: CinemaTags,
+    /// Lens-correction tables the file records, decoded but not necessarily applied (see [`lens_metadata`]); only
+    /// validated components are in `opcodes`.
+    #[serde(default)]
+    pub lens_metadata: LensMetadata,
     /// See [`RawImage::pixel_aspect`].
     #[serde(default = "square_pixels")]
     pub pixel_aspect: f32,
@@ -729,6 +801,11 @@ pub struct Cfa {
     pub height: usize,
     /// `width × height` colour indices, row-major, anchored at image pixel (0, 0).
     pub pattern: Vec<u8>,
+    /// The sensor-space coordinate where this periodic pattern is anchored.
+    #[serde(default)]
+    pub origin_x: usize,
+    #[serde(default)]
+    pub origin_y: usize,
 }
 
 impl Cfa {
@@ -745,13 +822,13 @@ impl Cfa {
                 })
             })
             .collect::<Option<_>>()?;
-        (p.len() == 4).then_some(Cfa { width: 2, height: 2, pattern: p })
+        (p.len() == 4).then_some(Cfa { width: 2, height: 2, pattern: p, origin_x: 0, origin_y: 0 })
     }
     /// A 2×2 Bayer layout named in code (`"RGGB"`, `"BGGR"`, `"GRBG"`, `"GBRG"`). Only for literal
     /// names (tested below); anything else falls back to RGGB instead of failing.
     #[cfg_attr(not(feature = "crw"), allow(dead_code))]
     pub(crate) fn bayer_static(s: &'static str) -> Cfa {
-        Cfa::bayer(s).unwrap_or(Cfa { width: 2, height: 2, pattern: vec![0, 1, 1, 2] })
+        Cfa::bayer(s).unwrap_or(Cfa { width: 2, height: 2, pattern: vec![0, 1, 1, 2], origin_x: 0, origin_y: 0 })
     }
     /// The Fujifilm X-Trans 6×6 layout (as commonly documented), anchored at (0, 0).
     pub fn xtrans() -> Cfa {
@@ -766,16 +843,20 @@ impl Cfa {
                 })
             })
             .collect();
-        Cfa { width: 6, height: 6, pattern }
+        Cfa { width: 6, height: 6, pattern, origin_x: 0, origin_y: 0 }
     }
     #[inline]
     pub fn color_at(&self, x: usize, y: usize) -> u8 {
-        self.pattern[(y % self.height) * self.width + (x % self.width)]
+        let relative = |v: usize, origin: usize, period: usize| {
+            let (v, origin) = (v % period, origin % period);
+            if v >= origin { v - origin } else { period - (origin - v) }
+        };
+        self.pattern[relative(y, self.origin_y, self.height) * self.width + relative(x, self.origin_x, self.width)]
     }
     /// The same pattern anchored at `(dx, dy)` of the current anchor (e.g. after cropping to an active area).
     pub fn shifted(&self, dx: usize, dy: usize) -> Cfa {
         let pattern = (0..self.height).flat_map(|y| (0..self.width).map(move |x| (x, y))).map(|(x, y)| self.color_at(x + dx, y + dy)).collect();
-        Cfa { width: self.width, height: self.height, pattern }
+        Cfa { width: self.width, height: self.height, pattern, origin_x: 0, origin_y: 0 }
     }
     pub fn is_bayer(&self) -> bool {
         if self.width != 2 || self.height != 2 {
@@ -792,7 +873,7 @@ impl Cfa {
     }
     /// Pattern name like `"RGGB"` for 2×2 patterns.
     pub fn name(&self) -> String {
-        self.pattern.iter().map(|&c| ['R', 'G', 'B', '?'][c.min(3) as usize]).collect()
+        self.shifted(0, 0).pattern.iter().map(|&c| ['R', 'G', 'B', '?'][c.min(3) as usize]).collect()
     }
     fn valid(&self) -> bool {
         self.width > 0 && self.height > 0 && self.width <= 16 && self.height <= 16 && self.pattern.len() == self.width * self.height
@@ -858,6 +939,35 @@ impl BlackLevel {
     }
 }
 
+/// Where a black or white level came from. Rendering ignores it; code that compares or stacks frames can refuse
+/// a [`LevelSource::Fallback`].
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum LevelSource {
+    /// The decoder doesn't say (every decoder that hasn't been annotated yet).
+    #[default]
+    Unknown,
+    /// Stated by the file: a tag, a maker note or a table.
+    Metadata,
+    /// Measured from the file's masked (optical black) samples.
+    MaskedPixels,
+    /// Inferred from the picture samples, e.g. a saturation plateau.
+    Inferred,
+    /// Neither read from the file nor measured from it: a default (0 or a format constant for black, the full bit
+    /// range or a format constant for white). Not necessarily wrong: a frame with no clipped highlights has no
+    /// saturation plateau to find.
+    Fallback,
+}
+
+/// The [`LevelSource`] of a [`RawImage`]'s black and white levels.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub struct LevelSources {
+    /// Where [`RawImage::black`] came from.
+    pub black: LevelSource,
+    /// Where [`RawImage::white`] came from.
+    pub white: LevelSource,
+}
+
 /// DNG colour tags (DNG 1.7 chapter 6). Matrices are 3×3 (three-colour cameras).
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct ColorData {
@@ -888,6 +998,20 @@ pub struct ColorData {
     /// matrices a Kelvin scale ([`kelvin`]). Not a DNG tag: the DNG writer does not write it.
     #[serde(default)]
     pub kelvin_presets: Option<kelvin::KelvinPresets>,
+}
+
+/// Bounded diagnostics for decisions actually made by a raw decoder. An absent optional tag
+/// does not itself set a notice; hosts can translate these flags into their own warning text
+/// without inferring a fallback from missing metadata or retaining source-controlled strings.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct RawNotices {
+    /// Explicit default-crop metadata needed correction or a fallback to the active area.
+    pub default_crop_adjusted: bool,
+    /// A source profile gain table could not be used and was omitted from the decoded image.
+    pub gain_table_omitted: bool,
+    /// The CFA layout was selected by a decoder fallback instead of usable source metadata.
+    pub assumed_cfa: bool,
 }
 
 /// A decoded raw image.
@@ -926,6 +1050,17 @@ pub struct RawImage {
     /// CinemaDNG frame tags (empty for a still).
     #[serde(default)]
     pub cinema: CinemaTags,
+    /// Lens-correction tables the file records, decoded but not necessarily applied (see [`lens_metadata`]); only
+    /// validated components are in `opcodes`.
+    #[serde(default)]
+    pub lens_metadata: LensMetadata,
+    /// Where `black` and `white` came from. Both [`LevelSource::Unknown`] after a headers-only decode, whose
+    /// measured levels are placeholders.
+    #[serde(default)]
+    pub level_sources: LevelSources,
+    /// Fixed-size decoder decisions, separate from ordinary missing optional metadata.
+    #[serde(default)]
+    pub notices: RawNotices,
 }
 
 impl RawImage {
@@ -946,6 +1081,7 @@ impl RawImage {
             opcodes: self.opcodes.clone(),
             camera: self.camera.clone(),
             cinema: self.cinema.clone(),
+            lens_metadata: self.lens_metadata.clone(),
             pixel_aspect: self.pixel_aspect,
         }
     }
@@ -967,6 +1103,7 @@ impl RawImage {
             opcodes: self.opcodes,
             camera: self.camera,
             cinema: self.cinema,
+            lens_metadata: self.lens_metadata,
             pixel_aspect: self.pixel_aspect,
         }
     }
@@ -1054,5 +1191,23 @@ mod checked_arithmetic_tests {
         }
         assert_eq!(Orientation::from_exif(0), Orientation::Normal);
         assert_eq!(Orientation::from_exif(9), Orientation::Normal);
+    }
+}
+
+#[cfg(test)]
+mod raw_notices_tests {
+    use super::*;
+
+    #[test]
+    fn missing_notices_default_to_no_claims_and_explicit_flags_are_independent() {
+        type Error = serde::de::value::Error;
+        let empty = serde::de::value::MapDeserializer::<_, Error>::new(std::iter::empty::<(&str, bool)>());
+        assert_eq!(RawNotices::deserialize(empty).unwrap(), RawNotices::default());
+        let one = serde::de::value::MapDeserializer::<_, Error>::new([("assumed_cfa", true)].into_iter());
+        let notices = RawNotices::deserialize(one).unwrap();
+        let copied = notices;
+        assert_eq!(notices, copied);
+        assert_eq!(notices, RawNotices { assumed_cfa: true, default_crop_adjusted: false, gain_table_omitted: false });
+        assert!(!std::mem::needs_drop::<RawNotices>(), "decoder notices own no allocated strings");
     }
 }

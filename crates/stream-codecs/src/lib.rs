@@ -6,16 +6,20 @@
 //!   encodings (`ASCII85Decode`, `ASCIIHexDecode`, `RunLengthDecode`; PackBits).
 //! - [`predictor`]: TIFF horizontal differencing and the PNG row filters.
 //! - [`ccitt`]: CCITT Group 3 and Group 4 fax decoding, bounded, and Group 4 encoding.
-//! - [`jbig2`]: lossless JBIG2 encoding (generic regions, symbol dictionaries, a dictionary
-//!   shared by a group of images). Decoding is `hayro-jbig2`'s.
+//! - [`jbig2`]: JBIG2 decoding through `hayro-jbig2`, bounded, and lossless encoding (generic
+//!   regions, symbol dictionaries, a dictionary shared by a group of images).
 //!
 //! The crate knows no container: a caller hands it bytes and parameters. A PDF `/Filter` chain
 //! (order, limits across stages, Flate) is `nodalia_pdf::filters`, built on this crate.
 //!
 //! Every decoder is bounded by a caller-supplied output limit and never panics on malformed
 //! input. A decoder that fails returns what it decoded before the damage ([`Failure`]), so a
-//! caller can choose to keep it. CCITT decoding spends from an allowance the caller shares
-//! across a run of images ([`pay`]); it does not decode without one:
+//! caller can choose to keep it. CCITT and JBIG2 decoding spend from an allowance the caller
+//! shares across a run of images ([`pay`]); neither decodes without one:
+//!
+//! ```compile_fail
+//! let _ = nodalia_stream_codecs::decode_jbig2(&[], None, 1, 1, 1 << 20);
+//! ```
 //!
 //! ```compile_fail
 //! let _ = nodalia_stream_codecs::decode_ccitt(&[], &nodalia_stream_codecs::CcittParams::default(), 1);
@@ -23,6 +27,7 @@
 //!
 //! ```
 //! let mut work = 1 << 20;
+//! assert!(nodalia_stream_codecs::decode_jbig2_within(&[], None, 1, 1, 1 << 20, &mut work).is_err());
 //! let p = nodalia_stream_codecs::CcittParams { columns: 8, ..Default::default() };
 //! assert!(nodalia_stream_codecs::decode_ccitt_within(&[], &p, 1, &mut work).is_ok());
 //! ```
@@ -37,8 +42,8 @@ mod mq;
 pub mod predictor;
 pub mod runlength;
 
-pub use ccitt::{CcittParams, MAX_CCITT_COLUMNS, MAX_G4_COLUMNS, decode_ccitt_within, encode_g4};
-pub use jbig2::{MAX_JBIG2_COLUMNS, MAX_JBIG2_PIXELS, SharedJbig2, encode_jbig2, encode_jbig2_generic, encode_jbig2_shared};
+pub use ccitt::{CcittErrorKind, CcittParams, CcittRawOutput, MAX_CCITT_COLUMNS, MAX_G4_COLUMNS, decode_ccitt_raw, decode_ccitt_within, encode_g4};
+pub use jbig2::{MAX_JBIG2_COLUMNS, MAX_JBIG2_PIXELS, SharedJbig2, decode_jbig2_within, encode_jbig2, encode_jbig2_generic, encode_jbig2_shared};
 
 /// Parameters of the predictors and of LZW, as a PDF `/DecodeParms` dictionary gives them
 /// (ISO 32000-2 Tables 8–9); TIFF's `Predictor`, `SamplesPerPixel`, `BitsPerSample` and

@@ -13,6 +13,7 @@ pub enum DngCompression {
     Uncompressed,
     /// Lossless JPEG tiles of `tile × tile` pixels (`tile` even). CFA tiles are encoded as two interleaved
     /// components of half the tile width (the common DNG layout), linear data with one component per sample.
+    /// Edges above 2048 (after even alignment) are rejected before padding the tile.
     Lj92 {
         tile: u32,
     },
@@ -34,6 +35,11 @@ const DEFLATE_LEVEL: u8 = 1;
 /// a multi-gigabyte buffer and billions of edge-replicate iterations. 2048² samples (≤ 24 MB of f32) is far
 /// above the 256 default and every real tile this writer makes.
 const MAX_DEFLATE_TILE: u32 = 2048;
+
+// Match the existing padded Deflate edge budget. JPEG's 16-bit dimension limit alone would permit
+// a 65534²-sample allocation even for a tiny source image. At most four validated channels make
+// this bound at most 32 MiB of u16 padding per tile, before encoder scratch/output.
+const MAX_LJ92_TILE: usize = MAX_DEFLATE_TILE as usize;
 
 /// `tile` aligned down to a multiple of 16 and clamped to [`MAX_DEFLATE_TILE`].
 fn deflate_tile(tile: u32) -> usize {
@@ -153,6 +159,7 @@ pub fn write_dng(raw: &RawImage, opts: &DngWriteOptions) -> Result<Vec<u8>> {
         ifd.set(t::BLACK_LEVEL_DELTA_V, Value::SRational(b.delta_v.iter().map(|&v| srational(v as f64)).collect()));
     }
     let white: Vec<u32> = (0..cpp).map(|s| raw.white_at(s).round().clamp(0.0, u32::MAX as f32) as u32).collect();
+    let max_white = white.iter().copied().max().unwrap_or(0);
     if matches!(raw.data, RawData::F32(_)) {
         ifd.set(t::WHITE_LEVEL, rat_vec(&(0..cpp).map(|s| raw.white_at(s) as f64).collect::<Vec<_>>()));
     } else {
@@ -216,8 +223,9 @@ pub fn write_dng(raw: &RawImage, opts: &DngWriteOptions) -> Result<Vec<u8>> {
             ifd.set_image(ImageData::Strips { rows_per_strip: h as u32, strips: vec![bytes] });
         }
         (RawData::U16(v), _) => {
-            let maxv = v.iter().copied().max().unwrap_or(0);
-            let bits = (16 - maxv.leading_zeros()).max(raw.bits.min(16)).max(2) as u8;
+            // Dark frames may never reach the sensor's white level, which must still fit.
+            let maxv = u32::from(v.iter().copied().max().unwrap_or(0)).max(max_white);
+            let bits = (32 - maxv.leading_zeros()).max(raw.bits).clamp(2, 16) as u8;
             ifd.set(
                 t::BITS_PER_SAMPLE,
                 Value::Short(vec![if matches!(opts.compression, DngCompression::Uncompressed) { 16 } else { bits as u16 }; cpp]),
@@ -268,7 +276,7 @@ pub fn write_dng(raw: &RawImage, opts: &DngWriteOptions) -> Result<Vec<u8>> {
                 }
                 DngCompression::Lj92 { tile } => {
                     let tile = (tile.max(2) & !1) as usize;
-                    if tile > 65534 {
+                    if tile > MAX_LJ92_TILE {
                         return Err(RawError::Limit("tile too large"));
                     }
                     ifd.set(t::COMPRESSION, Value::Short(vec![compression::JPEG]));
@@ -430,6 +438,58 @@ mod tests {
     use super::*;
     use crate::{BlackLevel, OpcodeLists, RawData, RawFormat, RawImage, Rect};
 
+    fn tiny_raw() -> RawImage {
+        let (w, h) = (8usize, 8usize);
+        let full = Rect::new(0, 0, w, h);
+        RawImage {
+            format: RawFormat::Dng,
+            width: w,
+            height: h,
+            cpp: 1,
+            data: RawData::U16((0..64).map(|i| i as u16 * 129).collect()),
+            cfa: None,
+            bits: 14,
+            black: BlackLevel::uniform(0.0),
+            white: vec![16383.0],
+            active_area: full,
+            crop: full,
+            orientation: crate::Orientation::Normal,
+            color: crate::ColorData::default(),
+            wb_multipliers: None,
+            linearized: false,
+            pixel_aspect: 1.0,
+            opcodes: OpcodeLists::default(),
+            camera: Default::default(),
+            cinema: Default::default(),
+            lens_metadata: Default::default(),
+            level_sources: Default::default(),
+            notices: crate::RawNotices::default(),
+        }
+    }
+
+    #[test]
+    fn oversized_lj92_padding_is_rejected() {
+        let raw = tiny_raw();
+        // The near-boundary case previously completed with an oversized padded tile; keep it first
+        // so reverting the guard fails without trying the multi-gigabyte cases.
+        for tile in [2050, 65534, u32::MAX] {
+            let opts = DngWriteOptions { compression: DngCompression::Lj92 { tile }, ..Default::default() };
+            assert!(matches!(write_dng(&raw, &opts), Err(RawError::Limit("tile too large"))));
+        }
+    }
+
+    #[test]
+    fn default_lj92_tiles_preserve_samples() {
+        let raw = tiny_raw();
+        let bytes = write_dng(&raw, &DngWriteOptions::default()).expect("normal tiles write");
+        let back = crate::decode(&bytes).expect("normal tiles decode");
+        assert_eq!((back.width, back.height), (raw.width, raw.height));
+        match (&back.data, &raw.data) {
+            (RawData::U16(actual), RawData::U16(expected)) => assert_eq!(actual, expected),
+            _ => panic!("integer DNG changed sample type"),
+        }
+    }
+
     /// Deflate tiles of `tile × tile` pad into a square buffer that grows with the square: a
     /// caller-supplied edge of `u32::MAX` would make the writer pad an 8 × 8 image into billions of
     /// edge-replicate iterations and a multi-gigabyte buffer. The clamp keeps the bounded shape — same
@@ -458,6 +518,9 @@ mod tests {
             opcodes: OpcodeLists::default(),
             camera: Default::default(),
             cinema: Default::default(),
+            lens_metadata: Default::default(),
+            level_sources: Default::default(),
+            notices: crate::RawNotices::default(),
         };
         let opts = |tile: u32| DngWriteOptions { compression: DngCompression::Deflate { tile, half: false }, ..DngWriteOptions::default() };
         let hostile = write_dng(&raw, &opts(u32::MAX)).expect("the clamped tile writes");

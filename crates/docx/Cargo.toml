@@ -11,6 +11,8 @@ repository.workspace = true
 workspace = true
 
 [dependencies]
+nodalia-drawingml = { workspace = true }
+nodalia-math = { workspace = true }
 nodalia-offcrypto = { workspace = true }
 nodalia-opc = { workspace = true }
 nodalia-wordmodel = { workspace = true }
