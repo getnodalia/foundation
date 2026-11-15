@@ -17,11 +17,40 @@ A Cargo workspace (edition 2024, resolver 3). Each library is a crate under `cra
 (`license.workspace = true`, and so on) and `[lints] workspace = true`. Register each crate in
 `[workspace.dependencies]` in the root `Cargo.toml`.
 
-Apps depend on a crate by git:
+## Use a released version
+
+The first coordinated release is **[v0.1.0](https://github.com/storytold/craft-libs/releases/tag/v0.1.0)**.
+It gives consumers a fixed baseline while development continues on `main`. All five crates
+share this version. They require Rust 1.95 or later; the UI integrations use egui 0.36.
+
+Add only the crates you need, using the same tag for every nodalia-libs dependency:
 
 ```toml
-craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commit>" }
+[dependencies]
+nodalia-ui = { git = "https://github.com/getnodalia/foundation", tag = "v0.1.0" }
+nodalia-settings = { git = "https://github.com/getnodalia/foundation", tag = "v0.1.0" }
+# Optional, for egui close handling and the macOS application menu:
+nodalia-quit = { git = "https://github.com/getnodalia/foundation", tag = "v0.1.0", features = ["menu"] }
 ```
+
+`nodalia-atomic` and `nodalia-print` use the same dependency syntax. Enable `nodalia-ui`'s
+`serde` feature if you need to serialize its docking layout. These are Git releases;
+crates.io publication is deferred.
+
+Release tags are never moved or reused. For a commit pin, resolve the tag with
+`git ls-remote https://github.com/getnodalia/foundation 'refs/tags/v0.1.0^{}'` and replace
+`tag = "v0.1.0"` with `rev = "<full commit SHA>"` on every nodalia-libs dependency.
+Use either `tag` or `rev`, not both. An existing commit pin keeps working; switching to this
+release may require adapting to changes since that commit.
+
+Commit your application's `Cargo.lock` and build with `cargo build --locked` for reproducible
+Rust dependency resolution. A Git pin fixes nodalia-libs source, not every transitive dependency.
+A library's own lockfile does not constrain its downstream consumers. Upgrade deliberately:
+read the release notes, update all nodalia-libs pins together, refresh the lockfile with
+`cargo check`, and run your application's tests and affected workflows before committing.
+
+See the [release notes](CHANGELOG.md) for included functionality and known limits, and the
+[versioning policy](docs/versioning.md) for compatibility guarantees and release checks.
 
 ## Libraries
 
@@ -91,6 +120,13 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   pages and version detection, and written back; and `model`, the drawing above the tags (header
   variables, tables, blocks, layouts, entities) and its writer (R12 to 2018), merged from Forja's and Pluma's readers. Bounded
   on hostile input. Mapping the model onto a document stays in each app.
+- [`nodalia-lamina-format`](crates/lamina-format/README.md): the Lámina `.deckcraft` package:
+  identity and sniffing, the `presentation.json` envelope with the presentation as a type
+  parameter, NaN-safe JSON and the reader for older files with `null` numbers, member names and
+  compression, and bounded, budgeted member reads. The presentation model and its mapping stay in Lámina.
+- [`nodalia-dwg`](crates/dwg/README.md): bounded byte-level DWG↔DXF conversion with diagnostics,
+  capped output and an optional child-process worker; the `acadrust` dependency remains isolated
+  behind bytes and is unavailable on wasm32 and FreeBSD/aarch64.
 - [`nodalia-ecproj-format`](crates/ecproj-format/README.md): the envelope of Pulso `.ecproj`
   project files: `savedBy`, the schema version and its check, and the file object with the
   project and its saved view as type parameters. The project model stays in Pulso.
@@ -111,6 +147,7 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   and channel names, the channels that make a colour picture, and Cryptomatte IDs, metadata keys,
   manifests and rank channels. The optional `decode` feature adds bounded part listing, flat
   decoding (scan lines, tiles, every compression of the `exr` crate) and writing.
+- [`nodalia-flags`](crates/flags/README.md): Feature flags shared by the Craft apps and the ArtCraft Launcher: one per-user `ArtCraft/flags.toml`, a `NODALIA_FLAGS` override, every flag off by default (`AI-MCP`, `AI-MODELS`).
 - [`nodalia-flow`](crates/flow/README.md): the flow model every text format maps to (paragraphs with a kind, lists and formatted spans; tables; pictures, fields, notes, equations), converted to and from a nodalia-wordmodel `Document`.
 - [`nodalia-font-catalog`](crates/font-catalog/README.md): the installed fonts on every platform
   (font folders, fontconfig and Flatpak host folders, CoreText, DirectWrite, the font store),
@@ -173,6 +210,8 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   decoder is bounded and returns its partial output on damage. From Papel; a PDF filter chain
   is built on it in `nodalia-pdf`.
 - [`nodalia-timeline`](crates/timeline/README.md): editorial timeline interchange: exact media time and SMPTE timecode, import/export reports, media path and `file://` URL handling, Avid Log Exchange (ALE) and CMX 3600 EDL documents, format detection. From Toma.
+- [`nodalia-time`](crates/time/README.md): exact rational ticks and SMPTE time across media, with a `soundcraft` compatibility module retaining SoundCraft's sample-index timebase, tempo maps, grids and session serialization semantics.
+- [`nodalia-sound-format`](crates/sound-format/README.md): SoundCraft's typed `.scraft` session schema, versioned reader/writer, hostile-input validation, and `.scraftz` bundle reader/writer. Engine and UI mapping stays in SoundCraft.
 - [`nodalia-metadata`](crates/metadata/README.md): photo metadata, from Luz: EXIF (read and write,
   maker-note lens and focus point, every tag by name), IPTC-IIM, XMP packets (read, write, and a merge
   that keeps what another program wrote), GPX track logs, and the blocks that carry them in JPEG, PNG,
@@ -196,9 +235,10 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   sockets: session, requests of method calls with back-references, responses, ids, address
   templates, credentials and the judgement of HTTP answers, over any HTTP implementation. Bounded
   on hostile answers; what a program asks and makes of the answers stays in it.
-- [`nodalia-jpeg`](crates/jpeg/README.md): clean-room decoder for 12-bit and arithmetic-coded
-  JPEG (T.81 SOF0/SOF1 at 12 bits, SOF9, SOF10), from Lienzo, and a frame probe for routing.
-  Metadata stays in each app.
+- [`nodalia-jpeg`](crates/jpeg/README.md): clean-room JPEG decoder for 12-bit and arithmetic-coded
+  frames (T.81 SOF0/SOF1 at 12 bits, SOF9, SOF10), band decoding, and an optimized 8-bit baseline
+  encoder, from Lienzo; includes a frame probe for routing. Metadata interpretation stays in
+  each app.
 - [`nodalia-raster-codecs`](crates/raster-codecs/README.md): small raster formats, one module each,
   from Lienzo: DDS (BC1 to BC3, read and write), DICOM, FITS (read and write), IFF/ILBM (read
   and write), PCX, PNM/PAM/PFM (read and write) and XPM, into one flat image type. Bounded and
@@ -241,6 +281,9 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
   header fields, MIME parts and multiparts, encoded-words, RFC 2231 parameters, base64 and
   quoted-printable, character sets, address lists, dates, mbox files and the `multipart/related`
   lookups of MHT web archives. What a message means (body, attachments, flags) stays in each app.
+- [`nodalia-openpgp`](crates/openpgp/README.md): OpenPGP as mail carries it: PGP/MIME and cleartext
+  Digital signatures checked, attached Public keys and `Autocrypt:` headers read, a secret key
+  file inspected without using it. Built on rPGP; no I/O, and every size and count is capped.
 - [`nodalia-odf`](crates/odf/README.md): OpenDocument packages (ODF 1.3 Part 2), read and written: the ZIP container with its `mimetype` and manifest within limits, password protection (AES-256-CBC with PBKDF2, as LibreOffice writes it) and flat single-file documents. With the `text` feature, OpenDocument Text documents read into and written from the nodalia-flow model.
 - [`nodalia-prc`](crates/prc/README.md): a reader for PRC (ISO 14739-1), the 3D model format of PDF 3D
   annotations: container, bit-level primitives, schema, tessellations and the product tree as
@@ -254,6 +297,10 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
 - [`nodalia-lienzo-format`](crates/lienzo-format/README.md): the envelope of Lienzo's `.pcraft`
   bundle: `Manifest<D>` with the document as a type parameter, `TileRef`, the entry paths, the
   manifest decode limits and the migration runner. The document model stays in Lienzo.
+- [`nodalia-pkcs7`](crates/pkcs7/README.md): the formats of digital signatures, read, verified and
+  written: ASN.1 DER, X.509 certificates and chains, CMS SignedData (PKCS #7), PKCS #12 identity
+  files, RFC 3161 timestamps, and CRL / OCSP revocation evidence. What a signature means for a
+  document or a message stays in each app.
 - [`nodalia-penpot`](crates/penpot/README.md): clean-room reader and writer for the Penpot 2.x export
   container (`.penpot`): the ZIP archive, its manifest, the per-file, per-page and per-shape JSON
   members and media objects, as the JSON the file holds. Bounded on hostile input. Carved from
@@ -288,6 +335,8 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
 - [`nodalia-sheet`](crates/sheet/README.md): spreadsheet vocabulary shared by `nodalia-xls`, `nodalia-xlsx` and `nodalia-ods`: cell positions and A1 text, cell values and error values, sheet-name quoting, Excel's built-in number formats and indexed colour palette. Not a file format; no dependencies.
 - [`nodalia-sf2`](crates/sf2/README.md): SoundFont 2 (`.sf2`) reader: the sample pool and, per preset, the key and velocity regions a note sounds, with tuning, loop points, pan, level and volume envelope resolved from the preset and instrument zones. Bounded on hostile input. From LoopCraft.
 - [`nodalia-silhouette-studio`](crates/silhouette-studio/src/lib.rs): bounded, fail-closed reader for Silhouette Studio `.studio` and `.studio3` documents: outlines, line colours and page size in millimetres. Protected designs are refused.
+- [`nodalia-stencil-format`](crates/stencil-format/README.md): the versioned `.stencilcraft` JSON wire schema and envelope: required members, version 1 defaults, optional fields, and header checks.
+- `nodalia-stencil-document`: StencilCraft's typed document model, geometry helpers, validation, and native `.stencilcraft` codec.
 - [`nodalia-sketch`](crates/sketch/README.md): clean-room reader for the `.sketch` container (Sketch 48 and newer): the ZIP archive, the version cut, `document.json`, the pages in document order and images, as the JSON the file holds. Bounded on hostile input. Carved from Trama.
 - [`nodalia-svg`](crates/svg/src/lib.rs): SVG. `sniff` recognises SVG and SVGZ data; `svgz` unpacks
   SVGZ within a byte limit, decodes UTF-8, UTF-16 and ISO 8859-1, and compresses; `guard` bounds
@@ -303,6 +352,9 @@ craft-<name> = { git = "https://github.com/getnodalia/foundation", rev = "<commi
 - [`nodalia-text`](crates/text/README.md): text processing below the composer. Its `hyphen` module finds
   hyphenation points, with a bundled US English dictionary and patterns and optional hypher patterns
   for 47 more languages (one cargo feature each).
+- [`nodalia-texture`](crates/texture/README.md): linear float image planes, gray or RGBA, with
+  nearest and bilinear sampling that repeats or clamps, resizing and display conversion. Sizes are
+  bounded by `Limits`. From MaterialCraft.
 - [`nodalia-ui`](crates/ui/README.md): SVG catalogs, icon buttons, tabs, pane controls, transactional docking, print settings and theme helpers for egui frontends;
   assets, themes, localization and command handling stay in each app. Requires Rust 1.95 or later.
 - [`nodalia-vcard`](crates/vcard/README.md): vCard contacts, from MailCraft: vCard 2.1, 3.0 and 4.0 read
