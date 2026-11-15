@@ -2422,30 +2422,3 @@ calendar weekday	We	on
 	“{name}” is protected. Enter a password to open it.	”{name}” är skyddad. Ange ett lösenord för att öppna den.
 	… and {n} more	… och {n} till
 	−LOC	−LOC
-# The rows above that name the app, under its Nodalia name, Papel.
-	About Papel	Om Papel
-	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Filer du öppnar i Papel visas här. Släpp en PDF var som helst för att öppna den.
-	Papel can't check this signature yet: {}.	Papel kan inte kontrollera den här signaturen ännu: {}.
-	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel stängdes inte av normalt. De här dokumenten hade ändringar som sparades automatiskt:
-	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel ritar utan grafikprocessor, så det kan bli långsamt. Att uppdatera grafikdrivrutinen kan hjälpa.
-	Papel on GitHub	Papel på GitHub
-	Papel web page	Papels webbsida
-	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel fungerar offline. Ingen telemetri, inget konto och ingen molnbearbetning om du inte lägger till en leverantör.
-	Papel {c} is up to date.	Papel {c} är aktuell.
-	Papel {v} is available.	Papel {v} är tillgänglig.
-	Reopen the files that were open when Papel last closed	Öppna de filer som var öppna när Papel senast stängdes
-	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Signera ett vitt papper och fotografera det i ljust, jämnt ljus (använd blixten). Välj fotot eller släpp det här: Papel hittar signaturen och tar bort pappret.
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Textigenkänningen är inte installerad: modellfilerna saknas. Installera om Papel, eller ställ in PDFCRAFT_MODELS på mappen som innehåller dem.
-	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Typsnitten som Papel skriver med kan inte rita ”{c}” ({code}), så det visas som ? i alla PDF-läsare. Texten sparas.
-	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Formuläret begär att skickas till {u}; Papel skickar inte formulärdata. Spara dokumentet för att behålla det du fyllt i.
-	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Nyckeln finns i macOS nyckelring, som kan fråga om Papel får använda den.
-	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Nyckeln finns i Windows certifikatarkiv, som kan fråga om Papel får använda den.
-	The signer's certificate has critical extensions Papel does not recognize ({}).	Signerarens certifikat har kritiska tillägg som Papel inte känner igen ({}).
-	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	textigenkänningsmodellerna är inte installerade (installera om Papel eller ställ in PDFCRAFT_MODELS på mappen som innehåller dem)
-	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Det här fältets typsnitt kan inte rita ”{c}” ({code}), så Papel visar ? i stället. Värdet sparas, och andra PDF-läsare ritar om fältet från det.
-	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Formuläret innehåller också XFA-data, som Papel inte kan läsa än. Du kan fylla i dess fält, men Acrobat kan visa XFA-värdena i stället.
-	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Det här är ett dynamiskt XFA-formulär som Papel inte kan visa än. Det du ser är filens platshållarsida.
-	Welcome to Papel	Välkommen till Papel
-	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} skickar formuläret till {url}; Papel skickar inte formulärdata. Spara dokumentet för att behålla det du fyllt i.
-	{who} in this document tried to open an address Papel won't open: {e}.	{who} i det här dokumentet försökte öppna en adress som Papel inte öppnar: {e}.
-	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} i det här dokumentet försökte öppna en adress som Papel inte öppnar: {e}. Endast webblänkar (http, https) och e-postlänkar (mailto) öppnas från dokument.

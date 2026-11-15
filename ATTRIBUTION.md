@@ -319,11 +319,3 @@ row: hotbar, OCR, scan clean-up and booklet print options in Papel; proofing, la
 recovery, printing and default-app options in Letra. AI-assisted with Claude Code, written from
 the plain meaning of the English in the terminology the files already use. No other product's
 localisation was consulted. Not yet reviewed by a native speaker.
-
-## Ánima: Spanish catalog
-
-`locales/es/anima.tsv`, the first catalog for Ánima (Nodalia's 2D animation studio,
-getnodalia/anima): its 2,346 interface strings that `common.tsv` doesn't already cover, from its
-menus, tools, panels, timeline, export and messages. AI-assisted with Claude Code, written from
-the plain meaning of the English in the terminology the Spanish catalogs already use. No other
-product's localisation was consulted. Not yet reviewed by a native speaker.

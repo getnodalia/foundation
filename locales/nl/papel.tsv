@@ -2598,31 +2598,3 @@ calendar weekday	We	Wo
 	… and {n} more	… en nog {n}
 	−Bin	−Bin
 	−LOC	−LOC
-# The rows above that name the app, under its Nodalia name, Papel.
-	About Papel	Over Papel
-	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Bestanden die je in Papel opent, verschijnen hier. Zet ergens een PDF neer om hem te openen.
-	Papel can't check this signature yet: {}.	Papel kan deze handtekening nog niet controleren: {}.
-	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel is niet normaal afgesloten. Deze documenten hadden wijzigingen die automatisch zijn opgeslagen:
-	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel tekent zonder grafische processor en kan daardoor traag zijn. Het bijwerken van het grafische stuurprogramma kan helpen.
-	Papel on GitHub	Papel op GitHub
-	Papel web page	Papel-webpagina
-	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel werkt offline. Geen telemetrie, geen account en geen verwerking in de cloud, tenzij je zelf een provider toevoegt.
-	Papel {c} is up to date.	Papel {c} is actueel.
-	Papel {v} is available.	Papel {v} is beschikbaar.
-	Reopen the files that were open when Papel last closed	De bestanden opnieuw openen die openstonden toen Papel voor het laatst sloot
-	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Onderteken een vel wit papier en maak er een foto van bij helder, gelijkmatig licht (gebruik de flitser). Kies de foto of zet die hier neer: Papel vindt de handtekening en verwijdert het papier.
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Tekstherkenning is niet geïnstalleerd: de modelbestanden ontbreken. Installeer Papel opnieuw, of stel PDFCRAFT_MODELS in op de map waarin ze staan.
-	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	Het certificaat van {} heeft kritieke extensies die Papel niet herkent, dus het wordt niet gebruikt om voor {} in te staan.
-	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	De lettertypen waarmee Papel schrijft, kunnen “{c}” ({code}) niet tekenen, dus het wordt een ? in elke PDF-viewer. De tekst wordt wel opgeslagen.
-	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Het formulier wil worden verzonden naar {u}; Papel verstuurt geen formuliergegevens. Sla het document op om je invoer te bewaren.
-	The key is in the macOS Keychain, which may ask to allow Papel to use it.	De sleutel staat in de macOS-sleutelhanger, die kan vragen of Papel hem mag gebruiken.
-	The key is in the Windows certificate store, which may ask to allow Papel to use it.	De sleutel staat in het Windows-certificaatarchief, dat kan vragen of Papel hem mag gebruiken.
-	The signer's certificate has critical extensions Papel does not recognize ({}).	Het certificaat van de ondertekenaar heeft kritieke extensies die Papel niet herkent ({}).
-	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	de tekstherkenningsmodellen zijn niet geïnstalleerd (installeer Papel opnieuw, of stel PDFCRAFT_MODELS in op de map waarin ze staan)
-	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Het lettertype van dit veld kan “{c}” ({code}) niet tekenen, dus Papel toont daar een ?. De waarde wordt opgeslagen en andere PDF-viewers tekenen het veld daaruit opnieuw.
-	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Dit formulier bevat ook XFA-gegevens, die Papel nog niet leest. Je kunt de velden invullen, maar Acrobat kan in plaats daarvan de XFA-waarden tonen.
-	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Dit is een dynamisch XFA-formulier, dat Papel nog niet kan weergeven. Wat je ziet, is de plaatsvervangende pagina van het bestand.
-	Welcome to Papel	Welkom bij Papel
-	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} verzendt het formulier naar {url}; Papel verstuurt geen formuliergegevens. Sla het document op om je invoer te bewaren.
-	{who} in this document tried to open an address Papel won't open: {e}.	{who} in dit document probeerde een adres te openen dat Papel niet opent: {e}.
-	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} in dit document probeerde een adres te openen dat Papel niet opent: {e}. Alleen webkoppelingen (http, https) en e-mailkoppelingen (mailto) openen vanuit documenten.

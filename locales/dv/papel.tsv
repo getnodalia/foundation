@@ -2685,30 +2685,3 @@ calendar weekday	We	ބުދަ
 	… and {n} more	… އަދި {n} އިތުރު
 	−Bin	−Bin
 	−LOC	−LOC
-# The rows above that name the app, under its Nodalia name, Papel.
-	About Papel	Papel ގެ ތަޢާރަފު
-	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papel ގައި ހުޅުވާ ފައިލްތައް މިތަނުގައި ފެންނާނެ. PDF އެއް ހުޅުވުމަށް ކޮންމެ ތަނަކަށް ދޫކޮށްލާ.
-	Papel can't check this signature yet: {}.	Papel އަށް މި ސޮއި އަދި ޗެކްކުރެވެއެއް ނުދޭ: {}.
-	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel އާދައިގެ ގޮތުން ބަންދު ނުވި. މި ޑޮކިއުމަންޓްތަކުގައި އޮޓޯކޮށް ރައްކާވި ބަދަލުތައް ހުރި:
-	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel ދައްކަނީ ގްރެފިކްސް ޕްރޮސެސަރއެއް ނެތި، އެހެންވެ ލަސްވެދާނެ. ގްރެފިކްސް ޑްރައިވަރ އަޕްޑޭޓްކުރުމުން ފައިދާވެދާނެ.
-	Papel on GitHub	GitHub ގައި Papel
-	Papel web page	Papel ވެބް ޞަފްޙާ
-	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel މަސައްކަތްކުރަނީ އޮފްލައިންކޮށް. ޓެލެމެޓްރީއެއް، އެކައުންޓެއް، އަދި ތިބާ ޕްރޮވައިޑަރެއް އިތުރުނުކުރާހާ ހިނދަކު ކްލައުޑް ޕްރޮސެސިންގެއް ނެތް.
-	Papel {c} is up to date.	Papel {c} އަޕްޑޭޓްވެފައި.
-	Papel {v} is available.	Papel {v} މިހާރު ލިބެން ހުރި.
-	Reopen the files that were open when Papel last closed	Papel ފަހުން ބަންދުކުރި ހިނދު ހުޅުވިފައި ހުރި ފައިލްތައް އަލުން ހުޅުވާ
-	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	ހުދު ކަރުދާހެއްގައި ސޮއިކޮށް، ވަރަށް އަލި، އެއްވަރެއްގެ އަލިކަމުގައި (ފްލޭޝް ބޭނުންކޮށް) އޭގެ ފޮޓޯއެއް ނަގާ. ފޮޓޯ ޚިޔާރުކުރޭ ނުވަތަ މިތަނަށް ދޫކޮށްލާ: Papel ސޮއި ހޯދައި ކަރުދާސް ނައްތާލާނެ.
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	ލިޔުން ދެނެގަތުން އިންސްޓޯލްކޮށްފައެއް ނުވޭ: އޭގެ މޮޑެލް ފައިލްތައް ނެތް. Papel އަލުން އިންސްޓޯލްކުރޭ، ނުވަތަ އެ ފައިލްތައް ހުރި ފޯލްޑަރަށް PDFCRAFT_MODELS ކަނޑައަޅާ.
-	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papel ލިޔުމަށް ބޭނުންކުރާ ފޮންޓްތަކަށް “{c}” ({code}) ނުކުރެހޭތީ، ހުރިހާ PDF ވިއުއަރެއްގައި އެ ފެންނާނީ ? ގެ ގޮތުގައި. ލިޔުން ރައްކާކުރެވިއްޖެ.
-	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	މި ފޯމު {u} އަށް ފޮނުވުމަށް އެދޭ؛ Papel އިން ފޯމު ޑޭޓާ ނުފޮނުވާނެ. ތިބާ ލިޔުއްވި އެއްޗެހި ބެހެއްޓުމަށް ޑޮކިއުމަންޓް ރައްކާކުރައްވާ.
-	The key is in the macOS Keychain, which may ask to allow Papel to use it.	ކީ ހުރީ macOS Keychain ގައި، އޭގެ ބޭނުންކުރުމުގެ ހުއްދަ Papel އަށް ދޭން އެއިން ސުވާލުކޮށްފާނެ.
-	The key is in the Windows certificate store, which may ask to allow Papel to use it.	ކީ ހުރީ Windows ސެޓްފިކެޓް ސްޓޯރުގައި، އޭގެ ބޭނުންކުރުމުގެ ހުއްދަ Papel އަށް ދޭން އެއިން ސުވާލުކޮށްފާނެ.
-	The signer's certificate has critical extensions Papel does not recognize ({}).	ސޮއިކުރި ފަރާތުގެ ސެޓްފިކެޓުގައި Papel އަށް ނޭނގޭ ކްރިޓިކަލް އެކްސްޓެންޝަންތައް ހުރި ({}).
-	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	ލިޔުން ދެނެގަންނަ މޮޑެލްތައް އިންސްޓޯލްކޮށްފައެއް ނުވޭ (Papel އަލުން އިންސްޓޯލްކުރޭ، ނުވަތަ އެ މޮޑެލްތައް ހުންނަ ފޯލްޑަރަށް PDFCRAFT_MODELS ސެޓްކުރޭ)
-	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	މި ފީލްޑްގެ ފޮންޓަށް “{c}” ({code}) ކުރެހޭކަށް ނެތް، އެހެންކަމުން Papel އޭގެ ބަދަލުގައި ? ދައްކާ. ވެލިއު ރައްކާވެފައިވާއިރު، އެހެން PDF ވިއުވަރުތަކުން އެއިން ފީލްޑް އަލުން ކުރަހާނެ.
-	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	މި ފޯމުގައި XFA ޑޭޓާވެސް ހިމެނޭ، އެއީ Papel އަދި ނުކިޔާ ޑޭޓާއެއް. ފީލްޑްތައް ފުރިދާނެ، ނަމަވެސް Acrobat އިން ދައްކާނީ XFA ގެ އަގުތައް ކަމަށް ވެދާނެ.
-	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	މިއީ Papel އަށް އަދި ދައްކައެއް ނުލެވޭ ޑައިނަމިކް XFA ފޯމެކެވެ. ފެންނަނީ ފައިލްގެ ޕްލޭސްހޯލްޑަރ ޞަފްޙާއެވެ.
-	Welcome to Papel	Papel އަށް މަރުޙަބާ
-	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} ފޯމު ފޮނުވަނީ {url} އަށް؛ Papel ފޯމު ޑޭޓާ ނުފޮނުވާނެ. ލިޔުނު މަޢުލޫމާތު ރައްކާކުރުމަށް ޑޮކިއުމަންޓު ރައްކާކުރޭ.
-	{who} in this document tried to open an address Papel won't open: {e}.	މި ޑޮކިއުމަންޓުގައިވާ {who} ވަނީ Papel ނުހުޅުވާނެ އެޑްރެހެއް ހުޅުވަން މަސައްކަތްކޮށްފައި: {e}.
-	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	މި ޑޮކިއުމަންޓުގައިވާ {who} ވަނީ Papel ނުހުޅުވާނެ އެޑްރެހެއް ހުޅުވަން މަސައްކަތްކޮށްފައި: {e}. ޑޮކިއުމަންޓުތަކުން ހުޅުވޭނީ ވެބް (http، https) އަދި އީމެއިލް (mailto) ލިންކްތައް އެކަނި.

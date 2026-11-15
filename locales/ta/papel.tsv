@@ -2863,30 +2863,3 @@ calendar weekday	We	பு
 	… and {n} more	… மேலும் {n}
 	−Bin	−Bin
 	−LOC	−LOC
-# The rows above that name the app, under its Nodalia name, Papel.
-	About Papel	Papel பற்றி
-	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papel-இல் நீங்கள் திறக்கும் கோப்புகள் இங்கே தோன்றும். PDF-ஐ எங்கேயும் இழுத்துவிட்டால் திறக்கும்.
-	Papel can't check this signature yet: {}.	இந்தக் கையொப்பத்தை Papel இன்னும் சரிபார்க்க இயலாது: {}.
-	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel இயல்பாக மூடப்படவில்லை. இந்த ஆவணங்களில் தானாகச் சேமிக்கப்பட்ட மாற்றங்கள் இருந்தன:
-	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel வரைகலை செயலி இல்லாமல் வரைகிறது, எனவே மெதுவாக இருக்கலாம். வரைகலை இயக்கியைப் புதுப்பித்தால் உதவலாம்.
-	Papel on GitHub	GitHub-இல் Papel
-	Papel web page	Papel இணையப் பக்கம்
-	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel இணையம் இல்லாமல் செயல்படும். டெலிமெட்ரி இல்லை, கணக்கு தேவையில்லை, நீங்கள் வழங்குநரைச் சேர்த்தால் மட்டுமே கிளவுட் செயலாக்கம் நடைபெறும்.
-	Papel {v} is available.	Papel {v} கிடைக்கிறது.
-	Reopen the files that were open when Papel last closed	Papel கடைசியாக மூடப்பட்டபோது திறந்திருந்த கோப்புகளை மீண்டும் திற
-	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	ஒரு வெள்ளைத் தாளில் கையொப்பமிட்டு, பிரகாசமான, சீரான ஒளியில் (ஃபிளாஷைப் பயன்படுத்தவும்) அதைப் புகைப்படம் எடுக்கவும். புகைப்படத்தைத் தேர்ந்தெடுக்கவும் அல்லது இங்கே இழுத்துவிடவும்: Papel கையொப்பத்தைக் கண்டறிந்து தாளை நீக்கும்.
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	உரை அடையாளம் காணல் நிறுவப்படவில்லை: அதன் மாதிரிக் கோப்புகள் இல்லை. Papel-ஐ மீண்டும் நிறுவவும், அல்லது PDFCRAFT_MODELS-ஐ அவை உள்ள கோப்புறைக்கு அமைக்கவும்.
-	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	{} இன் சான்றிதழில் Papel அடையாளம் காணாத முக்கிய நீட்சிகள் உள்ளன, எனவே {} க்குச் சான்றளிக்க அது பயன்படுத்தப்படவில்லை.
-	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papel எழுதப் பயன்படுத்தும் எழுத்துருக்களால் “{c}” ({code}) ஐ வரைய இயலாது, எனவே அது எல்லா PDF பார்வையாளர்களிலும் ? ஆகத் தெரியும். உரை சேமிக்கப்படுகிறது.
-	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	படிவம் {u} க்குச் சமர்ப்பிக்கப்பட வேண்டும் எனக் கோருகிறது; Papel படிவத் தரவை அனுப்புவதில்லை. உங்கள் உள்ளீடுகளை வைத்திருக்க ஆவணத்தைச் சேமிக்கவும்.
-	The key is in the macOS Keychain, which may ask to allow Papel to use it.	விசை macOS Keychain-இல் உள்ளது; Papel அதைப் பயன்படுத்த அனுமதி கேட்கலாம்.
-	The key is in the Windows certificate store, which may ask to allow Papel to use it.	விசை Windows சான்றிதழ் சேமிப்பகத்தில் உள்ளது; Papel அதைப் பயன்படுத்த அனுமதி கேட்கலாம்.
-	The signer's certificate has critical extensions Papel does not recognize ({}).	கையொப்பமிடுபவரின் சான்றிதழில் Papel அடையாளம் காணாத முக்கிய நீட்சிகள் உள்ளன ({}).
-	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	உரை அடையாளம் காணல் மாதிரிகள் நிறுவப்படவில்லை (Papel-ஐ மீண்டும் நிறுவவும், அல்லது PDFCRAFT_MODELS-ஐ அவை உள்ள கோப்புறைக்கு அமைக்கவும்)
-	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	இந்தப் புலத்தின் எழுத்துருவால் “{c}” ({code}) ஐ வரைய இயலாது, எனவே Papel அதன் இடத்தில் ? ஐக் காட்டுகிறது. மதிப்பு சேமிக்கப்படுகிறது; பிற PDF பார்வையாளர்கள் அதிலிருந்து புலத்தை மீண்டும் வரைவர்.
-	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	இந்தப் படிவத்தில் XFA தரவும் உள்ளது; அதை Papel இன்னும் படிக்காது. அதன் புலங்களை நிரப்பலாம், ஆனால் Acrobat அதற்குப் பதிலாக XFA மதிப்புகளைக் காட்டலாம்.
-	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	இது ஓர் இயங்குநிலை XFA படிவம்; இதை Papel இன்னும் காட்ட இயலாது. நீங்கள் காண்பது கோப்பின் இடஒதுக்கீட்டுப் பக்கம்.
-	Welcome to Papel	Papel-க்கு வரவேற்கிறோம்
-	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} படிவத்தை {url} க்குச் சமர்ப்பிக்கிறது; Papel படிவத் தரவை அனுப்புவதில்லை. உங்கள் உள்ளீடுகளை வைத்திருக்க ஆவணத்தைச் சேமிக்கவும்.
-	{who} in this document tried to open an address Papel won't open: {e}.	இந்த ஆவணத்தில் உள்ள {who}, Papel திறக்காத ஒரு முகவரியைத் திறக்க முயன்றது: {e}.
-	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	இந்த ஆவணத்தில் உள்ள {who}, Papel திறக்காத ஒரு முகவரியைத் திறக்க முயன்றது: {e}. ஆவணங்களிலிருந்து வலை (http, https) மற்றும் மின்னஞ்சல் (mailto) இணைப்புகள் மட்டுமே திறக்கும்.
