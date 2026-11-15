@@ -1425,7 +1425,6 @@ version = "0.1.0"
 name = "craft-captions"
 version = "0.1.0"
 dependencies = [
- "craft-media-testkit",
  "craft-timeline",
  "craft-xml",
  "proptest",
@@ -1927,7 +1926,6 @@ dependencies = [
  "avif-serialize",
  "craft-heif",
  "craft-jpeg",
- "craft-media-testkit",
  "craft-metadata",
  "craft-video",
  "crc32fast",
