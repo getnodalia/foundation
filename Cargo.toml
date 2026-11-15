@@ -11,8 +11,6 @@ rust-version = "1.95"
 repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
-nodalia-shx = { path = "crates/shx" }
-nodalia-http-url = { path = "crates/http-url" }
 nodalia-usd = { path = "crates/usd" }
 nodalia-smime = { path = "crates/smime" }
 nodalia-ber = { path = "crates/ber" }
@@ -42,7 +40,6 @@ bytemuck = "1"
 kurbo = "0.13"
 thiserror = "2"
 nodalia-gzip = { path = "crates/gzip" }
-nodalia-celdas-format = { path = "crates/celdas-format" }
 nodalia-aaf = { path = "crates/aaf" }
 nodalia-atomic = { path = "crates/atomic" }
 nodalia-captions = { path = "crates/captions" }
