@@ -93,6 +93,7 @@ nodalia-indd = { path = "crates/indd" }
 nodalia-jmap = { path = "crates/jmap" }
 nodalia-ical = { path = "crates/ical" }
 nodalia-jpeg = { path = "crates/jpeg" }
+nodalia-control-protocol = { path = "crates/control-protocol" }
 nodalia-jsonrpc = { path = "crates/jsonrpc" }
 nodalia-mcp = { path = "crates/mcp" }
 nodalia-jxl = { path = "crates/jxl" }
