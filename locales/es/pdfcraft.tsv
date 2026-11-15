@@ -4163,3 +4163,89 @@ document scrollbar width	Wide	Ancha
 	…or paste the raw text here; # headings, - bullets	…o pega aquí el texto original; # títulos, - viñetas
 	− Page {p}	− Página {p}
 	−LOC	−LOC
+	Dock navigation rail on Left	Acoplar la barra de navegación a la izquierda
+	Dock navigation rail on Right	Acoplar la barra de navegación a la derecha
+	Hotbar settings	Ajustes de la barra rápida
+	Hotbar settings / add tools	Ajustes de la barra rápida / añadir herramientas
+	Remove from hotbar	Quitar de la barra rápida
+	Float	Flotar
+	Drag hotbar	Arrastrar la barra rápida
+	Hotbar tools	Herramientas de la barra rápida
+	Close menu	Cerrar menú
+	Layout & Sizing	Disposición y tamaño
+	Toolbar size	Tamaño de la barra de herramientas
+	Vertical layout	Disposición vertical
+	Stick to a side:	Pegar a un lado:
+	Extend the docked toolbar along the entire side. Choose a side above to enable.	Extiende la barra de herramientas acoplada a lo largo de todo el lado. Elige un lado arriba para activarlo.
+	Full-side strip	Franja de lado completo
+	Add Tools to Hotbar	Añadir herramientas a la barra rápida
+	Search all tools…	Buscar todas las herramientas…
+	Show tab numbers	Mostrar números de pestaña
+	Page Properties	Propiedades de página
+	Tab Order	Orden de tabulación
+	Use Row Order	Usar orden de filas
+	Use Column Order	Usar orden de columnas
+	Use Document Structure	Usar estructura del documento
+	Unspecified	Sin especificar
+	New bookmarks from text styles…	Nuevos marcadores a partir de estilos de texto…
+	Paste bookmarks	Pegar marcadores
+	Edit description	Editar descripción
+	Re-reading the region…	Releyendo la región…
+	Re-reading the page…	Releyendo la página…
+	The re-read was cancelled; the words are unchanged	Se canceló la relectura; las palabras no cambian
+	Accept or reject the OCR review of the other document before running OCR here	Acepta o rechaza la revisión del OCR del otro documento antes de ejecutar el OCR aquí
+	Cancel re-read	Cancelar relectura
+	Engine	Motor
+	Built-in	Integrado
+	Tesseract	Tesseract
+	Combine engines	Combinar motores
+	Straighten pages scanned sideways or upside down	Enderezar páginas escaneadas de lado o al revés
+	Straighten skewed text lines	Enderezar líneas de texto inclinadas
+	Remove scan speckle	Quitar motas del escaneo
+	Black and white (binarize)	Blanco y negro (binarizar)
+	Optimizing… reading the pages	Optimizando… leyendo las páginas
+	Optimizing… reading page {d} of {t}	Optimizando… leyendo la página {d} de {t}
+	Discard embedded search index	Descartar el índice de búsqueda incrustado
+	Discard external cross-references	Descartar las referencias cruzadas externas
+	Enhance Scanned File	Mejorar archivo escaneado
+	Cleans up the scanned pictures in place: recognized text, comments and links on the pages stay as they are.	Limpia las imágenes escaneadas en su sitio: el texto reconocido, los comentarios y los vínculos de las páginas quedan como están.
+	Background removal	Eliminación del fondo
+	Evens out the paper so a grey or yellowed background turns white, and darkens faint strokes. 0 is off.	Iguala el papel para que un fondo gris o amarillento se vuelva blanco, y oscurece los trazos débiles. 0 lo desactiva.
+	Edge shadow removal	Eliminación de sombras en los bordes
+	Lightens shadows along the edges of the scan, such as a book's gutter or a copier's dark border	Aclara las sombras a lo largo de los bordes del escaneo, como el lomo de un libro o el borde oscuro de una fotocopiadora
+	Despeckle	Quitar motas
+	Removes isolated dark specks such as dust and scanner noise. The only filter black and white scans take.	Elimina motas oscuras aisladas, como polvo y ruido del escáner. Es el único filtro que admiten los escaneos en blanco y negro.
+	Enhance	Mejorar
+	No scanned pages were cleaned up.	No se limpió ninguna página escaneada.
+	Enhancing scans… image {d} of {t}	Mejorando escaneos… imagen {d} de {t}
+	Columns and rows must each be 1 to 99.	Las columnas y las filas deben estar entre 1 y 99.
+	Custom scale	Escala personalizada
+	by	por
+	Creep:	Desplazamiento hacia el lomo:
+	Moves each sheet's pages toward the fold by this much more than the sheet outside it, so the margins match once the booklet is folded and trimmed.	Mueve las páginas de cada pliego hacia el doblez esta cantidad más que las del pliego exterior, para que los márgenes coincidan una vez doblado y cortado el cuadernillo.
+	The creep moves the innermost sheet's pages too far for this many pages. Reduce Creep.	El desplazamiento hacia el lomo mueve demasiado las páginas del pliego más interior para esta cantidad de páginas. Redúcelo.
+	Search settings…	Buscar ajustes…
+	General & Interface	General e interfaz
+	Navigation rail side	Lado de la barra de navegación
+	Check for updates when PdfCraft starts	Buscar actualizaciones al iniciar PdfCraft
+	Open web and email addresses written in the page text	Abrir las direcciones web y de correo escritas en el texto de la página
+	Only web (http, https) and email addresses open, and PdfCraft asks first, as for other links.	Solo se abren direcciones web (http, https) y de correo, y PdfCraft pregunta antes, como con otros vínculos.
+	Invert middle-button drag	Invertir el arrastre con el botón central
+	Panning or auto-scrolling with the middle (wheel) button moves the page the other way.	Desplazar o desplazarse automáticamente con el botón central (rueda) mueve la página en sentido contrario.
+	PdfCraft's checks now find no problems for {level}. This is not a validator result. Save to keep the changes.	Las comprobaciones de PdfCraft ya no encuentran problemas para {level}. No es el resultado de un validador. Guarda para conservar los cambios.
+	PdfCraft's checks found no problems for {level}. This is not a validator result.	Las comprobaciones de PdfCraft no encontraron problemas para {level}. No es el resultado de un validador.
+	{font}, {size} pt	{font}, {size} pt
+	bold	negrita
+	italic	cursiva
+	1 line	1 línea
+	{n} lines	{n} líneas
+	New bookmarks from text styles	Nuevos marcadores a partir de estilos de texto
+	This document has no text to make bookmarks from.	Este documento no tiene texto con el que crear marcadores.
+	Every line set in the style chosen for a level becomes a bookmark of that level, under a new first bookmark.	Cada línea con el estilo elegido para un nivel se convierte en un marcador de ese nivel, bajo un nuevo primer marcador.
+	Level {n}	Nivel {n}
+	Reading the drawing for snapping…	Leyendo el dibujo para el ajuste…
+	Inherit Zoom	Heredar zoom
+	Remove this leaf tag from reading order and mark its direct content as an artifact	Quitar esta etiqueta hoja del orden de lectura y marcar su contenido directo como artefacto
+	Custom calculation script:	Script de cálculo personalizado:
+	This script is too long to edit here ({kib} KiB); its start is shown. It is kept as it is.	Este script es demasiado largo para editarlo aquí ({kib} KiB); se muestra su comienzo. Se conserva tal cual.
+	A script edited here can be at most 256 KiB long; that change wasn't made.	Un script editado aquí puede tener como máximo 256 KiB; ese cambio no se aplicó.

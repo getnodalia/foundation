@@ -310,3 +310,12 @@ Synced from `photocraft@7c64653` to `photocraft@2772ac1` with
 ## TextureCraft initial migration
 
 The `texturecraft.tsv` catalogs for ar, de, es, fr, it, ja, ko, pt-br and zh-hans were migrated from [TextureCraft `21856d778347e13857f65c8f1107170797bd070f`](https://github.com/storytold/texturecraft/tree/21856d778347e13857f65c8f1107170797bd070f/crates/ui-egui/src/i18n), MIT OR Apache-2.0. Original wording and contributor credits remain in the upstream history. Migration tooling was AI-assisted; no new translations were authored and no additional native-speaker review was performed. Every original row was checked against the resolved app and shared catalogs. Tracked in storytold/texturecraft#419.
+
+## Papel and Letra: Spanish rows for strings that showed in English
+
+Spanish (`es`) rows for 86 strings in `locales/es/pdfcraft.tsv` (Papel) and 149 in
+`locales/es/wordcraft.tsv` (Letra) that their interfaces passed to the catalog with no Spanish
+row: hotbar, OCR, scan clean-up and booklet print options in Papel; proofing, language packs,
+recovery, printing and default-app options in Letra. AI-assisted with Claude Code, written from
+the plain meaning of the English in the terminology the files already use. No other product's
+localisation was consulted. Not yet reviewed by a native speaker.
