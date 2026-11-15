@@ -53,13 +53,7 @@ pub(in crate::text) fn fill_attrs(
         }
         Some(f) => {
             let c = hex(f.main_color());
-            let opacity = match f {
-                Fill::Solid { transparency, .. } if *transparency > 0.0 => {
-                    format!(" draw:opacity=\"{:.0}%\"", (100.0 - transparency).clamp(0.0, 100.0))
-                }
-                _ => String::new(),
-            };
-            format!("{} draw:fill=\"solid\" draw:fill-color=\"{c}\"{opacity}", background(&c))
+            format!("{} draw:fill=\"solid\" draw:fill-color=\"{c}\"", background(&c))
         }
         None => format!("{} draw:fill=\"none\"", background("transparent")),
     }
@@ -76,10 +70,9 @@ pub(in crate::text) enum Place<'a> {
 }
 
 impl<'a> Place<'a> {
-    /// Its place in the stacking order (§19.231 `draw:z-index`, see `frames::z_of`), `unset`
-    /// without a stored one.
-    pub(in crate::text) fn z_index(self, stacking: crate::text::frames::Stacking) -> u32 {
-        crate::text::frames::z_index(self.float(), stacking)
+    /// Its place in the stacking order (§19.231 `draw:z-index`, see `frames::z_of`).
+    pub(in crate::text) fn z_index(self) -> u32 {
+        crate::text::frames::z_index(self.float())
     }
 
     /// What turns or mirrors the object, and places it in the text.
@@ -330,7 +323,7 @@ impl Writer {
         let (anchor, props, xy) = placement(place, img.w, img.h);
         let (anchor, style) =
             (anchor, format!(" draw:style-name=\"{}\"{xy}", self.graphic_style(format!("{}{props}{clip}", super::GRAPHICS_PARENT))));
-        let z = place.z_index(self.stacking);
+        let z = place.z_index();
         out.push_str(&format!(
             "<draw:frame draw:name=\"{}Image{n}\"{style}{anchor} svg:width=\"{}\" svg:height=\"{}\" draw:z-index=\"{z}\">{inner}",
             self.prefix,
@@ -367,8 +360,7 @@ impl Writer {
         let (anchor, props, _) = placement(Place::Text(float.filter(|f| f.wrap != nodalia_wordmodel::para::Wrap::Inline)), size.0, size.1);
         let style = self.graphic_style(props);
         self.boxes += 1;
-        let z = crate::text::frames::z_index(float, self.stacking);
-        out.push_str(&format!("<draw:g draw:name=\"{}Group{}\" draw:style-name=\"{style}\"{anchor} draw:z-index=\"{z}\">", self.prefix, self.boxes));
+        out.push_str(&format!("<draw:g draw:name=\"{}Group{}\" draw:style-name=\"{style}\"{anchor} draw:z-index=\"0\">", self.prefix, self.boxes));
         let at = Place::Text(float).origin();
         self.members(members, at, 0, out);
         out.push_str("</draw:g>");
@@ -427,7 +419,7 @@ impl Writer {
             .and_then(|c| c.next.as_deref())
             .map(|n| format!(" draw:chain-next-name=\"{}{}\"", self.prefix, x(n)))
             .unwrap_or_default();
-        let z = place.z_index(self.stacking);
+        let z = place.z_index();
         out.push_str(&format!(
             "<draw:frame draw:name=\"{}\" draw:style-name=\"{style}\"{anchor} svg:width=\"{}\"{height}{xy} draw:z-index=\"{z}\"><draw:text-box{min}{next}>{body}</draw:text-box></draw:frame>",
             x(&name),
@@ -530,7 +522,7 @@ impl Writer {
             })
             .unwrap_or_default();
         let conn = self.conn_attrs(kind, look);
-        let z = place.z_index(self.stacking);
+        let z = place.z_index();
         out.push_str(&format!(
             "<{element} draw:name=\"{}Shape{}\" draw:style-name=\"{style}\"{anchor}{at}{conn} draw:z-index=\"{z}\">{body}{geometry}</{element}>",
             self.prefix, self.boxes,

@@ -13,9 +13,6 @@
 
 mod budget;
 mod bytes;
-/// Content streams: operators with source spans, inline images, the serializer, matrices.
-#[cfg(feature = "content")]
-pub mod content;
 mod document;
 mod object;
 pub mod page_labels;
@@ -23,7 +20,7 @@ mod parser;
 mod security;
 mod writer;
 
-#[cfg(any(test, feature = "test-support"))]
+#[cfg(test)]
 pub(crate) mod testkit;
 
 pub use crate::crypt::{

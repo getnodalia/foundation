@@ -21,7 +21,7 @@ use std::sync::Arc;
 
 use nodalia_wordmodel::props::LineSpacing;
 use nodalia_wordmodel::props::VAlign;
-use nodalia_wordmodel::{Align, Document, Rgb};
+use nodalia_wordmodel::{Align, Document};
 
 use nodalia_flow::{
     self as model, Cell, FBlock, FTable, Flow, Fmt, Inline, Kind, ListInfo, Meta, Para, Spacing, base64_encode, data_uri, make_img, mime_of,
