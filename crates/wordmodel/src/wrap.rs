@@ -70,7 +70,6 @@ pub fn shape_outline(kind: ShapeKind, w: f32, h: f32, corner: Option<u32>) -> Op
         | ShapeKind::TextBox
         | ShapeKind::Line
         | ShapeKind::Freeform
-        | ShapeKind::Frame
         | ShapeKind::StraightConnector
         | ShapeKind::ElbowConnector
         | ShapeKind::CurvedConnector => return None,
