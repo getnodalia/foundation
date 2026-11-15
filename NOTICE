@@ -299,6 +299,6 @@ and the average bit rate filled in. Those files are Apache-2.0 only.
 
 Nodalia
 
-This tree is nodalia-libs, made from storytold/craft-libs at 55b1d7f3c598b600a130ae63f4a40334a230ae7b by renaming it
+This tree is nodalia-libs, made from storytold/craft-libs at 0c144b7d983899d4b5b281046dd03a8b1ab35fbb by renaming it
 (scripts/nodalia_libs.py in https://github.com/getnodalia/foundation). Its code and assets keep the licences, copyright
 notices and credits above and in ATTRIBUTION.md, unchanged.
