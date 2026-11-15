@@ -11,8 +11,6 @@ rust-version = "1.95"
 repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
-nodalia-http-url = { path = "crates/http-url" }
-nodalia-usd = { path = "crates/usd" }
 nodalia-smime = { path = "crates/smime" }
 nodalia-ber = { path = "crates/ber" }
 nodalia-proto = { path = "crates/proto" }
@@ -41,7 +39,6 @@ bytemuck = "1"
 kurbo = "0.13"
 thiserror = "2"
 nodalia-gzip = { path = "crates/gzip" }
-nodalia-celdas-format = { path = "crates/celdas-format" }
 nodalia-aaf = { path = "crates/aaf" }
 nodalia-atomic = { path = "crates/atomic" }
 nodalia-captions = { path = "crates/captions" }
@@ -57,7 +54,6 @@ nodalia-doc-binary = { path = "crates/doc-binary" }
 nodalia-docx = { path = "crates/docx" }
 nodalia-document-bundle = { path = "crates/document-bundle" }
 nodalia-mcmat = { path = "crates/mcmat" }
-nodalia-lamina-format = { path = "crates/lamina-format" }
 nodalia-pliego-format = { path = "crates/pliego-format" }
 nodalia-dxf = { path = "crates/dxf" }
 nodalia-drawingml = { path = "crates/drawingml" }
@@ -72,7 +68,6 @@ nodalia-doc = { path = "crates/doc" }
 nodalia-docpath = { path = "crates/docpath" }
 nodalia-dpx = { path = "crates/dpx" }
 nodalia-dwg = { path = "crates/dwg" }
-nodalia-fcproj-format = { path = "crates/fcproj-format" }
 nodalia-ecproj-format = { path = "crates/ecproj-format" }
 nodalia-figma-rest = { path = "crates/figma-rest" }
 nodalia-exr = { path = "crates/exr" }
@@ -96,7 +91,6 @@ nodalia-indd = { path = "crates/indd" }
 nodalia-jmap = { path = "crates/jmap" }
 nodalia-ical = { path = "crates/ical" }
 nodalia-jpeg = { path = "crates/jpeg" }
-nodalia-control-protocol = { path = "crates/control-protocol" }
 nodalia-jsonrpc = { path = "crates/jsonrpc" }
 nodalia-mcp = { path = "crates/mcp" }
 nodalia-jxl = { path = "crates/jxl" }
@@ -153,7 +147,6 @@ nodalia-stencil-document = { path = "crates/stencil-document" }
 nodalia-svg-paths = { path = "crates/svg-paths" }
 nodalia-stream-codecs = { path = "crates/stream-codecs" }
 nodalia-text = { path = "crates/text" }
-nodalia-texture-archive = { path = "crates/texture-archive" }
 nodalia-texture = { path = "crates/texture" }
 nodalia-tga = { path = "crates/tga" }
 nodalia-timeline = { path = "crates/timeline" }

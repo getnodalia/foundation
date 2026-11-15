@@ -12,7 +12,6 @@ workspace = true
 
 [dependencies]
 nodalia-xml = { workspace = true }
-quick-xml = { version = "0.41", default-features = false }
 nodalia-image-codecs = { workspace = true }
 # SVGZ (gzip), pure-Rust backend.
 flate2 = { version = "1", default-features = false, features = ["rust_backend"] }

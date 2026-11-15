@@ -1,4 +1,4 @@
-//! Clean-room Ogg demuxer and page writer, written from RFC 3533 (the Ogg encapsulation format), RFC 7845 (Ogg
+//! Clean-room Ogg demuxer, written from RFC 3533 (the Ogg encapsulation format), RFC 7845 (Ogg
 //! Opus) and the Vorbis I specification's Ogg mapping (section A).
 //!
 //! [`open`] reads every page (capture pattern, header, lacing values, CRC-32 checked; damaged
@@ -11,9 +11,6 @@
 //! [`OpusTiming`] implements RFC 7845 §4: packet start positions from granule positions and
 //! TOC-derived durations, the pre-skip, and end trimming of the final page, so a player can seek
 //! to any 48 kHz sample.
-//!
-//! [`PageWriter`] writes the pages of a logical bitstream, and [`opus_tags`] and
-//! [`vorbis_comment`] build the comment headers of Ogg Opus and Ogg Vorbis.
 //!
 //! Layer L0: no dependencies beyond `std`, no `unsafe`, builds for `wasm32-unknown-unknown`.
 //!
@@ -28,9 +25,6 @@ use std::fmt;
 use std::io;
 
 pub use crate::source::{ByteSource, ReadSeekSource};
-pub use write::{PAGE_TARGET_BYTES, PAGE_TARGET_PACKETS, PageWriter, opus_tags, vorbis_comment};
-
-mod write;
 
 /// Errors from reading an Ogg file.
 #[non_exhaustive]
@@ -885,5 +879,3 @@ impl VorbisInfo {
 
 #[cfg(test)]
 mod tests;
-#[cfg(test)]
-mod write_tests;
