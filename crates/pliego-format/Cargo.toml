@@ -1,0 +1,18 @@
+[package]
+name = "nodalia-pliego-format"
+description = "Versioned Pliego document JSON codec and legacy migrations over nodalia-document-bundle"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+nodalia-document-bundle = { workspace = true }
+nodalia-eps = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }

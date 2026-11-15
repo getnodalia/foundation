@@ -8,7 +8,7 @@ rust-version.workspace = true
 repository.workspace = true
 
 [dependencies]
-nodalia-keymap = { workspace = true, default-features = false, features = ["egui"] }
+nodalia-keymap = { workspace = true, features = ["egui"] }
 nodalia-quit = { workspace = true, features = ["egui"] }
 egui = { workspace = true }
 
