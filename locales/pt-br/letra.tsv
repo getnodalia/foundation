@@ -2238,17 +2238,24 @@
 	Uruguay	Uruguai
 	Venezuela	Venezuela
 	South Africa	África do Sul
-
-# Descriptive feature names; legacy rows remain for earlier app pins.
-	Diagram	Diagrama
-	Insert Diagram	Inserir diagrama
-	Diagram Design	Design do diagrama
-	Diagram Styles	Estilos de diagrama
-	Decorative Text	Texto decorativo
-	Decorative Text Styles	Estilos de texto decorativo
-	select a diagram first	selecione primeiro um diagrama
-	this diagram was made in another program: Letra shows it but can't edit it	este diagrama foi criado em outro programa: o Letra o exibe, mas não pode editá-lo
-	this diagram can't be edited	este diagrama não pode ser editado
-@msg	a diagram holds at most {MAX_ITEMS} items	um diagrama pode conter no máximo {MAX_ITEMS} itens
-@msg	unknown decorative text style `{id}`	estilo de texto decorativo desconhecido `{id}`
-	select a shape or decorative text first	selecione primeiro uma forma ou um texto decorativo
+	A free word processor, written in Rust.	Um processador de texto livre, escrito em Rust.
+	Back	Voltar
+	Licences	Licenças
+	MIT OR Apache-2.0. Includes open-source work by other authors; see NOTICE.	MIT OR Apache-2.0. Inclui trabalho de código aberto de outros autores; veja NOTICE.
+	Part of Nodalia	Parte da Nodalia
+	Report a problem	Relatar um problema
+	Source code	Código-fonte
+	Window controls:	Controles da janela:
+	‹ About Letra	‹ Sobre o Letra
+	Keyboard shortcuts	Atalhos de teclado
+	Check for updates…	Verificar atualizações…
+	About Letra	Sobre o Letra
+	Quit	Sair
+	Main menu	Menu principal
+	Screen paper color:	Cor do papel na tela:
+	Document background	Fundo do documento
+	Soft green	Verde suave
+	Warm cream	Creme quente
+	Soft gray	Cinza suave
+	Status bar count:	Contagem na barra de status:
+	You can also right-click the count in the status bar to change it.	Você também pode clicar com o botão direito na contagem da barra de status para alterá-la.

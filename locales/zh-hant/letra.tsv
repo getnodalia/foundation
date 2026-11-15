@@ -2255,17 +2255,24 @@
 	Uruguay	烏拉圭
 	Venezuela	委內瑞拉
 	South Africa	南非
-
-# Descriptive feature names; legacy rows remain for earlier app pins.
-	Diagram	圖示
-	Insert Diagram	插入圖示
-	Diagram Design	圖示設計
-	Diagram Styles	圖示樣式
-	Decorative Text	裝飾文字
-	Decorative Text Styles	裝飾文字樣式
-	select a diagram first	請先選取一個圖示
-	this diagram was made in another program: Letra shows it but can't edit it	此圖示由其他程式建立：Letra 可以顯示，但無法編輯
-	this diagram can't be edited	無法編輯此圖示
-@msg	a diagram holds at most {MAX_ITEMS} items	一個圖示最多包含 {MAX_ITEMS} 個項目
-@msg	unknown decorative text style `{id}`	未知的裝飾文字樣式 `{id}`
-	select a shape or decorative text first	請先選取一個圖案或裝飾文字
+	A free word processor, written in Rust.	一款以 Rust 撰寫的自由文書處理軟體。
+	Back	返回
+	Licences	授權
+	MIT OR Apache-2.0. Includes open-source work by other authors; see NOTICE.	MIT OR Apache-2.0。包含其他作者的開放原始碼成果；請參閱 NOTICE。
+	Part of Nodalia	Nodalia 的一部分
+	Report a problem	回報問題
+	Source code	原始碼
+	Window controls:	視窗控制按鈕:
+	‹ About Letra	‹ 關於 Letra
+	Keyboard shortcuts	鍵盤快速鍵
+	Check for updates…	檢查更新…
+	About Letra	關於 Letra
+	Quit	結束
+	Main menu	主選單
+	Screen paper color:	螢幕紙張色彩:
+	Document background	文件背景
+	Soft green	柔和綠色
+	Warm cream	暖奶油色
+	Soft gray	柔和灰色
+	Status bar count:	狀態列計數:
+	You can also right-click the count in the status bar to change it.	也可以在狀態列的計數上按右鍵來變更。

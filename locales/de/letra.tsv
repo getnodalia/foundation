@@ -2265,17 +2265,24 @@
 	Uruguay	Uruguay
 	Venezuela	Venezuela
 	South Africa	Südafrika
-
-# Descriptive feature names; legacy rows remain for earlier app pins.
-	Diagram	Schema
-	Insert Diagram	Schema einfügen
-	Diagram Design	Schemaentwurf
-	Diagram Styles	Schemaformatvorlagen
-	Decorative Text	Dekorativer Text
-	Decorative Text Styles	Formatvorlagen für dekorativen Text
-	select a diagram first	zuerst ein Schema auswählen
-	this diagram was made in another program: Letra shows it but can't edit it	dieses Schema wurde in einem anderen Programm erstellt: Letra zeigt es an, kann es aber nicht bearbeiten
-	this diagram can't be edited	dieses Schema kann nicht bearbeitet werden
-@msg	a diagram holds at most {MAX_ITEMS} items	ein Schema enthält höchstens {MAX_ITEMS} Elemente
-@msg	unknown decorative text style `{id}`	unbekannte Formatvorlage für dekorativen Text `{id}`
-	select a shape or decorative text first	zuerst eine Form oder dekorativen Text auswählen
+	A free word processor, written in Rust.	Eine freie Textverarbeitung, geschrieben in Rust.
+	Back	Zurück
+	Licences	Lizenzen
+	MIT OR Apache-2.0. Includes open-source work by other authors; see NOTICE.	MIT OR Apache-2.0. Enthält Open-Source-Arbeit anderer Autoren; siehe NOTICE.
+	Part of Nodalia	Teil von Nodalia
+	Report a problem	Problem melden
+	Source code	Quellcode
+	Window controls:	Fenstersteuerung:
+	‹ About Letra	‹ Über Letra
+	Keyboard shortcuts	Tastenkürzel
+	Check for updates…	Nach Updates suchen…
+	About Letra	Über Letra
+	Quit	Beenden
+	Main menu	Hauptmenü
+	Screen paper color:	Papierfarbe am Bildschirm:
+	Document background	Dokumenthintergrund
+	Soft green	Sanftes Grün
+	Warm cream	Warmes Creme
+	Soft gray	Sanftes Grau
+	Status bar count:	Zählung in der Statusleiste:
+	You can also right-click the count in the status bar to change it.	Du kannst auch mit der rechten Maustaste auf die Zählung in der Statusleiste klicken, um sie zu ändern.
