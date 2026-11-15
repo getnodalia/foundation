@@ -1352,7 +1352,6 @@ version = "0.1.0"
 dependencies = [
  "craft-media",
  "craft-media-testkit",
- "craft-xml",
  "log",
  "proptest",
  "rayon",
@@ -1880,7 +1879,6 @@ dependencies = [
  "ravif",
  "rayon",
  "serde_json",
- "sha2 0.10.9",
  "thiserror 2.0.21",
  "tiff",
  "zune-core",
@@ -2384,16 +2382,6 @@ dependencies = [
  "proptest",
  "toml",
  "unicode-normalization",
-]
-
-[[package]]
-name = "craft-proto"
-version = "0.1.0"
-dependencies = [
- "base64 0.23.1",
- "log",
- "proptest",
- "zeroize",
 ]
 
 [[package]]
