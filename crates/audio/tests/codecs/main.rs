@@ -20,5 +20,3 @@ mod opus;
 mod opusenc;
 mod routing_oracle;
 mod track_decoder;
-#[cfg(feature = "vorbis-encode")]
-mod vorbis_encoder_oracle;

@@ -23,7 +23,7 @@ mod writer;
 #[cfg(all(feature = "av1-large-encode", not(target_arch = "wasm32")))]
 mod large;
 #[cfg(all(feature = "av1-large-encode", not(target_arch = "wasm32")))]
-pub use large::{BufferedPacket, LargeEncoder};
+pub use large::LargeEncoder;
 
 use bitw::obu;
 use nodalia_media::bitstream::BitWriter;
