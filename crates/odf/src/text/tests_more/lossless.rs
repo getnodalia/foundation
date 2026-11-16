@@ -345,8 +345,14 @@ const SAMPLES: [Sample; 18] = [
 
 /// Whether `xml` is well-formed: every element closed, in order, once.
 fn well_formed(xml: &[u8]) -> bool {
-    let limits =
-        nodalia_xml::Limits { max_input: usize::MAX, max_depth: usize::MAX, max_nodes: usize::MAX, max_attrs: usize::MAX, max_attrs_total: usize::MAX };
+    let limits = nodalia_xml::Limits {
+        max_input: usize::MAX,
+        max_depth: usize::MAX,
+        max_nodes: usize::MAX,
+        max_elements: usize::MAX,
+        max_attrs: usize::MAX,
+        max_attrs_total: usize::MAX,
+    };
     nodalia_xml::Options::default().strict().with_limits(limits).parse(xml).is_ok()
 }
 
