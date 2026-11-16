@@ -35,8 +35,9 @@ workspace = true
 # ticket (winprint.rs#12, storytold/pdfcraft#3823), and reads whitespace-padded integers in
 # PrintCapabilities (winprint.rs#3, storytold/pdfcraft#2430). Pinned to an immutable revision;
 # review before bumping. The settings chosen in a driver's own dialog become a ticket through
-# `PrintTicket::from_dev_mode`.
-winprint = { git = "https://github.com/getnodalia/foundation", rev = "5d7cc5b9923836cf031f7d4bcadf6c004d1ceeb0", default-features = false }
+# `PrintTicket::from_dev_mode` (winprint.rs#24, pinned at its merge commit on winprint.rs's
+# `main`).
+winprint = { git = "https://github.com/getnodalia/foundation", rev = "a972454d46f1961cbd8280f0ba9c63943c38924d", default-features = false }
 # GetDefaultPrinter (MIT).
 winsafe = { version = "0.0.29", default-features = false, features = ["winspool"] }
 # The job file's private folder.
