@@ -2503,3 +2503,30 @@ calendar weekday	We	Sr
 	“{name}” is protected. Enter a password to open it.	„{name}” je zaštićen. Unesite lozinku da ga otvorite.
 	… and {n} more	… i još {n}
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	About Papel	O Papelu
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Datoteke koje otvorite u Papelu pojavljuju se ovdje. Ispustite PDF bilo gdje da ga otvorite.
+	Papel can't check this signature yet: {}.	Papel još ne može provjeriti ovaj potpis: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel se nije normalno ugasio. Ovi dokumenti su imali promjene koje su automatski sačuvane:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel crta bez grafičkog procesora, pa može biti spor. Ažuriranje upravljačkog programa za grafiku može pomoći.
+	Papel on GitHub	Papel na GitHubu
+	Papel web page	Web stranica Papela
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel radi van mreže. Bez telemetrije, bez računa i bez obrade u oblaku osim ako ne dodate pružaoca.
+	Papel {v} is available.	Dostupan je Papel {v}.
+	Reopen the files that were open when Papel last closed	Ponovo otvori datoteke koje su bile otvorene kad je Papel posljednji put zatvoren
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Potpišite list bijelog papira i fotografišite ga pri jakom, ravnomjernom svjetlu (koristite blic). Odaberite fotografiju ili je ispustite ovdje: Papel pronalazi potpis i uklanja papir.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Prepoznavanje teksta nije instalirano: nedostaju datoteke modela. Ponovo instalirajte Papel ili postavite PDFCRAFT_MODELS na folder koji ih sadrži.
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	Certifikat za {} ima kritična proširenja koja Papel ne prepoznaje, pa se ne koristi kao jamstvo za {}.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Fontovi kojima Papel piše ne mogu iscrtati „{c}” ({code}), pa se u svakom PDF pregledniku prikazuje kao ?. Tekst je sačuvan.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Obrazac traži slanje na {u}; Papel ne šalje podatke obrazaca. Sačuvajte dokument da zadržite unose.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Ključ je u macOS privjesku ključeva, koji može tražiti dozvolu da ga Papel koristi.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Ključ je u Windows skladištu certifikata, koje može tražiti dozvolu da ga Papel koristi.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	Certifikat potpisnika ima kritična proširenja koja Papel ne prepoznaje ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	modeli za prepoznavanje teksta nisu instalirani (ponovo instalirajte Papel ili postavite PDFCRAFT_MODELS na folder koji ih sadrži)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Font ovog polja ne može iscrtati „{c}” ({code}), pa Papel na tom mjestu prikazuje ?. Vrijednost je sačuvana i drugi PDF preglednici ponovo iscrtavaju polje iz nje.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Ovaj obrazac sadrži i XFA podatke, koje Papel još ne čita. Možete popuniti njegova polja, ali Acrobat može umjesto toga prikazati XFA vrijednosti.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Ovo je dinamički XFA obrazac, koji Papel još ne može prikazati. Ono što vidite je zamjenska stranica datoteke.
+	Welcome to Papel	Dobro došli u Papel
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} šalje obrazac na {url}; Papel ne šalje podatke obrazaca. Sačuvajte dokument da zadržite unose.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} u ovom dokumentu pokušao je otvoriti adresu koju Papel neće otvoriti: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} u ovom dokumentu pokušao je otvoriti adresu koju Papel neće otvoriti: {e}. Iz dokumenata se otvaraju samo web (http, https) i e-mail (mailto) veze.

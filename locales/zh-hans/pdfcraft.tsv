@@ -3788,3 +3788,58 @@ document scrollbar width	Wide	宽
 	…or paste the raw text here; # headings, - bullets	…或在此粘贴原始文本；# 标题，- 项目符号
 	− Page {p}	− 第 {p} 页
 	−LOC	删除行
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	在标签左侧、标题栏通常显示的位置放一个徽标或名称：Papel 自己的，或你公司的。
+	A PNG or SVG file. It is read from this place each time Papel starts.	一个 PNG 或 SVG 文件。每次 Papel 启动时都从此位置读取。
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	属于页面内容一部分的签名（例如扫描页面上的签名）既不是字段也不是注释，因此无法单独移除，Papel 也不会为隐藏它而擦除页面的某些部分。要去掉它，请对该区域进行密文处理（密文），如果签名是一张独立的图像，也可以用“编辑 PDF”删除该图像。
+	About Papel	关于 Papel
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	下次启动 Papel 时生效。如果窗口在支持 G-SYNC、FreeSync 或其他可变刷新率的显示器上闪烁，请选择 OpenGL。
+	Ask to make Papel the default PDF app	询问是否将 Papel 设为默认 PDF 应用
+	Choose Papel for .pdf files in Windows Settings.	请在 Windows 设置中为 .pdf 文件选择 Papel。
+	Combine files in Papel…	在 Papel 中合并文件…
+	Convert to PDF with Papel	使用 Papel 转换为 PDF
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	在 Papel 中打开的文件会显示在这里。将 PDF 拖放到任意位置即可打开。
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	在访达中：选择文件，然后右键点按 > 快速操作 > “Combine files in Papel”。没有列出？请在“快速操作 > 自定”中开启一次。
+	Hide Papel	隐藏 Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	匈牙利语 OCR 需要桌面应用、Tesseract 5 和 hun 语言模型。安装后请重启 Papel。
+	Make Papel your default PDF app?	将 Papel 设为默认 PDF 应用？
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	尚未安装插件。安装 .wasm 插件以扩展 Papel。
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	请打开一封不带附件的新邮件，Papel 会在文件夹中显示 {name}，以便你自行附加。
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	第 {page} 页的内容超过 Papel 能读取的量：其中一部分没有绘制，文字也只有部分能搜索或复制。
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	使用 Type 3 字体的页面将作为图像打印，因为打印这些页面时 Windows 可能会关闭 Papel。其他页面照常打印。
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	此页面的部分内容未显示：其内容超出了 Papel 为单个页面绘制的上限。
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel 未正常关闭。以下文档的更改已自动保存：
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel 正在不使用图形处理器的情况下绘制，因此可能较慢。更新显卡驱动程序可能会有帮助。
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel 正在保留你刚才的操作。文件选择器恢复正常后，请选择“重试”。
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel 会查找设备厂商安装的库。仅当找不到你的设备时才需要选择。
+	Papel on GitHub	GitHub 上的 Papel
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel 会打开提供商页面，你在那里用 CPF、PIN 和一次性验证码登录。
+	Papel web page	Papel 网页
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel 可离线工作。无遥测、无账号，除非您自行添加服务商，否则无云端处理。
+	Papel {v} is available.	Papel {v} 可用。
+	Papel's own	Papel 自己的
+	Plugins are sandboxed WebAssembly packages. They survive Papel updates as long as their API version is supported.	插件是沙盒化的 WebAssembly 包。只要其 API 版本受支持，它们就能在 Papel 更新后继续使用。
+	Quit Papel	退出 Papel
+	Reopen the files that were open when Papel last closed	重新打开上次关闭 Papel 时打开的文件
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	在白纸上签名，并在明亮、均匀的光线下拍照（使用闪光灯）。选择照片或将其拖放到此处：Papel 会找到签名并去除纸张背景。
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	未安装文本识别：缺少模型文件。请重新安装 Papel，或将 PDFCRAFT_MODELS 设置为包含这些文件的文件夹。
+	The Dock shows it the next time Papel opens.	下次打开 Papel 时，程序坞将显示此图标。
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papel 写入时使用的字体无法显示“{c}”（{code}），因此它在所有 PDF 阅读器中都会显示为 ?。文本已保存。
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	该表单请求提交到{u}；Papel 不发送表单数据。请保存文档以保留填写内容。
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	密钥位于 macOS 钥匙串中，系统可能会询问是否允许 Papel 使用它。
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	密钥位于 Windows 证书存储中，系统可能会询问是否允许 Papel 使用它。
+	The module's tokens hold no digital ID Papel can sign with.	该模块的令牌中没有 Papel 可用于签名的数字 ID。
+	The PIN goes only to the card; Papel doesn't keep it.	PIN 只发送到卡上；Papel 不会保存它。
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	尚未安装文本识别模型（请重新安装 Papel，或将 PDFCRAFT_MODELS 设置为包含这些模型的文件夹）
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	此字段的字体无法显示“{c}”（{code}），Papel 会在该处显示 ?。值已保存，其他 PDF 阅读器会根据该值重新绘制此字段。
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	此表单还包含 XFA 数据，Papel 暂不读取。您可以填写字段，但 Acrobat 可能显示 XFA 值。
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	此安装由 Debian 软件包管理。请使用系统软件管理器更新 Papel。
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	此安装由 RPM 软件包管理。请使用系统软件管理器更新 Papel。
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	这是动态 XFA 表单，Papel 暂无法显示。您看到的是文件的占位页面。
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	无法使用此签名服务：它需要在浏览器中进行 OAuth 登录，而 Papel 尚不支持
+	Use your system software manager to update Papel.	请使用系统软件管理器更新 Papel。
+	Welcome to Papel	欢迎使用 Papel
+	Your default email app can't take a file from Papel.	默认邮件应用无法从 Papel 接收文件。
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} 将表单提交到{url}；Papel 不发送表单数据。请保存文档以保留填写内容。
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	有 {n} 页的内容超过 Papel 能读取的量（最先是第 {page} 页）：其中部分没有绘制，文字也只有部分能搜索或复制。
+	{program} can't take a file from Papel.	{program} 无法从 Papel 接收文件。
