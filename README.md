@@ -120,6 +120,13 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   pages and version detection, and written back; and `model`, the drawing above the tags (header
   variables, tables, blocks, layouts, entities) and its writer (R12 to 2018), merged from Forja's and Pluma's readers. Bounded
   on hostile input. Mapping the model onto a document stays in each app.
+- [`nodalia-lamina-format`](crates/lamina-format/README.md): the Lámina `.deckcraft` package:
+  identity and sniffing, the `presentation.json` envelope with the presentation as a type
+  parameter, NaN-safe JSON and the reader for older files with `null` numbers, member names and
+  compression, and bounded, budgeted member reads. The presentation model and its mapping stay in Lámina.
+- [`nodalia-dwg`](crates/dwg/README.md): bounded byte-level DWG↔DXF conversion with diagnostics,
+  capped output and an optional child-process worker; the `acadrust` dependency remains isolated
+  behind bytes and is unavailable on wasm32 and FreeBSD/aarch64.
 - [`nodalia-ecproj-format`](crates/ecproj-format/README.md): the envelope of Pulso `.ecproj`
   project files: `savedBy`, the schema version and its check, and the file object with the
   project and its saved view as type parameters. The project model stays in Pulso.
@@ -169,6 +176,9 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   every frame's position, delay, disposal and transparent colour, the loop count and the first
   frame's colour table, without decompressing pixels. Tells an animation from a still and whether
   a file can hold the picture it declares before a decoder runs.
+- [`nodalia-celdas-format`](crates/celdas-format/README.md): Celdas's native JSON workbook
+  (`.json`, `.scjson`): the extensions, the reader, the pretty writer, and newer entries kept
+  unread and written back into a list. The workbook model and what follows a read stay in Celdas.
 - [`nodalia-hdr`](crates/hdr/src/lib.rs): Radiance HDR (RGBE) picture reader, from Toma: flat,
   old and new run-length scan lines and all eight axis orders, to linear float RGB. Scan lines are
   validated before the picture is allocated.
@@ -203,6 +213,8 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   decoder is bounded and returns its partial output on damage. From Papel; a PDF filter chain
   is built on it in `nodalia-pdf`.
 - [`nodalia-timeline`](crates/timeline/README.md): editorial timeline interchange: exact media time and SMPTE timecode, import/export reports, media path and `file://` URL handling, Avid Log Exchange (ALE) and CMX 3600 EDL documents, format detection. From Toma.
+- [`nodalia-time`](crates/time/README.md): exact rational ticks and SMPTE time across media, with a `soundcraft` compatibility module retaining SoundCraft's sample-index timebase, tempo maps, grids and session serialization semantics.
+- [`nodalia-sound-format`](crates/sound-format/README.md): SoundCraft's typed `.scraft` session schema, versioned reader/writer, hostile-input validation, and `.scraftz` bundle reader/writer. Engine and UI mapping stays in SoundCraft.
 - [`nodalia-metadata`](crates/metadata/README.md): photo metadata, from Luz: EXIF (read and write,
   maker-note lens and focus point, every tag by name), IPTC-IIM, XMP packets (read, write, and a merge
   that keeps what another program wrote), GPX track logs, and the blocks that carry them in JPEG, PNG,
@@ -226,9 +238,10 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
   sockets: session, requests of method calls with back-references, responses, ids, address
   templates, credentials and the judgement of HTTP answers, over any HTTP implementation. Bounded
   on hostile answers; what a program asks and makes of the answers stays in it.
-- [`nodalia-jpeg`](crates/jpeg/README.md): clean-room decoder for 12-bit and arithmetic-coded
-  JPEG (T.81 SOF0/SOF1 at 12 bits, SOF9, SOF10), from Lienzo, and a frame probe for routing.
-  Metadata stays in each app.
+- [`nodalia-jpeg`](crates/jpeg/README.md): clean-room JPEG decoder for 12-bit and arithmetic-coded
+  frames (T.81 SOF0/SOF1 at 12 bits, SOF9, SOF10), band decoding, and an optimized 8-bit baseline
+  encoder, from Lienzo; includes a frame probe for routing. Metadata interpretation stays in
+  each app.
 - [`nodalia-raster-codecs`](crates/raster-codecs/README.md): small raster formats, one module each,
   from Lienzo: DDS (BC1 to BC3, read and write), DICOM, FITS (read and write), IFF/ILBM (read
   and write), PCX, PNM/PAM/PFM (read and write) and XPM, into one flat image type. Bounded and
@@ -325,7 +338,8 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
 - [`nodalia-sheet`](crates/sheet/README.md): spreadsheet vocabulary shared by `nodalia-xls`, `nodalia-xlsx` and `nodalia-ods`: cell positions and A1 text, cell values and error values, sheet-name quoting, Excel's built-in number formats and indexed colour palette. Not a file format; no dependencies.
 - [`nodalia-sf2`](crates/sf2/README.md): SoundFont 2 (`.sf2`) reader: the sample pool and, per preset, the key and velocity regions a note sounds, with tuning, loop points, pan, level and volume envelope resolved from the preset and instrument zones. Bounded on hostile input. From LoopCraft.
 - [`nodalia-silhouette-studio`](crates/silhouette-studio/src/lib.rs): bounded, fail-closed reader for Silhouette Studio `.studio` and `.studio3` documents: outlines, line colours and page size in millimetres. Protected designs are refused.
-- [`nodalia-stencil-format`](crates/stencil-format/README.md): the versioned `.stencilcraft` JSON wire schema and envelope: required members, version 1 defaults, optional fields, and header checks. The app retains its document model and domain validation.
+- [`nodalia-stencil-format`](crates/stencil-format/README.md): the versioned `.stencilcraft` JSON wire schema and envelope: required members, version 1 defaults, optional fields, and header checks.
+- `nodalia-stencil-document`: StencilCraft's typed document model, geometry helpers, validation, and native `.stencilcraft` codec.
 - [`nodalia-sketch`](crates/sketch/README.md): clean-room reader for the `.sketch` container (Sketch 48 and newer): the ZIP archive, the version cut, `document.json`, the pages in document order and images, as the JSON the file holds. Bounded on hostile input. Carved from Trama.
 - [`nodalia-svg`](crates/svg/src/lib.rs): SVG. `sniff` recognises SVG and SVGZ data; `svgz` unpacks
   SVGZ within a byte limit, decodes UTF-8, UTF-16 and ISO 8859-1, and compresses; `guard` bounds
@@ -341,6 +355,9 @@ See the [release notes](CHANGELOG.md) for included functionality and known limit
 - [`nodalia-text`](crates/text/README.md): text processing below the composer. Its `hyphen` module finds
   hyphenation points, with a bundled US English dictionary and patterns and optional hypher patterns
   for 47 more languages (one cargo feature each).
+- [`nodalia-texture`](crates/texture/README.md): linear float image planes, gray or RGBA, with
+  nearest and bilinear sampling that repeats or clamps, resizing and display conversion. Sizes are
+  bounded by `Limits`. From MaterialCraft.
 - [`nodalia-ui`](crates/ui/README.md): SVG catalogs, icon buttons, tabs, pane controls, transactional docking, print settings and theme helpers for egui frontends;
   assets, themes, localization and command handling stay in each app. Requires Rust 1.95 or later.
 - [`nodalia-vcard`](crates/vcard/README.md): vCard contacts, from MailCraft: vCard 2.1, 3.0 and 4.0 read

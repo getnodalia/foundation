@@ -8,8 +8,10 @@ nothing.
 |---|---|
 | `sniff`, `is_eps` | EPS (binary header, or `%!PS-Adobe-… EPSF-…`), plain PostScript or PDF, and whether it is an Illustrator file: PostScript-based (`%AI…` comments, or Illustrator as `%%Creator`) or PDF-based (the `AIPrivateData` / `AIPDFPrivateData` keys near the start or end of the PDF, a hint only) |
 | `sections` | The parts behind the binary header ("DOS EPS"): the PostScript, the TIFF preview, the Windows metafile preview. A header that points outside the file is an error |
+| `postscript_section` | The PostScript program alone; a damaged preview does not prevent a reader from using a valid program section |
 | `wrap` | PostScript and its previews behind a binary header, as `sections` reads them back |
 | `Comments::read` | `%%BoundingBox` and `%%HiResBoundingBox` (the first in the header; `(atend)` taken from the trailer, outside embedded documents), `%%Pages`, `%%LanguageLevel`, `%%Creator`, `%%Title` |
+| `Comments::read_with_header_limit` | The same comments with a caller-selected header scan limit capped at 256 KiB; `read` defaults to 64 KiB |
 | `epsi` | The device-independent preview (`%%BeginPreview`, 1, 2, 4 or 8 bits) as an 8-bit grey bitmap |
 | `ascii85::encode`, `ascii85::decode` | The ASCII85 data encoding; lines never start with `%`, decoding is bounded |
 
@@ -29,7 +31,7 @@ written elsewhere:
   print jobs and the legacy Illustrator format from it. That code speaks Pluma's document
   model throughout and has not moved.
 - A PostScript interpreter that returns what a file paints as a PDF is proposed in
-  nodalia-libs#159 (`craft-ps`, from Pliego).
+  nodalia-libs#159 (`nodalia-ps`, from Pliego).
 - Decoding the TIFF or metafile preview is the caller's (`nodalia-metafile` reads the latter).
 - The editing copy of the art inside a PDF-based Illustrator file is in the PDF's `PieceInfo`,
   which a PDF reader finds.
