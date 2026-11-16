@@ -841,8 +841,7 @@ impl<'a> Builder<'a> {
             tb.props.style = None;
         }
         if t.widths.len() == cols && t.widths.iter().all(|w| w.is_finite() && *w > 1.0) {
-            // Narrow columns stay as they are: raising them would widen the table past its source.
-            tb.grid = t.widths.iter().map(|w| w.min(1584.0)).collect();
+            tb.grid = t.widths.iter().map(|w| w.clamp(6.0, 1584.0)).collect();
         }
         tb.rows.clear();
         if let Some(x) = &t.extra {

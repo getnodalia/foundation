@@ -78,7 +78,6 @@ impl Document {
             media_index: MediaIndex::default(),
             kept: Default::default(),
             missing_pictures: Default::default(),
-            skipped_parts: Vec::new(),
         }
     }
 
@@ -157,7 +156,6 @@ impl Document {
             media_index: _,
             kept: _,
             missing_pictures: _,
-            skipped_parts,
         } = self;
         let Document {
             body: other_body,
@@ -179,7 +177,6 @@ impl Document {
             media_index: _,
             kept: _,
             missing_pictures: _,
-            skipped_parts: other_skipped_parts,
         } = other;
         same_blocks(body, other_body)
             && same_parts(parts, other_parts)
@@ -197,7 +194,6 @@ impl Document {
             && same_bytes(media, other_media)
             && same_bytes(passthrough, other_passthrough)
             && same_glossary(glossary, other_glossary)
-            && skipped_parts == other_skipped_parts
     }
 
     pub fn story(&self, s: StoryRef) -> Option<&Blocks> {

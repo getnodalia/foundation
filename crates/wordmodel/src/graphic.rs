@@ -106,9 +106,6 @@ pub enum GraphicItem {
         stroke: Option<Rgb>,
         #[serde(default)]
         stroke_width: f32,
-        /// Opacity of `fill`, 0 to 1.
-        #[serde(default = "opaque")]
-        alpha: f32,
     },
     /// A path: polygons, pie slices, line series.
     Path {
@@ -155,8 +152,4 @@ pub enum PathSeg {
     Line(f32, f32),
     Cubic(f32, f32, f32, f32, f32, f32),
     Close,
-}
-
-fn opaque() -> f32 {
-    1.0
 }
