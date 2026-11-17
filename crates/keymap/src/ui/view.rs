@@ -426,7 +426,7 @@ impl Draw<'_, '_> {
             .inner
             .labelled_by(label.id);
         self.tag(|| format!("shortcuts.{salt}"), r.rect, title);
-        r
+        if natural > width { r.on_hover_text(full) } else { r }
     }
 
     fn filter_combo(&mut self, ui: &mut Ui) {
