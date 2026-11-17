@@ -102,13 +102,12 @@ impl<'d> EmbedWriter<'d> {
     }
 
     /// Write the font table kept from a file, with the fonts it embeds, relating it from `rels`.
-    /// Whether there was one to write.
-    pub fn font_table(&mut self, rels: &mut PartRels) -> bool {
+    pub fn font_table(&mut self, rels: &mut PartRels) {
         let mut written = Vec::new();
-        let Some(root) = crate::package::font_table_key(self.passthrough).map(str::to_string) else { return false };
-        let Some(name) = self.copy_tree(&root, &mut HashMap::new(), &mut written) else { return false };
-        rels.add(rt::FONT_TABLE, &relative(STORY_PART, &name), false);
-        true
+        let Some(root) = crate::package::font_table_key(self.passthrough).map(str::to_string) else { return };
+        if let Some(name) = self.copy_tree(&root, &mut HashMap::new(), &mut written) {
+            rels.add(rt::FONT_TABLE, &relative(STORY_PART, &name), false);
+        }
     }
 
     /// Reserve the names of the media files this writer writes.

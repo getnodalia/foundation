@@ -23,7 +23,7 @@ mod parser;
 mod security;
 mod writer;
 
-#[cfg(any(test, feature = "test-support"))]
+#[cfg(test)]
 pub(crate) mod testkit;
 
 pub use crate::crypt::{

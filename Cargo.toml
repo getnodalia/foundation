@@ -11,7 +11,6 @@ rust-version = "1.95"
 repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
-nodalia-palette = { path = "crates/palette" }
 nodalia-shx = { path = "crates/shx" }
 nodalia-http-url = { path = "crates/http-url" }
 nodalia-usd = { path = "crates/usd" }
@@ -27,7 +26,6 @@ nodalia-plist = { path = "crates/plist" }
 nodalia-platform = { path = "crates/platform" }
 nodalia-aep = { path = "crates/aep" }
 nodalia-affinity = { path = "crates/affinity" }
-nodalia-ai = { path = "crates/ai" }
 nodalia-ai-core = { path = "crates/ai-core" }
 nodalia-anima-format = { path = "crates/anima-format" }
 nodalia-pdf = { path = "crates/pdf", version = "=0.1.0" }
@@ -50,7 +48,6 @@ nodalia-gzip = { path = "crates/gzip" }
 nodalia-celdas-format = { path = "crates/celdas-format" }
 nodalia-aaf = { path = "crates/aaf" }
 nodalia-atomic = { path = "crates/atomic" }
-nodalia-xtask = { path = "crates/xtask" }
 nodalia-captions = { path = "crates/captions" }
 nodalia-cfb = { path = "crates/cfb" }
 nodalia-codepage = { path = "crates/codepage" }
@@ -145,7 +142,6 @@ nodalia-lienzo-bundle = { path = "crates/lienzo-bundle" }
 nodalia-pkcs7 = { path = "crates/pkcs7" }
 nodalia-plotter = { path = "crates/plotter" }
 nodalia-prepress = { path = "crates/prepress" }
-nodalia-press-print = { path = "crates/press-print" }
 nodalia-print = { path = "crates/print" }
 nodalia-proof = { path = "crates/proof" }
 nodalia-raster-codecs = { path = "crates/raster-codecs" }
@@ -167,7 +163,6 @@ nodalia-stencil-format = { path = "crates/stencil-format" }
 nodalia-stencil-document = { path = "crates/stencil-document" }
 nodalia-svg-paths = { path = "crates/svg-paths" }
 nodalia-stream-codecs = { path = "crates/stream-codecs" }
-nodalia-testkit = { path = "crates/testkit" }
 nodalia-text = { path = "crates/text" }
 nodalia-texture-archive = { path = "crates/texture-archive" }
 nodalia-texture = { path = "crates/texture" }
@@ -214,9 +209,6 @@ chrono = { version = "0.4.45", default-features = false, features = ["std"] }
 [workspace.lints.rust]
 unsafe_code = "forbid"
 unexpected_cfgs = { level = "warn", check-cfg = ["cfg(nodalia_pdf_unicode_fixtures)"] }
-
-[workspace.lints.cargo]
-unused_workspace_dependencies = "allow"
 
 [workspace.lints.clippy]
 cognitive_complexity = "deny"

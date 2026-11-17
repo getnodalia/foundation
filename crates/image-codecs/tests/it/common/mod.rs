@@ -2,7 +2,6 @@
 //! image generators, comparison metrics.
 #![allow(dead_code)]
 
-pub mod pngsuite;
 pub mod tiffgen;
 
 use nodalia_image_codecs::*;
