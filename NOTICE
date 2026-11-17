@@ -421,6 +421,6 @@ Original src/avx2/fdct.rs opening notice
 
 Nodalia
 
-This tree is nodalia-libs, made from storytold/craft-libs at fd91be74f078d7062945ff6512cf65afea0c73ac by renaming it
+This tree is nodalia-libs, made from storytold/craft-libs at de97c35f2b2af01c62371647e57a6affeab456fd by renaming it
 (scripts/nodalia_libs.py in https://github.com/getnodalia/foundation). Its code and assets keep the licences, copyright
 notices and credits above and in ATTRIBUTION.md, unchanged.
