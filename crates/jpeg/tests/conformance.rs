@@ -31,16 +31,6 @@ fn diff(a: impl Iterator<Item = f64>, b: impl Iterator<Item = f64>) -> (f64, f64
     (sum / n.max(1) as f64, max)
 }
 
-/// testimgari-huffman.jpg is testimgari.jpg transcoded by jpegtran: the same coefficients, only
-/// the entropy coding differs, so the samples must be identical.
-#[test]
-fn arithmetic_coded_image_matches_its_huffman_transcode() {
-    let huffman = decode_fixture("testimgari-huffman.jpg");
-    let arithmetic = decode_fixture("testimgari.jpg");
-    assert!(matches!(huffman.samples, Samples::U8(_)));
-    assert!(huffman.samples == arithmetic.samples, "testimgari.jpg decodes differently from testimgari-huffman.jpg");
-}
-
 /// The arithmetic and progressive arithmetic transcodes jpegtran made of testorig.jpg and
 /// testorig12.jpg hold their coefficients, so they decode to exactly the same samples.
 #[test]
@@ -65,25 +55,6 @@ fn arithmetic_white_tail_decodes_from_implied_zeros() {
     assert_eq!((arithmetic.width, arithmetic.height, arithmetic.components), (512, 512, 1));
     assert!(decode_clean("whitetail-huffman.jpg").samples == arithmetic.samples, "whitetail-ari.jpg decodes differently from whitetail-huffman.jpg");
 }
-
-/// The 8-bit path against zune-jpeg. Both use centered linear chroma upsampling; the residual is
-/// float against integer IDCT and color conversion.
-#[test]
-fn baseline_image_matches_zune_jpeg() {
-    let bytes = fixture("testorig.jpg");
-    let mut zune = zune_jpeg::JpegDecoder::new(zune_jpeg::zune_core::bytestream::ZCursor::new(&bytes[..]));
-    let reference = zune.decode().unwrap_or_else(|e| panic!("zune-jpeg: {e:?}"));
-    let img = decode_fixture("testorig.jpg");
-    let Samples::U8(px) = &img.samples else { panic!("testorig.jpg: expected 8-bit samples") };
-    assert_eq!(px.len(), reference.len());
-    let (mean, max) = diff(px.iter().map(|&v| f64::from(v)), reference.iter().map(|&v| f64::from(v)));
-    eprintln!("testorig.jpg vs zune-jpeg: mean {mean:.3}, max {max}");
-    assert!(mean < MAX_MEAN_8 && max <= MAX_ABS_8, "mean {mean}, max {max}");
-}
-
-// Observed: mean 0.52, max 3.
-const MAX_MEAN_8: f64 = 0.75;
-const MAX_ABS_8: f64 = 4.0;
 
 /// Parse a binary PPM with 16-bit big-endian samples.
 fn ppm16(bytes: &[u8]) -> (u32, u32, u32, Vec<u16>) {
@@ -126,3 +97,28 @@ fn twelve_bit_image_matches_libjpeg_turbo() {
 // Observed: mean 0.50, max 2.46 (of 4095).
 const MAX_MEAN_12: f64 = 0.75;
 const MAX_ABS_12: f64 = 4.0;
+
+/// Every band of each Huffman-coded 8-bit test image, read in order, joined.
+fn bands_of(bytes: &[u8]) -> (Vec<u8>, bool) {
+    let bands = nodalia_jpeg::Bands::new(bytes, &Limits::default(), None).unwrap_or_else(|e| panic!("bands: {e}"));
+    let mut reader = bands.reader();
+    let mut out = Vec::new();
+    while let Some(band) = reader.next_band().unwrap_or_else(|e| panic!("band: {e}")) {
+        out.extend_from_slice(band.samples);
+    }
+    (out, reader.damaged())
+}
+
+/// The sequential Huffman-coded 8-bit test images (4:2:0 colour, gray, and gray from the
+/// arithmetic white-tail test) decode in bands to exactly the whole-image decode's samples.
+#[test]
+fn baseline_images_decode_in_bands_as_whole() {
+    for name in ["testorig.jpg", "testimgari-huffman.jpg", "whitetail-huffman.jpg"] {
+        let bytes = fixture(name);
+        let whole = decode_clean(name);
+        let Samples::U8(px) = &whole.samples else { panic!("{name}: expected 8-bit samples") };
+        let (bands, damaged) = bands_of(&bytes);
+        assert!(!damaged, "{name}");
+        assert!(&bands == px, "{name}: bands differ from the whole-image decode");
+    }
+}

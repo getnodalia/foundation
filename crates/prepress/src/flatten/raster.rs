@@ -1,4 +1,4 @@
-//! Complex regions rasterized as ink images (plan tasks C3 and C4), and [`flatten_page`], which
+//! Complex regions rasterized as ink images, and [`flatten_page`], which
 //! flattens one page of a PDF.
 //!
 //! A region's image is its items written alone as a small PDF ([`page_pdf`]) and separated with
@@ -92,6 +92,7 @@ impl<'a> Rasterizer<'a> {
         Self { list, settings, printing, cms, dpi, report: RasterReport::default() }
     }
 
+    /// What the rasterizer has produced so far.
     pub fn report(&self) -> &RasterReport {
         &self.report
     }
@@ -104,13 +105,10 @@ impl<'a> Rasterizer<'a> {
         if !(bounds.is_finite() && page.is_finite() && self.dpi.is_finite() && self.dpi > 0.0) {
             return Ok(None);
         }
-        let mut scale = f64::from(self.dpi) / 72.0;
-        let mut grid = Grid::new(bounds, page, scale);
-        let pixels = grid.pixels();
-        if pixels > MAX_RASTER_PIXELS {
-            scale *= (MAX_RASTER_PIXELS as f64 / pixels as f64).sqrt() * 0.999;
-            grid = Grid::new(bounds, page, scale);
-            let dpi = (scale * 72.0) as f32;
+        let scale = f64::from(self.dpi) / 72.0;
+        let Some((grid, lowered)) = Grid::within_budget(bounds, page, scale) else { return Ok(None) };
+        if lowered {
+            let dpi = (grid.scale * 72.0) as f32;
             self.report.lowest_dpi = Some(self.report.lowest_dpi.map_or(dpi, |d| d.min(dpi)));
         }
         if grid.width() <= 0 || grid.height() <= 0 {
@@ -166,6 +164,7 @@ impl<'a> Rasterizer<'a> {
             isolated: g.isolated,
             knockout: g.knockout,
             clip: g.clip.clone(),
+            clip_rule: g.clip_rule,
             mask,
             actual_text: g.actual_text.clone(),
             children,
@@ -234,6 +233,7 @@ impl<'a> Rasterizer<'a> {
             isolated: false,
             knockout: false,
             clip: None,
+            clip_rule: FillRule::NonZero,
             mask: None,
             actual_text: None,
             children: vec![Item::Image(image)],
@@ -318,6 +318,29 @@ impl Grid {
         }
     }
 
+    /// The grid at `scale`, or at a lower one that keeps it within [`MAX_RASTER_PIXELS`]
+    /// (`true` then), checked after rounding. `None` when no scale does.
+    fn within_budget(bounds: Rect, page: Rect, mut scale: f64) -> Option<(Self, bool)> {
+        let mut grid = Self::new(bounds, page, scale);
+        if grid.pixels() <= MAX_RASTER_PIXELS {
+            return Some((grid, false));
+        }
+        // Scaling both sides down once is not enough for a thin region, whose short side stays
+        // at its minimum pixels: later passes scale by the pixel ratio itself. A grid whose
+        // coordinates hit the clamp reports fewer pixels than it spans, so a few passes may be
+        // needed; each shrinks the scale, and 8 bound the work.
+        for pass in 0..8 {
+            let linear = pass > 0;
+            let ratio = MAX_RASTER_PIXELS as f64 / grid.pixels() as f64;
+            scale *= if linear { ratio } else { ratio.sqrt() } * 0.999;
+            grid = Self::new(bounds, page, scale);
+            if grid.pixels() <= MAX_RASTER_PIXELS {
+                return Some((grid, true));
+            }
+        }
+        None
+    }
+
     fn width(&self) -> i64 {
         self.x1 - self.x0
     }
@@ -349,7 +372,9 @@ impl Grid {
 /// How [`flatten_page`] reads and flattens.
 #[derive(Clone, Debug, Default)]
 pub struct FlattenPageOptions {
+    /// How the page is read.
     pub read: ReadOptions,
+    /// How the page is flattened.
     pub flatten: FlattenOptions,
 }
 
@@ -357,21 +382,29 @@ pub struct FlattenPageOptions {
 #[derive(Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct FlattenPageReport {
+    /// What reading the page did.
     pub read: ReadReport,
+    /// What flattening the page did.
     pub flatten: FlattenReport,
+    /// What rasterizing the complex regions did.
     pub raster: RasterReport,
 }
 
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
+/// Why [`flatten_page`] failed.
 pub enum FlattenPageError {
     #[error(transparent)]
+    #[allow(missing_docs)]
     Open(#[from] OpenError),
     #[error(transparent)]
+    #[allow(missing_docs)]
     Read(#[from] ReadError),
     #[error(transparent)]
+    #[allow(missing_docs)]
     Flatten(#[from] FlattenError),
     #[error(transparent)]
+    #[allow(missing_docs)]
     Write(#[from] WriteError),
 }
 
@@ -390,4 +423,29 @@ pub fn flatten_page(pdf: &[u8], page: usize, opts: &FlattenPageOptions) -> Resul
     })?;
     let (_, report) = report.pages.pop().ok_or(FlattenPageError::Read(ReadError::Interpret))?;
     Ok((bytes, report))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_thin_region_still_fits_the_pixel_budget() {
+        // 1e7 × 1e-3 points at 600 dpi: 8.3e7 × 1 pixels before rounding, 3 rows after it.
+        let page = Rect::new(0.0, 0.0, 1e7, 1e7);
+        let (grid, lowered) = Grid::within_budget(Rect::new(0.0, 0.0, 1e7, 1e-3), page, 600.0 / 72.0).unwrap();
+        assert!(lowered);
+        assert!(grid.pixels() <= MAX_RASTER_PIXELS, "{} × {}", grid.width(), grid.height());
+        // The full page at that resolution: scaled down once, both ways.
+        let (grid, _) = Grid::within_budget(page, page, 600.0 / 72.0).unwrap();
+        assert!(grid.pixels() <= MAX_RASTER_PIXELS && grid.pixels() > MAX_RASTER_PIXELS / 2, "{} × {}", grid.width(), grid.height());
+    }
+
+    #[test]
+    fn a_clamped_grid_still_fits_the_pixel_budget() {
+        // Both sides past the coordinate clamp: the pixel count saturates, so one pass is not enough.
+        let page = Rect::new(0.0, 0.0, 1e15, 1e15);
+        let (grid, lowered) = Grid::within_budget(page, page, 600.0 / 72.0).unwrap();
+        assert!(lowered && grid.pixels() <= MAX_RASTER_PIXELS, "{} × {}", grid.width(), grid.height());
+    }
 }

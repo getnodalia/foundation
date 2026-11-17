@@ -1,0 +1,68 @@
+# API map of the "Imaging: scopes, blend keys" family: old path to new path and setter renames.
+
+family = "Imaging: scopes, blend keys"
+new_module = "nodalia_imaging::ui"
+
+[[type]]
+name = "ScopePanel"
+old = "nodalia_imaging::ui::scopes::ScopePanel"
+new = "nodalia_imaging::ui::scopes::ScopePanel"
+status = "same"
+
+[[type]]
+name = "ScopePanelLabels"
+old = "nodalia_imaging::ui::scopes::ScopePanelLabels"
+new = ""
+status = "removed"
+
+[[type]]
+name = "ScopeWords"
+old = ""
+new = "nodalia_imaging::ui::scopes::ScopeWords"
+status = "replaced"
+note = "the words! set that replaces ScopePanelLabels; the menu rows are the labels of ScopeCommand"
+
+[[type]]
+name = "ScopeCommand"
+old = ""
+new = "nodalia_imaging::ui::scopes::ScopeCommand"
+status = "replaced"
+note = "the panel menu, the scope menu and the U and O keys as one command set in the panel.scopes scope"
+
+[[type]]
+name = "ScopePanelStyle"
+old = "nodalia_imaging::ui::scopes::ScopePanelStyle"
+new = ""
+status = "removed"
+
+[[type]]
+name = "ClippingOverlay"
+old = "nodalia_imaging::ui::scopes::ClippingOverlay"
+new = "nodalia_imaging::ui::scopes::ClippingOverlay"
+status = "same"
+
+[[type]]
+name = "VectorscopePlot"
+old = "nodalia_imaging::ui::scopes::VectorscopePlot"
+new = "nodalia_imaging::ui::scopes::VectorscopePlot"
+status = "same"
+
+[[type]]
+name = "BlendKeys"
+old = "nodalia_imaging::ui::blend_keys::BlendKeys"
+new = "nodalia_ui::patterns::blend_keys::BlendKeys"
+status = "moved"
+
+[[type]]
+name = "BlendShortcut"
+old = "nodalia_imaging::ui::blend_keys::BlendShortcut"
+new = "nodalia_ui::patterns::blend_keys::BlendShortcut"
+status = "moved"
+
+[[type]]
+name = "BlendStep"
+old = ""
+new = "nodalia_ui::patterns::blend_keys::BlendStep"
+status = "replaced"
+note = "Shift+= and Shift+- as a command set"
+

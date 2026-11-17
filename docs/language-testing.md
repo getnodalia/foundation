@@ -14,8 +14,8 @@ Leave these to the automated tests; repeat them by hand only to investigate a fa
 
 | Automated | Where |
 |---|---|
-| Linux input methods on this box: fcitx5 on Xvfb (XIM), fcitx5 on headless sway (text-input-v3) and IBus on Xvfb; Pinyin, Hangul, Telex and Anthy compositions, a click into a composing field, a pointer unplugged while composing | [IME harness](https://github.com/storytold/craft-libs/pull/212), `tools/ime-harness/` |
-| Each app's key screens in Arabic, Japanese, Traditional Chinese, Korean, Thai and Vietnamese with no system fonts; one scripted IME composition and one non-Latin shortcut per app | `nodalia_ui::testing` ([nodalia-ui README](../crates/ui/README.md#testing-screens-in-each-language)) |
+| Linux input methods in the test setup: fcitx5 on Xvfb (XIM), fcitx5 on headless sway (text-input-v3) and IBus on Xvfb; Pinyin, Hangul, Telex and Anthy compositions, a click into a composing field, a pointer unplugged while composing | [IME harness](https://github.com/storytold/craft-libs/pull/212), `tools/ime-harness/` |
+| Each app's key screens in Arabic, Japanese, Traditional Chinese, Korean, Thai and Vietnamese with no system fonts; one scripted IME composition and one non-Latin shortcut per app | `nodalia_ui::testing` ([gates](craft-framework.md#82-gates)) |
 | The shortcut rule for Russian, Arabic 101, Hebrew, Greek, Thai, AZERTY, Dvorak and QWERTZ presses as egui reports them | nodalia-keymap's tests |
 
 The manual list covers what those can't reach: the input methods and layouts of Windows and
@@ -117,6 +117,10 @@ shortcut as listed. On macOS read Ctrl as Cmd.
       Q position, which types `'`, does not run Ctrl+Q.
 - [ ] **QWERTZ** (German). Ctrl+Z undoes and Ctrl+Y redoes, on the keys labelled Z and Y. Ctrl+⇧7
       runs Ctrl+/. The menu shows Ctrl+[ as Ctrl+Ü.
+- [ ] **Turkish Q** (Windows and Linux; macOS reports this key as `` ` ``). The Keyboard
+      Shortcuts dialog records the key next to left Shift, which types `<`, as `IntlBackslash`,
+      and with Shift held as `Shift+IntlBackslash`. Each runs its command, and neither runs a `\`
+      or Shift+, binding. Once `<` has been typed, the menu shows Ctrl+IntlBackslash as Ctrl+<.
 - [ ] **Dvorak – QWERTY ⌘** (macOS). Typing gives Dvorak letters. With Cmd held, the keys follow
       QWERTY: Cmd on the QWERTY C position copies, and the menus show ⌘C.
 
