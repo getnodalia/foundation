@@ -150,7 +150,7 @@ left out of the published crate, as only the tests read it.
 Regenerate the profiles with
 
 ```sh
-NODALIA_CMS_REGEN_PROFILES=1 cargo test -p nodalia-cms --release -- integration::regen integration::fogra39
+NODALIA_CMS_REGEN_PROFILES=1 cargo test -p nodalia-cms --release --test regen --test fogra39
 ```
 
 Use your printer's profile for production print.

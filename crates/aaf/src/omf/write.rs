@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use nodalia_timeline::Tick;
+use nodalia_timeline::time::Tick;
 
 use super::bento;
 use crate::model::{CItem, CKind, Document, Gain, Source, ticks_to_units};

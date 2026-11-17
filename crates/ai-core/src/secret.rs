@@ -13,7 +13,6 @@ use std::fmt;
 pub struct SecretString(String);
 
 impl SecretString {
-    /// Wraps a secret value.
     pub fn new(value: impl Into<String>) -> Self {
         Self(value.into())
     }
@@ -23,7 +22,6 @@ impl SecretString {
         &self.0
     }
 
-    /// True when the secret has no characters.
     pub fn is_empty(&self) -> bool {
         self.0.is_empty()
     }
@@ -76,6 +74,21 @@ mod tests {
     use super::*;
 
     #[test]
+    fn debug_and_display_never_show_the_value() {
+        let s = SecretString::new("sk-live-abc123");
+        assert!(!format!("{s:?}").contains("abc123"));
+        assert!(!format!("{s}").contains("abc123"));
+        assert!(!format!("{:?}", Some(&s)).contains("abc123"));
+    }
+
+    #[test]
+    fn redact_scrubs_every_occurrence() {
+        let s = SecretString::new("sk-live-abc123");
+        let out = redact("bad key sk-live-abc123 (sk-live-abc123)", &[&s]);
+        assert_eq!(out, "bad key [redacted] ([redacted])");
+    }
+
+    #[test]
     fn redact_never_searches_its_own_markers() {
         // Each secret matches the marker the one before it wrote; replacing in turn doubled the
         // text for every secret.
@@ -91,5 +104,11 @@ mod tests {
         let b = SecretString::new("bcd");
         assert_eq!(redact("xabcdx", &[&a, &b]), "x[redacted]x");
         assert_eq!(redact("abcabc", &[&a]), "[redacted][redacted]");
+    }
+
+    #[test]
+    fn redact_ignores_empty_secret() {
+        let s = SecretString::new("");
+        assert_eq!(redact("hello", &[&s]), "hello");
     }
 }

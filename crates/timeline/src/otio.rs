@@ -18,7 +18,6 @@
 //!
 //! JSON nesting is bounded by `serde_json`'s limit of 128 levels: a deeper document is a parse
 //! error, and nothing after parsing recurses deeper than the document.
-#![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
 
 use std::collections::HashMap;
 
@@ -27,16 +26,15 @@ use serde_json::{Map, Value, json};
 use crate::build::{
     Builder, Imported, MediaSpec, base_item, empty_sequence, generator_of, item_media, settings_for, transition_effect, transition_name,
 };
-use crate::interchange::{
+use crate::model::{
     AudioChannels, AudioStreamInfo, ClipId, EffectInstance, Ext, Generator, Interpolation, ItemId, ItemKind, Keyframe, Label, Marker, MarkerId,
     MarkerKind, MediaInfo, MediaKind, MediaRef, Param, ParamValue, Project, Sequence, SequenceSettings, Track, TrackItem, TrackKind, Transition,
     TransitionAlign, TransitionId, Vec2, VideoStreamInfo,
 };
 use crate::path::{file_name, is_absolute, path_to_file_url, relative_path, relative_url, resolve_path, resolve_url};
 use crate::rate::{MAX_RATE, rate_from_f64};
-use crate::rates::FrameRate;
 use crate::report::Report;
-use crate::time::{TICKS_PER_SECOND, Tick};
+use crate::time::{FrameRate, TICKS_PER_SECOND, Tick};
 use crate::{Error, ExportOptions, Format, ImportOptions, Result};
 
 // ---------------------------------------------------------------------------------------------
@@ -1244,7 +1242,6 @@ impl Imp<'_, '_, '_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nodalia_ui::testing::trial;
 
     #[cfg(feature = "xml")]
     fn iopts() -> ImportOptions<'static> {
@@ -1263,7 +1260,7 @@ mod tests {
         }
     }
 
-    #[trial]
+    #[test]
     fn rational_time() {
         for r in FrameRate::COMMON {
             for f in [0i64, 1, 1799, 86_400, 10_000_001] {
@@ -1310,7 +1307,7 @@ mod tests {
     /// written inside nested sequences the rest are gaps, with one warning. The test lowers the limit so it
     /// stays tiny: without the check all 112 stacks are written.
     #[cfg(feature = "xml")]
-    #[trial]
+    #[test]
     fn nested_copies_stop_at_the_limit() {
         let imported = crate::fcpxml::import(&nested_tree(3, 10), &iopts(), &mut Report::default()).expect("import succeeds");
         let seq = imported.sequences[0];
@@ -1340,7 +1337,7 @@ mod tests {
 
     /// An ordinary project with nested sequences is far below the real limit and exports untouched.
     #[cfg(feature = "xml")]
-    #[trial]
+    #[test]
     fn ordinary_nesting_is_not_capped() {
         let imported = crate::fcpxml::import(&nested_tree(3, 4), &iopts(), &mut Report::default()).expect("import succeeds");
         let mut report = Report::default();

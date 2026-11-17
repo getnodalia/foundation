@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-jpeg"
 description = "Clean-room JPEG decoder and 8-bit optimized baseline encoder (ITU-T T.81)."
 version.workspace = true

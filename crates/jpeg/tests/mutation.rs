@@ -19,7 +19,10 @@ const INPUTS: [(&str, usize); 8] = [
 
 /// Room for the 227×149 fixtures, too little for a mutated frame header that grows them much.
 fn test_limits() -> Limits {
-    Limits { max_pixels: 1 << 16, max_alloc: 1 << 20, ..Limits::default() }
+    let mut limits = Limits::default();
+    limits.max_pixels = 1 << 16;
+    limits.max_alloc = 1 << 20;
+    limits
 }
 
 struct Rng(u64);

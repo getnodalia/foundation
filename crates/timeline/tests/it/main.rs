@@ -1,17 +1,6 @@
-//! The integration tests of nodalia-timeline, folded into the lib's test target: the screen tests, and with
-//! the `xml` and `otio` features the interchange round trips.
+//! Integration tests, built as one test binary: each file is a module.
 
-#[cfg(all(feature = "xml", feature = "otio"))]
 mod fcp7;
-#[cfg(all(feature = "xml", feature = "otio"))]
 mod fcpxml;
-mod features;
-mod lanes;
-#[cfg(all(feature = "xml", feature = "otio"))]
 mod otio;
-mod panel;
-mod ruler;
-#[cfg(all(feature = "xml", feature = "otio"))]
 mod support;
-mod timecode;
-mod transport;

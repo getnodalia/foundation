@@ -1,6 +1,6 @@
 //! Documents written and read back, in both formats; damaged files.
 
-use nodalia_timeline::{FrameRate, Tick};
+use nodalia_timeline::time::{FrameRate, Tick};
 
 use crate::model::{CItem, CKind, CMarker, Composition, Document, Gain};
 use crate::testdoc::{IDENTITY, pcm_ramp, picture_and_sound, sound_only};

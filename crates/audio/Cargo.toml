@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-audio"
 description = "Audio file I/O and codecs: WAV/AIFF read and write, FLAC encoder, AAC and ALAC decoders and encoders, AC-3/E-AC-3 decoder and encoder, MP3 decoder and encoder, Opus decoder and encoder, Vorbis encoder, MP1/MP2 decoders."
 version.workspace = true
@@ -47,10 +46,6 @@ qoa = ["qoa-decode", "qoa-encode"]
 qoa-decode = []
 qoa-encode = []
 opus-encode = []
-# GSM 06.10 full-rate speech: decoder and encoder in the `gsm` module, each on its own.
-gsm = ["gsm-decode", "gsm-encode"]
-gsm-decode = []
-gsm-encode = []
 ac3-decode = ["nodalia-media/bitstream"]
 mpa-decode = ["nodalia-media/bitstream"]
 # MPEG-1/2 Layer III (MP3) decoder (`mp3::Decoder`).
@@ -63,8 +58,6 @@ ac3-encode = ["nodalia-media/bitstream"]
 eac3-encode = ["nodalia-media/bitstream"]
 # MPEG-1/2 Layer III (MP3) encoder (`mp3`).
 mp3-encode = ["nodalia-media/bitstream"]
-# Bluetooth Low Complexity Subband Coding (SBC) audio codec (`sbc`).
-sbc = []
 # Multi-resolution waveform overviews (`peaks`).
 peaks = []
 # Encode AAC channels in parallel (with `aac-encode`).
@@ -86,6 +79,22 @@ symphonia = { version = "0.6.1", optional = true, default-features = false, feat
 nodalia-media-testkit = { workspace = true }
 proptest = { workspace = true }
 serde_json = { workspace = true }
+
+[[test]]
+name = "audio"
+required-features = ["decode", "lossless-encode", "peaks"]
+
+[[test]]
+name = "codecs"
+required-features = ["decode", "encode"]
+
+[[test]]
+name = "flac_decode"
+required-features = ["flac-decode", "flac-encode"]
+
+[[test]]
+name = "qoa_oracle"
+required-features = ["qoa"]
 
 [[example]]
 name = "info"

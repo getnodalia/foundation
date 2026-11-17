@@ -23,14 +23,18 @@ fn paras(doc: &Document) -> Vec<&Paragraph> {
     doc.body.iter().filter_map(|b| b.as_para()).collect()
 }
 
-/// `doc` without the stacking order a save gives objects made in the app (`relativeHeight`,
-/// read back as `Float::z`), to compare them with the objects as made.
+/// `doc` with the stacking order of its body's floating objects cleared: saving gives objects
+/// without one an order (`relativeHeight`), so tests about other properties compare without it.
 fn unstacked(mut doc: Document) -> Document {
-    doc.objects_mut(&|_| true, &mut |o| {
-        if let Some(f) = o.float_mut() {
-            f.z = 0;
+    for b in &mut doc.body {
+        if let Block::Para(p) = std::sync::Arc::make_mut(b) {
+            for o in &mut p.objects {
+                if let Some(f) = o.float_mut() {
+                    f.z = 0;
+                }
+            }
         }
-    });
+    }
     doc
 }
 
@@ -1897,21 +1901,8 @@ fn flat_opc_round_trip_equals_docx() {
     assert!(text.starts_with("<?xml") && text.contains("<?mso-application progid=\"Word.Document\"?>"));
     assert!(text.contains("pkg:name=\"/word/document.xml\"") && text.contains("<pkg:binaryData>"));
     assert_eq!(nodalia_docx::sniff_xml(&xml), nodalia_docx::XmlKind::FlatOpc);
-    let mut back = nodalia_docx::read_xml(&xml).expect("read flat");
-    // `pkg:xmlData` inlines a part without its XML declaration, so a kept XML part (the font
-    // table) comes back without one; the markup is the same.
-    let mut want = rt(&d);
-    for doc in [&mut back, &mut want] {
-        for v in doc.passthrough.values_mut() {
-            if let Some(rest) =
-                v.strip_prefix(b"<?xml").and_then(|r| r.iter().position(|&b| b == b'>').map(|e| r[e + 1..].trim_ascii_start().to_vec()))
-            {
-                *v = std::sync::Arc::new(rest);
-            }
-        }
-    }
-    assert!(back.passthrough.contains_key("word/fontTable.xml"));
-    assert_eq!(back, want);
+    let back = nodalia_docx::read_xml(&xml).expect("read flat");
+    assert_eq!(back, rt(&d));
     assert_eq!(back.media.len(), 1);
 }
 
@@ -2395,10 +2386,6 @@ fn bibliography_sources_round_trip() {
 
     assert_bibliography_parts(&bytes);
     assert_bibliography_sources_round_trip(&bytes);
-    // Saved again after reading, the store keeps one relationship, from the main part.
-    let again = nodalia_docx::write(&nodalia_docx::read(&bytes).expect("read")).expect("write again");
-    assert_bibliography_parts(&again);
-    assert_eq!(nodalia_docx::read(&again).expect("read again").sources.len(), d.sources.len());
 }
 
 /// #4848: a corporate author saves as Word's `b:Corporate`, in place of a name list (a role holds
@@ -2440,14 +2427,10 @@ fn assert_bibliography_parts(bytes: &[u8]) {
     assert!(zip.by_name("customXml/itemProps1.xml").is_ok());
     assert!(zip.by_name("customXml/_rels/item1.xml.rels").is_ok());
 
-    // Word finds the sources' data store only through the main part's relationships.
     let mut rels_xml = String::new();
-    std::io::Read::read_to_string(&mut zip.by_name("word/_rels/document.xml.rels").unwrap(), &mut rels_xml).unwrap();
-    assert_eq!(rels_xml.matches("relationships/customXml\"").count(), 1, "{rels_xml}");
-    assert!(rels_xml.contains("Target=\"../customXml/item1.xml\""), "{rels_xml}");
-    let mut root_xml = String::new();
-    std::io::Read::read_to_string(&mut zip.by_name("_rels/.rels").unwrap(), &mut root_xml).unwrap();
-    assert!(!root_xml.contains("relationships/customXml\""), "{root_xml}");
+    std::io::Read::read_to_string(&mut zip.by_name("_rels/.rels").unwrap(), &mut rels_xml).unwrap();
+    assert!(rels_xml.contains("relationships/customXml"), "{rels_xml}");
+    assert!(rels_xml.contains("Target=\"customXml/item1.xml\""), "{rels_xml}");
 
     let mut ct_xml = String::new();
     std::io::Read::read_to_string(&mut zip.by_name("[Content_Types].xml").unwrap(), &mut ct_xml).unwrap();

@@ -1,22 +1,18 @@
-//! Window restore: the file that remembers where each window was. The core has no egui.
+//! Window restore: where a window opens and the file that remembers it. No egui.
 //!
-//! - [`place`](nodalia_behavior::placement::place) (in nodalia-behavior, which floating dock windows share): saved
-//!   [`Placement`](nodalia_behavior::placement::Placement) + connected [`Monitor`](nodalia_behavior::Monitor)s + app
-//!   [`Defaults`](nodalia_behavior::placement::Defaults) → the geometry to open with.
-//! - [`Store`]: `window.json` beside the app's `config.toml` on desktop, memory on the web (the
-//!   browser owns the tab's size, so nothing is written), one [`Placement`](nodalia_behavior::placement::Placement) per window key
+//! - [`place`]: saved [`Placement`] + connected [`Monitor`]s + app [`Defaults`] → the geometry to
+//!   open with. Pure; the rules are on its documentation.
+//! - [`Store`]: `window.json` beside the app's `config.toml`, one [`Placement`] per window key
 //!   (`"main"` for the first window).
-//! - `legacy` (desktop only): readers for what apps stored before, such as eframe's `"window"`
-//!   entry in `app.ron`.
+//! - [`legacy`]: readers for what apps stored before, such as eframe's `"window"` entry in
+//!   `app.ron`.
 //!
 //! Keep one [`Store`] per app, shared by every window (for example behind an `Arc<Mutex<_>>`):
 //! each write rewrites the whole file from that store's copy, so two stores in one process
 //! overwrite each other.
 //!
 //! ```
-//! use nodalia_behavior::placement::{Defaults, place};
-//! use nodalia_behavior::{Monitor, MonitorKey};
-//! use nodalia_window::restore::Store;
+//! use nodalia_window::restore::{Defaults, Monitor, MonitorKey, Store, place};
 //!
 //! let mut store = Store::in_memory();
 //! let monitors = [Monitor::new(MonitorKey::new("DP-1", [1920, 1080]), [0, 0], [1920, 1080], 1.0)];
@@ -26,10 +22,9 @@
 //! assert_eq!(store.get("main"), Some(opened));
 //! ```
 
-#[cfg(not(target_arch = "wasm32"))]
 pub mod legacy;
+mod place;
 mod store;
 
-#[cfg(not(target_arch = "wasm32"))]
-pub use store::write_pending;
-pub use store::{FILE_NAME, MAIN, Pending, ReadOnly, SCHEMA_VERSION, Store};
+pub use place::{Defaults, Monitor, MonitorKey, NormalRect, Placement, place};
+pub use store::{FILE_NAME, MAIN, Pending, ReadOnly, SCHEMA_VERSION, Store, write_pending};

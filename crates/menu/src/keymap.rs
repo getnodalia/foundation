@@ -1,23 +1,26 @@
 //! Shortcuts and checked states from the app's nodalia-keymap [`Keymap`], and the per-frame
 //! enabled and checked update.
 
-use nodalia_keymap::{CommandKind, CommandRef, Keymap};
+use nodalia_keymap::{CommandRef, Keymap};
 
 use crate::model::{Builtin, ItemKind, MenuBar};
 
 /// Give each item the shortcut its command has in `keymap`, the user's overrides included, and
-/// make the items of toggle commands (kind [`CommandKind::Toggle`]) check items.
+/// make the items of toggle commands ([`nodalia_keymap::Bindable::is_toggle`]) check items.
 ///
-/// The shortcut is [`Keymap::shown_chord`]: the first single-press binding that runs the command,
-/// one in its home scope first, so a chord another command wins is not shown. A command with no
-/// such binding loses its shortcut, and an item whose command the keymap doesn't know keeps its
-/// own. A toggle's check item keeps its checked state; radio items stay radio items. Call it on
-/// the app's bar, before the layout.
+/// The shortcut is the first single-press binding, one in the command's home scope first; a
+/// double press can't be a menu shortcut. A command the keymap binds to nothing loses its
+/// shortcut, and an item whose command the keymap doesn't know keeps its own. A toggle's check
+/// item keeps its checked state; radio items stay radio items. Call it on the app's bar, before
+/// the layout.
 pub fn apply_keymap(bar: &mut MenuBar, keymap: &Keymap) {
     bar.for_each_item_mut(|it| {
         let Some(bindable) = keymap.bindable(&it.command) else { return };
-        it.shortcut = keymap.shown_chord(&it.command);
-        if bindable.kind == CommandKind::Toggle && it.kind == ItemKind::Plain {
+        let bindings = keymap.bindings(&it.command);
+        let single = || bindings.iter().filter(|b| !b.trigger.double);
+        let home = single().find(|b| *b.scope_or(&bindable.scope) == bindable.scope);
+        it.shortcut = home.or_else(|| single().next()).map(|b| b.trigger.chord);
+        if bindable.is_toggle && it.kind == ItemKind::Plain {
             it.kind = ItemKind::Check(false);
         }
     });
@@ -25,26 +28,10 @@ pub fn apply_keymap(bar: &mut MenuBar, keymap: &Keymap) {
 
 /// An item's state for the frame.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-#[non_exhaustive]
 pub struct ItemState {
-    /// Whether the item can be chosen.
     pub enabled: bool,
     /// Checked or selected; `None` leaves the item's [`ItemKind`] as it is.
     pub checked: Option<bool>,
-}
-
-impl ItemState {
-    /// Set whether the item can be chosen.
-    pub fn enabled(mut self, enabled: bool) -> ItemState {
-        self.enabled = enabled;
-        self
-    }
-
-    /// Set the checked state.
-    pub fn checked(mut self, checked: Option<bool>) -> ItemState {
-        self.checked = checked;
-        self
-    }
 }
 
 impl Default for ItemState {

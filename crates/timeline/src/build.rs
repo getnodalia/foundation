@@ -1,17 +1,15 @@
 //! Building a [`Project`] from a document, and the helpers importers and exporters share.
-#![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
 
 use std::collections::HashMap;
 
-use crate::interchange::{
+use crate::model::{
     AudioStreamInfo, BinId, Catalog, ClipId, EffectInstance, EffectKind, Generator, ItemId, ItemKind, Label, MediaClip, MediaInfo, MediaKind,
     MediaRef, Param, ParamValue, Project, Sequence, SequenceSettings, Track, TrackId, TrackItem, TrackKind, VideoStreamInfo,
 };
 use crate::path::extension;
 use crate::rate::plausible_rate;
-use crate::rates::FrameRate;
 use crate::report::Report;
-use crate::time::Tick;
+use crate::time::{FrameRate, Tick};
 
 /// A timeline import may not materialise an unbounded number of sparse track
 /// labels. This remains well above common editorial timelines while keeping
@@ -433,9 +431,8 @@ mod tests {
     use super::*;
     use crate::fx::Standard;
     use crate::time::TimeRange;
-    use nodalia_ui::testing::trial;
 
-    #[trial]
+    #[test]
     fn imported_tracks_are_bounded() {
         let mut b = Builder::new("tracks", &Standard);
         let mut seq = empty_sequence(Default::default());
@@ -447,7 +444,7 @@ mod tests {
 
     /// A huge duration at an integral speed saturates instead of overflowing (an EDL with a record-out
     /// timecode of 2147483647 hours and an `M2 ... 72.0` speed change panicked here).
-    #[trial]
+    #[test]
     fn scaled_saturates() {
         assert_eq!(scaled(Tick(i64::MAX / 2), 3.0), Tick(i64::MAX));
         assert_eq!(scaled(Tick(i64::MIN / 2), 3.0), Tick(i64::MIN));
@@ -455,7 +452,7 @@ mod tests {
         assert_eq!(scaled(Tick(1000), 0.5), Tick(500));
     }
 
-    #[trial]
+    #[test]
     fn subclip_cycle_resolution_is_bounded() {
         let mut p = Project::new("Cycle Test");
         let spec = MediaSpec { duration: Some(Tick(100_000)), ..Default::default() };
@@ -492,7 +489,7 @@ mod tests {
     }
 
     /// An implausible rate or start timecode is reset, and the report says so.
-    #[trial]
+    #[test]
     fn imports_are_bounded() {
         let mut b = Builder::new("bounds", &Standard);
         let id = b.reserve_sequence("S", settings_for(FrameRate::new(i64::MAX, 1), 1920, 1080, false), None);

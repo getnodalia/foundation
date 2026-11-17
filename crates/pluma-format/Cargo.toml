@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-pluma-format"
 description = "The envelope of Pluma's .vectorcraft file: its members, version, embedded images and the data after the JSON, with the document as a type parameter."
 version.workspace = true

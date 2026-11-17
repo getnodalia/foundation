@@ -29,11 +29,10 @@ impl fmt::Display for MigrateError {
 
 impl std::error::Error for MigrateError {}
 
-/// A value of `config.toml` that parsed as TOML but did not fit the settings type, or a value a
-/// [`LegacyFile`](crate::LegacyFile) parse could not read; its default was used.
+/// A `[section]` that parsed as TOML but did not fit the settings type; its defaults were used.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SectionError {
-    /// The dotted key path of the value (`interface.uiScale`, a map's `shortcuts.file.open`).
+    /// The top-level key.
     pub section: String,
     /// The deserialization error.
     pub message: String,
@@ -92,19 +91,11 @@ pub struct LoadReport {
     pub dir: Option<PathBuf>,
     /// The rule that chose `dir` (see [`crate::Rule`]), as text so the report stays `Debug`-only.
     pub rule: String,
-    /// Set when a portable folder could not be written and the platform folder was used instead
-    /// ([`crate::Resolved::warning`]). Not part of [`LoadReport::has_problems`]; show it where
-    /// the app shows start-up notes.
-    pub warning: Option<String>,
     /// Where the values came from.
     pub source: Source,
-    /// The `config.toml` that could not be parsed. Defaults were used. [`SettingsStore::open_with`](crate::SettingsStore::open_with)
-    /// moves it aside (see `broken_moved_to`); [`SettingsStore::read`](crate::SettingsStore::read) leaves it in place.
-    pub damaged: Option<PathBuf>,
     /// Set when a damaged `config.toml` was renamed; the new name.
     pub broken_moved_to: Option<PathBuf>,
-    /// Values replaced by their defaults. A `config.toml` value is also taken out of the file, which
-    /// the next save writes with the default in its place.
+    /// Sections whose values were replaced by defaults.
     pub section_errors: Vec<SectionError>,
     /// Set when the file was upgraded from an older `schema_version`.
     pub migrated_from: Option<u32>,
@@ -115,7 +106,7 @@ pub struct LoadReport {
 impl LoadReport {
     /// True when something should be shown to the user.
     pub fn has_problems(&self) -> bool {
-        self.damaged.is_some() || self.broken_moved_to.is_some() || !self.section_errors.is_empty() || self.read_only.is_some()
+        self.broken_moved_to.is_some() || !self.section_errors.is_empty() || self.read_only.is_some()
     }
 }
 
