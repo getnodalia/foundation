@@ -3,7 +3,7 @@
 
 The manifest is crates/crw/tests/samples.json (name, raw.pixls.us URL, SHA-256, licence). Files
 already present with the right hash are kept. Then run the tests with
-`NODALIA_CRW_SAMPLES=<destination> cargo test -p nodalia-crw --release --test samples`.
+`NODALIA_CRW_SAMPLES=<destination> cargo test -p nodalia-crw --release -- integration::samples`.
 """
 
 import argparse

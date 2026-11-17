@@ -1,0 +1,39 @@
+[package]
+name = "nodalia-table"
+description = "Spreadsheet widgets for Craft apps: the cell grid, outline bands, field lists, conditions, charts, slicers, reference picking, selection statistics, error tags and filter buttons."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[lib]
+# Every test lives in the `it` integration binary, so `cargo test` builds the library once.
+test = false
+
+[lints]
+workspace = true
+
+[features]
+default = []
+# The table widgets (`nodalia_table::ui`).
+ui = ["dep:nodalia-ui", "dep:nodalia-behavior", "dep:nodalia-keymap", "dep:nodalia-theme", "dep:egui"]
+# The widgets' stories and trials (`tests/it`).
+screen-testing = ["ui", "nodalia-ui/testing"]
+
+[dependencies]
+nodalia-behavior = { workspace = true, optional = true }
+nodalia-keymap = { workspace = true, optional = true }
+nodalia-theme = { workspace = true, optional = true }
+nodalia-ui = { workspace = true, optional = true }
+egui = { workspace = true, optional = true }
+
+[dev-dependencies]
+nodalia-table = { path = ".", features = ["screen-testing"] }
+egui = { workspace = true }
+
+[[test]]
+name = "it"
+path = "tests/it/main.rs"
+harness = false
+required-features = ["screen-testing"]

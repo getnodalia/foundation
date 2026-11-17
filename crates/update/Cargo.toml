@@ -6,25 +6,36 @@ edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
+autotests = false
+
+[lib]
+# The lib's test target is the crate's one test executable: its trials and, with `screen-testing`, the
+# screen tests in tests/it.
+harness = false
 
 [lints]
 workspace = true
 
 [features]
+# Opt-in migration of first party Flatpak bundles to the ArtCraft OCI remote.
+oci_migration = []
 default = []
-egui = ["dep:egui", "dep:image"]
-local-mirror = []
-# tests/dialog_screenshots.rs: renders the dialogs to PNG with egui_kittest's wgpu renderer.
-snapshot = ["egui", "egui_kittest/wgpu"]
+ui = ["dep:egui", "dep:image", "dep:nodalia-ui", "dep:nodalia-host", "dep:nodalia-theme"]
+# The dialog stories, the updater's test seams and the integration binary `tests/it`.
+screen-testing = ["ui", "nodalia-ui/testing"]
 
 [dependencies]
 egui = { workspace = true, optional = true }
-# Decodes the app icon the startup prompt shows (`App::icon_png`); PNG only.
+nodalia-ui = { workspace = true, optional = true }
+# `Tone` for the dialogs' notices.
+nodalia-theme = { workspace = true, optional = true }
+# `Host::app`: the name the update dialogs show.
+nodalia-host = { workspace = true, features = ["ui"], optional = true }
+# Decodes the app icon the update dialogs show (`App::icon_png`); PNG only.
 image = { version = "0.25", default-features = false, features = ["png"], optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 log = "0.4"
-getrandom = "0.3"
 tempfile = "3"
 sha2 = "0.10"
 ureq = { version = "3.4", default-features = false, features = ["rustls-no-provider", "_ring", "gzip", "platform-verifier"] }
@@ -32,10 +43,8 @@ chrono = { workspace = true }
 semver = { version = "1", features = ["serde"] }
 
 [dev-dependencies]
+nodalia-ui = { workspace = true, features = ["testing"] }
 flate2 = "1"
-egui_kittest = "0.37"
-# egui's own Hack and Ubuntu Light for the screenshots (egui is built without default fonts).
-epaint_default_fonts = "0.37"
 
 [target.'cfg(unix)'.dependencies]
 flate2 = "1"
@@ -44,9 +53,17 @@ tar = { version = "0.4", default-features = false }
 [target.'cfg(target_os = "macos")'.dependencies]
 plist = "1"
 
+[target.'cfg(any(target_os = "macos", target_os = "linux"))'.dependencies]
+rustix = { version = "1.1", default-features = false, features = ["std", "fs", "process"] }
+
 [target.'cfg(target_os = "windows")'.dependencies]
 winreg = "0.55"
 dunce = "1"
-zip = { version = "9", default-features = false, features = ["deflate"] }
+# `deflate-flate2` with flate2's default miniz_oxide backend, not zip's `deflate` (zopfli and
+# zlib-rs): Cargo unifies flate2's features across an app, and zlib-rs would switch the whole
+# app's flate2 to it, where level 1 is a static-Huffman mode that can make output larger than
+# its input (Lightcraft's 16-bit ZIP TIFFs on Windows).
+zip = { version = "9", default-features = false, features = ["deflate-flate2"] }
+flate2 = "1"
 winsafe = { version = "0.0.29", features = ["advapi", "kernel", "shell", "version"] }
 verifysign = "1"

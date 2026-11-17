@@ -57,7 +57,7 @@ if nodalia_crw::probe(&bytes) {
 
 ### Output
 
-`Image { header, samples, black, white }`:
+`Image { header, samples, black, white, stream_end_fill }`:
 
 - `samples`: `width × height` `u16`s, row-major, the whole sensor including the masked borders,
   `bits` (10 or 12) deep, black not subtracted. Rows are in sensor order; apply
@@ -79,6 +79,7 @@ if nodalia_crw::probe(&bytes) {
   offset. Convert with chrono (`DateTime::from_timestamp`), never by hand.
 - `header.make` / `header.model`: the MakeModel record, e.g. `Canon` / `Canon EOS D60`. CRW
   files carry no Exif block, so this is where the camera name comes from.
+- `stream_end_fill`: how many samples were filled after the entropy stream ended (below).
 
 ### Errors and limits
 
@@ -91,20 +92,24 @@ by depth (16) and by a per-file record budget (4,096), and `width × height` is 
 buffers at its peak. `Limits` is `#[non_exhaustive]`: start from `Limits::default()` and set the
 fields you change.
 
-A stream that ends early is not an error: the remaining samples keep their predictor values (the
-frozen stream-end rule; real files end 1–3 samples short).
+When the entropy stream ends before the frame does, the remaining samples keep their predictor
+values (the frozen stream-end rule) and `Image::stream_end_fill` says how many. Up to
+`Limits::max_stream_end_fill` (default 64, one block) that is accepted; more is `Corrupt`, a stream
+cut short, which would otherwise decode as a smeared image. Every real file measured fills none:
+1,318 files of all seven verified bodies (1,308 of them EOS D60), whose last samples come from an
+end-of-block code.
 
 ### Performance
 
 About 60 ms for a 6.5 MP EOS file and 70 ms for the 7.4 MP G6 in release mode on a 2024 laptop
-(`cargo test -p nodalia-crw --release --test samples -- --nocapture` prints the times).
+(`cargo test -p nodalia-crw --release -- integration::samples --nocapture` prints the times).
 
 ## Tests
 
 - `cargo test -p nodalia-crw`: synthetic CIFF files round-tripped through a test-only encoder (the
-  model's inverse), the frozen tables' structure (prefix-free, all 162 symbols), hostile inputs
-  (every truncation and byte mutation of a valid file, self-referencing heaps), and a proptest
-  mutation sweep (`tests/robust.rs`). None needs sample files.
+  model's inverse), the frozen tables' coverage (all 162 symbols), and hostile inputs (every
+  truncation and byte mutation of a valid file in `tests/robust.rs`, self-referencing heaps).
+  None needs sample files.
 - `tests/samples.rs` pins the eleven CC0 sample files of [`tests/samples.json`](tests/samples.json)
   (raw.pixls.us): each decodes to exactly the samples the derivation verified against the
   reference, recorded as the SHA-256 of the sample buffer, with its levels, white balance and
@@ -112,15 +117,12 @@ About 60 ms for a 6.5 MP EOS file and 70 ms for the 7.4 MP G6 in release mode on
 
   ```sh
   python scripts/fetch-crw-samples.py ~/crw-samples        # downloads and verifies by SHA-256
-  NODALIA_CRW_SAMPLES=~/crw-samples cargo test -p nodalia-crw --release --test samples -- --nocapture
+  NODALIA_CRW_SAMPLES=~/crw-samples cargo test -p nodalia-crw --release -- integration::samples --nocapture
   ```
 
   Unset, the test prints that it skipped; CI sets `NODALIA_CRW_REQUIRE_SAMPLES=1` and runs it on
   Linux (`.github/workflows/crw.yml`; lint and the synthetic tests run on Linux, Windows and
   macOS, plus a wasm32 check).
-- `NODALIA_CRW_ORACLE=<dir>` additionally compares against `<name>.crw.tiff` references next to the
-  files (the reference decoder's `unprocessed_raw -T` output), the check the derivation used.
-  Those references are not distributable and stay outside the repository.
 
 ## Origin
 

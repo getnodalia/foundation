@@ -1,0 +1,46 @@
+[package]
+name = "nodalia-timeline"
+description = "Timelines for Craft apps: exact media time, frame rates, timecode, the playback clock, frame cache and frame server; the ruler, tracks, clips, keyframes, graph editor, transport and render queue."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+autotests = false
+
+[lib]
+# The lib's test target is the crate's one test executable: its trials and, with `screen-testing`, the
+# integration tests in tests/it (the interchange round trips also need `xml` and `otio`).
+harness = false
+
+[lints]
+workspace = true
+
+[features]
+default = []
+# The timeline widgets (`nodalia_timeline::ui`).
+ui = ["dep:nodalia-behavior", "dep:nodalia-keymap", "dep:nodalia-theme", "dep:nodalia-ui", "dep:egui"]
+# The stories and the integration tests (`tests/it`).
+screen-testing = ["ui", "nodalia-ui/testing"]
+# Final Cut Pro 7 XML and FCPXML (`interchange` formats), read with nodalia-xml's bounded parser.
+xml = ["dep:nodalia-xml"]
+# OpenTimelineIO JSON, with serde_json.
+otio = ["dep:serde_json"]
+
+[dependencies]
+nodalia-behavior = { workspace = true, optional = true }
+nodalia-keymap = { workspace = true, optional = true }
+nodalia-time = { workspace = true }
+nodalia-theme = { workspace = true, optional = true }
+nodalia-ui = { workspace = true, optional = true }
+nodalia-xml = { workspace = true, optional = true }
+egui = { workspace = true, optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true, optional = true }
+web-time = "1.1"
+
+[dev-dependencies]
+nodalia-ui = { workspace = true, features = ["testing"] }
+egui = { workspace = true }
+proptest = { workspace = true }
+serde_json = { workspace = true }

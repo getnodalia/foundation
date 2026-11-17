@@ -1,0 +1,23 @@
+{
+ "packages": [
+  {
+   "name": "nodalia-quit",
+   "features": {},
+   "dependencies": [
+    {
+     "name": "egui",
+     "kind": null,
+     "optional": false
+    }
+   ],
+   "targets": [
+    {
+     "kind": [
+      "lib"
+     ],
+     "src_path": "crates/quit/src/lib.rs"
+    }
+   ]
+  }
+ ]
+}

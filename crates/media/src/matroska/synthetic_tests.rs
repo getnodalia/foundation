@@ -2,13 +2,13 @@
 //! header stripping, BlockGroups, Colour + mastering metadata, Chapters, Tags, Attachments, CRC-32.
 
 use crate::matroska::codec::Codec;
-use crate::matroska::demux::MAX_TRACKS;
 use crate::matroska::ebml::{self, write_id, write_unknown_size};
-use crate::matroska::error::Error;
 use crate::matroska::ids::*;
 use crate::matroska::mux::{el, el_float, el_str, el_uint};
 use crate::matroska::track::ContentEncoding;
 use crate::matroska::{ByteSource, Demuxer, MkvFile, OpenOptions, Packet, open_with};
+
+mod hostile;
 
 fn block(track: u8, rel: i16, flags: u8, data: &[u8]) -> Vec<u8> {
     let mut b = vec![0x80 | track];
@@ -203,12 +203,12 @@ fn assert_crc_mismatch_is_reported(bytes: &[u8]) {
     let mut corrupted = bytes.to_vec();
     let title = corrupted.windows(9).position(|window| window == b"Synthetic").unwrap();
     corrupted[title] = b's';
-    let file = open_with(&corrupted[..], &OpenOptions { index: true, verify_crc: true }).unwrap();
+    let file = open_with(&corrupted[..], &OpenOptions { index: true, verify_crc: true, index_limit: None }).unwrap();
     assert_eq!(file.crc_errors.len(), 1);
 }
 
 fn assert_seek_builds_an_index(bytes: &[u8]) {
-    let mut demuxer = Demuxer::with_options(bytes, OpenOptions { index: false, verify_crc: false }).unwrap();
+    let mut demuxer = Demuxer::with_options(bytes, OpenOptions { index: false, verify_crc: false, index_limit: None }).unwrap();
     assert_eq!(demuxer.file().tracks.len(), 2);
     assert_eq!(demuxer.seek(0, 1_100_000_000).unwrap().pts, 1000);
     assert_eq!(demuxer.seek(0, 1_130_000_000).unwrap().pts, 1120);
@@ -219,7 +219,7 @@ fn assert_seek_builds_an_index(bytes: &[u8]) {
 #[test]
 fn synthetic_file() {
     let bytes = synthetic();
-    let file = open_with(&bytes[..], &OpenOptions { index: true, verify_crc: true }).unwrap();
+    let file = open_with(&bytes[..], &OpenOptions { index: true, verify_crc: true, index_limit: None }).unwrap();
     assert_synthetic_metadata(&file, &bytes);
     assert_synthetic_packets(&file, &bytes);
     assert_crc_mismatch_is_reported(&bytes);
@@ -228,10 +228,6 @@ fn synthetic_file() {
 
 /// One video track and one cluster at timestamp `ts` holding `content`.
 fn one_cluster(ts: u64, content: &[u8]) -> Vec<u8> {
-    one_cluster_scaled(1_000_000, ts, content)
-}
-
-fn one_cluster_scaled(scale: u64, ts: u64, content: &[u8]) -> Vec<u8> {
     let mut f = Vec::new();
     let mut h = Vec::new();
     el_str(&mut h, DOC_TYPE, "matroska");
@@ -239,7 +235,7 @@ fn one_cluster_scaled(scale: u64, ts: u64, content: &[u8]) -> Vec<u8> {
     write_id(&mut f, SEGMENT);
     write_unknown_size(&mut f, 8);
     let mut info = Vec::new();
-    el_uint(&mut info, TIMESTAMP_SCALE, scale);
+    el_uint(&mut info, TIMESTAMP_SCALE, 1_000_000);
     el(&mut f, INFO, &info);
     let mut v = Vec::new();
     el_uint(&mut v, TRACK_NUMBER, 1);
@@ -256,153 +252,6 @@ fn one_cluster_scaled(scale: u64, ts: u64, content: &[u8]) -> Vec<u8> {
     f
 }
 
-fn one_block(ts: u64, rel: i16) -> Vec<u8> {
-    let mut b = Vec::new();
-    el(&mut b, SIMPLE_BLOCK, &block(1, rel, 0x80, &[0]));
-    one_cluster(ts, &b)
-}
-
-/// A BlockGroup whose BlockAdditions hold `(BlockAddID, data)` pairs.
-fn group_with_additions(block_data: &[u8], additions: &[(Option<u64>, &[u8])]) -> Vec<u8> {
-    let mut adds = Vec::new();
-    for (id, data) in additions {
-        let mut more = Vec::new();
-        if let Some(id) = id {
-            el_uint(&mut more, BLOCK_ADD_ID, *id);
-        }
-        el(&mut more, BLOCK_ADDITIONAL, data);
-        el(&mut adds, BLOCK_MORE, &more);
-    }
-    let mut g = Vec::new();
-    el(&mut g, BLOCK, block_data);
-    el(&mut g, BLOCK_ADDITIONS, &adds);
-    let mut out = Vec::new();
-    el(&mut out, BLOCK_GROUP, &g);
-    out
-}
-
-#[test]
-fn block_additional_id_1_is_located() {
-    let mut c = group_with_additions(&block(1, 0, 0, b"frame"), &[(Some(2), b"other"), (None, b"alpha")]);
-    c.extend(group_with_additions(&block(1, 40, 0, b"next"), &[(Some(2), b"other")]));
-    // Xiph lacing with two frames: an addition belongs to the block, not to one frame.
-    c.extend(group_with_additions(&block(1, 80, 0x02, &[1, 2, b'a', b'b', b'c']), &[(Some(1), b"laced")]));
-    let bytes = one_cluster(0, &c);
-    let f = open_with(&bytes[..], &OpenOptions::default()).unwrap();
-    let t = &f.tracks[0];
-    assert_eq!(t.samples.len(), 4);
-    let adds: Vec<_> = (0..4).map(|i| f.read_sample_addition(&bytes[..], 0, i).unwrap()).collect();
-    assert_eq!(adds, [Some(b"alpha".to_vec()), None, None, None]);
-    assert_eq!(f.read_sample(&bytes[..], 0, 0).unwrap(), b"frame");
-    assert!(f.read_sample_addition(&bytes[..], 0, 9).is_err());
-}
-
-#[test]
-fn hostile_cluster_timestamps_saturate() {
-    let pts = |bytes: &[u8]| {
-        let first = Demuxer::from_slice(bytes).unwrap().next_packet().unwrap().unwrap().pts;
-        let indexed = open_with(bytes, &OpenOptions::default()).unwrap().tracks[0].samples[0].pts;
-        assert_eq!(first, indexed);
-        first
-    };
-    assert_eq!(pts(&one_block(1000, 5)), 1005);
-    assert_eq!(pts(&one_block(i64::MAX as u64, 0)), i64::MAX);
-    assert_eq!(pts(&one_block(i64::MAX as u64, 1)), i64::MAX);
-    assert_eq!(pts(&one_block(u64::MAX, -3)), i64::MAX - 3);
-}
-
-#[test]
-fn cue_position_past_the_file_falls_back_to_the_index() {
-    for pos in [1 << 40, u64::MAX - 1] {
-        let mut ctp = Vec::new();
-        el_uint(&mut ctp, CUE_TRACK, 1);
-        el_uint(&mut ctp, CUE_CLUSTER_POSITION, pos);
-        let mut cp = Vec::new();
-        el_uint(&mut cp, CUE_TIME, 0);
-        el(&mut cp, CUE_TRACK_POSITIONS, &ctp);
-        let mut cues = Vec::new();
-        el(&mut cues, CUE_POINT, &cp);
-        let mut bytes = one_block(1000, 0);
-        let at = bytes.windows(4).position(|w| w == CLUSTER.to_be_bytes()).unwrap();
-        let mut el_cues = Vec::new();
-        el(&mut el_cues, CUES, &cues);
-        bytes.splice(at..at, el_cues);
-        let mut d = Demuxer::with_options(bytes, OpenOptions { index: false, verify_crc: false }).unwrap();
-        assert_eq!(d.file().cues.len(), 1);
-        assert_eq!(d.seek(0, 0).unwrap().pts, 1000);
-    }
-}
-
-#[test]
-fn huge_timestamp_scale_is_ignored() {
-    // Three laced frames sharing the largest BlockDuration: with TimestampScale near 2^64 the
-    // per-lace split overflowed u128 and i128.
-    let mut g = Vec::new();
-    el(&mut g, BLOCK, &block(1, 0, 0x02, &[2, 1, 1, b'a', b'b', b'c']));
-    el_uint(&mut g, BLOCK_DURATION, u64::MAX);
-    let mut c = Vec::new();
-    el(&mut c, BLOCK_GROUP, &g);
-    let f = open_with(&one_cluster_scaled(u64::MAX, i64::MAX as u64, &c)[..], &OpenOptions::default()).unwrap();
-    assert_eq!(f.info.timestamp_scale, 1_000_000);
-    assert_eq!(f.tracks[0].samples.len(), 3);
-    let f = open_with(&one_cluster_scaled(1 << 32, 0, &c)[..], &OpenOptions::default()).unwrap();
-    assert_eq!(f.info.timestamp_scale, 1 << 32);
-}
-
-#[test]
-fn duration_of_a_block_at_the_largest_timestamp_saturates() {
-    for d in [80, u64::MAX] {
-        let mut g = Vec::new();
-        el(&mut g, BLOCK, &block(1, 0, 0, &[0]));
-        el_uint(&mut g, BLOCK_DURATION, d);
-        let mut c = Vec::new();
-        el(&mut c, BLOCK_GROUP, &g);
-        let f = open_with(&one_cluster(i64::MAX as u64, &c)[..], &OpenOptions::default()).unwrap();
-        assert_eq!(f.duration_ns(), Some(u64::MAX));
-    }
-}
-
-#[test]
-fn empty_laced_frames_exhaust_the_frame_budget() {
-    // Each 7-byte SimpleBlock is a fixed-size lace of 256 empty frames.
-    let mut c = Vec::new();
-    for _ in 0..100 {
-        el(&mut c, SIMPLE_BLOCK, &block(1, 0, 0x04, &[0xFF]));
-    }
-    let r = open_with(&one_cluster(0, &c)[..], &OpenOptions::default());
-    assert!(matches!(r, Err(Error::TooLarge(_))), "{r:?}");
-    // Laces of one-byte frames are paid for by their bytes.
-    let mut c = Vec::new();
-    for _ in 0..4 {
-        let mut data = vec![0xFF];
-        data.extend_from_slice(&[0; 256]);
-        el(&mut c, SIMPLE_BLOCK, &block(1, 0, 0x04, &data));
-    }
-    let f = open_with(&one_cluster(0, &c)[..], &OpenOptions::default()).unwrap();
-    assert_eq!(f.tracks[0].samples.len(), 1024);
-}
-
-#[test]
-fn track_entries_past_the_cap_are_rejected() {
-    let file = |entries: usize| {
-        let mut f = Vec::new();
-        let mut h = Vec::new();
-        el_str(&mut h, DOC_TYPE, "matroska");
-        el(&mut f, EBML, &h);
-        write_id(&mut f, SEGMENT);
-        write_unknown_size(&mut f, 8);
-        let mut tr = Vec::new();
-        for _ in 0..entries {
-            el(&mut tr, TRACK_ENTRY, &[0xD7, 0x81, 0x02]);
-        }
-        el(&mut f, TRACKS, &tr);
-        f
-    };
-    assert_eq!(open_with(&file(3)[..], &OpenOptions::default()).unwrap().tracks.len(), 3);
-    let r = open_with(&file(MAX_TRACKS + 1)[..], &OpenOptions::default());
-    assert!(matches!(r, Err(Error::TooLarge(_))), "{r:?}");
-}
-
 /// Counts the bytes read from `data`.
 struct Counting<'a>(&'a [u8], std::cell::Cell<u64>);
 
@@ -416,40 +265,109 @@ impl ByteSource for Counting<'_> {
     }
 }
 
-#[test]
-fn overlapping_seek_head_targets_are_read_once() {
-    // SeekHead entries point at nested Tags headers, each running to the end of the file.
-    let (n, pad) = (64u64, 128usize << 10);
-    let entry = |pos: u64| {
-        let mut s = Vec::new();
-        el(&mut s, SEEK_ID, &TAGS.to_be_bytes());
-        el(&mut s, SEEK_POSITION, &pos.to_be_bytes());
-        let mut o = Vec::new();
-        el(&mut o, SEEK, &s);
-        o
-    };
-    let seek_head = |first: u64| {
-        let entries: Vec<u8> = (0..n).flat_map(|i| entry(first + i * 12)).collect();
-        let mut o = Vec::new();
-        el(&mut o, SEEK_HEAD, &entries);
-        o
-    };
+/// Fake Cluster candidates every 16 bytes: a Cluster of 512 KiB whose first child is a 64 KiB Void, so
+/// `plausible` has to look 64 KiB away from each candidate and then finds a Cluster ID, not a Timestamp.
+fn dense_fake_clusters(total: usize) -> Vec<u8> {
+    let unit = fake_cluster_unit();
+    assert_eq!(unit.len(), 16);
     let mut f = Vec::new();
     let mut h = Vec::new();
     el_str(&mut h, DOC_TYPE, "matroska");
     el(&mut f, EBML, &h);
     write_id(&mut f, SEGMENT);
     write_unknown_size(&mut f, 8);
-    let first = seek_head(0).len() as u64;
-    f.extend_from_slice(&seek_head(first));
-    let total = n * 12 + pad as u64;
-    for i in 0..n {
-        write_id(&mut f, TAGS);
-        ebml::write_size(&mut f, total - (i + 1) * 12, 8);
+    // an undecodable first Segment child forces a resync into the fake candidates
+    f.push(0x00);
+    while f.len() < total {
+        f.extend_from_slice(&unit);
     }
-    f.resize(f.len() + pad, 0xEC);
+    f
+}
+
+#[test]
+fn resync_over_dense_fake_clusters_is_bounded_by_the_recovery_budget() {
+    let f = dense_fake_clusters(1 << 20);
     let src = Counting(&f, std::cell::Cell::new(0));
-    let file = open_with(&src, &OpenOptions { index: false, verify_crc: false }).unwrap();
-    assert_eq!(file.seek_head.len(), n as usize);
-    assert!(src.1.get() <= 4 * f.len() as u64, "read {} bytes of a {}-byte file", src.1.get(), f.len());
+    let _ = open_with(&src, &OpenOptions::default());
+    let read = src.1.get();
+    // 64 MiB of recovery work plus the one candidate that overdraws it; unbounded this is gigabytes
+    assert!(read <= (64 << 20) + (1 << 20), "read {read} bytes of a {}-byte file", f.len());
+}
+
+/// `prefix` followed by zeros up to `len` bytes, without holding them.
+struct Sparse {
+    prefix: Vec<u8>,
+    len: u64,
+}
+
+impl ByteSource for Sparse {
+    fn len(&self) -> u64 {
+        self.len
+    }
+    fn read_at(&self, offset: u64, buf: &mut [u8]) -> std::io::Result<()> {
+        if offset.checked_add(buf.len() as u64).is_none_or(|e| e > self.len) {
+            return Err(std::io::ErrorKind::UnexpectedEof.into());
+        }
+        if buf.len() > 64 << 20 {
+            return Err(std::io::Error::other("a read this large is the bug under test"));
+        }
+        for (i, b) in buf.iter_mut().enumerate() {
+            *b = self.prefix.get((offset as usize).saturating_add(i)).copied().unwrap_or(0);
+        }
+        Ok(())
+    }
+}
+
+#[test]
+fn a_block_larger_than_u32_is_skipped_without_reading_its_body() {
+    // flags 0x00 / 0x02 / 0x06 / 0x04: no lacing, Xiph, EBML and fixed-size lacing
+    for flags in [0x80u8, 0x82, 0x86, 0x84] {
+        let frame = (1u64 << 32) + 100;
+        let mut hdr = Vec::new();
+        write_id(&mut hdr, SIMPLE_BLOCK);
+        ebml::write_size(&mut hdr, 4 + frame, 8);
+        hdr.extend_from_slice(&[0x81, 0, 0, flags]);
+        let prefix = one_cluster(0, &hdr);
+        let len = prefix.len() as u64 + frame;
+        let f = open_with(Sparse { prefix, len }, &OpenOptions::default());
+        let f = f.unwrap_or_else(|e| panic!("flags {flags:#x}: {e:?}"));
+        assert!(f.tracks[0].samples.is_empty(), "flags {flags:#x}: {:?}", f.tracks[0].samples);
+    }
+}
+
+/// One fake Cluster candidate: it costs the resync two window refills, about 128 KiB.
+fn fake_cluster_unit() -> Vec<u8> {
+    let mut unit = Vec::new();
+    write_id(&mut unit, CLUSTER);
+    ebml::write_size(&mut unit, 512 << 10, 8);
+    write_id(&mut unit, VOID);
+    ebml::write_size(&mut unit, 64 << 10, 3);
+    unit
+}
+
+#[test]
+fn packet_reading_keeps_its_recovery_budget_after_the_index_is_built() {
+    // a Cluster, about 40 MiB of recovery reads of damage, then a second Cluster
+    let mut f = one_cluster(0, &{
+        let mut b = Vec::new();
+        el(&mut b, SIMPLE_BLOCK, &block(1, 0, 0x80, &[1]));
+        b
+    });
+    f.push(0x00);
+    for _ in 0..320 {
+        f.extend_from_slice(&fake_cluster_unit());
+    }
+    f.resize(f.len() + (700 << 10), 0);
+    write_id(&mut f, CLUSTER);
+    write_unknown_size(&mut f, 8);
+    el_uint(&mut f, TIMESTAMP, 10);
+    el(&mut f, SIMPLE_BLOCK, &block(1, 0, 0x80, &[2]));
+    let mut d = Demuxer::with_options(&f[..], OpenOptions { index: false, verify_crc: false, index_limit: None }).unwrap();
+    d.build_index().unwrap();
+    assert_eq!(d.file().tracks[0].samples.len(), 2, "the index found both clusters: {:?}", d.file().warnings);
+    let mut n = 0;
+    while d.next_packet().unwrap().is_some() {
+        n += 1;
+    }
+    assert_eq!(n, 2, "reading ended at the damage: {:?}", d.file().warnings);
 }
