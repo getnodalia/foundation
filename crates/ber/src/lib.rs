@@ -4,7 +4,7 @@
 //! what CMS writers use: indefinite lengths (which streaming signers write) and OCTET STRINGs in
 //! pieces (constructed). What is DER already is kept byte for byte, an element with a definite
 //! length inside an indefinite one too, so that the bytes a signature covers (signed attributes,
-//! a certificate's body) are those the signer wrote. For S/MIME: `craft-smime` checks
+//! a certificate's body) are those the signer wrote. For S/MIME: `nodalia-smime` checks
 //! signatures with it, and a message's reader takes out what an opaque signed one holds
 //! ([`signed_content`]).
 //!
@@ -18,7 +18,7 @@ const DATA: &[u8] = &[0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x07, 0x01];
 
 /// What the CMS `cms` holds when it is SignedData with its content inside, of type id-data: the
 /// MIME entity an opaque signed message (`application/pkcs7-mime`, RFC 8551 §3.5) signed, for
-/// reading as the message. Nothing is checked here (`craft-smime` checks it); `None` for any
+/// reading as the message. Nothing is checked here (`nodalia-smime` checks it); `None` for any
 /// other CMS (an Encrypted message's enveloped data) or bytes that aren't one.
 pub fn signed_content(cms: &[u8]) -> Option<Vec<u8>> {
     let der = to_der(cms)?;
