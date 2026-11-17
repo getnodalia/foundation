@@ -12,6 +12,7 @@ repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
 nodalia-palette = { path = "crates/palette" }
+nodalia-score = { path = "crates/score" }
 nodalia-shx = { path = "crates/shx" }
 nodalia-http-url = { path = "crates/http-url" }
 nodalia-usd = { path = "crates/usd" }
