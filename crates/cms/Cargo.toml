@@ -1,4 +1,5 @@
 [package]
+autotests = false
 name = "nodalia-cms"
 version.workspace = true
 edition.workspace = true
@@ -11,6 +12,9 @@ exclude = ["tests/data", "tests/fogra39.rs"]
 
 [lints]
 workspace = true
+
+[dependencies]
+md5 = { workspace = true }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 rayon = { workspace = true }

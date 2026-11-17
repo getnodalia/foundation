@@ -1,0 +1,93 @@
+# API map of the "Font manager: panel" family: old path to new path and setter renames.
+
+family = "Font manager: panel"
+new_module = "nodalia_font_manager"
+
+# One entry per public type: `old` is the path an app calls today, `new` the path after migration.
+# `status` is "pending", "same" (path unchanged), "moved", "replaced" (use `note`) or "removed".
+
+[[type]]
+name = "FontsPanel"
+old = "nodalia_font_manager::FontsPanel"
+new = "nodalia_font_manager::FontsPanel"
+status = "same"
+note = "Stays the model the app holds. `ui` becomes FontsPanelView::new(&mut panel).show(ui); `set_look` is removed; `sources_ui` becomes FontSources::new(&mut panel).show(ui)."
+
+[[type]]
+name = "FontsPanelView"
+old = ""
+new = "nodalia_font_manager::FontsPanelView"
+status = "replaced"
+note = "Replaces FontsPanel::ui: a pattern over the model that fills the room it is given and returns FontsPanelOutput."
+
+[[type]]
+name = "FontsPanelOutput"
+old = ""
+new = "nodalia_font_manager::FontsPanelOutput"
+status = "replaced"
+note = "What FontsPanelView::show returns: the panel's response."
+
+[[type]]
+name = "Options"
+old = "nodalia_font_manager::Options"
+new = "nodalia_font_manager::Options"
+status = "same"
+
+[[type]]
+name = "Preset"
+old = "nodalia_font_manager::Preset"
+new = "nodalia_font_manager::Preset"
+status = "same"
+
+[[type]]
+name = "Tab"
+old = "nodalia_font_manager::Tab"
+new = "nodalia_font_manager::Tab"
+status = "same"
+
+[[type]]
+name = "FontsPanelSettings"
+old = "nodalia_font_manager::FontsPanelSettings"
+new = "nodalia_font_manager::FontsPanelSettings"
+status = "same"
+
+[[type]]
+name = "Look"
+old = "nodalia_font_manager::Look"
+new = ""
+status = "removed"
+note = "The panel draws with the app's nodalia-theme theme."
+
+[[type]]
+name = "Palette"
+old = "nodalia_font_manager::Palette"
+new = ""
+status = "removed"
+note = "The panel draws with the app's nodalia-theme theme."
+
+# One entry per rewritten call.
+[[call]]
+old = "install_interface_fonts(ctx, &craft_faces)"
+new = "install_interface_fonts(ctx, language, &craft_faces)"
+note = "The interface language is passed in (it was read from the Host in the context), and the faces are nodalia_ui::fonts::EmbeddedFace. The interface direction is the app's RootEnv::direction, no longer set here."
+
+[[call]]
+old = "panel.ui(ui)"
+new = "FontsPanelView::new(&mut panel).show(ui)"
+note = "The panel is a pattern over the model."
+
+[[call]]
+old = "panel.set_look(look)"
+new = ""
+note = "Removed: the panel draws with the app's theme."
+
+# One entry per renamed, removed or reshaped setter or constructor.
+[[setter]]
+type = "FontsPanel"
+old = "ui(&mut Ui)"
+new = "FontsPanelView::new(&mut FontsPanel).show(&mut Ui)"
+
+[[setter]]
+type = "FontsPanel"
+old = "sources_ui(&mut Ui)"
+new = "FontSources::new(&mut FontsPanel).show(&mut Ui)"

@@ -1,7 +1,7 @@
 //! Regenerates the shipped synthetic CMYK profile when `NODALIA_CMS_REGEN_PROFILES=1`:
 //!
 //! ```sh
-//! NODALIA_CMS_REGEN_PROFILES=1 cargo test -p nodalia-cms --release --test regen
+//! NODALIA_CMS_REGEN_PROFILES=1 cargo test -p nodalia-cms --release -- integration::regen
 //! ```
 //!
 //! Without the variable the test only checks that the generator's model still matches the

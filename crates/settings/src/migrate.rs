@@ -6,7 +6,7 @@ use toml_edit::DocumentMut;
 
 use crate::Settings;
 use crate::document::{schema_version, set_schema_version};
-use crate::error::MigrateError;
+use crate::error::{MigrateError, SectionError};
 
 /// What [`upgrade`] found.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -14,9 +14,15 @@ pub enum Upgrade {
     /// Already at the current version, or no `schema_version` key (treated as current).
     Current,
     /// Upgraded step by step from this older version.
-    Migrated { from: u32 },
+    Migrated {
+        /// The schema version the document had.
+        from: u32,
+    },
     /// Written by a newer build; the document was left alone.
-    Newer { file: u32 },
+    Newer {
+        /// The schema version the document has.
+        file: u32,
+    },
 }
 
 /// Brings `doc` up to [`Settings::SCHEMA_VERSION`] by calling [`Settings::migrate`] once per step.
@@ -49,9 +55,19 @@ pub fn upgrade<T: Settings>(doc: &mut DocumentMut) -> Result<Upgrade, MigrateErr
 pub struct LegacyFile<T> {
     /// Where the old file lives on this platform.
     pub path: PathBuf,
-    /// Parses the file's bytes into the current settings type.
-    pub parse: fn(&[u8]) -> Result<T, String>,
+    /// Parses the file's bytes into the current settings type. The list names the values the
+    /// parse replaced with defaults (`section` holds the key path, e.g. `interface.uiScale`); the
+    /// store reports them in [`LoadReport::section_errors`](crate::LoadReport::section_errors), the
+    /// same place a `config.toml` load puts its own. An `Err` means the file is unusable and the
+    /// next legacy file is tried.
+    pub parse: ParseLegacy<T>,
 }
+
+/// Parses a legacy file's bytes: the value and the values reset to defaults, or why the file is unusable.
+pub type ParseLegacy<T> = fn(&[u8]) -> Result<(T, Vec<SectionError>), String>;
+
+/// A legacy file that parsed: its value, the values reset to defaults, and where it was.
+pub type Imported<T> = (T, Vec<SectionError>, PathBuf);
 
 impl<T> std::fmt::Debug for LegacyFile<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -59,11 +75,12 @@ impl<T> std::fmt::Debug for LegacyFile<T> {
     }
 }
 
-/// Tries each legacy file in order and returns the first one that parses, with its path.
+/// Tries each legacy file in order and returns the first one that parses, with the values it
+/// reset and its path.
 #[cfg(not(target_arch = "wasm32"))]
-pub fn import_legacy<T>(files: &[LegacyFile<T>]) -> Option<(T, PathBuf)> {
+pub fn import_legacy<T>(files: &[LegacyFile<T>]) -> Option<Imported<T>> {
     files.iter().find_map(|f| {
         let bytes = std::fs::read(&f.path).ok()?;
-        (f.parse)(&bytes).ok().map(|v| (v, f.path.clone()))
+        (f.parse)(&bytes).ok().map(|(v, errors)| (v, errors, f.path.clone()))
     })
 }

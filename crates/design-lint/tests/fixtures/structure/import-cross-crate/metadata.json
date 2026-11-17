@@ -1,0 +1,36 @@
+{
+ "packages": [
+  {
+   "name": "nodalia-ui",
+   "features": {},
+   "dependencies": [
+    {
+     "name": "nodalia-domain",
+     "kind": null,
+     "optional": false
+    }
+   ],
+   "targets": [
+    {
+     "kind": [
+      "lib"
+     ],
+     "src_path": "crates/ui/src/lib.rs"
+    }
+   ]
+  },
+  {
+   "name": "nodalia-domain",
+   "features": {},
+   "dependencies": [],
+   "targets": [
+    {
+     "kind": [
+      "lib"
+     ],
+     "src_path": "crates/domain/src/lib.rs"
+    }
+   ]
+  }
+ ]
+}

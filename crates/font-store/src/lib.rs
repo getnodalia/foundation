@@ -18,8 +18,9 @@
 //! # }
 //! ```
 //!
-//! The index and its lookups, [`verify_font`] and [`IndexPin`] build on every target. The store
-//! and the HTTP client are native only.
+//! The index and its lookups, [`verify_font`] and [`IndexPin`] build on every target. The store,
+//! the HTTP client and Language packs (the store's second item kind, `language-pack`: see
+//! [`FontStore::install_language_pack`]) are native only.
 
 mod index;
 mod pin;
@@ -29,6 +30,8 @@ mod verify;
 
 #[cfg(not(target_arch = "wasm32"))]
 mod http;
+#[cfg(not(target_arch = "wasm32"))]
+mod language_packs;
 #[cfg(not(target_arch = "wasm32"))]
 mod store;
 
@@ -40,10 +43,29 @@ pub use pin::{IndexPin, PINNED_INDEX};
 pub use sources::{SourceEntry, SourcesFile};
 pub use verify::{VerifyError, is_font, sha256_hex, verify_font};
 
+/// A source the user added: an index file at an https URL, never curated. Plain data, so it builds on every target
+/// for the interfaces that list the sources.
+#[derive(Clone, Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct UserSource {
+    /// The index file (format 1.x, JSON or gzipped JSON).
+    pub url: String,
+    /// When it was added, in seconds since 1970.
+    pub added_at: u64,
+    /// The sha256 of the file first fetched from it. A different file later shows as
+    /// [`FontSource::changed`].
+    #[serde(default)]
+    pub last_sha256: Option<String>,
+}
+
 #[cfg(not(target_arch = "wasm32"))]
 pub use http::{Cancel, Client, FetchError, Timeouts, USER_AGENT};
 #[cfg(not(target_arch = "wasm32"))]
-pub use store::{Caller, Error, FontStore, InstalledFamily, InstalledFile, Network, Problem, Progress, UserSource};
+pub use language_packs::{
+    InstalledLanguagePack, LANGUAGE_PACK_INDEX_ENV, LANGUAGE_PACKS, MAX_PACK_ARCHIVE_BYTES, MAX_PACK_ENTRIES, MAX_PACK_FILE_BYTES,
+    MAX_PACK_INDEX_BYTES, MAX_PACK_UNPACKED_BYTES, PackEntry, PackIndex, PackIndexPin, language_pack_index_overridden,
+};
+#[cfg(not(target_arch = "wasm32"))]
+pub use store::{Caller, Error, FontStore, InstalledFamily, InstalledFile, Network, Problem, Progress};
 
 #[cfg(test)]
 mod tests;

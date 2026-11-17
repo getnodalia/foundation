@@ -7,6 +7,10 @@
 use std::collections::HashMap;
 use std::hash::{BuildHasherDefault, Hasher};
 
+/// The most patterns one set holds; later ones are ignored. The bundled US English set has
+/// about 7,000.
+pub(crate) const MAX_PATTERNS: usize = 1 << 20;
+
 /// Word-boundary marker in patterns.
 pub(crate) const DOT: char = '.';
 /// Longest pattern the packed key supports.
@@ -17,9 +21,6 @@ pub(crate) const MAX_PATTERN_LEN: usize = 9;
 pub(crate) struct FxHasher(u64);
 
 impl Hasher for FxHasher {
-    fn finish(&self) -> u64 {
-        self.0
-    }
     fn write(&mut self, bytes: &[u8]) {
         for &b in bytes {
             self.write_u64(b as u64);
@@ -27,6 +28,12 @@ impl Hasher for FxHasher {
     }
     fn write_u64(&mut self, i: u64) {
         self.0 = (self.0.rotate_left(5) ^ i).wrapping_mul(0x51_7c_c1_b7_27_22_0a_95);
+    }
+    fn finish(&self) -> u64 {
+        // The table indexes by the low bits, which a multiplication leaves depending on the
+        // low bits of the key alone: packed patterns that share their first letters would
+        // share a bucket. Rotating brings the well-mixed high bits down (as rustc-hash 2 does).
+        self.0.rotate_left(26)
     }
 }
 
@@ -123,8 +130,12 @@ impl Patterns {
         if codes.is_empty() || codes.len() > MAX_PATTERN_LEN {
             return false;
         }
+        let key = pack(&codes);
+        if self.map.len() >= MAX_PATTERNS && !self.map.contains_key(&key) {
+            return false;
+        }
         self.max_len = self.max_len.max(codes.len());
-        self.map.insert(pack(&codes), vals.into_boxed_slice());
+        self.map.insert(key, vals.into_boxed_slice());
         true
     }
 
@@ -141,11 +152,13 @@ impl Patterns {
         }
     }
 
-    #[cfg(any(test, feature = "generator"))]
+    /// The number of patterns.
+    #[cfg(feature = "generator")]
     pub fn len(&self) -> usize {
         self.map.len()
     }
 
+    /// Whether there are no patterns.
     pub fn is_empty(&self) -> bool {
         self.map.is_empty()
     }
@@ -176,7 +189,7 @@ impl Patterns {
     }
 
     /// The patterns in TeX notation (sorted by letters), e.g. for writing a pattern file.
-    #[cfg(any(test, feature = "generator"))]
+    #[cfg(feature = "generator")]
     pub fn to_tex(&self) -> Vec<String> {
         let mut rev: Vec<(u8, char)> =
             (0u8..128).filter(|&c| self.alpha.ascii[c as usize] != 0).map(|c| (self.alpha.ascii[c as usize], c as char)).collect();
@@ -220,22 +233,5 @@ pub(crate) fn apply(map: &FxMap<u64, Box<[u8]>>, max_len: usize, codes: &[u8], v
                 }
             }
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn liang_example() {
-        // The classic example from Liang's thesis: "hy-phen-ation".
-        let p = Patterns::parse("hy3ph he2n hena4 hen5at 1na n2at 1tio 2io o2n");
-        let w: Vec<char> = "hyphenation".chars().collect();
-        assert_eq!(p.points(&w).unwrap(), vec![2, 6]);
-        let mut tex = p.to_tex();
-        tex.sort();
-        assert!(tex.contains(&"hen5at".to_string()));
-        assert!(p.values(&['h', 'é']).is_none());
     }
 }
