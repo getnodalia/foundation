@@ -25,7 +25,9 @@ use nodalia_wordmodel::{Align, Document};
 use nodalia_flow::{self as model, Cell, FBlock, FTable, Fmt, Inline, Kind, ListInfo, Para, make_img};
 
 mod blocks;
+mod escaping;
 mod export;
+pub mod extracted;
 mod inlines;
 
 pub use nodalia_flow::MAX_TABLE_CELLS;

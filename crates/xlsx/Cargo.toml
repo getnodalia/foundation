@@ -10,9 +10,16 @@ repository.workspace = true
 [lints]
 workspace = true
 
+[features]
+# `testing`: writers of small workbooks and packages, for the tests of crates that read them.
+test-support = []
+
 [dependencies]
 nodalia-drawingml = { workspace = true }
 nodalia-opc = { workspace = true }
 nodalia-sheet = { workspace = true }
 nodalia-xml = { workspace = true }
 thiserror = { workspace = true }
+
+[dev-dependencies]
+nodalia-xlsx = { path = ".", features = ["test-support"] }
