@@ -1,10 +1,7 @@
 //! Where the desktop puts the window buttons, and which look they get. The parsers are pure
 //! functions over strings; the file reads at the bottom are thin.
 
-use crate::{
-    Layout,
-    policy::{CaptionFamily, Decision, Frame, Os},
-};
+use crate::{Layout, policy::CaptionFamily};
 
 use crate::desktop::DesktopKind;
 
@@ -59,7 +56,7 @@ pub(crate) fn family(kind: DesktopKind, gtk_theme: Option<&str>) -> CaptionFamil
     match kind {
         DesktopKind::Gnome => CaptionFamily::Adwaita,
         DesktopKind::Kde => CaptionFamily::Breeze,
-        _ => family_from_gtk_theme(gtk_theme),
+        DesktopKind::Tiling | DesktopKind::Other => family_from_gtk_theme(gtk_theme),
     }
 }
 
@@ -81,6 +78,7 @@ pub(crate) fn default_layout(kind: DesktopKind) -> Layout {
 }
 
 /// A parsed layout, or the default when the text names no usable button.
+#[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd", test))]
 fn parse_or_default(text: Option<&str>, kind: DesktopKind) -> Layout {
     text.map(Layout::parse).filter(Layout::is_usable).unwrap_or_else(|| default_layout(kind))
 }
@@ -101,114 +99,10 @@ pub(crate) fn read_layout(kind: DesktopKind, var: &dyn Fn(&str) -> Option<String
             let rc = read_config(var, "kwinrc").unwrap_or_default();
             parse_or_default(Some(&kwin_layout(&rc)), kind)
         }
-        _ => {
+        DesktopKind::Tiling | DesktopKind::Other => {
             let ini = read_config(var, "gtk-3.0/settings.ini").unwrap_or_default();
             parse_or_default(gtk_settings(&ini).0.as_deref(), kind)
         }
-    }
-}
-
-/// Follows the desktop's window-button layout while the app runs, so `Captions.layout` can change
-/// without a restart.
-///
-/// - GNOME: the live value is `org.gnome.desktop.wm.preferences` `button-layout`, which
-///   `nodalia_platform::appearance::Watcher::button_layout` follows on the settings portal. Pass it
-///   to [`LayoutWatch::set_gnome`] when the watcher wakes; until it answers, the layout read at
-///   startup stays.
-/// - KDE: KWin's `kwinrc`; other desktops: GTK's `settings.ini`. Neither announces changes, so
-///   [`LayoutWatch::on_focus`] re-reads them when the window regains focus.
-/// - Windows, macOS and the web: the layout never changes.
-///
-/// A value that names no usable button gives the desktop's default (Close only on GNOME, all
-/// three elsewhere).
-///
-/// ```ignore
-/// let mut layouts = LayoutWatch::new(&decision);
-/// // Each frame, with the app's one `nodalia_platform::appearance::Watcher`:
-/// let mut changed = layouts.set_gnome(watcher.button_layout().as_deref());
-/// if window_gained_focus {
-///     changed |= layouts.on_focus();
-/// }
-/// if changed && let Frame::Integrated(captions) = &mut decision.frame {
-///     captions.layout = layouts.layout().clone();
-/// }
-/// ```
-#[derive(Clone, Debug)]
-pub struct LayoutWatch {
-    os: Os,
-    kind: DesktopKind,
-    /// The layout read at startup, or on the last focus re-read.
-    read: Layout,
-    /// GNOME's `button-layout` as the platform watcher last reported it.
-    gnome: Option<String>,
-    current: Layout,
-}
-
-impl LayoutWatch {
-    /// Start from `decision`: its desktop, and its caption layout when the app draws the frame.
-    /// For any other frame the desktop's layout is read now (on GNOME with `gsettings`, bounded
-    /// at 500 ms), so a later switch to the app's bar has one.
-    pub fn new(decision: &Decision) -> Self {
-        let os = Os::current();
-        let kind = decision.desktop.kind;
-        let read = match &decision.frame {
-            Frame::Integrated(captions) => captions.layout.clone(),
-            Frame::Native | Frame::Inset(_) => crate::policy::desktop_layout(os, kind),
-        };
-        Self::with(os, kind, read)
-    }
-
-    fn with(os: Os, kind: DesktopKind, read: Layout) -> Self {
-        Self { os, kind, current: read.clone(), read, gnome: None }
-    }
-
-    /// The layout to draw the caption buttons in.
-    pub fn layout(&self) -> &Layout {
-        &self.current
-    }
-
-    /// Take GNOME's `button-layout` from `nodalia_platform::appearance::Watcher::button_layout`.
-    /// Only GNOME follows it; `None` keeps the startup layout. Returns whether the layout changed.
-    pub fn set_gnome(&mut self, value: Option<&str>) -> bool {
-        if self.gnome.as_deref() == value {
-            return false;
-        }
-        self.gnome = value.map(str::to_owned);
-        self.update()
-    }
-
-    /// Re-read KWin's `kwinrc` (KDE) or GTK's `settings.ini` (other desktops). Call it when the
-    /// window regains focus, since neither file announces changes. GNOME's value comes through
-    /// [`LayoutWatch::set_gnome`] instead, so nothing is read there. Returns whether the layout
-    /// changed.
-    pub fn on_focus(&mut self) -> bool {
-        #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
-        {
-            self.refresh_with(&|k: &str| std::env::var(k).ok())
-        }
-        #[cfg(not(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd")))]
-        {
-            false
-        }
-    }
-
-    #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
-    fn refresh_with(&mut self, var: &dyn Fn(&str) -> Option<String>) -> bool {
-        if self.os != Os::Linux || self.kind == DesktopKind::Gnome {
-            return false;
-        }
-        self.read = read_layout(self.kind, var);
-        self.update()
-    }
-
-    fn update(&mut self) -> bool {
-        let next = match &self.gnome {
-            Some(value) if self.os == Os::Linux && self.kind == DesktopKind::Gnome => parse_or_default(Some(value), self.kind),
-            _ => self.read.clone(),
-        };
-        let changed = next != self.current;
-        self.current = next;
-        changed
     }
 }
 
@@ -248,4 +142,93 @@ fn read_config(var: &dyn Fn(&str) -> Option<String>, relative: &str) -> Option<S
     // Config files are small; the cap keeps a stray huge file from stalling startup.
     std::fs::File::open(config.join(relative)).ok()?.take(1 << 20).read_to_end(&mut bytes).ok()?;
     Some(String::from_utf8_lossy(&bytes).into_owned())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Button::{Close, Maximize, Minimize};
+
+    #[test]
+    fn the_family_follows_the_desktop_then_the_gtk_theme() {
+        assert_eq!(family(DesktopKind::Gnome, Some("Arc")), CaptionFamily::Adwaita);
+        assert_eq!(family(DesktopKind::Kde, None), CaptionFamily::Breeze);
+        assert_eq!(family(DesktopKind::Other, Some("adw-gtk3-dark")), CaptionFamily::Adwaita);
+        assert_eq!(family(DesktopKind::Other, Some("Yaru-blue")), CaptionFamily::Adwaita);
+        assert_eq!(family(DesktopKind::Other, Some("Breeze-Dark")), CaptionFamily::Breeze);
+        assert_eq!(family(DesktopKind::Other, Some("Mint-Y")), CaptionFamily::Generic);
+        assert_eq!(family(DesktopKind::Other, None), CaptionFamily::Generic);
+    }
+
+    #[test]
+    fn kwin_button_letters_become_a_gtk_layout() {
+        assert_eq!(kwin_layout(""), ":minimize,maximize,close", "KWin's defaults");
+        let rc = "[Desktops]\nButtonsOnLeft=X\n[org.kde.kdecoration2]\nButtonsOnLeft=XIA\nButtonsOnRight=\nlibrary=org.kde.breeze\n";
+        assert_eq!(kwin_layout(rc), "close,minimize,maximize:");
+        assert_eq!(ini_value(rc, "org.kde.kdecoration2", "library").as_deref(), Some("org.kde.breeze"));
+        assert_eq!(ini_value(rc, "nope", "library"), None);
+        // Garbage is just no buttons on that side, never a panic.
+        assert_eq!(kwin_layout("[org.kde.kdecoration2]\nButtonsOnRight=\u{ff}\u{20ac}=X\n"), ":close");
+    }
+
+    #[test]
+    fn the_icon_theme_comes_from_the_setting_or_the_desktop_default() {
+        let globals = "[Icons]\nTheme=breeze-dark\n";
+        let ini = "[Settings]\ngtk-icon-theme-name=Papirus\n";
+        assert_eq!(icon_theme(DesktopKind::Kde, globals, ini), "breeze-dark");
+        assert_eq!(icon_theme(DesktopKind::Other, globals, ini), "Papirus");
+        assert_eq!(icon_theme(DesktopKind::Gnome, "", ""), "Adwaita");
+        assert_eq!(icon_theme(DesktopKind::Kde, "", ini), "breeze");
+    }
+
+    #[test]
+    fn kwin_order_parses_into_a_layout() {
+        let rc = "[org.kde.kdecoration2]\nButtonsOnLeft=XIA\nButtonsOnRight=\n";
+        let layout = Layout::parse(&kwin_layout(rc));
+        assert_eq!(layout.left, vec![Close, Minimize, Maximize]);
+        assert!(layout.right.is_empty());
+    }
+
+    #[test]
+    fn gtk_settings_give_the_layout_and_theme() {
+        let ini = "[Settings]\ngtk-theme-name=Yaru\ngtk-decoration-layout=close,maximize:\n";
+        assert_eq!(gtk_settings(ini), (Some("close,maximize:".into()), Some("Yaru".into())));
+        assert_eq!(gtk_settings(""), (None, None));
+        let layout = Layout::parse("close,maximize:");
+        assert_eq!((layout.left, layout.right), (vec![Close, Maximize], vec![]));
+    }
+
+    #[test]
+    fn missing_or_unusable_layouts_fall_back_to_the_desktops_default() {
+        assert_eq!(parse_or_default(None, DesktopKind::Gnome).right, vec![Close], "GNOME's default shows Close only");
+        assert_eq!(parse_or_default(Some("appmenu:spacer"), DesktopKind::Other).right, vec![Minimize, Maximize, Close]);
+        assert_eq!(parse_or_default(Some("close:"), DesktopKind::Other).left, vec![Close]);
+    }
+
+    #[cfg(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))]
+    #[test]
+    fn settings_files_are_read_from_the_config_dir() {
+        let dir = std::env::temp_dir().join(format!("nodalia-window-layout-{}", std::process::id()));
+        std::fs::create_dir_all(dir.join("gtk-3.0")).unwrap_or_default();
+        std::fs::write(dir.join("gtk-3.0/settings.ini"), "[Settings]\ngtk-theme-name=Yaru\ngtk-decoration-layout=close,maximize:\n")
+            .unwrap_or_default();
+        std::fs::write(dir.join("kwinrc"), "[org.kde.kdecoration2]\nButtonsOnRight=AX\n").unwrap_or_default();
+        let path = dir.to_string_lossy().into_owned();
+        let var = move |k: &str| (k == "XDG_CONFIG_HOME").then(|| path.clone());
+        assert_eq!(read_gtk_theme(&var).as_deref(), Some("Yaru"));
+        std::fs::write(dir.join("kdeglobals"), "[Icons]\nTheme=breeze-dark\n").unwrap_or_default();
+        assert_eq!(read_icon_theme(DesktopKind::Kde, &var), "breeze-dark");
+        let path2 = dir.to_string_lossy().into_owned();
+        let with_env = move |k: &str| match k {
+            "XDG_CONFIG_HOME" => Some(path2.clone()),
+            "GTK_THEME" => Some("Breeze:dark".to_string()),
+            _ => None,
+        };
+        assert_eq!(read_gtk_theme(&with_env).as_deref(), Some("Breeze"), "GTK_THEME wins over settings.ini");
+        assert_eq!(read_layout(DesktopKind::Other, &var).left, vec![Close, Maximize]);
+        assert_eq!(read_layout(DesktopKind::Kde, &var).right, vec![Maximize, Close]);
+        // A relative XDG_CONFIG_HOME is ignored, as the XDG spec says; with no HOME nothing is found.
+        assert_eq!(read_gtk_theme(&|k: &str| (k == "XDG_CONFIG_HOME").then(|| "rel".to_string())), None);
+        let _ = std::fs::remove_dir_all(dir);
+    }
 }

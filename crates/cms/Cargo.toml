@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-cms"
 version.workspace = true
 edition.workspace = true

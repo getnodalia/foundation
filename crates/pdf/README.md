@@ -16,18 +16,7 @@ No feature is enabled by default.
 | `filters` | The `/Filter` chain for editing and writing PDF files: decode and encode, with limits and accounting. No reader or writer dependency |
 | `crypt` | The standard security handler: decrypt, encrypt and create encryption. No reader or writer dependency |
 | `cos` | `crypt` and `filters` plus the object layer: open, edit and save PDF files (incremental and full saves). No reader or writer dependency |
-| `test-support` | `cos` plus `testing::Pdf`, a builder of small synthetic PDF files for tests |
 | `content` | `cos` plus `cos::content`: parse content streams into operators with source spans, write them back, and the matrix arithmetic. Uses hayro-syntax's tokenizer for inline images |
-
-## Export settings
-
-`settings` (always available, no dependencies) holds the PDF export settings a shared export
-dialog edits and a preset stores: `PdfSettings` with its sections, the choice enums (each with a
-stable `id`, `from_id` and English `label`, listed by the `Choice` trait), the built-in presets
-(`builtin_presets(app)`), and the checks that refuse settings a writer can't honour
-(`PdfSettings::check`, `check_values`, `warnings`). Errors and warnings are English text with a
-stable `id` each. Checks that depend on colour profiles ask an app-supplied `ProfileCatalog`.
-The settings types derive `Serialize` and `Deserialize` (camelCase, every field optional, passwords never written); apps can also save settings through the ids.
 
 ## Reading and rendering
 
@@ -147,11 +136,7 @@ let bytes = write_full(&doc, &SaveOptions::default())?;        // rewrite what t
 
 With `content`, `cos::content` reads and writes page content streams. `parse` keeps each
 operator's byte span and skips (and counts) what it cannot read instead of failing; inline images
-stay whole, so `parse` → `serialize_ops` round-trips them. Between operands, a token of one or two
-signs with a minus among them (`-`, `--`, `-+`, `+-`), followed by whitespace, a delimiter or the
-end, is read as the number 0, as hayro-syntax reads it. Inside an array or dictionary, or among an
-inline image's parameters, such a token still makes the whole operand unreadable (such an image is
-left out of `ops` and counted in `ambiguous_images`). `Matrix` holds the arithmetic content
+stay whole, so `parse` → `serialize_ops` round-trips them. `Matrix` holds the arithmetic content
 interpretation needs.
 
 - Reads every cross-reference form (tables, streams, hybrid `/XRefStm`) and object streams. A
@@ -175,9 +160,8 @@ The code comes from Papel's `pdfcraft-cos` crate (revision
 comments. Its test helpers come along: `src/cos/testkit.rs` (synthetic files, from
 `pdfcraft-testkit`) and `tests/cos/oracle.rs` (qpdf runs, from `pdfcraft-oracle`; a missing
 `qpdf` skips those tests, or fails them when `NODALIA_PDF_ORACLES_REQUIRED` is set). Tests:
-`cargo test -p nodalia-pdf --no-default-features --features cos`. Other crates' tests use the
-builder as `nodalia_pdf::testing::Pdf` by enabling `test-support` in their dev-dependency on
-`nodalia-pdf`. Examples: `cos_info` and `cos_protect` (`--features cos`).
+`cargo test -p nodalia-pdf --no-default-features --features cos`. Examples: `cos_info` and
+`cos_protect` (`--features cos`).
 
 ## Stream filters
 
@@ -386,7 +370,7 @@ one directory using the listed names, then run:
 ```sh
 NODALIA_PDF_TEST_FONT_DIR=/absolute/path/to/licensed-fonts \
 RUSTFLAGS="--cfg nodalia_pdf_unicode_fixtures" \
-cargo test -p nodalia-pdf --all-features -- integration::unicode_writing
+cargo test -p nodalia-pdf --all-features --test unicode_writing
 ```
 
 Repeat with `--target wasm32-unknown-unknown` and the matching test runner for

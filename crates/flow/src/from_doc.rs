@@ -18,7 +18,11 @@ pub(super) fn uses_kind(blocks: &[FBlock], k: Kind, depth: usize) -> bool {
 // ---------------------------------------------------------------------------------------------
 // Document → Flow
 
-pub use nodalia_wordmodel::font_kind::is_mono;
+/// Is this a monospace family name?
+pub fn is_mono(font: &str) -> bool {
+    let f = font.to_ascii_lowercase();
+    f.contains("courier") || f.contains("mono") || f.contains("consolas") || f.contains("menlo") || f.contains("code") || f == "monaco"
+}
 
 fn is_code_style(doc: &Document, id: &str) -> bool {
     let names = |s: &str| {
@@ -197,7 +201,7 @@ fn para_extra(doc: &Document, p: &nodalia_wordmodel::props::ParaProps) -> Option
     let outline_level = p.outline_level.or_else(|| style.as_ref().and_then(|_| doc.styles.resolve_para(p).outline_level));
     let x = nodalia_wordmodel::props::ParaProps {
         tabs,
-        shading: doc.styles.resolve_para(p).shading,
+        shading: p.shading,
         style,
         contextual_spacing: p.contextual_spacing,
         bidi: p.bidi.filter(|b| *b),
@@ -432,11 +436,10 @@ fn drawing_inline(doc: &Document, o: &InlineObject, opts: FlowOpts, depth: usize
     }
 }
 
-/// Keep placement, transforms, and explicit stacking metadata even for inline drawings.
-/// Presence alone does not imply anchoring: the retained Float keeps its original wrap.
+/// The placement a flow keeps for a drawing: when it floats, or turns or mirrors it in line.
 fn kept_float(f: &nodalia_wordmodel::para::Float) -> Option<Box<nodalia_wordmodel::para::Float>> {
     let turned = f.rot.is_finite() && f.rot.rem_euclid(360.0) > 0.001 && f.rot.rem_euclid(360.0) < 359.999;
-    (f.wrap != nodalia_wordmodel::para::Wrap::Inline || turned || f.flip_h || f.flip_v || f.z != 0).then(|| Box::new(f.clone()))
+    (f.wrap != nodalia_wordmodel::para::Wrap::Inline || turned || f.flip_h || f.flip_v).then(|| Box::new(f.clone()))
 }
 
 fn flow_comment(doc: &Document, c: &nodalia_wordmodel::Comment, parent: Option<u32>, opts: FlowOpts) -> FComment {
@@ -549,12 +552,6 @@ fn flow_paras_in(doc: &Document, p: &Paragraph, opts: FlowOpts) -> Vec<Para> {
             if c == PAGE_BREAK {
                 if !hidden {
                     out.push_text(&std::mem::take(&mut buf), &f);
-                    let extra = out.extra.as_ref().and_then(|x| {
-                        let mut x = (**x).clone();
-                        x.drop_cap = None;
-                        x.drop_cap_distance = None;
-                        (x != nodalia_wordmodel::props::ParaProps::default()).then(|| Box::new(x))
-                    });
                     let next = Para {
                         kind,
                         list: None,
@@ -569,7 +566,7 @@ fn flow_paras_in(doc: &Document, p: &Paragraph, opts: FlowOpts) -> Vec<Para> {
                         mark_ins: None,
                         mark_del: None,
                         fmt_change: None,
-                        extra,
+                        extra: None,
                         mark: None,
                         kept: None,
                         wrap: None,
@@ -767,14 +764,9 @@ fn graphic_group(
         .iter()
         .take(10_000)
         .filter_map(|item| match item {
-            GraphicItem::Shape { rect, kind, fill, stroke, stroke_width, alpha } if finite(rect) => {
+            GraphicItem::Shape { rect, kind, fill, stroke, stroke_width } if finite(rect) => {
                 let look = BoxLook {
-                    fill: fill
-                        .map(|color| nodalia_wordmodel::fill::Fill::Solid {
-                            color,
-                            transparency: (1.0 - if alpha.is_finite() { alpha.clamp(0.0, 1.0) } else { 1.0 }) * 100.0,
-                        })
-                        .filter(|_| *kind != ShapeKind::Line),
+                    fill: fill.map(nodalia_wordmodel::fill::Fill::solid).filter(|_| *kind != ShapeKind::Line),
                     line: stroke.filter(|_| stroke_width.is_finite() && *stroke_width > 0.0).map(|c| (c, stroke_width.min(12.0))),
                     ..plain.clone()
                 };
@@ -1109,10 +1101,7 @@ fn flow_table(doc: &Document, t: &Table, depth: usize, tracked: FlowOpts) -> FTa
     let ncols =
         t.rows.iter().map(|r| r.first_grid() + r.cells.iter().map(|c| c.span()).sum::<usize>() + r.grid_after()).max().unwrap_or(0).max(t.grid.len());
     for (ri, r) in t.rows.iter().enumerate() {
-        // The look's header row is an option of the table's style (`w:tblLook/@w:firstRow`): with
-        // no table style there is nothing to apply, so the first row stays an ordinary row, as in
-        // Word. Only Repeat as header row makes it one then.
-        let header = r.props.header || (ri == 0 && style.is_some() && t.props.look.header_row && t.rows.len() > 1);
+        let header = r.props.header || (ri == 0 && t.props.look.header_row && t.rows.len() > 1);
         let mut cells = Vec::new();
         for (ci, c) in r.cells.iter().enumerate() {
             let styled = if bake { styled_cell(t, style.as_ref(), (ri, ci), ncols) } else { None };
@@ -1281,20 +1270,5 @@ impl ListCounter {
             1 => format!("{}.", nodalia_wordmodel::section::letters(n)),
             _ => format!("{}.", nodalia_wordmodel::section::roman(n)),
         }
-    }
-}
-
-#[cfg(test)]
-mod stacking_tests {
-    #[test]
-    fn explicit_inline_stacking_preserves_wrap_without_creating_an_anchor() {
-        use nodalia_wordmodel::para::{Float, Wrap};
-        let f = Float { z: u32::MAX, ..Float::default() };
-        assert_eq!(f.wrap, Wrap::Inline);
-        let kept = super::kept_float(&f).unwrap();
-        assert_eq!(kept.wrap, Wrap::Inline);
-        assert_eq!(kept.z, u32::MAX);
-        assert_eq!(kept.rot, f.rot);
-        assert!(super::kept_float(&Float::default()).is_none());
     }
 }

@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 
-use nodalia_timeline::{FrameRate, Tick};
+use nodalia_timeline::time::{FrameRate, Tick};
 
 use super::ids::{META_DICTIONARY, ROOT, cls, ddef, def, path, pid};
 use super::store::{self, Auid, Obj, Value, rational, utf16z};

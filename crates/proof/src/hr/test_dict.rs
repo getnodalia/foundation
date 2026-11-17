@@ -35,3 +35,9 @@ pravopis
 provjera
 računala
 ";
+pub fn install() {
+    crate::hold_dictionary_tests();
+    if let Err(e) = super::install_dictionary(AFF, DIC) {
+        panic!("test dictionary: {e}");
+    }
+}

@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-ecproj-format"
 description = "The envelope of Pulso .ecproj project files: savedBy, the schema version and its check, and the file object with the project and its saved view as type parameters."
 version.workspace = true

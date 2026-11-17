@@ -2,7 +2,7 @@
 //!
 //! This layer recognizes the document, stage, scene, layer and keyframe fields defined by XFL.
 //! It does not construct a consumer's animation model. More detailed payloads remain available
-//! through [`crate::document::Document::root`] for the application adapter.
+//! through [`Document::root`] for the application adapter.
 use crate::shape::XflElement;
 use nodalia_xml::{Doctype, El, Error as XmlError, Limits, Local, Options, Pat, UnknownEntity};
 use std::borrow::Cow;
