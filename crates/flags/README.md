@@ -16,7 +16,7 @@ until a person turns it on. Every flag is off by default.
 
 | Constant | Id | What it gates |
 |---|---|---|
-| `AI_MCP` | `AI-MCP` | AI agents using the Craft apps through MCP: the launcher's AI agents settings, the `craft-ai-mcp` gateway, the apps' agent connection settings |
+| `AI_MCP` | `AI-MCP` | AI agents using the Craft apps through MCP: the launcher's AI agents settings, the `nodalia-ai-mcp` gateway, the apps' agent connection settings |
 | `AI_MODELS` | `AI-MODELS` | Choosing AI models and services for AI tools such as Generative Fill |
 
 A new flag is a new constant here and a row in `ALL`, so the launcher can list it and every app
