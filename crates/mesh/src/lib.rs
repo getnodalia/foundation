@@ -47,6 +47,7 @@ pub mod ply;
 pub mod stl;
 #[cfg(feature = "threemf")]
 pub mod threemf;
+mod triangulate;
 
 use std::collections::HashMap;
 use std::fmt;
@@ -170,6 +171,8 @@ pub struct Part {
     pub material: Option<usize>,
     /// OBJ smoothing group; 0 is off.
     pub smoothing: u32,
+    /// This glTF primitive supplies tangents for its positions.
+    pub has_tangents: bool,
     /// Corners of each face, in order. Empty means every face is a triangle.
     pub face_sizes: Vec<u32>,
     /// The corners of all faces, one face after another.
@@ -191,7 +194,8 @@ impl Part {
         })
     }
 
-    /// The faces as triangles: a polygon becomes a fan from its first corner.
+    /// The faces as triangles: a polygon becomes a fan from its first corner, which is right
+    /// only for a convex face. [`Part::triangles_in`] triangulates concave faces too.
     pub fn triangles(&self) -> impl Iterator<Item = [Corner; 3]> + '_ {
         self.faces().flat_map(|f| {
             let first = f.first().copied();
@@ -202,7 +206,19 @@ impl Part {
         })
     }
 
-    /// Triangles the faces fan into.
+    /// The faces as triangles, with `positions` (the mesh's [`Mesh::positions`]) to see their
+    /// shape. A convex face becomes a fan from its first corner, as in [`Part::triangles`]; a
+    /// concave one is triangulated by ear clipping in its own plane, so no triangle covers a
+    /// notch. Each triangle keeps the face's winding. A face with a corner that has no position,
+    /// or with no area, keeps the fan. What is left of a face when no ear can be found (it
+    /// crosses itself) or the part's work budget (256 steps per corner) is spent is
+    /// fanned. Every face gives `corners − 2` triangles, as [`Part::triangle_count`] counts.
+    pub fn triangles_in<'a>(&'a self, positions: &'a [[f64; 3]]) -> impl Iterator<Item = [Corner; 3]> + 'a {
+        let mut budget = triangulate::WORK_PER_CORNER.saturating_mul(self.corners.len());
+        self.faces().flat_map(move |f| triangulate::face(f, positions, &mut budget))
+    }
+
+    /// Triangles the faces give: `corners − 2` each.
     pub fn triangle_count(&self) -> usize {
         if self.face_sizes.is_empty() { self.corners.len() / 3 } else { self.face_sizes.iter().map(|n| (*n as usize).saturating_sub(2)).sum() }
     }
@@ -214,6 +230,9 @@ pub struct Mesh {
     pub name: String,
     pub positions: Vec<[f64; 3]>,
     pub normals: Vec<[f64; 3]>,
+    /// Authored glTF tangents `[x, y, z, handedness]`, aligned with `positions`; empty when no
+    /// primitive supplies tangents. A part's [`Part::has_tangents`] distinguishes absent values.
+    pub tangents: Vec<[f64; 4]>,
     /// UV sets; every set has the same length and is indexed by [`Corner::uv`].
     pub uv_sets: Vec<Vec<[f32; 2]>>,
     /// RGBA per position (same length as `positions`), or empty.
@@ -255,10 +274,15 @@ impl Mesh {
         if self.uv_sets.iter().any(|s| s.len() != uvs) {
             return bad("UV sets differ in length");
         }
-        for (what, len) in [("colours", self.colors.len()), ("joints", self.joints.len()), ("weights", self.weights.len())] {
+        for (what, len) in
+            [("colours", self.colors.len()), ("tangents", self.tangents.len()), ("joints", self.joints.len()), ("weights", self.weights.len())]
+        {
             if len != 0 && len != self.positions.len() {
                 return bad(&format!("{what} do not match the positions"));
             }
+        }
+        if self.parts.iter().any(|p| p.has_tangents) && self.tangents.len() != self.positions.len() {
+            return bad("a part names tangents but the tangent array does not match the positions");
         }
         for p in &self.parts {
             let total = if p.face_sizes.is_empty() {
@@ -281,8 +305,8 @@ impl Mesh {
         Ok(())
     }
 
-    /// The mesh as triangles with one vertex per distinct corner. Corners whose indices are out
-    /// of range are dropped with their triangle.
+    /// The mesh as triangles ([`Part::triangles_in`]) with one vertex per distinct corner.
+    /// Corners whose indices are out of range are dropped with their triangle.
     pub fn unified(&self) -> Unified {
         let mut out = Unified::default();
         let all = |f: &dyn Fn(&Corner) -> bool| self.parts.iter().all(|p| p.corners.iter().all(f));
@@ -292,7 +316,7 @@ impl Mesh {
         let mut ids: HashMap<Corner, u32> = HashMap::new();
         for part in &self.parts {
             let mut tris = Vec::with_capacity(part.triangle_count());
-            'tri: for t in part.triangles() {
+            'tri: for t in part.triangles_in(&self.positions) {
                 let mut tri = [0u32; 3];
                 for (slot, c) in tri.iter_mut().zip(t) {
                     let key = Corner {
@@ -355,6 +379,52 @@ pub struct TextureRef {
     pub image: usize,
     pub uv_set: u32,
     pub wrap: [Wrap; 2],
+    /// Where the slot's UVs land before the image is looked up (glTF `KHR_texture_transform`).
+    pub transform: Option<UvTransform>,
+}
+
+/// A UV transform: scale, then rotate by `rotation` radians, then add `offset`, in the order and
+/// with the signs of glTF's `KHR_texture_transform` (v runs down the image).
+///
+/// Compared and hashed by bits, so [`TextureRef`] keeps `Eq` and `Hash`.
+#[derive(Clone, Copy, Debug)]
+pub struct UvTransform {
+    pub offset: [f32; 2],
+    pub rotation: f32,
+    pub scale: [f32; 2],
+}
+
+impl Default for UvTransform {
+    fn default() -> Self {
+        Self { offset: [0.0; 2], rotation: 0.0, scale: [1.0; 2] }
+    }
+}
+
+impl UvTransform {
+    /// The transformed coordinate.
+    pub fn apply(&self, [u, v]: [f32; 2]) -> [f32; 2] {
+        let (sin, cos) = self.rotation.sin_cos();
+        let (su, sv) = (u * self.scale[0], v * self.scale[1]);
+        [cos * su + sin * sv + self.offset[0], cos * sv - sin * su + self.offset[1]]
+    }
+
+    fn bits(&self) -> [u32; 5] {
+        [self.offset[0], self.offset[1], self.rotation, self.scale[0], self.scale[1]].map(f32::to_bits)
+    }
+}
+
+impl PartialEq for UvTransform {
+    fn eq(&self, other: &Self) -> bool {
+        self.bits() == other.bits()
+    }
+}
+
+impl Eq for UvTransform {}
+
+impl std::hash::Hash for UvTransform {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.bits().hash(state);
+    }
 }
 
 /// A metallic-roughness material: the simple parameters every format here can carry.
@@ -611,6 +681,9 @@ pub struct Scene {
     pub meshes: Vec<Mesh>,
     pub materials: Vec<Material>,
     pub images: Vec<Image>,
+    /// Texture and sampler entries in the file, including ones no material uses. Their image
+    /// index and wrap modes are format properties; UV sets belong to each material slot.
+    pub texture_variants: Vec<TextureRef>,
     /// Every format fills this: a format without a hierarchy gets one root node per mesh.
     pub nodes: Vec<Node>,
     /// The top-level nodes.
@@ -673,6 +746,9 @@ impl Scene {
             if slots.iter().flatten().any(|t| t.image >= self.images.len()) {
                 return bad(format!("material `{}` names an image that does not exist", m.name));
             }
+        }
+        if self.texture_variants.iter().any(|t| t.image >= self.images.len()) {
+            return bad("a texture names an image that does not exist".into());
         }
         let n = self.nodes.len();
         for node in &self.nodes {

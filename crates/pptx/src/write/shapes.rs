@@ -123,7 +123,9 @@ pub fn geometry(w: &mut Writer, g: &Geom) {
                 w.empty("a:avLst", &[]);
                 w.close();
             } else {
-                nodalia_drawingml::custgeom::write_cust_geom(w, paths);
+                // `nodalia-pptx` does not yet retain custom-geometry connection sites.
+                // Zero extent keeps the previous path-only output until the model carries them.
+                nodalia_drawingml::custgeom::write_cust_geom(w, paths, &[], (0, 0));
             }
         }
     }
