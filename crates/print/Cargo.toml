@@ -12,7 +12,7 @@ description = "System PDF print spooler for the Craft apps: CUPS and Windows"
 # Keep the public rgb re-export at main's GDI revision: a different Git rev gives
 # downstream GDI values a different Rust type identity even when the code is unchanged.
 # PDF loader updates below are independent of this public transport API.
-nodalia-winprint-gdi = { git = "https://github.com/getnodalia/foundation", rev = "e6b9c3cb65bf6d11a75b0ee2c17b41aae14a6b7d" }
+nodalia-winprint-gdi = { git = "https://github.com/getnodalia/foundation", rev = "90f5a544e380fa95cc97468f06ea54f049d3cd28" }
 # Says why the printer list is empty when lpstat can't run (e.g. a Flatpak without CUPS tools),
 # and why a job went on with the paper the request names while the driver reported only one side
 # of it (storytold/craft-libs#7230).
@@ -37,7 +37,7 @@ workspace = true
 # review before bumping. The settings chosen in a driver's own dialog become a ticket through
 # `PrintTicket::from_dev_mode` (winprint.rs#24, pinned at its merge commit on winprint.rs's
 # `main`).
-winprint = { git = "https://github.com/getnodalia/foundation", rev = "485b9a1b1607d3a09d7971eac579693df7b4fdd1", default-features = false }
+winprint = { git = "https://github.com/getnodalia/foundation", rev = "a972454d46f1961cbd8280f0ba9c63943c38924d", default-features = false }
 # GetDefaultPrinter (MIT).
 winsafe = { version = "0.0.29", default-features = false, features = ["winspool"] }
 # The job file's private folder.

@@ -13,15 +13,12 @@
 //!
 //! [`hostile::hammer`] runs a parser over every truncation and mutations of a valid input and fails
 //! on a panic or a case that does not finish in time; `NODALIA_MEDIA_HOSTILE_MULT=10` runs ten times
-//! the iterations and `NODALIA_HOSTILE_DIVISOR=8` an eighth of them. It and [`with_deadline`] call
-//! `nodalia_testkit`.
-//! [`vmd`] writes Sierra VMD fixtures, which ffmpeg can read but not write.
+//! the iterations. It and [`with_deadline`] call `nodalia_testkit`.
 //!
 //! Failing loudly is what a test helper is for: a wrong `NODALIA_MEDIA_*` setting or an unwritable
 //! fixture directory panics, which fails the test that asked.
 
 pub mod hostile;
-pub mod vmd;
 
 use std::path::{Path, PathBuf};
 use std::process::Command;

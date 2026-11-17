@@ -11,15 +11,6 @@ rust-version = "1.95"
 repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
-nodalia-evm = { path = "crates/evm" }
-nodalia-java-class = { path = "crates/java-class" }
-nodalia-sourcemap = { path = "crates/sourcemap" }
-nodalia-pcap = { path = "crates/pcap" }
-nodalia-har = { path = "crates/har" }
-nodalia-xfdf = { path = "crates/xfdf" }
-nodalia-jsonc = { path = "crates/jsonc" }
-nodalia-palette = { path = "crates/palette" }
-nodalia-score = { path = "crates/score" }
 nodalia-shx = { path = "crates/shx" }
 nodalia-http-url = { path = "crates/http-url" }
 nodalia-usd = { path = "crates/usd" }
@@ -32,7 +23,6 @@ acadrust = "=0.6.6"
 log = "0.4"
 # internal: add each crate here as `craft-<name> = { path = "crates/<name>" }`
 nodalia-plist = { path = "crates/plist" }
-nodalia-wasm = { path = "crates/wasm" }
 nodalia-platform = { path = "crates/platform" }
 nodalia-aep = { path = "crates/aep" }
 nodalia-affinity = { path = "crates/affinity" }
@@ -64,8 +54,6 @@ nodalia-captions = { path = "crates/captions" }
 nodalia-cfb = { path = "crates/cfb" }
 nodalia-codepage = { path = "crates/codepage" }
 nodalia-cms = { path = "crates/cms" }
-nodalia-cloud = { path = "crates/cloud" }
-nodalia-cloud-local = { path = "crates/cloud-local" }
 nodalia-color = { path = "crates/color" }
 nodalia-frame = { path = "crates/frame" }
 nodalia-crs = { path = "crates/crs" }

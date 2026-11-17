@@ -1,7 +1,4 @@
-//! Vorbis I: the pure-Rust [`decoder`] (feature `vorbis-decode`) and [`encoder`] (feature
-//! `vorbis-encode`). `nodalia_audio::decode` still reads Vorbis files through symphonia.
+//! Vorbis I (feature `vorbis-encode`): the pure-Rust [`encoder`]. Decoding Vorbis goes through
+//! [`crate::decode`].
 
-#[cfg(feature = "vorbis-decode")]
-pub mod decoder;
-#[cfg(feature = "vorbis-encode")]
 pub mod encoder;

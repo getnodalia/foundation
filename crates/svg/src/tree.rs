@@ -22,10 +22,10 @@
 //! 16 MB or so, and a 1 MB stack takes a depth of about 34.
 
 use std::borrow::Cow;
-use std::collections::HashMap;
 use std::collections::hash_map::Entry;
+use std::collections::{HashMap, HashSet};
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
-use std::sync::{Arc, Mutex, PoisonError, Weak};
+use std::sync::{Arc, Mutex, PoisonError};
 
 pub use usvg;
 
@@ -34,13 +34,7 @@ use crate::{guard, svgz};
 
 pub mod document;
 pub mod draw;
-#[cfg(feature = "tree-render")]
-mod image_href;
 pub mod primitive;
-#[cfg(feature = "tree-render")]
-mod validated;
-#[cfg(feature = "tree-render")]
-pub use validated::ValidatedImageResolver;
 
 /// What one import may use. The defaults suit a desktop app that parses on a thread with a
 /// large stack (see the module text).
@@ -70,9 +64,9 @@ pub struct Limits {
     pub embedded_bytes: usize,
     /// SVG documents embedded inside one another, for [`image_resolver`].
     pub embedded_depth: usize,
-    /// Cumulative raster decode pixels for a drawing. usvg sends each data-URL
-    /// resolution separately, so repeated uses normally spend a separate charge.
-    /// The legacy resolver can share a charge for the same live input allocation.
+    /// Decoded RGBA pixels retained across the raster images embedded in one drawing. Dimensions
+    /// are probed before usvg hands the bytes to a decoder; repeated references to the same data
+    /// URL share one charge.
     pub embedded_raster_pixels: u64,
 }
 
@@ -167,8 +161,6 @@ pub fn root_unitless_size(svg: &str, limits: &Limits) -> Result<Option<(f64, f64
 /// SVG text after shared byte, entity, attribute, XML and expansion-depth checks.
 /// Keep it opaque so consumers use the same checked tree and don't reparse XML locally.
 pub struct Preflight<'s> {
-    #[cfg(feature = "tree-render")]
-    limits: Limits,
     xml: roxmltree::Document<'s>,
     depth: usize,
     /// [`height`]: the nesting usvg converts, references followed.
@@ -227,8 +219,6 @@ const UNSUPPORTED: &[&str] = &[
 
 /// Checks already-decoded SVG text once, retaining the parsed XML for both depth policy and tree conversion.
 pub fn preflight<'s>(svg: &'s str, limits: &Limits) -> Result<Preflight<'s>, Error> {
-    #[cfg(test)]
-    PREFLIGHT_PASSES.with(|count| count.set(count.get().saturating_add(1)));
     let preflight_limits = crate::preflight::Limits {
         bytes: limits.bytes,
         depth: limits.depth,
@@ -249,13 +239,7 @@ pub fn preflight<'s>(svg: &'s str, limits: &Limits) -> Result<Preflight<'s>, Err
     let Some(height) = height(&xml, limits.tree_depth)? else {
         return Err(Error::TooDeep(limits.tree_depth));
     };
-    Ok(Preflight {
-        #[cfg(feature = "tree-render")]
-        limits: *limits,
-        xml,
-        depth,
-        height,
-    })
+    Ok(Preflight { xml, depth, height })
 }
 
 /// Dimensions of an SVG viewport in SVG user units.
@@ -437,7 +421,7 @@ struct Used {
     svg_count: AtomicUsize,
     svg_depth: AtomicUsize,
     raster_pixels: AtomicU64,
-    raster_data: Mutex<HashMap<usize, Weak<Vec<u8>>>>,
+    raster_data: Mutex<HashSet<usize>>,
     invalid_raster: AtomicUsize,
     raster_limit: AtomicUsize,
     invalid_svg: AtomicUsize,
@@ -448,12 +432,9 @@ struct Used {
 /// What resolving one drawing's embedded images used or refused.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct ImageUsage {
-    /// Decoded raster pixel work reserved before decode. The legacy resolver
-    /// shares a charge across repeated data; the validated context charges each
-    /// attempted decode, including failures.
+    /// Unique decoded raster pixels reserved before decode.
     pub raster_pixels: u64,
-    /// Decoded SVG text work charged to embedded data URLs, including the
-    /// remaining allowance consumed by a failed inflation attempt.
+    /// Unpacked SVG bytes consumed by embedded SVG data URLs.
     pub embedded_svg_bytes: usize,
     /// Embedded SVG images parsed, including nested images.
     pub embedded_svg_count: usize,
@@ -493,7 +474,7 @@ impl ImageResolver {
                 svg_count: AtomicUsize::new(0),
                 svg_depth: AtomicUsize::new(0),
                 raster_pixels: AtomicU64::new(0),
-                raster_data: Mutex::new(HashMap::new()),
+                raster_data: Mutex::new(HashSet::new()),
                 invalid_raster: AtomicUsize::new(0),
                 raster_limit: AtomicUsize::new(0),
                 invalid_svg: AtomicUsize::new(0),
@@ -561,51 +542,28 @@ fn account_invalid_data_urls(xml: &roxmltree::Document<'_>, used: &Used) {
     }
 }
 
-#[derive(Clone, Copy)]
-enum SvgRaster {
-    Png,
-    Jpeg,
-    Gif,
-    WebP,
-}
-
-impl SvgRaster {
-    fn codec(self) -> nodalia_image_codecs::Format {
-        match self {
-            Self::Png => nodalia_image_codecs::Format::Png,
-            Self::Jpeg => nodalia_image_codecs::Format::Jpeg,
-            Self::Gif => nodalia_image_codecs::Format::Gif,
-            Self::WebP => nodalia_image_codecs::Format::WebP,
-        }
-    }
-
-    fn image_kind(self, data: Arc<Vec<u8>>) -> usvg::ImageKind {
-        match self {
-            Self::Png => usvg::ImageKind::PNG(data),
-            Self::Jpeg => usvg::ImageKind::JPEG(data),
-            Self::Gif => usvg::ImageKind::GIF(data),
-            Self::WebP => usvg::ImageKind::WEBP(data),
-        }
-    }
-}
-
-/// Match supported raster signatures to the MIME types both image resolvers accept.
-fn declared_raster(mime: &str, data: &[u8]) -> Option<SvgRaster> {
-    use nodalia_image_codecs::Format;
-    match (mime, nodalia_image_codecs::detect(data)?) {
-        ("image/png" | "text/plain", Format::Png) => Some(SvgRaster::Png),
-        ("image/jpg" | "image/jpeg" | "text/plain", Format::Jpeg) => Some(SvgRaster::Jpeg),
-        ("image/gif" | "text/plain", Format::Gif) => Some(SvgRaster::Gif),
-        ("image/webp" | "text/plain", Format::WebP) => Some(SvgRaster::WebP),
+fn raster_format(data: &[u8]) -> Option<nodalia_image_codecs::Format> {
+    match nodalia_image_codecs::detect(data)? {
+        format @ (nodalia_image_codecs::Format::Png
+        | nodalia_image_codecs::Format::Jpeg
+        | nodalia_image_codecs::Format::Gif
+        | nodalia_image_codecs::Format::WebP) => Some(format),
         _ => None,
     }
 }
 
-fn raster_image(used: &Used, limits: &Limits, data: Arc<Vec<u8>>, format: SvgRaster) -> Option<usvg::ImageKind> {
+fn raster_image(used: &Used, limits: &Limits, data: Arc<Vec<u8>>, format: nodalia_image_codecs::Format) -> Option<usvg::ImageKind> {
     let Ok((width, height)) = nodalia_image_codecs::probe_allocation_size(&data) else {
         used.invalid_raster.fetch_add(1, Ordering::Relaxed);
         return None;
     };
+    if !matches!(
+        format,
+        nodalia_image_codecs::Format::Png | nodalia_image_codecs::Format::Jpeg | nodalia_image_codecs::Format::Gif | nodalia_image_codecs::Format::WebP
+    ) {
+        used.invalid_raster.fetch_add(1, Ordering::Relaxed);
+        return None;
+    }
     let pixels = u64::from(width).checked_mul(u64::from(height))?;
     if pixels == 0 || pixels > limits.embedded_raster_pixels {
         used.raster_limit.fetch_add(1, Ordering::Relaxed);
@@ -613,11 +571,12 @@ fn raster_image(used: &Used, limits: &Limits, data: Arc<Vec<u8>>, format: SvgRas
     }
     let pointer = Arc::as_ptr(&data) as usize;
     let mut seen = used.raster_data.lock().unwrap_or_else(PoisonError::into_inner);
-    if let Entry::Vacant(entry) = seen.entry(pointer) {
+    if seen.insert(pointer) {
         let mut current = used.raster_pixels.load(Ordering::Relaxed);
         loop {
             let next = current.checked_add(pixels)?;
             if next > limits.embedded_raster_pixels {
+                seen.remove(&pointer);
                 used.raster_limit.fetch_add(1, Ordering::Relaxed);
                 return None;
             }
@@ -626,16 +585,13 @@ fn raster_image(used: &Used, limits: &Limits, data: Arc<Vec<u8>>, format: SvgRas
                 Err(actual) => current = actual,
             }
         }
-        // The weak reference pins the allocation identity, not its encoded bytes.
-        // At most one entry is added for each nonrefundable pixel charge.
-        entry.insert(Arc::downgrade(&data));
     }
     drop(seen);
     // A valid header is not proof of valid pixels. resvg can silently omit a damaged
     // image later; decode now under explicit limits so omission accounting is honest.
     let decode_limits = nodalia_image_codecs::Limits::new(width, height, pixels, limits.embedded_raster_pixels.saturating_mul(8));
     let options = nodalia_image_codecs::DecodeOptions { limits: decode_limits, keep_orientation: true };
-    if let Err(error) = nodalia_image_codecs::decode_as_with(format.codec(), &data, &options) {
+    if let Err(error) = nodalia_image_codecs::decode_as_with(format, &data, &options) {
         // No tree retains this allocation on failure. Forget its address before it
         // can be reused, but keep the pixel charge for the decode work already spent.
         used.raster_data.lock().unwrap_or_else(PoisonError::into_inner).remove(&pointer);
@@ -649,35 +605,13 @@ fn raster_image(used: &Used, limits: &Limits, data: Arc<Vec<u8>>, format: SvgRas
         }
         return None;
     }
-    Some(format.image_kind(data))
-}
-
-/// Decode one child within the original byte allowance, including encoding expansion.
-fn embedded_text<'a>(data: &'a [u8], room: usize, limits: &Limits) -> Result<Cow<'a, str>, svgz::Error> {
-    let text = svgz::text(data, room.min(limits.bytes))?;
-    if text.len() > room {
-        return Err(svgz::Error::TooLarge(room));
-    }
-    Ok(text)
-}
-
-enum ChildRefusal {
-    Depth,
-    Bytes,
-    Invalid,
-}
-
-fn preflight_child<'a>(text: &'a str, limits: &Limits) -> Result<Preflight<'a>, ChildRefusal> {
-    preflight(text, limits).map_err(|error| match error {
-        Error::TooDeep(_) => ChildRefusal::Depth,
-        Error::Text(svgz::Error::TooLarge(_)) => ChildRefusal::Bytes,
-        _ => ChildRefusal::Invalid,
+    Some(match format {
+        nodalia_image_codecs::Format::Png => usvg::ImageKind::PNG(data),
+        nodalia_image_codecs::Format::Jpeg => usvg::ImageKind::JPEG(data),
+        nodalia_image_codecs::Format::Gif => usvg::ImageKind::GIF(data),
+        nodalia_image_codecs::Format::WebP => usvg::ImageKind::WEBP(data),
+        _ => return None,
     })
-}
-
-/// Reserve the complete checked height within the parent's remaining XML room.
-fn child_total_depth(parent: usize, checked: &Preflight<'_>, limits: &Limits) -> Option<usize> {
-    parent.checked_add(checked.height).filter(|depth| *depth <= limits.tree_depth)
 }
 
 /// An embedded SVG document, if the budgets allow it.
@@ -688,7 +622,7 @@ fn embedded(used: &Used, limits: &Limits, data: &[u8], options: &usvg::Options<'
         return None;
     }
     let left = limits.embedded_bytes.saturating_sub(used.bytes.load(Ordering::Relaxed));
-    let text = match embedded_text(data, left, limits) {
+    let text = match svgz::text(data, left.min(limits.bytes)) {
         Ok(text) => text,
         // What a refused document unpacked before it was refused was work too: it uses up what
         // is left, so the next image can't repeat it.
@@ -701,17 +635,25 @@ fn embedded(used: &Used, limits: &Limits, data: &[u8], options: &usvg::Options<'
             return None;
         }
     };
+    // The raw/inflated bytes can fit while UTF-16/Latin-1 decoding expands
+    // beyond the aggregate allowance. A refusal consumes the remaining work.
+    if text.len() > left {
+        used.bytes.fetch_add(left, Ordering::Relaxed);
+        used.svg_limit.fetch_add(1, Ordering::Relaxed);
+        used.svg_resource_limit.fetch_add(1, Ordering::Relaxed);
+        return None;
+    }
     used.bytes.fetch_add(text.len(), Ordering::Relaxed);
-    let checked = match preflight_child(&text, limits) {
+    let checked = match preflight(&text, limits) {
         Ok(checked) => checked,
         // Decoding UTF-16 or Latin-1 can exceed the text cap after the
         // raw/inflated bytes fitted. This is a resource refusal, not invalid XML.
-        Err(ChildRefusal::Bytes) => {
+        Err(Error::Text(svgz::Error::TooLarge(_))) => {
             used.svg_limit.fetch_add(1, Ordering::Relaxed);
             used.svg_resource_limit.fetch_add(1, Ordering::Relaxed);
             return None;
         }
-        Err(ChildRefusal::Depth) => {
+        Err(Error::TooDeep(_)) => {
             used.svg_limit.fetch_add(1, Ordering::Relaxed);
             return None;
         }
@@ -721,7 +663,9 @@ fn embedded(used: &Used, limits: &Limits, data: &[u8], options: &usvg::Options<'
         }
     };
     // The nesting usvg converts, references followed, not the source depth alone.
-    let Some(total_depth) = child_total_depth(used.xml_depth.load(Ordering::Relaxed), &checked, limits) else {
+    let xml_depth = checked.height;
+    let total_depth = used.xml_depth.load(Ordering::Relaxed).checked_add(xml_depth);
+    let Some(total_depth) = total_depth.filter(|depth| *depth <= limits.tree_depth) else {
         used.svg_limit.fetch_add(1, Ordering::Relaxed);
         return None;
     };
@@ -756,7 +700,16 @@ pub fn image_resolver(limits: Limits) -> usvg::ImageHrefResolver<'static> {
 fn image_resolver_for(limits: Limits, used: Arc<Used>) -> usvg::ImageHrefResolver<'static> {
     usvg::ImageHrefResolver {
         resolve_data: Box::new(move |mime, data, options| {
-            if let Some(format) = declared_raster(mime, &data) {
+            let detected = raster_format(&data);
+            let format = match mime {
+                "image/jpg" | "image/jpeg" => (detected == Some(nodalia_image_codecs::Format::Jpeg)).then_some(nodalia_image_codecs::Format::Jpeg),
+                "image/png" => (detected == Some(nodalia_image_codecs::Format::Png)).then_some(nodalia_image_codecs::Format::Png),
+                "image/gif" => (detected == Some(nodalia_image_codecs::Format::Gif)).then_some(nodalia_image_codecs::Format::Gif),
+                "image/webp" => (detected == Some(nodalia_image_codecs::Format::WebP)).then_some(nodalia_image_codecs::Format::WebP),
+                "text/plain" => detected,
+                _ => None,
+            };
+            if let Some(format) = format {
                 return raster_image(&used, &limits, data, format);
             }
             // usvg can decode only the raster variants above. Count every other declared
@@ -777,8 +730,3 @@ fn image_resolver_for(limits: Limits, used: Arc<Used>) -> usvg::ImageHrefResolve
 
 #[cfg(test)]
 mod tests;
-
-#[cfg(test)]
-thread_local! {
-    static PREFLIGHT_PASSES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
-}

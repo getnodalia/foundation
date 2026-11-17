@@ -1075,18 +1075,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cap-std"
-version = "4.0.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1ec78e242cfa2cfe276807ac2ecc00315a6c97786977414bcd1c3963b6c91b8"
-dependencies = [
- "cap-primitives",
- "io-extras",
- "io-lifetimes 3.0.1",
- "rustix 1.1.5",
-]
-
-[[package]]
 name = "cast"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1629,25 +1617,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "craft-cloud"
-version = "0.1.0"
-dependencies = [
- "serde",
- "thiserror 2.0.21",
-]
-
-[[package]]
-name = "craft-cloud-local"
-version = "0.1.0"
-dependencies = [
- "cap-std",
- "craft-cloud",
- "craft-ui",
- "egui",
- "tempfile",
-]
-
-[[package]]
 name = "craft-cms"
 version = "0.1.0"
 dependencies = [
@@ -1913,16 +1882,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "craft-evm"
-version = "0.1.0"
-dependencies = [
- "craft-testkit",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
-]
-
-[[package]]
 name = "craft-ews"
 version = "0.1.0"
 dependencies = [
@@ -2164,14 +2123,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "craft-har"
-version = "0.1.0"
-dependencies = [
- "serde_json",
- "thiserror 2.0.21",
-]
-
-[[package]]
 name = "craft-hdr"
 version = "0.1.0"
 dependencies = [
@@ -2303,15 +2254,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "craft-java-class"
-version = "0.1.0"
-dependencies = [
- "craft-testkit",
- "serde",
- "thiserror 2.0.21",
-]
-
-[[package]]
 name = "craft-jmap"
 version = "0.1.0"
 dependencies = [
@@ -2328,13 +2270,6 @@ dependencies = [
  "rayon",
  "thiserror 2.0.21",
  "zune-jpeg",
-]
-
-[[package]]
-name = "craft-jsonc"
-version = "0.1.0"
-dependencies = [
- "serde_json",
 ]
 
 [[package]]
@@ -2658,20 +2593,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "craft-palette"
-version = "0.1.0"
-
-[[package]]
-name = "craft-pcap"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "serde",
- "serde_json",
- "thiserror 2.0.21",
-]
-
-[[package]]
 name = "craft-pcraft-bundle"
 version = "0.1.0"
 dependencies = [
@@ -2971,7 +2892,6 @@ name = "craft-raster-codecs"
 version = "0.1.0"
 dependencies = [
  "base64 0.23.1",
- "craft-dds",
  "craft-image-codecs",
  "image",
  "thiserror 2.0.21",
@@ -3017,13 +2937,6 @@ dependencies = [
  "encoding_rs",
  "image",
  "proptest",
-]
-
-[[package]]
-name = "craft-score"
-version = "0.1.0"
-dependencies = [
- "craft-xml",
 ]
 
 [[package]]
@@ -3123,15 +3036,6 @@ name = "craft-sniff"
 version = "0.1.0"
 
 [[package]]
-name = "craft-sourcemap"
-version = "0.1.0"
-dependencies = [
- "serde",
- "serde_json",
- "thiserror 2.0.21",
-]
-
-[[package]]
 name = "craft-ssip"
 version = "0.1.0"
 
@@ -3177,14 +3081,11 @@ dependencies = [
  "craft-xml",
  "data-url",
  "flate2",
- "gif",
- "image-webp",
  "kurbo 0.13.1",
  "quick-xml 0.41.0",
  "resvg 0.48.1",
  "roxmltree 0.21.2",
  "thiserror 2.0.21",
- "toml",
  "usvg 0.48.1",
  "vectorcraft-geom",
  "vectorcraft-pathops",
@@ -3202,7 +3103,6 @@ dependencies = [
 name = "craft-tar"
 version = "0.1.0"
 dependencies = [
- "craft-testkit",
  "serde",
 ]
 
@@ -3287,7 +3187,6 @@ dependencies = [
 name = "craft-ui"
 version = "0.1.0"
 dependencies = [
- "craft-cloud",
  "craft-fonts-build",
  "craft-i18n",
  "eframe",
@@ -3383,21 +3282,9 @@ dependencies = [
  "craft-jpeg",
  "craft-media",
  "craft-media-testkit",
- "miniz_oxide 0.8.9",
  "rav1e",
  "rayon",
  "thiserror 2.0.21",
-]
-
-[[package]]
-name = "craft-wasm"
-version = "0.1.0"
-dependencies = [
- "craft-testkit",
- "serde",
- "thiserror 2.0.21",
- "wasmparser 0.261.0",
- "wasmprinter",
 ]
 
 [[package]]
@@ -3471,14 +3358,6 @@ name = "craft-xcf"
 version = "0.1.0"
 dependencies = [
  "flate2",
- "thiserror 2.0.21",
-]
-
-[[package]]
-name = "craft-xfdf"
-version = "0.1.0"
-dependencies = [
- "craft-xml",
  "thiserror 2.0.21",
 ]
 
@@ -12091,7 +11970,7 @@ dependencies = [
  "wasmi_collections",
  "wasmi_core",
  "wasmi_ir",
- "wasmparser 0.228.0",
+ "wasmparser",
 ]
 
 [[package]]
@@ -12129,28 +12008,6 @@ checksum = "4abf1132c1fdf747d56bbc1bb52152400c70f336870f968b85e89ea422198ae3"
 dependencies = [
  "bitflags 2.13.2",
  "indexmap",
-]
-
-[[package]]
-name = "wasmparser"
-version = "0.261.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f20f20e44f7e8aeb6744823ea9d869ede51e51be4fdaedede2852282e54d2d8"
-dependencies = [
- "bitflags 2.13.2",
- "indexmap",
- "semver",
-]
-
-[[package]]
-name = "wasmprinter"
-version = "0.261.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86a21c9e3325655ba02de3e645bc8357a8b3651a2e3ada25b6dbc37560deb9b7"
-dependencies = [
- "anyhow",
- "termcolor",
- "wasmparser 0.261.0",
 ]
 
 [[package]]
