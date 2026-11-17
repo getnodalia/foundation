@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-atomic"
 version.workspace = true
 edition.workspace = true

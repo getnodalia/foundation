@@ -12,7 +12,6 @@
 
 mod sequence;
 mod smf;
-pub mod source_timed;
 pub mod sync;
 
 pub use sequence::{CtrlEvent, CtrlKind, Note, Sequence};

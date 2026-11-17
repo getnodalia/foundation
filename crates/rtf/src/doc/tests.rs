@@ -2141,23 +2141,3 @@ fn alignment_survives_an_export_import_round_trip() {
     // The export writes the alignment before the direction, which Word reads as logical start/end.
     assert!(out.contains("\\qr\\rtlpar"), "{out}");
 }
-
-/// `export` names Letra as the writer; an app embedding the writer names itself, escaped as
-/// a font name is (a `;` would end the group's text early), and a blank name leaves the group out.
-#[test]
-fn the_generator_names_the_writing_application() {
-    let doc = nodalia_wordmodel::Document::from_text("Hello");
-    assert!(export(&doc).contains(r"{\*\generator Letra;}"));
-    let pdf = export_with_generator(&doc, "Papel 1.2");
-    assert!(pdf.contains(r"{\*\generator Papel 1.2;}") && !pdf.contains("Letra"), "{pdf}");
-    let odd = export_with_generator(&doc, "A;B}\u{1}C\\");
-    assert!(odd.contains(r"{\*\generator A\'3bB\}C\\;}"), "{odd}");
-    for blank in ["", "  ", "\u{1}"] {
-        assert!(!export_with_generator(&doc, blank).contains("generator"), "{blank:?}");
-    }
-    let long = export_with_generator(&doc, &"x".repeat(1000));
-    assert!(long.contains(&format!(r"{{\*\generator {};}}", "x".repeat(255))), "cut at 255 characters");
-    // Whatever the name, the text reads back.
-    let back = parse(odd.as_bytes()).expect("parses");
-    assert_eq!(texts(&back), ["Normal:Hello"]);
-}

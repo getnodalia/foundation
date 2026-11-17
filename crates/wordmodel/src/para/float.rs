@@ -171,7 +171,7 @@ pub struct Float {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub wrap_polygon: Option<std::sync::Arc<crate::wrap::WrapPolygon>>,
     /// What the drawing is, for screen readers and exports (`wp:docPr` `@descr`, `@title` and the
-    /// decorative mark). See `InlineObject::alt_text`.
+    /// decorative mark). See [`InlineObject::alt_text`].
     #[serde(skip_serializing_if = "AltText::is_empty")]
     pub alt: AltText,
     /// Hidden (`wp:docPr/@hidden`, VML `visibility:hidden`): kept and saved, but neither drawn nor
@@ -182,11 +182,8 @@ pub struct Float {
     /// off, any VML shape in a header or footer): a picture watermark in a header that starts with a table.
     #[serde(skip_serializing_if = "is_false")]
     pub outside_cell: bool,
-    /// Stacking order among the floating objects of its layer, one more than the file's
-    /// (`wp:anchor/@relativeHeight`, ODF's `draw:z-index`), so a file's lowest, 0, is 1: a higher
-    /// one is drawn over a lower one, whatever their order in the text, as Word does. 0 = none
-    /// (objects inserted by the app, or from other formats): stacks above every object that has
-    /// one, in text order.
+    /// Stacking order among floating objects (`wp:anchor/@relativeHeight`): higher is drawn on
+    /// top. 0 = unknown, drawn in document order (objects inserted here, or from other formats).
     #[serde(skip_serializing_if = "is_zero_u32")]
     pub z: u32,
     /// The page a drawing anchored to a page is on, from 1 (ODF's `text:anchor-page-number`,
@@ -209,7 +206,7 @@ pub const MAX_ALT_TEXT: usize = 10_000;
 #[serde(default, rename_all = "camelCase")]
 pub struct AltText {
     /// The description of a shape, text box or group. Pictures and charts keep theirs in their
-    /// own `alt`; read it with `InlineObject::alt_text`, which knows where it is.
+    /// own `alt`; read it with [`InlineObject::alt_text`], which knows where it is.
     #[serde(skip_serializing_if = "String::is_empty")]
     pub text: String,
     /// The short title (`wp:docPr/@title`).
@@ -245,12 +242,6 @@ fn is_zero_u32(v: &u32) -> bool {
 }
 
 impl Float {
-    /// Where it stacks among the floating objects of its layer: see [`Float::z`]. None (0) is
-    /// past every stored order, `u32::MAX` included.
-    pub fn stack(&self) -> u64 {
-        if self.z > 0 { u64::from(self.z) } else { u64::from(u32::MAX) + 1 }
-    }
-
     /// The rotation and flips, the angle normalised to `0..360` (a NaN angle is no rotation).
     pub fn spin(&self) -> crate::geom::Spin {
         crate::geom::Spin::new(self.rot, self.flip_h, self.flip_v)

@@ -4,7 +4,6 @@
 use super::*;
 use crate as spool;
 use crate::cups::{self as ipp, Server};
-use nodalia_ui::testing::trial;
 use std::collections::VecDeque;
 use std::io::{Read, Write};
 use std::sync::Mutex;
@@ -166,7 +165,7 @@ fn entry(name: &str, default: bool) -> spool::Printer {
     spool::Printer { description: String::new(), name: name.into(), default, two_sided: None }
 }
 
-#[trial]
+#[test]
 fn discovery_finds_queues_and_the_default_over_a_unix_socket() {
     let fake = FakeCups::on_unix(vec![
         http_reply(&ipp_reply(
@@ -198,7 +197,7 @@ fn discovery_finds_queues_and_the_default_over_a_unix_socket() {
     assert_eq!(&default[..4], &[1, 1, 0x40, 0x01], "CUPS-Get-Default");
 }
 
-#[trial]
+#[test]
 fn a_print_job_carries_the_pdf_and_the_options() {
     let pdf: Vec<u8> = b"%PDF-1.7 fake print job\n".iter().copied().cycle().take(1 << 20).collect();
     let job = spool::Job {
@@ -234,7 +233,7 @@ fn a_print_job_carries_the_pdf_and_the_options() {
     assert!(request.ends_with(&pdf), "the whole job is the document data");
 }
 
-#[trial]
+#[test]
 fn the_default_printer_is_used_when_the_job_has_none() {
     let fake = FakeCups::on_tcp(vec![
         http_reply(&ipp_reply(0x0000, &[&group(0x01), &group(0x04), &printer_name("Office")])),
@@ -249,7 +248,7 @@ fn the_default_printer_is_used_when_the_job_has_none() {
     assert!(has(ipp_body(&taken).unwrap(), b"ipp://localhost/printers/Office"), "the resolved default is the target");
 }
 
-#[trial]
+#[test]
 fn a_default_outside_the_queue_list_still_gets_its_marker() {
     let fake = FakeCups::on_unix(vec![
         http_reply(&ipp_reply(0x0000, &[&group(0x01), &group(0x04), &printer_name("Office_Laser")])),
@@ -264,14 +263,14 @@ fn a_default_outside_the_queue_list_still_gets_its_marker() {
     );
 }
 
-#[trial]
+#[test]
 fn no_default_printer_is_an_error_when_the_job_names_none() {
     let fake = FakeCups::on_unix(vec![http_reply(&ipp_reply(0x0000, &[&group(0x01)]))]).unwrap();
     let err = ipp::print_job_at(fake.endpoint(), b"%PDF-1.7\n", &Job::default()).unwrap_err();
     assert!(err.to_string().contains("no default printer"), "{err}");
 }
 
-#[trial]
+#[test]
 fn a_printer_name_that_cannot_be_a_uri_path_is_refused() {
     let fake = FakeCups::on_tcp(vec![]).unwrap();
     let mut long = "x".repeat(257);
@@ -286,7 +285,7 @@ fn a_printer_name_that_cannot_be_a_uri_path_is_refused() {
     }
 }
 
-#[trial]
+#[test]
 fn an_ipp_refusal_is_an_error_that_names_the_problem() {
     let fake = FakeCups::on_tcp(vec![http_reply(&ipp_reply(0x0506, &[&group(0x01)]))]).unwrap();
     let job = spool::Job { printer: Some("Office".into()), ..Job::default() };
@@ -296,7 +295,7 @@ fn an_ipp_refusal_is_an_error_that_names_the_problem() {
     );
 }
 
-#[trial]
+#[test]
 fn malformed_replies_are_errors_never_a_panic() {
     let bodies: Vec<(&str, Vec<u8>)> = vec![
         // Shorter than an IPP header.
@@ -322,7 +321,7 @@ fn malformed_replies_are_errors_never_a_panic() {
     }
 }
 
-#[trial]
+#[test]
 fn http_replies_that_cannot_carry_an_answer_are_refused() {
     let replies: Vec<(&str, Vec<u8>)> = vec![
         ("requires authentication", b"HTTP/1.1 401 Unauthorized\r\nContent-Length: 0\r\n\r\n".to_vec()),
@@ -342,7 +341,7 @@ fn http_replies_that_cannot_carry_an_answer_are_refused() {
     assert!(ipp::post(&[fake.server], "/", b"ignored", TIMEOUT, true).is_err(), "a hang-up is an error");
 }
 
-#[trial]
+#[test]
 fn a_server_that_answers_is_reachable_and_silence_is_not() {
     let fake = FakeCups::on_unix(vec![]).unwrap();
     assert!(ipp::reachable(&fake.server), "a unix socket that accepts connections is reachable");
@@ -357,7 +356,7 @@ fn a_server_that_answers_is_reachable_and_silence_is_not() {
     assert!(!ipp::reachable(&Server::Tcp(addr)), "a port nothing listens on is not reachable");
 }
 
-#[trial]
+#[test]
 fn chunked_reply_is_bounded_and_rejects_ambiguous_framing() {
     let good = b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\n\r\n3\r\nabc\r\n2\r\nde\r\n0\r\n\r\n";
     assert_eq!(super::read_reply(&mut &good[..]).unwrap(), b"abcde");
@@ -371,7 +370,7 @@ fn chunked_reply_is_bounded_and_rejects_ambiguous_framing() {
     }
 }
 
-#[trial]
+#[test]
 fn explicit_server_rejects_header_injection_and_malformed_port() {
     for value in ["host\r\nInjected: yes", "host:0", "host:99999", "http://host", "user@host", ""] {
         assert!(Server::parse(value).is_err(), "{value:?}");
@@ -380,7 +379,7 @@ fn explicit_server_rejects_header_injection_and_malformed_port() {
     assert_eq!(Server::parse("print.example:8631").unwrap().authority(), "print.example:8631");
 }
 
-#[trial]
+#[test]
 fn class_submission_preserves_authority_user_and_numeric_job_id() {
     let fake = FakeCups::on_tcp(vec![http_reply(&ipp_reply(0, &[&group(2), &attr(0x21, "job-id", &42u32.to_be_bytes())]))]).unwrap();
     let destination = super::Destination { name: "Studio".into(), is_class: true };
@@ -392,7 +391,7 @@ fn class_submission_preserves_authority_user_and_numeric_job_id() {
     assert!(has(ipp_body(&request).unwrap(), &attr(0x42, "requesting-user-name", b"artist")));
 }
 
-#[trial]
+#[test]
 fn uncertain_submission_never_tries_the_second_endpoint() {
     let first = FakeCups::on_tcp(vec![]).unwrap();
     let second = FakeCups::on_tcp(vec![]).unwrap();
@@ -402,7 +401,7 @@ fn uncertain_submission_never_tries_the_second_endpoint() {
     assert!(second.requests.recv_timeout(Duration::from_millis(100)).is_err());
 }
 
-#[trial]
+#[test]
 fn queue_metadata_stays_with_its_printer_group() {
     let bytes = ipp_reply(
         0,
@@ -425,7 +424,7 @@ fn queue_metadata_stays_with_its_printer_group() {
     assert!(reply.queues[1].accepting_jobs);
 }
 
-#[trial]
+#[test]
 fn reply_identity_and_metadata_request_are_checked() {
     let request = super::discovery_request(0x4002);
     assert!(has(&request, b"printer-info"));
@@ -440,7 +439,7 @@ fn reply_identity_and_metadata_request_are_checked() {
     assert!(super::validate_reply_identity(&request, &reply).is_err());
 }
 
-#[trial]
+#[test]
 fn slow_reply_cannot_reset_the_absolute_deadline() {
     let (client, mut peer) = std::os::unix::net::UnixStream::pair().unwrap();
     let producer = std::thread::spawn(move || {
@@ -462,7 +461,7 @@ fn slow_reply_cannot_reset_the_absolute_deadline() {
     assert!(start.elapsed() < Duration::from_secs(3));
 }
 
-#[trial]
+#[test]
 fn blocked_upload_obeys_the_same_absolute_deadline() {
     let (client, _peer) = std::os::unix::net::UnixStream::pair().unwrap();
     let start = std::time::Instant::now();
@@ -481,13 +480,13 @@ fn blocked_upload_obeys_the_same_absolute_deadline() {
     assert!(start.elapsed() < Duration::from_secs(3));
 }
 
-#[trial]
+#[test]
 fn recorded_request_body_requires_complete_http_headers() {
     assert!(ipp_body(b"POST / HTTP/1.1\r\n").is_none());
     assert_eq!(ipp_body(b"POST / HTTP/1.1\r\n\r\nbody"), Some(b"body".as_slice()));
 }
 
-#[trial]
+#[test]
 fn named_destinations_encode_one_path_segment_on_both_wire_fields() {
     for is_class in [false, true] {
         let fake = FakeCups::on_tcp(vec![http_reply(&ipp_reply(0, &[&group(2), &attr(0x21, "job-id", &42u32.to_be_bytes())]))]).unwrap();
@@ -501,7 +500,7 @@ fn named_destinations_encode_one_path_segment_on_both_wire_fields() {
     }
 }
 
-#[trial]
+#[test]
 fn destination_path_rejects_routing_syntax_before_connecting() {
     for name in ["", ".", "..", "../admin", "a/b", "a\\b", "a\r\nb", "a\0b"] {
         let destination = super::Destination { name: name.into(), is_class: false };
@@ -511,7 +510,7 @@ fn destination_path_rejects_routing_syntax_before_connecting() {
     assert!(super::destination_path(&destination).is_err());
 }
 
-#[trial]
+#[test]
 fn separate_queue_query_preserves_optional_discovery_errors() {
     let fake = FakeCups::on_tcp(vec![http_reply(&ipp_reply(0x0403, &[&group(1)]))]).unwrap();
     assert!(super::queues_at(fake.endpoint(), true).is_err(), "authorization refusal is not an empty class list");
@@ -526,7 +525,7 @@ fn separate_queue_query_preserves_optional_discovery_errors() {
     assert_eq!(&ipp_body(&request).unwrap()[..4], &[1, 1, 0x40, 0x05]);
 }
 
-#[trial]
+#[test]
 fn ipv6_endpoint_keeps_scope_for_resolution_and_escapes_wire_authority() {
     assert_eq!(Server::parse("[::1]").unwrap().authority(), "[::1]:631");
     assert_eq!(Server::parse("::1").unwrap().authority(), "[::1]:631");
@@ -542,7 +541,7 @@ fn ipv6_endpoint_keeps_scope_for_resolution_and_escapes_wire_authority() {
     }
 }
 
-#[trial]
+#[test]
 fn long_printer_descriptions_are_not_limited_like_queue_names() {
     let description = "Studio ".repeat(200);
     let body = ipp_reply(0, &[&group(1), &group(4), &printer_name("Studio"), &attr(0x41, "printer-info", description.as_bytes())]);
@@ -550,7 +549,7 @@ fn long_printer_descriptions_are_not_limited_like_queue_names() {
     assert_eq!(parsed.queues[0].info, description);
 }
 
-#[trial]
+#[test]
 fn destination_limit_is_explicit_and_never_silently_truncates() {
     let mut body = vec![1, 1, 0, 0, 0, 0, 0, 1];
     for index in 0..super::MAX_PRINTERS {
@@ -566,7 +565,7 @@ fn destination_limit_is_explicit_and_never_silently_truncates() {
     assert!(super::parse_reply(&body).err().unwrap().to_string().contains("too many CUPS destinations"));
 }
 
-#[trial]
+#[test]
 fn closed_unix_peer_keeps_its_buffered_reply_readable_with_a_deadline() {
     let (client, mut peer) = std::os::unix::net::UnixStream::pair().unwrap();
     let body = ipp_reply(0, &[&group(1), &group(4), &printer_name("Studio")]);
@@ -581,7 +580,7 @@ fn closed_unix_peer_keeps_its_buffered_reply_readable_with_a_deadline() {
     assert_eq!(reader.read(&mut byte).unwrap_err().kind(), std::io::ErrorKind::TimedOut);
 }
 
-#[trial]
+#[test]
 fn stalled_unix_peer_still_fails_within_the_absolute_read_deadline() {
     let (client, _peer) = std::os::unix::net::UnixStream::pair().unwrap();
     let start = std::time::Instant::now();

@@ -7,7 +7,7 @@
 //! ffprobe must describe the new file as it does the source, and ffmpeg must decode the same
 //! pictures and sound from it.
 
-use super::common;
+mod common;
 
 use nodalia_media::CodecId;
 use nodalia_media::mxf::{

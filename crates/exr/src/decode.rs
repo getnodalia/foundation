@@ -8,7 +8,7 @@
 //!   sample type, over the part's data window. Every compression the `exr` crate reads is read,
 //!   scan lines and tiles alike (the largest resolution level). Other parts' chunks are skipped
 //!   unread, and channels the filter drops are never allocated. Other parts may be deep.
-//! - [`fn@write`] writes one scan-line part.
+//! - [`write`] writes one scan-line part.
 //!
 //! The `exr` crate sizes buffers from headers before it reads pixels, so everything that reaches
 //! it is checked first: preview attributes against their own size, each part's samples against
@@ -44,7 +44,7 @@ pub enum Error {
     /// The file declares more than [`Limits`] allow.
     #[error("OpenEXR exceeds a limit: {0}")]
     LimitExceeded(String),
-    /// The picture handed to [`fn@write`] cannot be stored.
+    /// The picture handed to [`write`] cannot be stored.
     #[error("OpenEXR: cannot write: {0}")]
     Encode(String),
 }
@@ -281,9 +281,8 @@ pub(super) fn read_meta(bytes: &[u8], limits: &Limits) -> Result<MetaData> {
         return Err(Error::LimitExceeded(format!("{total} bytes across {} parts exceed {}", meta.headers.len(), limits.max_bytes)));
     }
     // A flat part's samples are allocated before its chunks are read, so the file must be able
-    // to hold the flat parts' samples. DWA's run-length channels are zlib-packed on top (RLE up to
-    // 64:1, zlib up to about 1032:1, about 66000:1 together), so DWA parts are counted at a quarter
-    // (with room to spare). Deep parts size their samples from
+    // to hold the flat parts' samples. DWA's run-length channels are zlib-packed on top and reach
+    // about 132000:1, so DWA parts are counted at a quarter. Deep parts size their samples from
     // the file's own counts and are not counted here.
     let declared = flat.saturating_sub(dwa).saturating_add(dwa / 4);
     let capacity = (bytes.len() as u64).saturating_mul(limits.max_ratio).saturating_add(1 << 20);
@@ -309,7 +308,7 @@ fn text_attributes(header: &Header) -> Vec<(String, String)> {
     out
 }
 
-pub(crate) fn part_info(index: usize, header: &Header) -> PartInfo {
+fn part_info(index: usize, header: &Header) -> PartInfo {
     let (w, h) = window_size(header.layer_size);
     let display = &header.shared_attributes.display_window;
     let (dw, dh) = window_size(display.size);
@@ -450,7 +449,6 @@ pub fn decode_display_part(
     header_limits.max_pixels = u64::MAX;
     header_limits.max_bytes = u64::MAX;
     let meta = read_meta(bytes, &header_limits)?;
-    check_dwa_chunks(bytes, &meta)?;
     let info = meta.headers.get(index).map(|header| part_info(index, header)).ok_or_else(|| malformed(format!("part {index}")))?;
     if info.deep {
         return Err(Error::Unsupported("deep data (use the deep reader)".into()));
@@ -758,16 +756,6 @@ fn tables_start(bytes: &[u8]) -> Result<u64> {
     Ok(cursor.position())
 }
 
-/// Checks the chunks of the file's DWAA/DWAB parts before the `exr` crate decompresses them (see
-/// [`crate::dwa_guard`]: a few bytes of counters can make it allocate terabytes and abort).
-fn check_dwa_chunks(bytes: &[u8], meta: &MetaData) -> Result<()> {
-    if !meta.headers.iter().any(|h| crate::dwa_guard::is_dwa(h.compression)) {
-        return Ok(());
-    }
-    let tables = usize::try_from(tables_start(bytes)?).map_err(|_| malformed("header size"))?;
-    crate::dwa_guard::check_file(bytes, meta, tables).map_err(malformed)
-}
-
 /// Stable dense ordinal without materializing every tile. The library's block iterator
 /// internally allocates a Vec of all coordinates, which is unsuitable for cropped reads.
 pub(super) fn flat_block_ordinal(header: &Header, tile: TileCoordinates) -> Result<usize> {
@@ -956,7 +944,6 @@ fn read_flat_part_chunks(bytes: &[u8], meta: &MetaData, index: usize, reader: &m
 /// [`Error::Unsupported`]; the file's other parts may be deep.
 pub fn decode_part(bytes: &[u8], index: usize, keep: &dyn Fn(&str) -> bool, limits: &Limits) -> Result<Part> {
     let meta = read_meta(bytes, limits)?;
-    check_dwa_chunks(bytes, &meta)?;
     let header = meta.headers.get(index).ok_or_else(|| malformed(format!("part {index} of {}", meta.headers.len())))?;
     if header.deep {
         return Err(Error::Unsupported("deep data (use the deep reader)".into()));
@@ -979,7 +966,7 @@ pub fn decode_part(bytes: &[u8], index: usize, keep: &dyn Fn(&str) -> bool, limi
     Ok(Part { info, channels })
 }
 
-/// Compression for [`fn@write`].
+/// Compression for [`write`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Compression {
     None,

@@ -150,14 +150,12 @@ fn we_decode_what_ffmpeg_encodes_to_what_ffmpeg_decodes() {
     let Some(ff) = nodalia_media_testkit::ffmpeg() else { return };
     let dir = nodalia_media_testkit::fixture_subdir("mjpeg");
     let s = |p: &Path| p.to_str().expect("path").to_string();
-    // the same input every run: ffmpeg's own test sources draw random colors
-    let input = dir.join("input.rgb");
-    std::fs::write(&input, picture(67, 41, 3)).expect("write");
-    let input = s(&input);
-    let source = ["-f", "rawvideo", "-pix_fmt", "rgb24", "-s", "67x41", "-i", input.as_str()];
     for (name, pix_fmt, rgb_pix, channels) in [("420", "yuvj420p", "rgb24", 3), ("422", "yuvj422p", "rgb24", 3), ("444", "yuvj444p", "rgb24", 3)] {
         let jpg = dir.join(format!("{name}.jpg"));
-        ffmpeg(&ff, &[&source[..], &["-frames:v", "1", "-c:v", "mjpeg", "-pix_fmt", pix_fmt, "-q:v", "2", &s(&jpg)]].concat());
+        ffmpeg(
+            &ff,
+            &["-f", "lavfi", "-i", "gradients=size=67x41:rate=1", "-frames:v", "1", "-c:v", "mjpeg", "-pix_fmt", pix_fmt, "-q:v", "2", &s(&jpg)],
+        );
         let reference = dir.join(format!("{name}.raw"));
         ffmpeg(&ff, &["-i", &s(&jpg), "-f", "rawvideo", "-pix_fmt", rgb_pix, &s(&reference)]);
         let packet = std::fs::read(&jpg).expect("read");
@@ -172,7 +170,23 @@ fn we_decode_what_ffmpeg_encodes_to_what_ffmpeg_decodes() {
         let plain = dir.join(format!("{name}_default_tables.jpg"));
         ffmpeg(
             &ff,
-            &[&source[..], &["-frames:v", "1", "-c:v", "mjpeg", "-pix_fmt", pix_fmt, "-q:v", "2", "-huffman", "default", &s(&plain)]].concat(),
+            &[
+                "-f",
+                "lavfi",
+                "-i",
+                "gradients=size=67x41:rate=1",
+                "-frames:v",
+                "1",
+                "-c:v",
+                "mjpeg",
+                "-pix_fmt",
+                pix_fmt,
+                "-q:v",
+                "2",
+                "-huffman",
+                "default",
+                &s(&plain),
+            ],
         );
         let stripped = without_huffman_tables(&std::fs::read(&plain).expect("read"));
         let with_tables = Decoder::new().decode(&std::fs::read(&plain).expect("read")).expect("decode");

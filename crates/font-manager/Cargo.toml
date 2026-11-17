@@ -7,46 +7,35 @@ license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 
-[lib]
-# Every test lives in the `it` integration binary, so `cargo test` builds the library once.
-test = false
-
 [features]
 default = []
-# `FontsPanel`: the whole interface as one egui panel (it builds for the web too), with the picker, the Glyphs panel, the axis sliders and the
-# Missing Fonts dialog.
-ui = ["dep:nodalia-behavior", "dep:nodalia-theme", "dep:egui", "dep:nodalia-ui", "dep:nodalia-host", "dep:serde", "dep:log"]
-# The widgets' stories and trials (`tests/it`).
-screen-testing = ["ui", "nodalia-ui/testing", "dep:epaint_default_fonts", "egui/default_fonts"]
+# `FontsPanel`: the whole interface as one egui panel.
+egui = ["dep:egui", "dep:nodalia-ui", "dep:serde", "dep:log"]
 
 [dependencies]
 nodalia-font-catalog = { workspace = true }
 nodalia-i18n = { workspace = true }
 # The pinned built-in indexes compiled in, for browsing offline.
 nodalia-font-store = { workspace = true, features = ["bundled-index"] }
-egui = { workspace = true, optional = true }
-# The story's installed faces.
-epaint_default_fonts = { version = "0.37", optional = true }
+# egui's default faces lead the interface font stack.
+egui = { workspace = true, features = ["default_fonts"], optional = true }
 # A host that wants installed fonts for characters its interface faces lack (language names in
 # their own scripts in the language filter) enables nodalia-ui's `system_fonts` itself.
 nodalia-ui = { workspace = true, optional = true }
-# The Host: settings section, jobs and interface language.
-nodalia-host = { workspace = true, optional = true }
-nodalia-behavior = { workspace = true, optional = true }
-nodalia-theme = { workspace = true, optional = true }
 serde = { workspace = true, optional = true }
 log = { version = "0.4", optional = true }
-# Variation axes and named instances of a face (`axes`), on every feature set.
-skrifa = { version = "0.44", default-features = false, features = ["std"] }
 
 [dev-dependencies]
-nodalia-font-manager = { path = ".", features = ["screen-testing"] }
+egui_kittest = { version = "0.37", features = ["wgpu", "snapshot"] }
+# Real fonts for the fake font store to install: egui's own Hack and Ubuntu Light.
+epaint_default_fonts = "0.37"
+image = { version = "0.25", default-features = false, features = ["png"] }
+# The system's fonts for the Japanese and Arabic screenshots.
+egui_system_font_provider = "0.37"
 
 [[test]]
-name = "it"
-path = "tests/it/main.rs"
-harness = false
-required-features = ["screen-testing"]
+name = "flows"
+required-features = ["egui"]
 
 [lints]
 workspace = true

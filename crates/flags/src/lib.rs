@@ -57,7 +57,7 @@ pub struct Flag {
 }
 
 /// AI agents reach the Craft apps through MCP: the launcher's AI agents settings, the
-/// `nodalia-ai-mcp` gateway and the apps' agent connection settings.
+/// `craft-ai-mcp` gateway and the apps' agent connection settings.
 pub const AI_MCP: Flag = Flag {
     id: "AI-MCP",
     title: "AI agents (MCP)",

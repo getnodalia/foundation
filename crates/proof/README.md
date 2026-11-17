@@ -56,7 +56,9 @@ The word lists and patterns live in [nodalia-i18n](https://github.com/getnodalia
   grammar and the Hunspell languages work as before.
 - `NODALIA_I18N_REQUIRED=1` (releases) makes a missing directory or file an error.
 
-Tests that pin results of the data run only when every file the build embeds is there (`nodalia_proof_data`).
+Tests that pin results of the data run only when every file the build embeds is there (`nodalia_proof_data`);
+`src/no_data.rs` runs every public entry point when none is (`nodalia_proof_no_data`). A partial
+data folder runs neither set.
 
 - By default every carry-over locale is embedded: English, the German, Polish, Portuguese and
   Italian patterns and our own word supplements (`*-extra.txt`, MIT), as before Language packs.

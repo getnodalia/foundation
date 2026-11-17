@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-docpath"
 description = "Decide whether a file path or file URL stored in a document refers to a local file."
 version.workspace = true
@@ -10,6 +9,3 @@ repository.workspace = true
 
 [lints]
 workspace = true
-
-[dependencies]
-serde = { workspace = true }

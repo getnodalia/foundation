@@ -19,13 +19,13 @@ use super::{WriteError, guard};
 pub struct PrintColor<'a> {
     /// The CMYK ICC profile, written as `/DestOutputProfile`.
     pub profile: &'a [u8],
-    /// `/OutputConditionIdentifier`: a registered name such as `FOGRA39`.
+    /// `/OutputConditionIdentifier`: a registered name such as `FOGRA39`, or `Custom`.
     pub condition_identifier: &'a str,
     /// `/OutputCondition`: a human-readable description.
     pub condition: Option<&'a str>,
-    /// `/RegistryName`, such as `http://www.color.org`.
+    /// `/RegistryName`, such as `http://www.color.org` for registered conditions.
     pub registry_name: Option<&'a str>,
-    /// `/Info` text of the output intent, passed through.
+    /// `/Info`: PDF/X requires it when the condition is not registered.
     pub info: Option<&'a str>,
 }
 

@@ -71,7 +71,7 @@ pub mod engine_data;
 pub mod error;
 pub mod file;
 pub mod filter_effects;
-#[cfg(any(test, feature = "test-support"))]
+#[cfg(any(test, feature = "testgen"))]
 pub mod fixtures;
 pub mod flat;
 pub mod float;
@@ -97,7 +97,7 @@ pub mod slices;
 pub mod smart;
 pub mod source;
 pub mod tagged;
-#[cfg(any(test, feature = "test-support"))]
+#[cfg(any(test, feature = "testgen"))]
 // Test-data generator (tests and fuzz seeds only): failing loudly is the point.
 #[allow(clippy::expect_used)]
 pub mod testgen;

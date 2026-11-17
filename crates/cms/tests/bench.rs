@@ -1,4 +1,4 @@
-//! Throughput check: `cargo test -p nodalia-cms --release -- integration::bench --ignored --nocapture`.
+//! Throughput check: `cargo test -p nodalia-cms --release --test bench -- --ignored --nocapture`.
 
 use nodalia_cms::{Builtin, Intent, Transform};
 

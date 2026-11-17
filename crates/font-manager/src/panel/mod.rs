@@ -1,21 +1,18 @@
-//! The Fonts panel: the installed fonts, the Google Fonts catalogue, and installing and removing through the font
-//! store.
+//! The egui interface: the installed fonts, the Google Fonts catalogue, and installing and
+//! removing through the font store.
 
 mod i18n;
 
 mod app;
-pub(crate) mod browse;
+mod browse;
 mod details;
-pub(crate) mod faces;
-#[cfg(feature = "screen-testing")]
-pub(crate) mod fixtures;
-pub(crate) mod jobs;
-pub(crate) mod samples;
+mod faces;
+mod jobs;
+mod look;
+mod samples;
 mod sources;
-mod specimen;
+mod widgets;
 
-pub use app::{
-    FontsCommand, FontsPanel, FontsPanelOutput, FontsPanelSettings, FontsPanelView, FontsPanelWords, Options, Preset, Tab, install_interface_fonts,
-};
-pub use browse::FontsBrowseWords;
-pub use sources::{FontSources, FontSourcesOutput};
+pub use app::{FontsPanel, Options, Preset, Settings, Tab, install_interface_fonts};
+pub use jobs::Runner;
+pub use look::{Look, Palette};

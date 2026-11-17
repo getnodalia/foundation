@@ -4,8 +4,6 @@
 
 use nodalia_fonts_build::{EmbeddedFace, ServedFace};
 
-/// The faces the build script embedded.
 pub static NODALIA_FONTS: &[EmbeddedFace] = include!(concat!(env!("OUT_DIR"), "/nodalia_fonts.rs"));
 
-/// The faces the build script wrote for serving.
 pub static NODALIA_FONTS_SERVED: &[ServedFace] = include!(concat!(env!("OUT_DIR"), "/nodalia_fonts_served.rs"));

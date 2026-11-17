@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-pdf"
 description = "Shared PDF reading, rendering and optional writing for Craft apps"
 version.workspace = true
@@ -28,8 +27,6 @@ cos = ["crypt", "filters", "dep:chrono", "dep:js-sys", "dep:wasm-bindgen"]
 # tokenizer ends them.
 content = ["cos", "dep:hayro-syntax"]
 crypt = ["dep:aes", "dep:md-5", "dep:sha2", "dep:stringprep", "dep:zeroize", "dep:thiserror"]
-# `testing`: a builder of small synthetic PDF files, for the tests of crates that read them.
-test-support = ["cos"]
 
 [dependencies]
 hayro-syntax = { workspace = true, optional = true }
@@ -41,7 +38,6 @@ nodalia-svg = { workspace = true, optional = true }
 krilla-svg = { version = "=0.8.1", optional = true }
 usvg = { version = "=0.47.0", features = ["text"], optional = true }
 thiserror = { workspace = true, optional = true }
-serde = { workspace = true }
 flate2 = { version = "1.1", default-features = false, features = ["zlib-rs"], optional = true }
 roxmltree = { version = "0.21", optional = true }
 # The filter chain (`filters`). flate2 with zlib-rs, the backend the chain's Flate prices were measured on.

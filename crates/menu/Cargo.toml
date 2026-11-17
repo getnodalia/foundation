@@ -1,54 +1,27 @@
 [package]
 name = "nodalia-menu"
-description = "A Craft app's menus: layouts for macOS, Windows, Linux and the web, shortcuts from nodalia-keymap, a macOS backend (in nodalia-window), and key equivalents fed back to egui."
+description = "A Craft app's menus: layouts for macOS, Windows, Linux and the web, shortcuts from nodalia-keymap, a macOS backend, and key equivalents fed back to egui."
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 
-[lib]
-# Every test lives in the `it` integration binary, except the AppKit one (`mac_appkit`, no harness), so `cargo test` builds the library once.
-test = false
-
 [dependencies]
-nodalia-behavior = { workspace = true }
-nodalia-host = { workspace = true }
-nodalia-i18n = { workspace = true, features = ["collate"] }
 nodalia-keymap = { workspace = true, features = ["egui"] }
-nodalia-quit = { workspace = true, features = ["ui"] }
-nodalia-theme = { workspace = true }
-nodalia-ui = { workspace = true }
-nodalia-window = { workspace = true, features = ["appkit"] }
+nodalia-quit = { workspace = true, features = ["egui"] }
 egui = { workspace = true }
-serde = { workspace = true }
-serde_json = { workspace = true }
 
-[features]
-screen-testing = ["nodalia-ui/testing"]
+# Already in the apps' Cargo.lock: muda through nodalia-quit's `menu` feature, objc2 and objc2-app-kit
+# through eframe.
+[target.'cfg(target_os = "macos")'.dependencies]
+muda = { version = "0.21.2", default-features = false }
+objc2 = { version = "0.6.4", default-features = false, features = ["std"] }
+objc2-app-kit = { version = "0.3.2", default-features = false, features = ["std", "NSApplication", "NSEvent", "NSMenu", "NSMenuItem", "NSResponder"] }
 
 [dev-dependencies]
-# `default_fonts` so that the shortcuts dialog and native menu tests lay out text.
-egui = { workspace = true }
-
-[[test]]
-name = "it"
-path = "tests/it/main.rs"
-harness = false
-required-features = ["screen-testing"]
-
-# AppKit end to end: runs on the main thread, so no harness; on other platforms it does nothing.
-[[test]]
-name = "mac_appkit"
-path = "tests/mac_appkit.rs"
-harness = false
-required-features = ["screen-testing"]
-
-# The test reads AppKit's menu bar back and feeds it real events, through safe objc2 calls.
-[target.'cfg(target_os = "macos")'.dev-dependencies]
-objc2 = { version = "0.6.4", default-features = false, features = ["std"] }
-objc2-app-kit = { version = "0.3.2", default-features = false, features = ["std", "NSApplication", "NSControl", "NSEvent", "NSMenu", "NSMenuItem", "NSResponder"] }
-objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSDate", "NSGeometry", "NSRunLoop", "NSString"] }
+# `default_fonts` so that the bar's tests lay out text.
+egui = { workspace = true, features = ["default_fonts"] }
 
 [lints]
 workspace = true

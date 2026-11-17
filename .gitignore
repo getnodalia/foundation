@@ -9,4 +9,3 @@ target/
 /.claude/
 .idea/
 /vendor/*/target
-__pycache__/

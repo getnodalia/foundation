@@ -2,7 +2,7 @@
 //! demuxer's streams, access-unit counts, sizes, timestamps and key flags are compared with
 //! ffprobe's packets, and every unit reads back.
 
-use super::common;
+mod common;
 
 use nodalia_media::CodecId;
 use nodalia_media::mpegts::{Codec, File, Format, Kind, open};
