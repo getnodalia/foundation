@@ -1,0 +1,121 @@
+# Using nodalia-i18n in a Crafting App
+
+nodalia-i18n is a **fully optional** source of translations. An app must build, test and run without
+it, in English; with it, the app embeds the catalogs in `locales/`. The code that reads them is the
+`nodalia-i18n` crate in nodalia-libs, which apps already depend on
+([ADR 0002](adr/0002-runtime-in-craft-libs-data-in-craft-i18n.md)).
+
+## Why not a Cargo dependency
+
+Cargo resolves every dependency in `Cargo.toml`, optional ones included. A git dependency on this
+repository would make every build (offline, in a fork, on a mirror) need it. So apps never list it
+in `Cargo.toml`; the build option is an environment variable instead, as for nodalia-fonts.
+
+## The build option: `NODALIA_I18N_DIR`
+
+```sh
+git clone https://github.com/getnodalia/foundation ../nodalia-i18n
+NODALIA_I18N_DIR=$PWD/../nodalia-i18n cargo build --release
+```
+
+The app's `build.rs` writes one static into `OUT_DIR`, always, so the app needs no `cfg`:
+
+```rust
+/// (locale, shared catalog, this app's catalog), one entry per locale; "" for a missing file.
+pub static NODALIA_I18N: &[(&str, &str, &str)] = &[
+    ("fr", include_str!("/abs/nodalia-i18n/locales/fr/common.tsv"), include_str!("/abs/nodalia-i18n/locales/fr/letra.tsv")),
+    // …
+];
+```
+
+- **Unset** (the default): the static is empty. The app is English-only.
+- **Set to a checkout** (it has a `locales/` directory): one entry per locale that has this app's
+  own catalog (`locales/<locale>/<app>.tsv`), embedded with `include_str!` on absolute paths. A
+  locale with only shared strings is left out, so an app never offers a language it has barely
+  been translated into.
+- **Set but not a checkout:** `cargo::warning`, and the static is empty.
+- **`NODALIA_I18N_REQUIRED=1`** with a missing or invalid checkout: `cargo::error`. Releases set it,
+  so a release never ships English-only by accident.
+- `cargo::rerun-if-env-changed` for both variables, and `cargo::rerun-if-changed` for every
+  embedded file and the `locales/` directory.
+- Web (wasm) builds embed the same locales as desktop.
+
+Use an **absolute** path: Cargo runs build scripts in the crate's own directory.
+Write each path into the generated source with `{:?}` (as nodalia-fonts' `include_bytes!({:?})`), so
+Windows backslashes are escaped, and don't `canonicalize` it (on Windows that gives `\\?\C:\…`).
+
+## What the app shows
+
+The app passes `NODALIA_I18N` to the nodalia-libs crate, with the codes of its own language list: only
+those are offered (an embedded locale the app isn't ready for, such as a right-to-left one, stays a
+fallback only). For `pt-br` it looks up: `pt-br` app catalog → `pt-br` shared → `pt` app → `pt`
+shared → the English source text. An app catalog's row wins over
+the shared one in its own locale only. A row the crate doesn't understand (a newer `@` context) is
+skipped and logged, and that string shows in English.
+
+## Stale and missing strings
+
+A missing translation never blocks anything: not a feature PR, not a pin bump, not a release.
+The string shows in English.
+
+nodalia-i18n can't see app code. With `NODALIA_I18N_DIR` set, each app prints a report of the English
+source texts that have no translation, and the translations of source texts the app no longer
+uses. The report always passes.
+
+## Adding strings
+
+A feature PR that adds or changes interface text adds the English only, and merges on its own
+schedule. Translators add the other languages here, in nodalia-i18n PRs, whenever they get to them.
+The new strings show in English until the app's [pin](../GLOSSARY.md) reaches the nodalia-i18n
+commit that has their translations.
+
+- **Before the app's cutover** (its branch still has `i18n/*.tsv`): add rows there as today, then
+  write them into nodalia-i18n with the sync script, run from a nodalia-i18n checkout:
+
+  ```sh
+  tools/sync_app.py ../wordcraft <SHA last synced> --ref my-branch
+  ```
+
+  The last synced SHA is the app's line in `ATTRIBUTION.md`. The script applies what the branch
+  changed since then: new and corrected rows go to `locales/<locale>/<app>.tsv` (never
+  `common.tsv`; a changed shared string becomes an override there), deleted rows leave it, and a
+  new locale gets its lowercase BCP 47 name and its `@id language.name` row. A row the branch
+  didn't touch keeps nodalia-i18n's wording. It prints the app SHA it read (record it in
+  `ATTRIBUTION.md`) and checks the round trip: every row the app has at `--ref` must resolve to
+  the same text from `locales/`. `--check` runs only that check. Re-running changes nothing.
+- **After cutover** (the app has no `i18n/*.tsv`): add rows straight to
+  `locales/<locale>/<app>.tsv`. The app's stale and missing report, run with `NODALIA_I18N_DIR`
+  set, lists the source texts with no translation (its missing bucket).
+  When the app only fixes its English (a typo, punctuation, casing), `tools/rekey.py <app> <old>
+  <new>` moves every locale's translation to the new text in one go; a changed meaning needs new
+  translations instead.
+
+The cutover itself: a final sync against the app's `main`, that nodalia-i18n PR merges, the app's
+wiring PR merges (deleting `i18n/*.tsv` and pinning a nodalia-i18n SHA that holds the sync), then the
+sync runs again against the merge's first parent for rows that landed in between.
+
+## Language data
+
+The same variable also feeds `craft-proof` (nodalia-libs): its own `build.rs` embeds the files
+it names from `$NODALIA_I18N_DIR/language-data/` (spelling word lists and hyphenation patterns; layout in
+[`language-data/README.md`](../language-data/README.md)), with the same rules: unset or missing
+data is a warning and an empty embedding (English spelling falls back to the system's Hunspell
+dictionaries, hyphenation that needs data is off), and `NODALIA_I18N_REQUIRED=1` makes it an error. An app that uses `craft-proof` needs nothing
+more than the `NODALIA_I18N_DIR` it already sets for the catalogs, at a pin that has `language-data/`.
+
+## Release builds
+
+Whether craft-common-actions' release workflow checks out nodalia-i18n and sets
+`NODALIA_I18N_DIR` and `NODALIA_I18N_REQUIRED=1`, as it does for nodalia-fonts, is a pending maintainer
+decision.
+
+## Initial import from TextureCraft Rust tables
+
+TextureCraft's pre-cutover catalogs are Rust tables rather than `i18n/*.tsv`.
+Use `python tools/export_texturecraft.py ../texturecraft --ref <pre-cutover SHA>`
+for its initial export. The tool uses rustc to decode the original strings, reuses
+identical shared rows and verifies that every original translation still resolves.
+`--check` verifies without rewriting catalogs. Record the full source SHA in
+`ATTRIBUTION.md`. This is an initial import, not an incremental merge: do not run
+write mode over independently edited catalogs. After cutover, edit the TSV files
+here directly. Coordination: storytold/texturecraft#419.
