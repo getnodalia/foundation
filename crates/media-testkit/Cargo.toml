@@ -1,0 +1,15 @@
+[package]
+name = "nodalia-media-testkit"
+description = "Oracle-test support (ffmpeg discovery, fixture locations) for the nodalia-libs media crates. Test support only."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+nodalia-testkit = { workspace = true }
+
+[lints]
+workspace = true
