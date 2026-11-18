@@ -299,11 +299,23 @@ def git(*args: str, cwd: Path | None = None, env: dict | None = None) -> str:
                           capture_output=True).stdout.strip()
 
 
+# Bump when the renaming changes what a generated tree holds: commits made by an older generator
+# are then made again (the branch keeps the old ones, which apps already pin).
+GENERATOR = 2
+FORMAT = "%H %(trailers:key=Upstream-Commit,valueonly,separator=) %(trailers:key=Generator,valueonly,separator=)"
+
+
+def current(parts: list[str]) -> str | None:
+    """The upstream sha of a log line made by this generator, else None."""
+    if len(parts) >= 2 and int(parts[2] if len(parts) > 2 and parts[2].isdigit() else 1) >= GENERATOR:
+        return parts[1]
+    return None
+
+
 def lookup(library: str, upstream_sha: str, repo: Path) -> str | None:
     branch = LIBRARIES[library]["branch"]
     try:
-        log = git("log", "--first-parent", "--format=%H %(trailers:key=Upstream-Commit,valueonly)",
-                  f"origin/{branch}", cwd=repo)
+        log = git("log", "--first-parent", f"--format={FORMAT}", f"origin/{branch}", cwd=repo)
     except subprocess.CalledProcessError:
         return None
     try:
@@ -312,7 +324,7 @@ def lookup(library: str, upstream_sha: str, repo: Path) -> str | None:
         return None
     for line in log.splitlines():
         parts = line.split()
-        if len(parts) == 2 and parts[1] == full:
+        if current(parts) == full:
             return parts[0]
     return None
 
@@ -377,7 +389,7 @@ def generate(library: str, upstream_sha: str, repo: Path) -> str:
            "GIT_COMMITTER_NAME": "Nodalia", "GIT_COMMITTER_EMAIL": "noreply@getnodalia.com",
            "GIT_AUTHOR_DATE": date, "GIT_COMMITTER_DATE": date}
     message = (f"nodalia-{library} from {spec['upstream']}@{full[:12]}\n\n"
-               f"Upstream-Commit: {full}\n")
+               f"Upstream-Commit: {full}\nGenerator: {GENERATOR}\n")
     commit = git("commit-tree", tree, *parents, "-m", message, cwd=repo, env=env)
     git("update-ref", f"refs/remotes/origin/{spec['branch']}", commit, cwd=repo)
     return commit
@@ -386,11 +398,10 @@ def generate(library: str, upstream_sha: str, repo: Path) -> str:
 def generated_upstreams(library: str, repo: Path) -> set[str]:
     branch = LIBRARIES[library]["branch"]
     try:
-        log = git("log", "--first-parent", "--format=%(trailers:key=Upstream-Commit,valueonly)",
-                  f"origin/{branch}", cwd=repo)
+        log = git("log", "--first-parent", f"--format={FORMAT}", f"origin/{branch}", cwd=repo)
     except subprocess.CalledProcessError:
         return set()
-    return {line.strip() for line in log.splitlines() if line.strip()}
+    return {sha for sha in (current(line.split()) for line in log.splitlines()) if sha}
 
 
 # How many main-line commits one run fills in; past this it generates only the tip.

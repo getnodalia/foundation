@@ -99,6 +99,14 @@ class TextTests(unittest.TestCase):
                          'const APP: &str = "papel.tsv";')
 
 
+class GeneratorTests(unittest.TestCase):
+    def test_commits_of_an_older_generator_are_made_again(self):
+        sha = "a" * 40
+        self.assertIsNone(nl.current(["c" * 40, sha]))
+        self.assertIsNone(nl.current(["c" * 40, sha, str(nl.GENERATOR - 1)]))
+        self.assertEqual(nl.current(["c" * 40, sha, str(nl.GENERATOR)]), sha)
+
+
 class TreeTests(unittest.TestCase):
     def test_directories_and_files_are_renamed(self):
         with tempfile.TemporaryDirectory() as tmp:
