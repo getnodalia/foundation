@@ -25,7 +25,7 @@ on:
         type: string
         default: ""
       i18n-repository:
-        description: "Repository with the translations build input, checked out at craft-i18n.rev when the repo has one; empty skips it"
+        description: "Repository with the translations build input, checked out at nodalia-i18n.rev (or craft-i18n.rev) when the repo has one; empty skips it"
         type: string
         default: ""
       timeout-minutes:
@@ -58,8 +58,13 @@ jobs:
         env:
           I18N_REPOSITORY: ${{ inputs.i18n-repository }}
         run: |
-          if [ -n "$I18N_REPOSITORY" ] && [ -f craft-i18n.rev ]; then
-            echo "rev=$(tr -d '[:space:]' < craft-i18n.rev)" >> "$GITHUB_OUTPUT"
+          if [ -n "$I18N_REPOSITORY" ]; then
+            for pin in nodalia-i18n.rev craft-i18n.rev; do
+              if [ -f "$pin" ]; then
+                echo "rev=$(tr -d '[:space:]' < "$pin")" >> "$GITHUB_OUTPUT"
+                break
+              fi
+            done
           fi
       - name: Check out translations build input
         if: steps.i18n.outputs.rev != ''
@@ -87,9 +92,11 @@ jobs:
           run: |
             set -e
             if [ -d .nodalia/fonts ]; then
+              export NODALIA_FONTS_DIR="$PWD/.nodalia/fonts" NODALIA_FONTS_REQUIRED=1
               export CRAFT_FONTS_DIR="$PWD/.nodalia/fonts" CRAFT_FONTS_REQUIRED=1
             fi
             if [ -d .nodalia/i18n ]; then
+              export NODALIA_I18N_DIR="$PWD/.nodalia/i18n" NODALIA_I18N_REQUIRED=1
               export CRAFT_I18N_DIR="$PWD/.nodalia/i18n" CRAFT_I18N_REQUIRED=1
             fi
             # Tests run as an ordinary user: root is never refused a file, so a test that expects

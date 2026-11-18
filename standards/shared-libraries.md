@@ -7,9 +7,9 @@ has no better home. Today:
 |---|---|---|
 | Design tokens, widgets, icons, fonts | `getnodalia/nodalia-design` | packages per toolkit (see [ndl.md](ndl.md)) |
 | Update check and update dialog | `nodalia-design/packages/update` (`nodalia-update` crate) | one contract for every app's updater |
-| Window, UI helpers, PDF, docpath, web host (Rust desktop apps) | craft-libs, vendored in `getnodalia/foundation` | inherited; crates are renamed only when all the apps move together |
-| Fonts build input | craft-fonts, vendored in `getnodalia/foundation` | never committed into app repositories |
-| Translations build input | craft-i18n, vendored in `getnodalia/foundation` | pinned per app by `craft-i18n.rev` |
+| Window, UI helpers, PDF, docpath, web host (Rust desktop apps) | `nodalia-*` crates on `nodalia/libs` in `getnodalia/foundation` | generated from the upstream mirror; see [vendor/README.md](../vendor/README.md) |
+| Fonts build input | `nodalia/fonts` in `getnodalia/foundation` (`NODALIA_FONTS_DIR`) | never committed into app repositories |
+| Translations build input | `nodalia/i18n` in `getnodalia/foundation` (`NODALIA_I18N_DIR`) | pinned per app by `nodalia-i18n.rev` |
 | CI/CD | this repository | reusable workflows |
 
 Not created, and why:

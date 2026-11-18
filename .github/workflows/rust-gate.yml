@@ -31,7 +31,7 @@ on:
         type: string
         default: "cargo-nextest"
       fonts-repository:
-        description: "Repository holding the fonts build input (CRAFT_FONTS_DIR); empty skips it"
+        description: "Repository holding the fonts build input (NODALIA_FONTS_DIR, and CRAFT_FONTS_DIR for apps not yet moved); empty skips it"
         type: string
         default: ""
       fonts-ref:
@@ -39,7 +39,7 @@ on:
         type: string
         default: ""
       i18n-repository:
-        description: "Repository holding the translations build input (CRAFT_I18N_DIR). Checked out only when the repo has craft-i18n.rev"
+        description: "Repository holding the translations build input (NODALIA_I18N_DIR, and CRAFT_I18N_DIR for apps not yet moved). Checked out only when the repo has nodalia-i18n.rev (or craft-i18n.rev)"
         type: string
         default: ""
       env:
@@ -98,15 +98,25 @@ jobs:
         if: inputs.fonts-repository != '' && inputs.fonts-ref != ''
         shell: bash
         run: |
-          echo "CRAFT_FONTS_DIR=$GITHUB_WORKSPACE/.nodalia/fonts" >> "$GITHUB_ENV"
-          echo "CRAFT_FONTS_REQUIRED=1" >> "$GITHUB_ENV"
+          {
+            echo "NODALIA_FONTS_DIR=$GITHUB_WORKSPACE/.nodalia/fonts"
+            echo "NODALIA_FONTS_REQUIRED=1"
+            # Apps that still build against craft-libs read the old names.
+            echo "CRAFT_FONTS_DIR=$GITHUB_WORKSPACE/.nodalia/fonts"
+            echo "CRAFT_FONTS_REQUIRED=1"
+          } >> "$GITHUB_ENV"
 
       - name: Read translations pin
         id: i18n
         shell: bash
         run: |
-          if [ -n "${{ inputs.i18n-repository }}" ] && [ -f craft-i18n.rev ]; then
-            echo "rev=$(tr -d '[:space:]' < craft-i18n.rev)" >> "$GITHUB_OUTPUT"
+          if [ -n "${{ inputs.i18n-repository }}" ]; then
+            for pin in nodalia-i18n.rev craft-i18n.rev; do
+              if [ -f "$pin" ]; then
+                echo "rev=$(tr -d '[:space:]' < "$pin")" >> "$GITHUB_OUTPUT"
+                break
+              fi
+            done
           fi
 
       - name: Check out translations build input
@@ -121,7 +131,9 @@ jobs:
       - name: Use translations build input
         if: steps.i18n.outputs.rev != ''
         shell: bash
-        run: echo "CRAFT_I18N_DIR=$GITHUB_WORKSPACE/.nodalia/i18n" >> "$GITHUB_ENV"
+        run: |
+          echo "NODALIA_I18N_DIR=$GITHUB_WORKSPACE/.nodalia/i18n" >> "$GITHUB_ENV"
+          echo "CRAFT_I18N_DIR=$GITHUB_WORKSPACE/.nodalia/i18n" >> "$GITHUB_ENV"
 
       - name: Caller environment
         if: inputs.env != '' || inputs.linux-env != '' || inputs.windows-env != ''

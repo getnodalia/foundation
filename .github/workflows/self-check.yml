@@ -34,3 +34,5 @@ jobs:
           ./actionlint -color
       - name: Actions are pinned to full SHAs
         run: python3 scripts/check_pins.py .github/workflows
+      - name: Library renaming tests
+        run: python3 -m unittest scripts/test_nodalia_libs.py
