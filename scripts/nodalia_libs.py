@@ -199,14 +199,19 @@ class Renamer:
         self.all_dirs = all_dirs
         self.product_re = re.compile(r"(?<![A-Za-z0-9_])(" + "|".join(PRODUCT_NAMES) +
                                      r")(?![A-Za-z0-9_])" + CREDIT)
+        # Third-party code under vendor/ is never renamed, so the names it defines stay too.
+        kept = vendored_variables(root)
+        head = r"(?<![A-Za-z0-9_])CRAFT_"
+        tail = r"(?![A-Za-z0-9_])"
         if env_names is None:
-            self.env_re = re.compile(r"(?<![A-Za-z0-9_])CRAFT_(?=[A-Z0-9])")
+            alt = "|".join(re.escape(n[len("CRAFT_"):]) for n in sorted(kept, key=len, reverse=True))
+            self.env_re = re.compile(head + (f"(?!(?:{alt}){tail})" if kept else "") + "(?=[A-Z0-9])")
         else:
             # Only the libraries' own variables: an app's own CRAFT_* names (installer
             # properties a previous install saved) keep working.
-            self.env_re = re.compile(r"(?<![A-Za-z0-9_])CRAFT_(?=(?:" + "|".join(
-                re.escape(n[len("CRAFT_"):]) for n in sorted(env_names, key=len, reverse=True)) +
-                r")(?![A-Za-z0-9_]))") if env_names else None
+            names_ = sorted(set(env_names) - kept, key=len, reverse=True)
+            alt = "|".join(re.escape(n[len("CRAFT_"):]) for n in names_)
+            self.env_re = re.compile(f"{head}(?=(?:{alt}){tail})") if names_ else None
         mirrored = "|".join(re.escape(r) for r in MIRRORED)
         self.git_re = re.compile(r"https://github\.com/storytold/(" + mirrored + r")(?:\.git)?\b")
         generated = "|".join(re.escape(r) for r in GENERATED_REPOS)
@@ -294,11 +299,23 @@ def git(*args: str, cwd: Path | None = None, env: dict | None = None) -> str:
                           capture_output=True).stdout.strip()
 
 
+# Bump when the renaming changes what a generated tree holds: commits made by an older generator
+# are then made again (the branch keeps the old ones, which apps already pin).
+GENERATOR = 2
+FORMAT = "%H %(trailers:key=Upstream-Commit,valueonly,separator=) %(trailers:key=Generator,valueonly,separator=)"
+
+
+def current(parts: list[str]) -> str | None:
+    """The upstream sha of a log line made by this generator, else None."""
+    if len(parts) >= 2 and int(parts[2] if len(parts) > 2 and parts[2].isdigit() else 1) >= GENERATOR:
+        return parts[1]
+    return None
+
+
 def lookup(library: str, upstream_sha: str, repo: Path) -> str | None:
     branch = LIBRARIES[library]["branch"]
     try:
-        log = git("log", "--first-parent", "--format=%H %(trailers:key=Upstream-Commit,valueonly)",
-                  f"origin/{branch}", cwd=repo)
+        log = git("log", "--first-parent", f"--format={FORMAT}", f"origin/{branch}", cwd=repo)
     except subprocess.CalledProcessError:
         return None
     try:
@@ -307,7 +324,7 @@ def lookup(library: str, upstream_sha: str, repo: Path) -> str | None:
         return None
     for line in log.splitlines():
         parts = line.split()
-        if len(parts) == 2 and parts[1] == full:
+        if current(parts) == full:
             return parts[0]
     return None
 
@@ -372,7 +389,7 @@ def generate(library: str, upstream_sha: str, repo: Path) -> str:
            "GIT_COMMITTER_NAME": "Nodalia", "GIT_COMMITTER_EMAIL": "noreply@getnodalia.com",
            "GIT_AUTHOR_DATE": date, "GIT_COMMITTER_DATE": date}
     message = (f"nodalia-{library} from {spec['upstream']}@{full[:12]}\n\n"
-               f"Upstream-Commit: {full}\n")
+               f"Upstream-Commit: {full}\nGenerator: {GENERATOR}\n")
     commit = git("commit-tree", tree, *parents, "-m", message, cwd=repo, env=env)
     git("update-ref", f"refs/remotes/origin/{spec['branch']}", commit, cwd=repo)
     return commit
@@ -381,11 +398,10 @@ def generate(library: str, upstream_sha: str, repo: Path) -> str:
 def generated_upstreams(library: str, repo: Path) -> set[str]:
     branch = LIBRARIES[library]["branch"]
     try:
-        log = git("log", "--first-parent", "--format=%(trailers:key=Upstream-Commit,valueonly)",
-                  f"origin/{branch}", cwd=repo)
+        log = git("log", "--first-parent", f"--format={FORMAT}", f"origin/{branch}", cwd=repo)
     except subprocess.CalledProcessError:
         return set()
-    return {line.strip() for line in log.splitlines() if line.strip()}
+    return {sha for sha in (current(line.split()) for line in log.splitlines()) if sha}
 
 
 # How many main-line commits one run fills in; past this it generates only the tip.
@@ -441,6 +457,22 @@ def mirror_packages(repo: Path) -> dict[str, str]:
                     names[m.group(1)] = "nodalia-" + new_crate_suffix(m.group(1)[len("craft-"):])
     names.update({**EXTRA_NAMES, **SIBLING_CRATES})
     return names
+
+
+def vendored_variables(root: Path) -> set[str]:
+    """The CRAFT_* names defined by the third-party code under vendor/."""
+    found: set[str] = set()
+    base = Path(root) / "vendor"
+    if not base.is_dir():
+        return found
+    for path in base.rglob("*"):
+        if path.is_file() and path.stat().st_size < 4_000_000:
+            try:
+                text = path.read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError):
+                continue
+            found.update(re.findall(r"CRAFT_[A-Z0-9_]*[A-Z0-9]", text))
+    return found
 
 
 def library_variables(repo: Path) -> set[str]:
