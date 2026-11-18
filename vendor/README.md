@@ -31,7 +31,7 @@ request). Without the branch the commit would not be reachable here.
 
 Apps never depend on a mirror directly: they depend on the same code under Nodalia's names,
 which `scripts/nodalia_libs.py` makes from the mirrors and the **Nodalia libraries** workflow
-publishes on four branches of its own:
+publishes on branches of its own:
 
 | Branch | Made from | What changes |
 |---|---|---|
@@ -39,14 +39,15 @@ publishes on four branches of its own:
 | `nodalia/i18n` | `vendor/craft-i18n/*` | the same, and each app's catalog has the app's name (`pdfcraft.tsv` is `papel.tsv`, `wordcraft.tsv` is `letra.tsv`) |
 | `nodalia/fonts` | `vendor/craft-fonts/*` | the same (`NODALIA_FONTS_DIR`) |
 | `nodalia/winprint` | `vendor/winprint.rs/*` | the GDI helper crate is `nodalia-winprint-gdi` |
+| `nodalia/toma` | `vendor/filmcraft/*` | renamed by Toma's own rules (`.github/rebrand.toml` in getnodalia/toma), so its media crates are `toma-*` exactly as in Toma; Pulso uses them |
 
 What never changes: licence texts, `NOTICE` (it gains a paragraph saying where the tree comes
 from), `ATTRIBUTION.md`, third-party code under `vendor/`, links and credits, and the lower-case
 product words that are file signatures, so documents saved before keep opening.
 
-Each generated commit has two parents: the previous generated commit and the upstream commit it
-was made from, so the full history and its authors stay reachable. Its message ends with
-`Upstream-Commit: <sha>`. `nodalia_libs.py lookup libs <upstream sha>` prints the matching
+Each generated commit follows the previous one, and its message ends with
+`Upstream-Commit: <sha>`: the mirror commit it was made from, where the full history and its
+authors stay. Upstream's `.github/workflows` are left out, since they are not these branches' CI. `nodalia_libs.py lookup libs <upstream sha>` prints the matching
 commit; an app moves to it, and its weekly upstream sync keeps it there, with
 `nodalia_libs.py app <checkout> --repo <foundation clone>`, which renames the app's uses and
 maps every pinned SHA. The workflow runs when a `vendor/` branch moves, every Monday before the

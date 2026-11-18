@@ -105,6 +105,17 @@ class TreeTests(unittest.TestCase):
             # The licence notice keeps its words.
             self.assertEqual((root / "NOTICE").read_text(), "craft-libs\nCopyright ArtCraft Team\n")
 
+    def test_names_a_tree_depends_on(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "Cargo.toml").write_text(
+                '[workspace.dependencies]\ncraft-ui = { git = "x", rev = "y" }\n'
+                'filmcraft-media = { git = "x", rev = "y" }\n'
+                '# filmcraft-codecs = { path = "../filmcraft/crates/codecs" }\n')
+            self.assertEqual(nl.dependency_names(root)["craft-ui"], "nodalia-ui")
+            self.assertEqual(nl.renamed_packages(root),
+                             {"filmcraft-media": "toma-media", "filmcraft-codecs": "toma-codecs"})
+
 
 if __name__ == "__main__":
     unittest.main()
