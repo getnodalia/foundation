@@ -21,8 +21,9 @@ Collected on 2026-11-18 from `nodalia-web` (`assets/`), `nodalia-design` (`docs/
 | `dmg-backgrounds/` | The Finder window background of every app's macOS DMG: SVG master and a 2× PNG (1320 × 800) | generated with `nodalia-design/tools/dmg-background` |
 | `ndl/` | The NDL guide: design language, tokens, components, iconography, the Creator and Engineering suite specs, and the token JSON files | `nodalia-design/docs`, `packages/tokens/src` |
 
-`nodalia-design` stays the source for NDL and the fonts, and keeps the two generators (`tools/app-portrait` for the icon portraits, `tools/dmg-background` for the DMG windows); and each app's repository for
-its icon. When one of them changes, refresh the copy here.
+`nodalia-design` stays the source for NDL and the fonts, and each app's repository for its icon.
+The two generators also live in `nodalia-design`: `tools/app-portrait` for the icon portraits and
+`tools/dmg-background` for the DMG windows. When one of them changes, refresh the copy here.
 
 ## Logo
 
