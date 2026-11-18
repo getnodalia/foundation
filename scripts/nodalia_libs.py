@@ -206,7 +206,7 @@ class Renamer:
             # properties a previous install saved) keep working.
             self.env_re = re.compile(r"(?<![A-Za-z0-9_])CRAFT_(?=(?:" + "|".join(
                 re.escape(n[len("CRAFT_"):]) for n in sorted(env_names, key=len, reverse=True)) +
-                r")(?![A-Za-z0-9_]))") if env_names else re.compile(r"(?!x)x")
+                r")(?![A-Za-z0-9_]))") if env_names else None
         mirrored = "|".join(re.escape(r) for r in MIRRORED)
         self.git_re = re.compile(r"https://github\.com/storytold/(" + mirrored + r")(?:\.git)?\b")
         generated = "|".join(re.escape(r) for r in GENERATED_REPOS)
@@ -236,7 +236,8 @@ class Renamer:
         if self.sha_map:
             s = re.sub(r"\b[0-9a-f]{40}\b", lambda m: self.sha_map.get(m.group(0), m.group(0)), s)
         s = self.name_re.sub(lambda m: self.table[m.group(1)], s)
-        s = self.env_re.sub("NODALIA_", s)
+        if self.env_re:
+            s = self.env_re.sub("NODALIA_", s)
         if self.products:
             s = self.product_re.sub(lambda m: PRODUCT_NAMES[m.group(1)], s)
         if self.dir_re:
