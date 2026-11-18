@@ -4061,6 +4061,65 @@ document scrollbar width	Wide	Широкая
 	…or paste the raw text here; # headings, - bullets	…или вставьте сюда исходный текст; # заголовки, - списки
 	− Page {p}	− Стр. {p}
 	−LOC	−строк
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Логотип или название слева от вкладок, там, где их показала бы строка заголовка: Papel или вашей компании.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Файл PNG или SVG. Читается из этого места при каждом запуске Papel.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Подпись, которая является частью содержимого страницы (например, на отсканированной странице), не является ни полем, ни примечанием, поэтому её нельзя удалить отдельно, а Papel не стирает части страницы, чтобы её скрыть. Чтобы убрать её, скройте эту область (Скрыть) или, если подпись — отдельное изображение, удалите его с помощью «Редактировать PDF».
+	About Papel	О программе Papel
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Применяется при следующем запуске Papel. Выберите OpenGL, если окно мерцает на дисплее с G-SYNC, FreeSync или другой переменной частотой обновления.
+	Ask to make Papel the default PDF app	Спрашивать о назначении Papel приложением для PDF по умолчанию
+	Choose Papel for .pdf files in Windows Settings.	Выберите Papel для файлов .pdf в параметрах Windows.
+	Combine files in Papel…	Объединить файлы в Papel…
+	Convert to PDF with Papel	Преобразовать в PDF с помощью Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Файлы, которые вы открываете в Papel, появляются здесь. Перетащите PDF в любое место, чтобы открыть.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	В Finder: выберите файлы, затем правый клик > Быстрые действия > “Combine files in Papel”. Нет в списке? Включите один раз в Быстрые действия > Настроить.
+	Hide Papel	Скрыть Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	Для венгерского OCR требуется настольное приложение с Tesseract 5 и языковой моделью hun. После установки перезапустите Papel.
+	Make Papel your default PDF app?	Сделать Papel приложением для PDF по умолчанию?
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Плагины ещё не установлены. Установите .wasm-плагин, чтобы расширить Papel.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Откройте новое письмо без файла, и Papel покажет {name} в его папке, чтобы вы прикрепили его сами.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Страница {page} содержит больше содержимого, чем Papel может прочитать: часть не отрисована, а найти или скопировать можно лишь часть её текста.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Страницы со шрифтами Type 3 печатаются как изображения, потому что Windows может закрыть Papel во время их печати. Остальные страницы печатаются как обычно.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Часть этой страницы не показана: её содержимое превышает максимум, который Papel отрисовывает для одной страницы.
+	Papel can't check this signature yet: {}.	Papel пока не может проверить эту подпись: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel завершился некорректно. В этих документах были изменения, сохранённые автоматически:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel рисует без графического процессора, поэтому может работать медленно. Может помочь обновление графического драйвера.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel сохраняет то, над чем вы работали. Когда выбор файлов заработает, выберите «Повторить».
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel ищет библиотеки, которые устанавливают производители устройств. Выберите библиотеку, только если устройство не найдено.
+	Papel on GitHub	Papel на GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel открывает страницу поставщика, где вы входите с CPF, PIN-кодом и одноразовым кодом.
+	Papel web page	Веб-страница Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel работает офлайн. Без телеметрии, аккаунтов и облачной обработки, если вы не добавите провайдера.
+	Papel {v} is available.	Доступна Papel {v}.
+	Papel's own	Papel
+	Quit Papel	Завершить Papel
+	Reopen the files that were open when Papel last closed	Повторно открывать файлы, которые были открыты при последнем закрытии Papel
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Распишитесь на листе белой бумаги и сфотографируйте его при ярком равномерном освещении (со вспышкой). Выберите фото или перетащите его сюда: Papel найдёт подпись и уберёт бумагу.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Распознавание текста не установлено: отсутствуют файлы моделей. Переустановите Papel или задайте в PDFCRAFT_MODELS папку, в которой они лежат.
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	Сертификат {} содержит критические расширения, которые Papel не распознаёт, поэтому он не используется для подтверждения {}.
+	The Dock shows it the next time Papel opens.	Dock покажет его при следующем открытии Papel.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Шрифты, которыми пишет Papel, не могут отобразить «{c}» ({code}), поэтому во всех программах просмотра PDF на его месте будет ?. Текст сохранён.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Форма просит отправить данные на {u}; Papel не отправляет данные форм. Сохраните документ, чтобы сохранить введённые данные.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Ключ находится в Keychain macOS, который может запросить разрешение на использование Papel.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Ключ находится в хранилище сертификатов Windows, которое может запросить разрешение на использование Papel.
+	The module's tokens hold no digital ID Papel can sign with.	Токены модуля не содержат цифрового идентификатора, которым Papel может подписывать.
+	The PIN goes only to the card; Papel doesn't keep it.	PIN-код передаётся только карте; Papel его не сохраняет.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	Сертификат подписанта содержит критические расширения, которые Papel не распознаёт ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	модели распознавания текста не установлены (переустановите Papel или задайте в PDFCRAFT_MODELS папку, в которой они лежат)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Шрифт этого поля не может отобразить «{c}» ({code}), поэтому Papel показывает на его месте ?. Значение сохранено, и другие программы просмотра PDF перерисуют поле по нему.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Эта форма также содержит данные XFA, которые Papel пока не читает. Вы можете заполнить её поля, но Acrobat может показать значения XFA вместо них.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Эта установка принадлежит пакету Debian. Обновите Papel с помощью системного менеджера программ.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Эта установка принадлежит пакету RPM. Обновите Papel с помощью системного менеджера программ.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Это динамическая форма XFA, которую Papel пока не может отобразить. То, что вы видите, — заглушка страницы файла.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	эту службу подписи нельзя использовать: ей нужен вход через OAuth в браузере, который Papel пока не поддерживает
+	Use your system software manager to update Papel.	Обновите Papel с помощью системного менеджера программ.
+	Welcome to Papel	Добро пожаловать в Papel
+	Your default email app can't take a file from Papel.	Почтовое приложение по умолчанию не может принять файл из Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} отправляет форму на {url}; Papel не отправляет данные форм. Сохраните документ, чтобы сохранить введённые данные.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} страниц содержат больше содержимого, чем Papel может прочитать, первая — страница {page}: части не отрисованы, а найти или скопировать можно лишь часть их текста.
+	{program} can't take a file from Papel.	{program} не может принять файл из Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} в этом документе пытается открыть адрес, который Papel не открывает: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} в этом документе пытается открыть адрес, который Papel не открывает: {e}. Из документов открываются только веб-ссылки (http, https) и ссылки на почту (mailto).
 	This document's script is asking	Скрипт этого документа спрашивает
 	Document: {name}	Документ: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Этот запрос исходит от документа, а не от Papel. Вводите пароль, только если доверяете этому документу.

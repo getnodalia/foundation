@@ -3853,5 +3853,56 @@ calendar weekday	We	Ke
 	− Page {p}	− Sivu {p}
 	−Bin	−Bin
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Logo tai nimi välilehtien vasemmalla puolella, jossa otsikkorivi näyttäisi sellaisen: Papelin oma tai yrityksesi.
+	A PNG or SVG file. It is read from this place each time Papel starts.	PNG- tai SVG-tiedosto. Se luetaan tästä sijainnista aina, kun Papel käynnistyy.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Sivun sisältöön kuuluva allekirjoitus, kuten skannatulla sivulla, ei ole kenttä eikä merkintä, joten sitä ei voi poistaa yksinään, eikä Papel pyyhi sivun osia sen piilottamiseksi. Poista se peittämällä alue (Peitä) tai, jos allekirjoitus on erillinen kuva, poistamalla kuva toiminnolla Muokkaa PDF:ää.
+	About Papel	Tietoja Papelista
+	Combine files in Papel…	Yhdistä tiedostot Papelissa…
+	Convert to PDF with Papel	Muunna PDF:ksi Papelilla
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papelissa avatut tiedostot näkyvät tässä. Avaa PDF pudottamalla se mihin tahansa.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Finderissa: valitse tiedostot, napsauta sitten hiiren kakkospainikkeella > Pikatoiminnot > Yhdistä tiedostot Papelilla. Ei luettelossa? Ota se käyttöön kerran kohdassa Pikatoiminnot > Mukauta.
+	Hide Papel	Kätke Papel
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Avaa uusi viesti ilman sitä, niin Papel näyttää tiedoston {name} sen kansiossa, ja voit liittää sen itse.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Sivulla {page} on enemmän sisältöä kuin Papel pystyy lukemaan: osaa siitä ei piirretä, ja sen tekstistä voi etsiä tai kopioida vain osan.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Type 3 -fontteja käyttävät sivut tulostetaan kuvina, koska Windows voi sulkea Papelin niitä tulostettaessa. Muut sivut tulostetaan tavalliseen tapaan.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Osa tästä sivusta ei näy: sen sisältö ylittää enimmäismäärän, jonka Papel piirtää yhdelle sivulle.
+	Papel can't check this signature yet: {}.	Papel ei vielä pysty tarkistamaan tätä allekirjoitusta: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel ei sulkeutunut normaalisti. Näiden asiakirjojen muutokset tallennettiin automaattisesti:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel piirtää ilman grafiikkasuoritinta, joten se voi olla hidas. Näytönohjaimen ajurin päivittäminen voi auttaa.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel säilyttää keskeneräisen työsi. Kun tiedostonvalitsin toimii, valitse Yritä uudelleen.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel etsii laitevalmistajien asentamat kirjastot. Valitse kirjasto vain, jos laitettasi ei löydy.
+	Papel on GitHub	Papel GitHubissa
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel avaa palveluntarjoajan sivun, jolla kirjaudut CPF:llä, PIN-koodilla ja kertakäyttökoodilla.
+	Papel web page	Papelin verkkosivu
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel toimii ilman verkkoyhteyttä. Ei telemetriaa, ei tiliä eikä pilvikäsittelyä, ellei palveluntarjoajaa lisätä.
+	Papel {c} is up to date.	Papel {c} on ajan tasalla.
+	Papel {v} is available.	Papel {v} on saatavilla.
+	Papel's own	Papelin oma
+	Quit Papel	Lopeta Papel
+	Reopen the files that were open when Papel last closed	Avaa uudelleen tiedostot, jotka olivat auki, kun Papel viimeksi suljettiin
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Allekirjoita valkoinen paperiarkki ja ota siitä valokuva kirkkaassa, tasaisessa valossa (käytä salamaa). Valitse kuva tai pudota se tähän: Papel löytää allekirjoituksen ja poistaa paperin.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Tekstintunnistusta ei ole asennettu: sen mallitiedostot puuttuvat. Asenna Papel uudelleen tai aseta PDFCRAFT_MODELS osoittamaan kansioon, jossa ne ovat.
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.
+	The Dock shows it the next time Papel opens.	Dock näyttää sen, kun Papel avataan seuraavan kerran.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papelin käyttämät fontit eivät pysty piirtämään merkkiä ”{c}” ({code}), joten se näkyy merkkinä ? kaikissa PDF-katseluohjelmissa. Teksti tallennetaan.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Lomake pyytää lähettämään tiedot osoitteeseen {u}; Papel ei lähetä lomaketietoja. Tallenna asiakirja, jotta syötetyt tiedot säilyvät.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Avain on macOS-avainnipussa, joka voi pyytää lupaa Papelin käytölle.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Avain on Windowsin varmennesäilössä, joka voi pyytää lupaa Papelin käytölle.
+	The PIN goes only to the card; Papel doesn't keep it.	PIN-koodi menee vain kortille; Papel ei tallenna sitä.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	Allekirjoittajan varmenteessa on kriittisiä laajennuksia, joita Papel ei tunnista ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	tekstintunnistusmalleja ei ole asennettu (asenna Papel uudelleen tai aseta PDFCRAFT_MODELS osoittamaan mallien kansioon)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Tämän kentän fontti ei pysty piirtämään merkkiä ”{c}” ({code}), joten Papel näyttää sen tilalla merkin ?. Arvo tallennetaan, ja muut PDF-katseluohjelmat piirtävät kentän sen perusteella uudelleen.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Tämä lomake sisältää myös XFA-tietoja, joita Papel ei vielä lue. Voit täyttää kentät, mutta Acrobat saattaa näyttää XFA-arvot niiden sijaan.
+	This form has too many fields, or a field name too long, for Papel to read them all. Any signature among the rest is not listed, so the document is treated as signed.	Tässä lomakkeessa on liian monta kenttää tai liian pitkä kentän nimi, jotta Papel voisi lukea ne kaikki. Muiden joukossa olevia allekirjoituksia ei näytetä luettelossa, joten asiakirjaa käsitellään allekirjoitettuna.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Tämä on dynaaminen XFA-lomake, jota Papel ei vielä osaa näyttää. Näet tiedoston paikkamerkkisivun.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	tätä allekirjoituspalvelua ei voi käyttää: se vaatii OAuth-kirjautumisen selaimessa, jota Papel ei vielä tue
+	Welcome to Papel	Tervetuloa Papeliin
+	Your default email app can't take a file from Papel.	Oletussähköpostisovelluksesi ei voi ottaa vastaan tiedostoa Papelilta.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} lähettää lomakkeen osoitteeseen {url}; Papel ei lähetä lomaketietoja. Tallenna asiakirja, jotta syötetyt tiedot säilyvät.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} sivulla on enemmän sisältöä kuin Papel pystyy lukemaan, ensimmäisenä sivu {page}: osia niistä ei piirretä, ja niiden tekstistä voi etsiä tai kopioida vain osan.
+	{program} can't take a file from Papel.	{program} ei voi ottaa vastaan tiedostoa Papelilta.
+	{who} in this document tried to open an address Papel won't open: {e}.	Tämän asiakirjan {who} yritti avata osoitteen, jota Papel ei avaa: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Tämän asiakirjan {who} yritti avata osoitteen, jota Papel ei avaa: {e}. Asiakirjoista avautuvat vain verkkolinkit (http, https) ja sähköpostilinkit (mailto).
 	This document's script is asking	Tämän asiakirjan skripti kysyy
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Tämä pyyntö tulee asiakirjasta, ei PdfCraftista. Kirjoita salasana vain, jos luotat tähän asiakirjaan.

@@ -150,6 +150,7 @@
 	Arabic	Arabisch
 	Arch Down	Bogen nach unten
 	Arch Up	Bogen nach oben
+	Arrange All	Alle anordnen
 	Arrange\nAll	Alle\nanordnen
 	Article I.	Artikel I.
 	Artistic Effects	Künstlerische Effekte
@@ -1173,6 +1174,7 @@
 	No limit	Keine Begrenzung
 	No Markup	Keine Änderungen
 	No model credits were built into this copy.	In dieser Version wurden keine Modellnachweise eingebaut.
+	No other Letra windows are open.	Es sind keine weiteren Letra-Fenster geöffnet.
 	No Outline	Keine Kontur
 	No Paragraph Space	Kein Absatzabstand
 	No printers found. Configure a system printer or export a PDF.	Keine Drucker gefunden. Richten Sie einen Systemdrucker ein oder exportieren Sie ein PDF.
@@ -1825,7 +1827,10 @@
 	Swap footnotes and endnotes	Fuß- und Endnoten vertauschen
 	Swedish	Schwedisch
 	Switch Modes	Modus wechseln
+	Switch Windows	Fenster wechseln
 	Switch\nModes	Modus\nwechseln
+	Switch\nWindows	Fenster\nwechseln
+	Synchronous Scrolling	Synchrones Scrollen
 	Synonyms	Synonyme
 	Tab	Tab
 	Tab Character	Tabstoppzeichen
@@ -2032,6 +2037,7 @@
 	Vertical alignment:	Vertikale Ausrichtung:
 	View Alt Text…	Alternativtext anzeigen…
 	View Gridlines	Rasterlinien anzeigen
+	View Side by Side	Nebeneinander anzeigen
 	View State	Ansichtszustand
 	View › Focus hides everything but your words. I'll wait outside.	Ansicht › Fokus blendet alles außer Ihren Worten aus. Ich warte draußen.
 	Views	Ansichten
@@ -2265,6 +2271,27 @@
 	Uruguay	Uruguay
 	Venezuela	Venezuela
 	South Africa	Südafrika
+	A free word processor, written in Rust.	Eine freie Textverarbeitung, geschrieben in Rust.
+	Back	Zurück
+	Licences	Lizenzen
+	MIT OR Apache-2.0. Includes open-source work by other authors; see NOTICE.	MIT OR Apache-2.0. Enthält Open-Source-Arbeit anderer Autoren; siehe NOTICE.
+	Part of Nodalia	Teil von Nodalia
+	Report a problem	Problem melden
+	Source code	Quellcode
+	Window controls:	Fenstersteuerung:
+	‹ About Letra	‹ Über Letra
+	Keyboard shortcuts	Tastenkürzel
+	Check for updates…	Nach Updates suchen…
+	About Letra	Über Letra
+	Quit	Beenden
+	Main menu	Hauptmenü
+	Screen paper color:	Papierfarbe am Bildschirm:
+	Document background	Dokumenthintergrund
+	Soft green	Sanftes Grün
+	Warm cream	Warmes Creme
+	Soft gray	Sanftes Grau
+	Status bar count:	Zählung in der Statusleiste:
+	You can also right-click the count in the status bar to change it.	Du kannst auch mit der rechten Maustaste auf die Zählung in der Statusleiste klicken, um sie zu ändern.
 
 # Descriptive feature names; legacy rows remain for earlier app pins.
 	Diagram	Schema

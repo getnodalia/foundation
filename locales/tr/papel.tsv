@@ -3923,6 +3923,65 @@ document scrollbar width	Wide	Geniş
 	…or paste the raw text here; # headings, - bullets	…veya ham metni buraya yapıştırın; # başlıklar, - madde işaretleri
 	− Page {p}	− Sayfa {p}
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Sekmelerin solunda, başlık çubuğunun göstereceği yerde bir logo veya ad: Papel'ınki ya da şirketinizinki.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Bir PNG veya SVG dosyası. Papel her başlatıldığında bu konumdan okunur.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Sayfa içeriğinin parçası olan bir imza, örneğin taranmış bir sayfada, bir alan ya da açıklama değildir; bu yüzden tek başına kaldırılamaz ve Papel onu gizlemek için sayfanın bölümlerini silmez. Kaldırmak için o alanı karartın (Karart) ya da imza ayrı bir görüntüyse görüntüyü PDF'i düzenle ile silin.
+	About Papel	Papel hakkında
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Papel bir sonraki başlatılışında uygulanır. Pencere G-SYNC, FreeSync veya başka bir değişken yenileme hızına sahip bir ekranda titriyorsa OpenGL'i seçin.
+	Ask to make Papel the default PDF app	Papel'ı varsayılan PDF uygulaması yapmayı sor
+	Choose Papel for .pdf files in Windows Settings.	Windows Ayarları'nda .pdf dosyaları için Papel'ı seçin.
+	Combine files in Papel…	Dosyaları Papel'ta birleştir…
+	Convert to PDF with Papel	Papel ile PDF'ye dönüştür
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papel'ta açtığınız dosyalar burada görünür. Açmak için bir PDF'i herhangi bir yere bırakın.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Finder'dan: dosyaları seçin, sonra sağ tık > Hızlı Eylemler > “Combine files in Papel”. Listede yok mu? Bir kez Hızlı Eylemler > Özelleştir'den açın.
+	Hide Papel	Papel’i Gizle
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	Macarca OCR için Tesseract 5 ve hun dil modeli içeren masaüstü uygulaması gerekir. Kurulumdan sonra Papel uygulamasını yeniden başlatın.
+	Make Papel your default PDF app?	Papel varsayılan PDF uygulamanız yapılsın mı?
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Henüz yüklü eklenti yok. Papel'ı genişletmek için bir .wasm eklentisi yükleyin.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Dosya olmadan yeni bir ileti açın; Papel, {name} dosyasını klasöründe gösterecek, böylece kendiniz ekleyebilirsiniz.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Sayfa {page}, Papel'ın okuyabileceğinden daha fazla içerik barındırıyor: bir kısmı çizilmiyor ve metninin yalnızca bir kısmı bulunabiliyor ya da kopyalanabiliyor.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Type 3 yazı tipleri kullanan sayfalar resim olarak yazdırılır, çünkü Windows bu sayfaları yazdırırken Papel'ı kapatabilir. Diğer sayfalar her zamanki gibi yazdırılır.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Bu sayfanın bir kısmı gösterilmiyor: içeriği, Papel'ın bir sayfa için çizdiği en fazla miktarı aşıyor.
+	Papel can't check this signature yet: {}.	Papel bu imzayı henüz denetleyemiyor: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel normal şekilde kapanmadı. Bu belgelerde otomatik olarak kaydedilen değişiklikler vardı:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel grafik işlemcisi olmadan çizim yapıyor, bu nedenle yavaş olabilir. Grafik sürücüsünü güncellemek yardımcı olabilir.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel yaptığınız işi saklıyor. Dosya seçici çalıştığında Tekrar dene'yi seçin.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel, cihaz üreticilerinin yüklediği kitaplıkları arar. Yalnızca cihazınız bulunamazsa birini seçin.
+	Papel on GitHub	GitHub'da Papel
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel sağlayıcının sayfasını açar; orada CPF, PIN ve tek kullanımlık kodla oturum açarsınız.
+	Papel web page	Papel web sayfası
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel çevrimdışı çalışır. Bir sağlayıcı eklemediğiniz sürece telemetri yok, hesap yok ve bulut işleme yok.
+	Papel {v} is available.	Papel {v} kullanılabilir.
+	Papel's own	Papel'ınki
+	Quit Papel	Papel’ten Çık
+	Reopen the files that were open when Papel last closed	Papel en son kapatıldığında açık olan dosyaları yeniden aç
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Beyaz bir kâğıda imzanızı atın ve parlak, eşit ışıkta fotoğrafını çekin (flaş kullanın). Fotoğrafı seçin veya buraya bırakın: Papel imzayı bulur ve kâğıdı kaldırır.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Metin tanıma yüklü değil: model dosyaları eksik. Papel'ı yeniden yükleyin veya PDFCRAFT_MODELS ortam değişkenini bunları içeren klasöre ayarlayın.
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	{} sertifikasında Papel'ın tanımadığı kritik uzantılar var, bu yüzden {} için güvence olarak kullanılmıyor.
+	The Dock shows it the next time Papel opens.	Dock, Papel bir sonraki açılışında gösterir.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papel'ın yazdığı yazı tipleri “{c}” ({code}) karakterini çizemiyor, bu yüzden her PDF görüntüleyicide ? olarak görünür. Metin kaydedilir.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Form {u} adresine gönderilmek isteniyor; Papel form verilerini göndermez. Girdilerinizi korumak için belgeyi kaydedin.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Anahtar macOS Anahtar Zinciri'ndedir ve Papel'ın kullanmasına izin vermenizi isteyebilir.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Anahtar Windows sertifika deposundadır ve Papel'ın kullanmasına izin vermenizi isteyebilir.
+	The module's tokens hold no digital ID Papel can sign with.	Modülün belirteçlerinde Papel'ın imzalayabileceği bir dijital kimlik yok.
+	The PIN goes only to the card; Papel doesn't keep it.	PIN yalnızca karta gider; Papel onu saklamaz.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	İmzalayanın sertifikasında Papel'ın tanımadığı kritik uzantılar var ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	metin tanıma modelleri yüklü değil (Papel'ı yeniden yükleyin veya PDFCRAFT_MODELS değişkenini bunları içeren klasöre ayarlayın)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Bu alanın yazı tipi “{c}” ({code}) karakterini çizemiyor, bu yüzden Papel yerine ? gösteriyor. Değer kaydedilir ve diğer PDF görüntüleyiciler alanı ondan yeniden çizer.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Bu form aynı zamanda Papel'ın henüz okumadığı XFA verilerini de içerir. Alanlarını doldurabilirsiniz ancak Acrobat bunun yerine XFA değerlerini gösterebilir.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Bu kurulum bir Debian paketine aittir. Papel’ı sistem yazılım yöneticinizden güncelleyin.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Bu kurulum bir RPM paketine aittir. Papel’ı sistem yazılım yöneticinizden güncelleyin.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Bu, Papel'ın henüz görüntüleyemediği dinamik bir XFA formudur. Gördüğünüz şey dosyanın yer tutucu sayfasıdır.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	bu imza hizmeti kullanılamıyor: tarayıcıda OAuth ile oturum açmayı gerektiriyor ve Papel bunu henüz desteklemiyor
+	Use your system software manager to update Papel.	Papel’ı sistem yazılım yöneticinizden güncelleyin.
+	Welcome to Papel	Papel'a Hoş Geldiniz
+	Your default email app can't take a file from Papel.	Varsayılan e-posta uygulamanız Papel’tan dosya alamıyor.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} formu {url} adresine gönderiyor; Papel form verilerini göndermez. Girdilerinizi korumak için belgeyi kaydedin.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} sayfa Papel'ın okuyabileceğinden daha fazla içerik barındırıyor, ilki sayfa {page}: bazı kısımları çizilmiyor ve metinlerinin yalnızca bir kısmı bulunabiliyor ya da kopyalanabiliyor.
+	{program} can't take a file from Papel.	{program}, Papel’tan dosya alamıyor.
+	{who} in this document tried to open an address Papel won't open: {e}.	Bu belgedeki {who}, Papel'ın açamayacağı bir adresi açmaya çalıştı: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Bu belgedeki {who}, Papel'ın açamayacağı bir adresi açmaya çalıştı: {e}. Belgelerden yalnızca web (http, https) ve e-posta (mailto) bağlantıları açılır.
 	This document's script is asking	Bu belgenin betiği soruyor
 	Document: {name}	Belge: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Bu istek Papel'tan değil, belgeden geliyor. Yalnızca bu belgeye güveniyorsanız parola girin.

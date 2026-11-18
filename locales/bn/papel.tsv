@@ -2697,6 +2697,33 @@ calendar weekday	We	বু
 	… and {n} more	… এবং আরও {n}টি
 	−Bin	−Bin
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	About Papel	Papel সম্পর্কে
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papel-এ খোলা ফাইল এখানে দেখা যায়। PDF খুলতে যেকোনো জায়গায় ছেড়ে দিন।
+	Papel can't check this signature yet: {}.	Papel এখনও এই স্বাক্ষর যাচাই করতে পারে না: {}।
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel স্বাভাবিকভাবে বন্ধ হয়নি। এই নথিগুলোর পরিবর্তন স্বয়ংক্রিয়ভাবে সংরক্ষিত ছিল:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel গ্রাফিক্স প্রসেসর ছাড়া আঁকছে, তাই ধীর হতে পারে। গ্রাফিক্স ড্রাইভার হালনাগাদ করলে উপকার হতে পারে।
+	Papel on GitHub	GitHub-এ Papel
+	Papel web page	Papel ওয়েব পৃষ্ঠা
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel অফলাইনে কাজ করে। আপনি কোনো প্রদানকারী যোগ না করলে টেলিমেট্রি, অ্যাকাউন্ট বা ক্লাউড প্রক্রিয়াকরণ নেই।
+	Papel {v} is available.	Papel {v} পাওয়া যাচ্ছে।
+	Reopen the files that were open when Papel last closed	Papel শেষবার বন্ধ হওয়ার সময় খোলা ফাইলগুলো আবার খুলুন
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	একটি সাদা কাগজে স্বাক্ষর করুন এবং উজ্জ্বল, সমান আলোতে (ফ্ল্যাশ ব্যবহার করে) তার ছবি তুলুন। ছবিটি বেছে নিন বা এখানে ছেড়ে দিন: Papel স্বাক্ষরটি খুঁজে নিয়ে কাগজটি সরিয়ে দেয়।
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	লেখা শনাক্তকরণ ইনস্টল নেই: মডেল ফাইল অনুপস্থিত। Papel আবার ইনস্টল করুন বা মডেলের ফোল্ডারে PDFCRAFT_MODELS নির্ধারণ করুন।
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	{}-এর সনদে এমন জরুরি এক্সটেনশন আছে যা Papel চেনে না, তাই {}-এর নিশ্চয়তা দিতে এটি ব্যবহার করা হয় না।
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papel যে ফন্ট দিয়ে লেখে সেগুলো “{c}” ({code}) আঁকতে পারে না, তাই প্রতিটি PDF ভিউয়ারে এটি ? হিসেবে দেখায়। লেখাটি সংরক্ষিত হয়েছে।
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	ফর্ম {u}-এ জমা দিতে বলছে; Papel ফর্মের তথ্য পাঠায় না। লেখা রাখতে নথি সংরক্ষণ করুন।
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	কী macOS Keychain-এ আছে, যা Papel-কে ব্যবহারের অনুমতি চাইতে পারে।
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	কী Windows সনদ ভাণ্ডারে আছে, যা Papel-কে ব্যবহারের অনুমতি চাইতে পারে।
+	The signer's certificate has critical extensions Papel does not recognize ({}).	স্বাক্ষরকারীর সনদে এমন জরুরি এক্সটেনশন আছে যা Papel চেনে না ({})।
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	লেখা শনাক্তকরণ মডেল ইনস্টল নেই (Papel আবার ইনস্টল করুন বা মডেলের ফোল্ডারে PDFCRAFT_MODELS নির্ধারণ করুন)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	এই ঘরের ফন্ট “{c}” ({code}) আঁকতে পারে না, তাই Papel এর জায়গায় ? দেখায়। মানটি সংরক্ষিত থাকে, এবং অন্যান্য PDF ভিউয়ার সেখান থেকে ঘরটি নতুন করে আঁকে।
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	এই ফর্মে XFA তথ্যও আছে, যা Papel এখনও পড়ে না। ঘর পূরণ করতে পারেন, তবে Acrobat পরিবর্তে XFA মান দেখাতে পারে।
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	এটি গতিশীল XFA ফর্ম, যা Papel এখনও দেখাতে পারে না। আপনি ফাইলের স্থানধারক পৃষ্ঠা দেখছেন।
+	Welcome to Papel	Papel-এ স্বাগতম
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} ফর্ম {url}-এ জমা দেয়; Papel ফর্মের তথ্য পাঠায় না। লেখা রাখতে নথি সংরক্ষণ করুন।
+	{who} in this document tried to open an address Papel won't open: {e}.	এই নথির {who} এমন ঠিকানা খুলতে চেয়েছে যা Papel খুলবে না: {e}।
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	এই নথির {who} এমন ঠিকানা খুলতে চেয়েছে যা Papel খুলবে না: {e}। নথি থেকে শুধু ওয়েব (http, https) ও ইমেইল (mailto) লিংক খোলে।
 	This document's script is asking	এই নথির স্ক্রিপ্ট জানতে চাইছে
 	Document: {name}	নথি: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	এই অনুরোধটি নথি থেকে এসেছে, Papel থেকে নয়। এই নথিকে বিশ্বাস করলে তবেই পাসওয়ার্ড লিখুন।

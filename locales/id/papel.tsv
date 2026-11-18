@@ -3454,6 +3454,54 @@ calendar weekday	We	Rab
 	− Page {p}	− Halaman {p}
 	−Bin	−Bin
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Logo atau nama di sebelah kiri tab, tempat bilah judul biasanya menampilkannya: milik Papel, atau milik perusahaan Anda.
+	A PNG or SVG file. It is read from this place each time Papel starts.	File PNG atau SVG. File dibaca dari lokasi ini setiap kali Papel dimulai.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Tanda tangan yang menjadi bagian dari isi halaman, seperti pada halaman hasil pindai, bukan kolom atau anotasi, jadi tidak dapat dihapus sendiri, dan Papel tidak menghapus bagian halaman untuk menyembunyikannya. Untuk menghapusnya, sensor area tersebut (Sensor), atau hapus gambarnya dengan Edit PDF jika tanda tangan itu berupa gambar tersendiri.
+	About Papel	Tentang Papel
+	Combine files in Papel…	Gabung file di Papel…
+	Convert to PDF with Papel	Konversi ke PDF dengan Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	File yang Anda buka di Papel akan muncul di sini. Jatuhkan PDF di mana saja untuk membukanya.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Dari Finder: pilih file, lalu klik kanan > Aksi Cepat > Gabungkan file di Papel. Tidak ada di daftar? Aktifkan sekali di Aksi Cepat > Sesuaikan.
+	Hide Papel	Sembunyikan Papel
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Buka pesan baru tanpanya, dan Papel akan menampilkan {name} di foldernya agar Anda dapat melampirkannya sendiri.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Halaman {page} berisi lebih banyak konten daripada yang dapat dibaca Papel: sebagian tidak digambar, dan hanya sebagian teksnya yang dapat dicari atau disalin.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Sebagian halaman ini tidak ditampilkan: isinya melebihi batas maksimum yang digambar Papel untuk satu halaman.
+	Papel can't check this signature yet: {}.	Papel belum dapat memeriksa tanda tangan ini: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel tidak berhenti secara normal. Dokumen-dokumen ini memiliki perubahan yang disimpan otomatis:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel sedang menggambar tanpa akselerator grafis, jadi mungkin lambat. Memperbarui driver grafis mungkin membantu.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel menyimpan pekerjaan Anda. Setelah pemilih file berfungsi, pilih Coba lagi.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel mencari pustaka yang dipasang vendor perangkat. Pilih salah satu hanya jika perangkat Anda tidak ditemukan.
+	Papel on GitHub	Papel di GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel membuka halaman penyedia, tempat Anda masuk dengan CPF, PIN, dan kode sekali pakai.
+	Papel web page	Halaman web Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel bekerja secara luring. Tidak ada telemetri, tidak ada akun, dan tidak ada pemrosesan awan kecuali Anda menambahkan penyedia.
+	Papel {c} is up to date.	Papel {c} sudah terbaru.
+	Papel {v} is available.	Papel {v} tersedia.
+	Papel's own	Milik Papel
+	Quit Papel	Keluar dari Papel
+	Reopen the files that were open when Papel last closed	Buka kembali file yang terbuka saat Papel terakhir ditutup
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Tandatangani selembar kertas putih dan ambil fotonya dengan cahaya terang dan merata (gunakan blitz). Pilih foto atau jatuhkan di sini: Papel menemukan tanda tangan dan menghapus kertasnya.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Pengenalan teks belum terpasang: file modelnya hilang. Pasang ulang Papel, atau atur PDFCRAFT_MODELS ke folder yang memuatnya.
+	The Dock shows it the next time Papel opens.	Dock menampilkannya saat Papel dibuka berikutnya.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Font yang dipakai Papel tidak dapat menggambar “{c}” ({code}), sehingga teks itu tampil sebagai ? di setiap penampil PDF. Teks tetap tersimpan.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Formulir diminta untuk dikirim ke {u}; Papel tidak mengirim data formulir. Simpan dokumen untuk mempertahankan isi Anda.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Kunci berada di Keychain macOS, yang mungkin meminta izin untuk memakai Papel.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Kunci berada di penyimpanan sertifikat Windows, yang mungkin meminta izin untuk memakai Papel.
+	The PIN goes only to the card; Papel doesn't keep it.	PIN hanya dikirim ke kartu; Papel tidak menyimpannya.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	Sertifikat penanda tangan memiliki ekstensi kritis yang tidak dikenali Papel ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	model pengenalan teks belum terpasang (pasang ulang Papel, atau atur PDFCRAFT_MODELS ke folder yang memuatnya)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Font kolom ini tidak dapat menggambar “{c}” ({code}), jadi Papel menampilkan ? sebagai gantinya. Nilainya disimpan, dan penampil PDF lain menggambar ulang kolom dari nilai itu.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Formulir ini juga berisi data XFA, yang belum dibaca Papel. Anda dapat mengisi kolomnya, tetapi Acrobat mungkin menampilkan nilai XFA sebagai gantinya.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Ini adalah formulir XFA dinamis, yang belum dapat ditampilkan oleh Papel. Yang Anda lihat adalah halaman placeholder milik file tersebut.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	layanan tanda tangan ini tidak dapat digunakan: memerlukan masuk OAuth di browser, yang belum didukung Papel
+	Welcome to Papel	Selamat datang di Papel
+	Your default email app can't take a file from Papel.	Aplikasi email default Anda tidak dapat menerima file dari Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} mengirim formulir ke {url}; Papel tidak mengirim data formulir. Simpan dokumen untuk mempertahankan isi Anda.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} halaman berisi lebih banyak konten daripada yang dapat dibaca Papel, dimulai dari halaman {page}: sebagian tidak digambar, dan hanya sebagian teksnya yang dapat dicari atau disalin.
+	{program} can't take a file from Papel.	{program} tidak dapat menerima file dari Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} dalam dokumen ini mencoba membuka alamat yang tidak akan dibuka Papel: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} dalam dokumen ini mencoba membuka alamat yang tidak akan dibuka Papel: {e}. Hanya tautan web (http, https) dan email (mailto) yang terbuka dari dokumen.
 	This document's script is asking	Skrip dokumen ini bertanya
 	Document: {name}	Dokumen: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Permintaan ini berasal dari dokumen, bukan dari Papel. Masukkan kata sandi hanya jika Anda memercayai dokumen ini.

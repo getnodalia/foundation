@@ -3537,6 +3537,58 @@ document scrollbar width	Wide	Πλατύ
 	…or paste the raw text here; # headings, - bullets	…ή επικολλήστε εδώ το ακατέργαστο κείμενο· # επικεφαλίδες, - λίστες
 	− Page {p}	− Σελίδα {p}
 	−LOC	−Γραμμές
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Ένα λογότυπο ή όνομα αριστερά από τις καρτέλες, εκεί όπου θα το έδειχνε μια γραμμή τίτλου: του Papel ή της εταιρείας σας.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Ένα αρχείο PNG ή SVG. Διαβάζεται από αυτή τη θέση σε κάθε εκκίνηση του Papel.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Μια υπογραφή που είναι μέρος του περιεχομένου μιας σελίδας, όπως σε σαρωμένη σελίδα, δεν είναι πεδίο ούτε σχολιασμός, οπότε δεν μπορεί να αφαιρεθεί μόνη της, και το Papel δεν σβήνει τμήματα της σελίδας για να την κρύψει. Για να την αφαιρέσετε, αποκρύψτε αυτή την περιοχή (Απόκρυψη ευαίσθητου περιεχομένου) ή, αν η υπογραφή είναι ξεχωριστή εικόνα, διαγράψτε την εικόνα με την Επεξεργασία PDF.
+	About Papel	Σχετικά με το Papel
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Εφαρμόζεται την επόμενη φορά που θα ξεκινήσει το Papel. Επιλέξτε OpenGL αν το παράθυρο τρεμοπαίζει σε οθόνη με G-SYNC, FreeSync ή άλλο μεταβλητό ρυθμό ανανέωσης.
+	Ask to make Papel the default PDF app	Ερώτηση για ορισμό του Papel ως προεπιλεγμένης εφαρμογής PDF
+	Choose Papel for .pdf files in Windows Settings.	Επιλέξτε το Papel για αρχεία .pdf στις Ρυθμίσεις των Windows.
+	Combine files in Papel…	Συνδυασμός αρχείων στο Papel…
+	Convert to PDF with Papel	Μετατροπή σε PDF με το Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Τα αρχεία που ανοίγετε στο Papel εμφανίζονται εδώ. Σύρετε ένα PDF οπουδήποτε για να το ανοίξετε.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Από το Finder: επιλέξτε αρχεία, μετά δεξί κλικ > Γρήγορες ενέργειες > “Combine files in Papel”. Δεν εμφανίζεται; Ενεργοποιήστε το μία φορά στο Γρήγορες ενέργειες > Προσαρμογή.
+	Hide Papel	Απόκρυψη Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	Το ουγγρικό OCR απαιτεί την εφαρμογή υπολογιστή με Tesseract 5 και το γλωσσικό μοντέλο hun. Επανεκκινήστε το Papel μετά την εγκατάσταση.
+	Make Papel your default PDF app?	Να γίνει το Papel η προεπιλεγμένη εφαρμογή PDF;
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Ανοίξτε ένα νέο μήνυμα χωρίς αυτό και το Papel θα εμφανίσει το {name} στον φάκελό του, ώστε να το επισυνάψετε μόνοι σας.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Η σελίδα {page} περιέχει περισσότερο περιεχόμενο από όσο μπορεί να διαβάσει το Papel: ένα μέρος της δεν σχεδιάζεται και μόνο μέρος του κειμένου της μπορεί να αναζητηθεί ή να αντιγραφεί.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Οι σελίδες που χρησιμοποιούν γραμματοσειρές Type 3 εκτυπώνονται ως εικόνες, επειδή τα Windows μπορεί να κλείσουν το Papel κατά την εκτύπωσή τους. Οι υπόλοιπες σελίδες εκτυπώνονται κανονικά.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Μέρος αυτής της σελίδας δεν εμφανίζεται: το περιεχόμενό της υπερβαίνει το μέγιστο που σχεδιάζει το Papel για μία σελίδα.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Το Papel δεν τερματίστηκε κανονικά. Στα παρακάτω έγγραφα αποθηκεύτηκαν αυτόματα αλλαγές:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Το Papel αποδίδει τα γραφικά χωρίς επιτάχυνση από επεξεργαστή γραφικών και ενδέχεται να είναι αργό. Μια ενημέρωση του προγράμματος οδήγησης γραφικών ίσως βοηθήσει.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Το Papel αναζητά τις βιβλιοθήκες που εγκαθιστούν οι κατασκευαστές συσκευών. Επιλέξτε μία μόνο αν δεν βρεθεί η συσκευή σας.
+	Papel on GitHub	Papel στο GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Το Papel ανοίγει τη σελίδα του παρόχου, όπου συνδέεστε με CPF, PIN και κωδικό μίας χρήσης.
+	Papel web page	Ιστότοπος του Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Το Papel λειτουργεί χωρίς σύνδεση στο διαδίκτυο. Χωρίς τηλεμετρία, λογαριασμό ή επεξεργασία στο νέφος, εκτός αν προσθέσετε εσείς υπηρεσία.
+	Papel {v} is available.	Η έκδοση {v} του Papel είναι διαθέσιμη.
+	Papel's own	Του Papel
+	Quit Papel	Τερματισμός Papel
+	Reopen the files that were open when Papel last closed	Εκ νέου άνοιγμα των αρχείων που ήταν ανοιχτά κατά τον τελευταίο τερματισμό του Papel
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Υπογράψτε σε ένα λευκό φύλλο χαρτιού και φωτογραφίστε το σε έντονο, ομοιόμορφο φως (χρησιμοποιήστε το φλας). Επιλέξτε τη φωτογραφία ή αφήστε την εδώ: το Papel βρίσκει την υπογραφή και αφαιρεί το χαρτί.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Η αναγνώριση κειμένου δεν είναι εγκατεστημένη: λείπουν τα αρχεία μοντέλων. Εγκαταστήστε ξανά το Papel ή ορίστε το PDFCRAFT_MODELS στον φάκελο που τα περιέχει.
+	The Dock shows it the next time Papel opens.	Το Dock θα το δείξει την επόμενη φορά που θα ανοίξει το Papel.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Οι γραμματοσειρές με τις οποίες γράφει το Papel δεν μπορούν να σχεδιάσουν το «{c}» ({code}), γι' αυτό εμφανίζεται ως ? σε κάθε πρόγραμμα προβολής PDF. Το κείμενο αποθηκεύεται.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Η φόρμα ζητά υποβολή στο {u}, αλλά το Papel δεν αποστέλλει δεδομένα φόρμας. Αποθηκεύστε το έγγραφο για να διατηρήσετε τις καταχωρίσεις σας.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Το κλειδί βρίσκεται στην Κλειδοθήκη του macOS, η οποία ενδέχεται να ζητήσει άδεια χρήσης από το Papel.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Το κλειδί βρίσκεται στο χώρο αποθήκευσης πιστοποιητικών των Windows, ο οποίος ενδέχεται να ζητήσει άδεια χρήσης από το Papel.
+	The module's tokens hold no digital ID Papel can sign with.	Τα token της μονάδας δεν περιέχουν ψηφιακή ταυτότητα με την οποία μπορεί να υπογράψει το Papel.
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	τα μοντέλα αναγνώρισης κειμένου δεν είναι εγκατεστημένα (επανεγκαταστήστε το Papel ή ορίστε το PDFCRAFT_MODELS στον φάκελο που τα περιέχει)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Η γραμματοσειρά αυτού του πεδίου δεν μπορεί να σχεδιάσει το «{c}» ({code}), γι' αυτό το Papel δείχνει ? στη θέση του. Η τιμή αποθηκεύεται και άλλα προγράμματα προβολής PDF επανασχεδιάζουν το πεδίο από αυτήν.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Αυτή η φόρμα περιέχει επίσης δεδομένα XFA, τα οποία το Papel δεν διαβάζει ακόμη. Μπορείτε να συμπληρώσετε τα πεδία της, αλλά το Acrobat ενδέχεται να εμφανίσει τις τιμές XFA.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Αυτή η εγκατάσταση διαχειρίζεται από πακέτο Debian. Χρησιμοποιήστε τη διαχείριση λογισμικού του συστήματος για να ενημερώσετε το Papel.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Αυτή η εγκατάσταση διαχειρίζεται από πακέτο RPM. Χρησιμοποιήστε τη διαχείριση λογισμικού του συστήματος για να ενημερώσετε το Papel.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Πρόκειται για δυναμική φόρμα XFA, την οποία το Papel δεν μπορεί ακόμη να εμφανίσει. Εμφανίζεται η προσωρινή σελίδα του αρχείου.
+	Use your system software manager to update Papel.	Χρησιμοποιήστε τη διαχείριση λογισμικού του συστήματος για να ενημερώσετε το Papel.
+	Welcome to Papel	Καλώς ορίσατε στο Papel
+	Your default email app can't take a file from Papel.	Η προεπιλεγμένη εφαρμογή email δεν μπορεί να δεχτεί αρχείο από το Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	Το {name} υποβάλλει τη φόρμα στο {url}, αλλά το Papel δεν αποστέλλει δεδομένα φόρμας. Αποθηκεύστε το έγγραφο για να διατηρήσετε τις καταχωρίσεις σας.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} σελίδες περιέχουν περισσότερο περιεχόμενο από όσο μπορεί να διαβάσει το Papel, πρώτη η σελίδα {page}: μέρη τους δεν σχεδιάζονται και μόνο μέρος του κειμένου τους μπορεί να αναζητηθεί ή να αντιγραφεί.
+	{program} can't take a file from Papel.	Το {program} δεν μπορεί να δεχτεί αρχείο από το Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	Το στοιχείο {who} σε αυτό το έγγραφο προσπάθησε να ανοίξει διεύθυνση που το Papel δεν επιτρέπει: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Το στοιχείο {who} σε αυτό το έγγραφο προσπάθησε να ανοίξει μη επιτρεπόμενη διεύθυνση: {e}. Από τα έγγραφα ανοίγουν μόνο σύνδεσμοι ιστού (http, https) και ηλεκτρονικού ταχυδρομείου (mailto).
 	This document's script is asking	Το σενάριο αυτού του εγγράφου ρωτά
 	Document: {name}	Έγγραφο: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Αυτό το αίτημα προέρχεται από το έγγραφο, όχι από το Papel. Εισαγάγετε κωδικό πρόσβασης μόνο αν εμπιστεύεστε αυτό το έγγραφο.

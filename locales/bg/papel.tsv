@@ -3699,6 +3699,60 @@ document scrollbar width	Wide	Широка
 	…or paste the raw text here; # headings, - bullets	…или поставете суровия текст тук; # заглавия, - списъци
 	− Page {p}	− Страница {p}
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Лого или име вляво от разделите, където би ги показала заглавната лента: на Papel или на вашата фирма.
+	A PNG or SVG file. It is read from this place each time Papel starts.	PNG или SVG файл. Чете се от това място при всяко стартиране на Papel.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Подпис, който е част от съдържанието на страница (например на сканирана страница), не е поле или анотация, затова не може да се премахне самостоятелно, а Papel не изтрива части от страницата, за да го скрие. За да го махнете, заличете тази област (Заличаване) или, ако подписът е отделно изображение, изтрийте го с „Редактирай PDF“.
+	About Papel	За Papel
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Прилага се при следващото стартиране на Papel. Изберете OpenGL, ако прозорецът трепти на дисплей с G-SYNC, FreeSync или друга променлива честота на опресняване.
+	Ask to make Papel the default PDF app	Питане дали Papel да бъде приложението по подразбиране за PDF
+	Choose Papel for .pdf files in Windows Settings.	Изберете Papel за файловете .pdf в настройките на Windows.
+	Combine files in Papel…	Обединяване на файлове в Papel…
+	Convert to PDF with Papel	Преобразуване в PDF с Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Файловете, които отваряте в Papel, се показват тук. Пуснете PDF файл където и да е, за да го отворите.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Във Finder: изберете файлове, после десен клик > Бързи действия > “Combine files in Papel”. Няма го? Включете го веднъж от Бързи действия > Персонализиране.
+	Hide Papel	Скрий Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	Унгарското OCR изисква настолното приложение с Tesseract 5 и езиковия модел hun. Рестартирайте Papel след инсталирането.
+	Make Papel your default PDF app?	Задаване на Papel като приложение по подразбиране за PDF?
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Все още няма инсталирани плъгини. Инсталирайте .wasm плъгин, за да разширите Papel.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Отворете ново съобщение без него и Papel ще покаже {name} в папката му, за да го прикачите сами.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Страница {page} съдържа повече съдържание, отколкото Papel може да прочете: част от нея не е изчертана, а само част от текста може да бъде намерена или копирана.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Страниците, които използват шрифтове Type 3, се отпечатват като изображения, защото Windows може да затвори Papel, докато ги отпечатва. Останалите страници се отпечатват както обикновено.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Част от тази страница не е показана: съдържанието ѝ надхвърля максимума, който Papel изчертава за една страница.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel не беше затворен нормално. Тези документи имат автоматично записани промени:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel рисува без графичен процесор, затова може да е бавен. Обновяването на графичния драйвер може да помогне.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel запазва това, върху което работехте. Когато изборът на файлове заработи, изберете Опитай отново.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel търси библиотеките, които инсталират производителите на устройства. Изберете библиотека само ако устройството ви не е намерено.
+	Papel on GitHub	Papel в GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel отваря страницата на доставчика, където влизате с CPF, PIN и еднократен код.
+	Papel web page	Уебстраница на Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel работи офлайн. Без телеметрия, без акаунт и без обработка в облака, освен ако не добавите доставчик.
+	Papel {v} is available.	Налична е Papel {v}.
+	Papel's own	На Papel
+	Quit Papel	Изход от Papel
+	Reopen the files that were open when Papel last closed	Отваряй отново файловете, които бяха отворени при последното затваряне на Papel
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Подпишете се на лист бяла хартия и го снимайте на ярка, равномерна светлина (със светкавица). Изберете снимката или я пуснете тук: Papel открива подписа и премахва хартията.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Разпознаването на текст не е инсталирано: файловете на моделите му липсват. Инсталирайте Papel отново или задайте в PDFCRAFT_MODELS папката, която ги съдържа.
+	The Dock shows it the next time Papel opens.	Dock ще я покаже при следващото отваряне на Papel.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Шрифтовете, с които Papel пише, не могат да покажат „{c}“ ({code}), затова във всяка програма за PDF то се показва като ?. Текстът е запазен.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Формулярът изисква да бъде изпратен до {u}; Papel не изпраща данни от формуляри. Запишете документа, за да запазите въведеното.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Ключът е в macOS Keychain, който може да поиска разрешение Papel да го използва.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Ключът е в хранилището за сертификати на Windows, което може да поиска разрешение Papel да го използва.
+	The module's tokens hold no digital ID Papel can sign with.	Токените на модула не съдържат цифров идентификатор, с който Papel може да подписва.
+	The PIN goes only to the card; Papel doesn't keep it.	ПИН кодът се изпраща само към картата; Papel не го запазва.
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	моделите за разпознаване на текст не са инсталирани (инсталирайте Papel отново или задайте в PDFCRAFT_MODELS папката, която ги съдържа)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Шрифтът на това поле не може да покаже „{c}“ ({code}), затова Papel показва ? на негово място. Стойността е запазена и другите програми за PDF преначертават полето по нея.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Този формуляр съдържа и XFA данни, които Papel все още не чете. Можете да попълвате полетата му, но Acrobat може да покаже вместо това XFA стойностите.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Тази инсталация се управлява от пакет на Debian. Използвайте системния софтуерен мениджър, за да актуализирате Papel.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Тази инсталация се управлява от RPM пакет. Използвайте системния софтуерен мениджър, за да актуализирате Papel.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Това е динамичен XFA формуляр, който Papel все още не може да показва. Виждате заместващата страница на файла.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	тази услуга за подписване не може да се използва: тя изисква вход с OAuth в браузър, който Papel все още не поддържа
+	Use your system software manager to update Papel.	Използвайте системния софтуерен мениджър, за да актуализирате Papel.
+	Welcome to Papel	Добре дошли в Papel
+	Your default email app can't take a file from Papel.	Имейл приложението по подразбиране не може да приеме файл от Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} изпраща формуляра до {url}; Papel не изпраща данни от формуляри. Запишете документа, за да запазите въведеното.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} страници съдържат повече съдържание, отколкото Papel може да прочете, първата е страница {page}: части от тях не са изчертани, а само част от текста им може да бъде намерена или копирана.
+	{program} can't take a file from Papel.	{program} не може да приеме файл от Papel.
 	This document's script is asking	Скриптът на този документ пита
 	Document: {name}	Документ: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Тази заявка идва от документа, а не от Papel. Въвеждайте парола само ако имате доверие на този документ.

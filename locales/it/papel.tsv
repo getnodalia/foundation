@@ -3828,6 +3828,65 @@ document scrollbar width	Wide	Larga
 	…or paste the raw text here; # headings, - bullets	…oppure incolla qui il testo grezzo; # titoli, - elenchi puntati
 	− Page {p}	− Pagina {p}
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Un logo o un nome a sinistra delle schede, dove lo mostrerebbe una barra del titolo: quello di Papel o quello della tua azienda.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Un file PNG o SVG. Viene letto da questa posizione a ogni avvio di Papel.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Una firma che fa parte del contenuto di una pagina, come in una pagina scansionata, non è un campo né un'annotazione, quindi non può essere rimossa da sola, e Papel non cancella parti di una pagina per nasconderla. Per toglierla, oscura quell'area (Oscura) oppure, se la firma è un'immagine a sé, elimina l'immagine con Modifica un PDF.
+	About Papel	Informazioni su Papel
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Si applica al prossimo avvio di Papel. Scegli OpenGL se la finestra sfarfalla su uno schermo con G-SYNC, FreeSync o un'altra frequenza di aggiornamento variabile.
+	Ask to make Papel the default PDF app	Chiedi se impostare Papel come applicazione predefinita per i PDF
+	Choose Papel for .pdf files in Windows Settings.	Scegli Papel per i file .pdf nelle impostazioni di Windows.
+	Combine files in Papel…	Combina file in Papel…
+	Convert to PDF with Papel	Converti in PDF con Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	I file aperti in Papel compaiono qui. Trascina un PDF in un punto qualsiasi per aprirlo.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Dal Finder: seleziona i file, poi clic destro > Azioni rapide > “Combine files in Papel”. Non c'è? Attivala una volta in Azioni rapide > Personalizza.
+	Hide Papel	Nascondi Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	L’OCR ungherese richiede l’app desktop con Tesseract 5 e il modello linguistico hun. Riavvia Papel dopo l’installazione.
+	Make Papel your default PDF app?	Impostare Papel come applicazione predefinita per i PDF?
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Nessun plug-in ancora installato. Installa un plug-in .wasm per estendere Papel.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Apri un nuovo messaggio senza il file e Papel mostrerà {name} nella sua cartella, così potrai allegarlo tu.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	La pagina {page} contiene più contenuto di quanto Papel possa leggere: una parte non viene disegnata e solo una parte del suo testo può essere cercata o copiata.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Le pagine che usano font Type 3 vengono stampate come immagini, perché Windows può chiudere Papel durante la loro stampa. Le altre pagine vengono stampate come al solito.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Parte di questa pagina non è visualizzata: il suo contenuto supera il massimo che Papel disegna per una pagina.
+	Papel can't check this signature yet: {}.	Papel non può ancora verificare questa firma: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel non è stato chiuso correttamente. Questi documenti avevano modifiche salvate automaticamente:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel sta disegnando senza un processore grafico, quindi potrebbe essere lento. Aggiornare il driver grafico può aiutare.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel conserva ciò che stavi facendo. Quando il selettore di file funziona, scegli Riprova.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel cerca le librerie installate dai produttori dei dispositivi. Scegline una solo se il dispositivo non viene trovato.
+	Papel on GitHub	Papel su GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel apre la pagina del fornitore, dove accedi con CPF, PIN e codice monouso.
+	Papel web page	Pagina web di Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel funziona offline. Nessuna telemetria, nessun account e nessuna elaborazione nel cloud, a meno che tu non aggiunga un fornitore.
+	Papel {v} is available.	Papel {v} è disponibile.
+	Papel's own	Quello di Papel
+	Quit Papel	Esci da Papel
+	Reopen the files that were open when Papel last closed	Riapri i file aperti alla chiusura precedente di Papel
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Firma un foglio di carta bianca e fotografalo con una luce intensa e uniforme (usa il flash). Scegli la foto o trascinala qui: Papel trova la firma e rimuove la carta.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Il riconoscimento del testo non è installato: mancano i file dei modelli. Reinstalla Papel o imposta PDFCRAFT_MODELS sulla cartella che li contiene.
+	The Dock shows it the next time Papel opens.	Il Dock la mostrerà alla prossima apertura di Papel.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	I font con cui Papel scrive non possono disegnare «{c}» ({code}), quindi appare come ? in ogni visualizzatore PDF. Il testo è salvato.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Il modulo chiede di essere inviato a {u}; Papel non invia dati dei moduli. Salva il documento per conservare i dati inseriti.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	La chiave si trova nel Portachiavi di macOS, che potrebbe chiedere di autorizzarne l'uso da parte di Papel.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	La chiave si trova nell'archivio certificati di Windows, che potrebbe chiedere di autorizzarne l'uso da parte di Papel.
+	The module's tokens hold no digital ID Papel can sign with.	I token del modulo non contengono alcun ID digitale con cui Papel possa firmare.
+	The PIN goes only to the card; Papel doesn't keep it.	Il PIN va solo alla scheda; Papel non lo conserva.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	Il certificato del firmatario ha estensioni critiche che Papel non riconosce ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	i modelli di riconoscimento del testo non sono installati (reinstalla Papel o imposta PDFCRAFT_MODELS sulla cartella che li contiene)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Il font di questo campo non può disegnare «{c}» ({code}), quindi Papel mostra ? al suo posto. Il valore è salvato e gli altri visualizzatori PDF ridisegnano il campo a partire da esso.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Questo modulo contiene anche dati XFA, che Papel non legge ancora. Puoi compilarne i campi, ma Acrobat potrebbe mostrare invece i valori XFA.
+	This form has too many fields, or a field name too long, for Papel to read them all. Any signature among the rest is not listed, so the document is treated as signed.	Questo modulo ha troppi campi, o un nome di campo troppo lungo, perché Papel li legga tutti. Le eventuali firme tra gli altri non sono elencate, quindi il documento è considerato firmato.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Questa installazione è gestita da un pacchetto Debian. Usa il gestore software di sistema per aggiornare Papel.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Questa installazione è gestita da un pacchetto RPM. Usa il gestore software di sistema per aggiornare Papel.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Questo è un modulo XFA dinamico, che Papel non è ancora in grado di visualizzare. Quella che vedi è la pagina segnaposto del file.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	questo servizio di firma non può essere usato: richiede l'accesso OAuth in un browser, che Papel non supporta ancora
+	Use your system software manager to update Papel.	Usa il gestore software di sistema per aggiornare Papel.
+	Welcome to Papel	Benvenuto in Papel
+	Your default email app can't take a file from Papel.	L'app di posta predefinita non può ricevere un file da Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} invia il modulo a {url}; Papel non invia dati dei moduli. Salva il documento per conservare i dati inseriti.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} pagine contengono più contenuto di quanto Papel possa leggere, la pagina {page} per prima: parti di esse non vengono disegnate e solo una parte del loro testo può essere cercata o copiata.
+	{program} can't take a file from Papel.	{program} non può ricevere un file da Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} in questo documento ha provato ad aprire un indirizzo che Papel non apre: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} in questo documento ha provato ad aprire un indirizzo che Papel non apre: {e}. Dai documenti si aprono solo collegamenti web (http, https) ed email (mailto).
 	This document's script is asking	Lo script di questo documento chiede
 	Document: {name}	Documento: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Questa richiesta proviene dal documento, non da Papel. Inserisci una password solo se ti fidi di questo documento.

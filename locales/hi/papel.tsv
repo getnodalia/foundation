@@ -3735,6 +3735,54 @@ calendar weekday	We	बुध
 	− Page {p}	− पृष्ठ {p}
 	−Bin	−Bin
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	टैबों के बाईं ओर एक लोगो या नाम, जहाँ शीर्षक पट्टी उसे दिखाती: Papel का अपना, या आपकी कंपनी का।
+	A PNG or SVG file. It is read from this place each time Papel starts.	एक PNG या SVG फ़ाइल। Papel हर बार शुरू होने पर इसे इसी जगह से पढ़ता है।
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	पृष्ठ की सामग्री का हिस्सा बना हस्ताक्षर, जैसे स्कैन किए गए पृष्ठ पर, न फ़ील्ड है न एनोटेशन, इसलिए उसे अकेले नहीं हटाया जा सकता, और Papel उसे छिपाने के लिए पृष्ठ के हिस्से नहीं मिटाता। उसे हटाने के लिए उस क्षेत्र को रेडैक्ट करें (रेडैक्ट करें), या अगर हस्ताक्षर एक अलग छवि है तो पीडीएफ़ संपादित करें से छवि हटाएँ।
+	About Papel	Papel के बारे में
+	Combine files in Papel…	Papel में फ़ाइलें संयोजित करें…
+	Convert to PDF with Papel	Papel से PDF में बदलें
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	आप Papel में जो फ़ाइलें खोलते हैं वे यहाँ दिखाई देती हैं। खोलने के लिए पीडीएफ़ कहीं भी छोड़ दें।
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Finder से: फ़ाइलें चुनें, फिर राइट-क्लिक करें > क्विक एक्शन > Papel में फ़ाइलें संयोजित करें। सूची में नहीं है? क्विक एक्शन > कस्टमाइज़ करें में एक बार चालू करें।
+	Hide Papel	Papel छिपाएँ
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	इसके बिना नया संदेश खोलें, और Papel {name} को उसके फ़ोल्डर में दिखाएगा ताकि आप उसे खुद संलग्न कर सकें।
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	पृष्ठ {page} में उससे अधिक सामग्री है जितनी Papel पढ़ सकता है: इसका कुछ भाग नहीं दिखाया जाता, और इसके पाठ का केवल कुछ भाग ही खोजा या कॉपी किया जा सकता है।
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	इस पृष्ठ का एक भाग नहीं दिखाया गया है: इसकी सामग्री उस सीमा से अधिक है जितना Papel एक पृष्ठ के लिए अधिकतम बनाता है।
+	Papel can't check this signature yet: {}.	Papel अभी इस हस्ताक्षर की जाँच नहीं कर सकता: {}।
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel सही ढंग से बंद नहीं हुआ। इन दस्तावेज़ों के बदलाव स्वतः सहेजे गए थे:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel बिना ग्राफ़िक्स प्रोसेसर के चित्र बना रहा है, इसलिए धीमा चल सकता है। ग्राफ़िक्स ड्राइवर अपडेट करने से मदद मिल सकती है।
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel आपका चल रहा काम सुरक्षित रख रहा है। फ़ाइल चयनकर्ता काम करने लगे, तो पुनः प्रयास करें चुनें।
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel उन लाइब्रेरी को खोजता है जिन्हें डिवाइस निर्माता इंस्टॉल करते हैं। केवल तभी कोई चुनें जब आपका डिवाइस न मिले।
+	Papel on GitHub	GitHub पर Papel
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel प्रदाता का पेज खोलता है, जहाँ आप अपने CPF, पिन और एक-बार के कोड से साइन इन करते हैं।
+	Papel web page	Papel वेबपेज
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel ऑफ़लाइन काम करता है। जब तक आप कोई प्रोवाइडर न जोड़ें, न टेलीमेट्री है, न खाता और न ही क्लाउड प्रोसेसिंग।
+	Papel {c} is up to date.	Papel {c} अद्यतन है।
+	Papel {v} is available.	Papel {v} उपलब्ध है।
+	Papel's own	Papel का अपना
+	Quit Papel	Papel बंद करें
+	Reopen the files that were open when Papel last closed	Papel के बंद होने के समय जो फ़ाइलें खुली थीं, उन्हें दोबारा खोलें
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	सफ़ेद काग़ज़ के एक टुकड़े पर हस्ताक्षर करें और तेज़, एकसार रोशनी में उसकी फ़ोटो लें (फ़्लैश लगाएँ)। फ़ोटो चुनें या यहाँ छोड़ दें: Papel हस्ताक्षर ढूँढ लेगा और काग़ज़ हटा देगा।
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	टेक्स्ट पहचान इंस्टॉल नहीं है: इसकी मॉडल फ़ाइलें मौजूद नहीं हैं। Papel दोबारा इंस्टॉल करें, या PDFCRAFT_MODELS को उस फ़ोल्डर पर सेट करें जिसमें वे रखी हैं।
+	The Dock shows it the next time Papel opens.	अगली बार Papel खुलने पर Dock इसे दिखाएगा।
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	जिन फ़ॉन्ट से Papel लिखता है, वे “{c}” ({code}) नहीं बना सकते, इसलिए हर पीडीएफ़ व्यूअर में वह ? की तरह दिखता है। टेक्स्ट सहेजा गया है।
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	फ़ॉर्म {u} पर जमा होने का अनुरोध करता है; Papel फ़ॉर्म डेटा नहीं भेजता। अपनी भरी हुई जानकारी बनाए रखने के लिए दस्तावेज़ सहेजें।
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	कुंजी macOS Keychain में है, जो Papel को उसका उपयोग करने की अनुमति माँग सकती है।
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	कुंजी Windows प्रमाणपत्र स्टोर में है, जो Papel को उसका उपयोग करने की अनुमति माँग सकता है।
+	The PIN goes only to the card; Papel doesn't keep it.	PIN केवल कार्ड को जाता है; Papel उसे नहीं रखता।
+	The signer's certificate has critical extensions Papel does not recognize ({}).	हस्ताक्षरकर्ता के प्रमाणपत्र में क्रिटिकल एक्सटेंशन हैं जिन्हें Papel नहीं पहचानता ({})।
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	टेक्स्ट पहचान मॉडल इंस्टॉल नहीं हैं (Papel दोबारा इंस्टॉल करें, या PDFCRAFT_MODELS को उस फ़ोल्डर पर सेट करें जिसमें वे मौजूद हैं)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	इस फ़ील्ड का फ़ॉन्ट “{c}” ({code}) नहीं बना सकता, इसलिए Papel उसकी जगह ? दिखाता है। मान सहेजा गया है, और दूसरे पीडीएफ़ व्यूअर उसी से फ़ील्ड दोबारा बनाते हैं।
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	इस फ़ॉर्म में XFA डेटा भी है, जिसे Papel अभी नहीं पढ़ता। आप इसके फ़ील्ड भर सकते हैं, लेकिन Acrobat इसके बजाय XFA मान दिखा सकता है।
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	यह एक डायनामिक XFA फ़ॉर्म है, जिसे Papel अभी दिखा नहीं सकता। आप जो देख रहे हैं वह फ़ाइल का प्लेसहोल्डर पृष्ठ है।
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	इस हस्ताक्षर सेवा का उपयोग नहीं किया जा सकता: इसके लिए ब्राउज़र में OAuth साइन-इन चाहिए, जिसका Papel अभी समर्थन नहीं करता
+	Welcome to Papel	Papel में आपका स्वागत है
+	Your default email app can't take a file from Papel.	आपका डिफ़ॉल्ट ईमेल ऐप Papel से फ़ाइल नहीं ले सकता।
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} फ़ॉर्म {url} पर भेजता है; Papel फ़ॉर्म डेटा नहीं भेजता। अपनी भरी हुई जानकारी बनाए रखने के लिए दस्तावेज़ सहेजें।
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} पृष्ठों में उससे अधिक सामग्री है जितनी Papel पढ़ सकता है, पहला पृष्ठ {page}: उनके कुछ भाग नहीं दिखाए जाते, और उनके पाठ का केवल कुछ भाग ही खोजा या कॉपी किया जा सकता है।
+	{program} can't take a file from Papel.	{program} Papel से फ़ाइल नहीं ले सकता।
+	{who} in this document tried to open an address Papel won't open: {e}.	इस दस्तावेज़ में {who} ने एक ऐसा पता खोलने की कोशिश की जो Papel नहीं खोलता: {e}।
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	इस दस्तावेज़ में {who} ने एक ऐसा पता खोलने की कोशिश की जो Papel नहीं खोलता: {e}। दस्तावेज़ों से केवल वेब (http, https) और ईमेल (mailto) लिंक खुलते हैं।
 	This document's script is asking	इस दस्तावेज़ की स्क्रिप्ट पूछ रही है
 	Document: {name}	दस्तावेज़: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	यह अनुरोध दस्तावेज़ से आया है, Papel से नहीं। पासवर्ड तभी दर्ज करें जब आपको इस दस्तावेज़ पर भरोसा हो।
