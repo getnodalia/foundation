@@ -3480,3 +3480,6 @@ calendar weekday	We	수
 	{program} can't take a file from Papel.	{program}은(는) Papel에서 파일을 받을 수 없습니다.
 	{who} in this document tried to open an address Papel won't open: {e}.	이 문서의 {who}이(가) Papel가 열지 않는 주소를 열려고 했습니다: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	이 문서의 {who}이(가) Papel가 열지 않는 주소를 열려고 했습니다: {e}. 문서에서는 웹(http, https) 및 이메일(mailto) 링크만 열립니다.
+	This document's script is asking	이 문서의 스크립트가 묻고 있습니다
+	Document: {name}	문서: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	이 요청은 PdfCraft가 아니라 문서에서 온 것입니다. 이 문서를 신뢰하는 경우에만 암호를 입력하세요.

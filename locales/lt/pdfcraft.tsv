@@ -4222,3 +4222,5 @@ document scrollbar width	Wide	Platus
 	{program} can't take a file from Papel.	{program} negali priimti failo iš Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	Šiame dokumente {who} bandė atverti adresą, kurio „Papel“ neatveria: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Šiame dokumente {who} bandė atverti adresą, kurio „Papel“ neatveria: {e}. Iš dokumentų atveriami tik žiniatinklio (http, https) ir el. pašto (mailto) saitai.
+	This document's script is asking	Šio dokumento scenarijus klausia
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Ši užklausa gauta iš dokumento, o ne iš PdfCraft. Slaptažodį įveskite tik tada, jei pasitikite šiuo dokumentu.

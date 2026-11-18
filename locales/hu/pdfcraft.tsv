@@ -3734,3 +3734,6 @@ document scrollbar width	Wide	Széles
 	{program} can't take a file from Papel.	A(z) {program} nem tud fájlt fogadni a Papelból.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} ebben a dokumentumban olyan címet próbált megnyitni, amelyet a Papel nem nyit meg: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} ebben a dokumentumban olyan címet próbált megnyitni, amelyet a Papel nem nyit meg: {e}. Dokumentumokból csak webes (http, https) és e-mail (mailto) hivatkozások nyílnak meg.
+	This document's script is asking	A dokumentum szkriptje kérdez
+	Document: {name}	Dokumentum: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Ez a kérés a dokumentumtól származik, nem a PdfCrafttól. Csak akkor adjon meg jelszót, ha megbízik ebben a dokumentumban.

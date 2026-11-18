@@ -3924,3 +3924,6 @@ document scrollbar width	Wide	عريض
 	{program} can't take a file from Papel.	لا يستطيع {program} استلام ملف من Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} في هذا المستند حاول فتح عنوان لن يفتحه Papel: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} في هذا المستند حاول فتح عنوان لن يفتحه Papel: {e}. روابط الويب (http, https) والبريد (mailto) وحدها تُفتح من المستندات.
+	This document's script is asking	نص هذا المستند البرمجي يطلب
+	Document: {name}	المستند: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	هذا الطلب صادر عن المستند، لا عن PdfCraft. لا تُدخل كلمة مرور إلا إذا كنت تثق بهذا المستند.

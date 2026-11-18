@@ -3911,3 +3911,5 @@ document scrollbar width	Wide	Rộng
 	{program} can't take a file from Papel.	{program} không thể nhận tệp từ Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} trong tài liệu này đã cố mở một địa chỉ mà Papel sẽ không mở: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} trong tài liệu này đã cố mở một địa chỉ mà Papel sẽ không mở: {e}. Chỉ các liên kết web (http, https) và email (mailto) mới được mở từ tài liệu.
+	This document's script is asking	Tập lệnh của tài liệu này đang hỏi
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Yêu cầu này đến từ tài liệu, không phải từ PdfCraft. Chỉ nhập mật khẩu nếu bạn tin cậy tài liệu này.

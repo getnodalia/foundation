@@ -3351,3 +3351,6 @@ calendar weekday	We	พ
 	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} หน้ามีเนื้อหามากกว่าที่ Papel อ่านได้ เริ่มจากหน้า {page}: บางส่วนจะไม่ถูกวาด และค้นหาหรือคัดลอกข้อความของหน้าเหล่านี้ได้เพียงบางส่วน
 	{who} in this document tried to open an address Papel won't open: {e}.	{who}ในเอกสารนี้พยายามเปิดที่อยู่ที่ Papel จะไม่เปิด: {e}
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who}ในเอกสารนี้พยายามเปิดที่อยู่ที่ Papel จะไม่เปิด: {e} เอกสารเปิดได้เฉพาะลิงก์เว็บ (http, https) และอีเมล (mailto)
+	This document's script is asking	สคริปต์ของเอกสารนี้กำลังถาม
+	Document: {name}	เอกสาร: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	คำขอนี้มาจากเอกสาร ไม่ใช่จาก PdfCraft ป้อนรหัสผ่านเฉพาะเมื่อคุณเชื่อถือเอกสารนี้เท่านั้น

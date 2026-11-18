@@ -3737,3 +3737,6 @@ document scrollbar width	Wide	Широка
 	{program} can't take a file from Papel.	{program} не може прийняти файл із Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} у цьому документі намагається відкрити адресу, яку Papel не відкриває: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} у цьому документі намагається відкрити адресу, яку Papel не відкриває: {e}. З документів відкриваються лише вебпосилання (http, https) та посилання на електронну пошту (mailto).
+	This document's script is asking	Скрипт цього документа запитує
+	Document: {name}	Документ: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Цей запит надходить від документа, а не від PdfCraft. Вводьте пароль, лише якщо довіряєте цьому документу.

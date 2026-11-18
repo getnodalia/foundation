@@ -3502,3 +3502,6 @@ calendar weekday	We	Rab
 	{program} can't take a file from Papel.	{program} tidak dapat menerima file dari Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} dalam dokumen ini mencoba membuka alamat yang tidak akan dibuka Papel: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} dalam dokumen ini mencoba membuka alamat yang tidak akan dibuka Papel: {e}. Hanya tautan web (http, https) dan email (mailto) yang terbuka dari dokumen.
+	This document's script is asking	Skrip dokumen ini bertanya
+	Document: {name}	Dokumen: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Permintaan ini berasal dari dokumen, bukan dari PdfCraft. Masukkan kata sandi hanya jika Anda memercayai dokumen ini.

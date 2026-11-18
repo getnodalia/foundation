@@ -3705,3 +3705,6 @@ document scrollbar width	Wide	Кең
 	{program} can't take a file from Papel.	{program} Papel-тан файл қабылдай алмайды.
 	{who} in this document tried to open an address Papel won't open: {e}.	Осы құжаттағы {who} Papel ашпайтын адресті ашпақ болды: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Осы құжаттағы {who} Papel ашпайтын адресті ашпақ болды: {e}. Құжаттардан тек веб (http, https) және email (mailto) сілтемелері ашылады.
+	This document's script is asking	Осы құжаттың скрипті сұрап тұр
+	Document: {name}	Құжат: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Бұл сұрау PdfCraft-тан емес, құжаттан келді. Құпиясөзді осы құжатқа сенсеңіз ғана енгізіңіз.

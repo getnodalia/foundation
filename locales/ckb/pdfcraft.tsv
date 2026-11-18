@@ -3347,3 +3347,6 @@ calendar weekday	We	چوارشەممە
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} فۆڕمەکە دەنێرێت بۆ {url}؛ Papel داتای فۆڕم نانێرێت. بەڵگەنامەکە پاشەکەوت بکە بۆ پاراستنی تۆمارەکانت.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} لەم بەڵگەنامەیەدا هەوڵیدا ناونیشانێک بکاتەوە کە Papel نایکاتەوە: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} لەم بەڵگەنامەیەدا هەوڵیدا ناونیشانێک بکاتەوە کە Papel نایکاتەوە: {e}. تەنها بەستەری وێب (http, https) و ئیمەیڵ (mailto) لە بەڵگەنامەکانەوە دەکرێنەوە.
+	This document's script is asking	سکریپتی ئەم بەڵگەنامەیە دەپرسێت
+	Document: {name}	بەڵگەنامە: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	ئەم داواکارییە لە بەڵگەنامەکەوە هاتووە، نەک لە PdfCraft. تەنها ئەگەر متمانەت بەم بەڵگەنامەیە هەیە وشەی نهێنی بنووسە.

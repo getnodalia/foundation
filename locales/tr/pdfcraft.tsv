@@ -3982,3 +3982,6 @@ document scrollbar width	Wide	Geniş
 	{program} can't take a file from Papel.	{program}, Papel’tan dosya alamıyor.
 	{who} in this document tried to open an address Papel won't open: {e}.	Bu belgedeki {who}, Papel'ın açamayacağı bir adresi açmaya çalıştı: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Bu belgedeki {who}, Papel'ın açamayacağı bir adresi açmaya çalıştı: {e}. Belgelerden yalnızca web (http, https) ve e-posta (mailto) bağlantıları açılır.
+	This document's script is asking	Bu belgenin betiği soruyor
+	Document: {name}	Belge: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Bu istek PdfCraft'tan değil, belgeden geliyor. Yalnızca bu belgeye güveniyorsanız parola girin.

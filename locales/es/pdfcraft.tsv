@@ -4320,3 +4320,5 @@ document scrollbar width	Wide	Ancha
 	Read, sign, edit and organize PDFs, in pure Rust.	Lee, firma, edita y organiza PDF, en Rust puro.
 	Licence: MIT OR Apache-2.0	Licencia: MIT OR Apache-2.0
 	Includes work by other open-source authors (see NOTICE).	Incluye trabajo de otros autores de código abierto (ver NOTICE).
+	This document's script is asking	El script de este documento pregunta
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Esta solicitud procede del documento, no de PdfCraft. Introduzca una contraseña solo si confía en este documento.

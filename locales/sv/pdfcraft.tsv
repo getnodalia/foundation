@@ -2449,3 +2449,6 @@ calendar weekday	We	on
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} skickar formuläret till {url}; Papel skickar inte formulärdata. Spara dokumentet för att behålla det du fyllt i.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} i det här dokumentet försökte öppna en adress som Papel inte öppnar: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} i det här dokumentet försökte öppna en adress som Papel inte öppnar: {e}. Endast webblänkar (http, https) och e-postlänkar (mailto) öppnas från dokument.
+	This document's script is asking	Det här dokumentets skript frågar
+	Document: {name}	Dokument: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Den här begäran kommer från dokumentet, inte från PdfCraft. Ange bara ett lösenord om du litar på det här dokumentet.

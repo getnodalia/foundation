@@ -2746,3 +2746,6 @@ calendar weekday	We	ד׳
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} שולח את הטופס אל {url}; ‏Papel אינו שולח נתוני טפסים. יש לשמור את המסמך כדי לשמור את הנתונים שהוזנו.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} במסמך זה ניסה לפתוח כתובת ש־Papel לא יפתח: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} במסמך זה ניסה לפתוח כתובת ש־Papel לא יפתח: {e}. ממסמכים נפתחים רק קישורי אינטרנט (http, https) ודוא״ל (mailto).
+	This document's script is asking	הסקריפט של מסמך זה שואל
+	Document: {name}	מסמך: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	בקשה זו מגיעה מהמסמך, לא מ-PdfCraft. הזינו סיסמה רק אם אתם סומכים על מסמך זה.

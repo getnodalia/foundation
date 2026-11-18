@@ -2890,3 +2890,6 @@ calendar weekday	We	பு
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} படிவத்தை {url} க்குச் சமர்ப்பிக்கிறது; Papel படிவத் தரவை அனுப்புவதில்லை. உங்கள் உள்ளீடுகளை வைத்திருக்க ஆவணத்தைச் சேமிக்கவும்.
 	{who} in this document tried to open an address Papel won't open: {e}.	இந்த ஆவணத்தில் உள்ள {who}, Papel திறக்காத ஒரு முகவரியைத் திறக்க முயன்றது: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	இந்த ஆவணத்தில் உள்ள {who}, Papel திறக்காத ஒரு முகவரியைத் திறக்க முயன்றது: {e}. ஆவணங்களிலிருந்து வலை (http, https) மற்றும் மின்னஞ்சல் (mailto) இணைப்புகள் மட்டுமே திறக்கும்.
+	This document's script is asking	இந்த ஆவணத்தின் ஸ்கிரிப்ட் கேட்கிறது
+	Document: {name}	ஆவணம்: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	இந்தக் கோரிக்கை PdfCraft-இலிருந்து அல்ல, ஆவணத்திலிருந்து வருகிறது. இந்த ஆவணத்தை நம்பினால் மட்டுமே கடவுச்சொல்லை உள்ளிடவும்.

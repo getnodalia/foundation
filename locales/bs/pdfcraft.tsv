@@ -2530,3 +2530,6 @@ calendar weekday	We	Sr
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} šalje obrazac na {url}; Papel ne šalje podatke obrazaca. Sačuvajte dokument da zadržite unose.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} u ovom dokumentu pokušao je otvoriti adresu koju Papel neće otvoriti: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} u ovom dokumentu pokušao je otvoriti adresu koju Papel neće otvoriti: {e}. Iz dokumenata se otvaraju samo web (http, https) i e-mail (mailto) veze.
+	This document's script is asking	Skripta ovog dokumenta pita
+	Document: {name}	Dokument: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Ovaj zahtjev dolazi iz dokumenta, a ne iz PdfCrafta. Unesite lozinku samo ako vjerujete ovom dokumentu.

@@ -2724,3 +2724,6 @@ calendar weekday	We	বু
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} ফর্ম {url}-এ জমা দেয়; Papel ফর্মের তথ্য পাঠায় না। লেখা রাখতে নথি সংরক্ষণ করুন।
 	{who} in this document tried to open an address Papel won't open: {e}.	এই নথির {who} এমন ঠিকানা খুলতে চেয়েছে যা Papel খুলবে না: {e}।
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	এই নথির {who} এমন ঠিকানা খুলতে চেয়েছে যা Papel খুলবে না: {e}। নথি থেকে শুধু ওয়েব (http, https) ও ইমেইল (mailto) লিংক খোলে।
+	This document's script is asking	এই নথির স্ক্রিপ্ট জানতে চাইছে
+	Document: {name}	নথি: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	এই অনুরোধটি নথি থেকে এসেছে, PdfCraft থেকে নয়। এই নথিকে বিশ্বাস করলে তবেই পাসওয়ার্ড লিখুন।
