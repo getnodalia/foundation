@@ -127,9 +127,7 @@ struct ReaderContextData<'a> {
 #[derive(Clone, Debug)]
 enum ReaderContextInner<'a> {
     Shared(Arc<ReaderContextData<'a>>),
-    /// Craft patch: the default limits with `max_decoded_stream` (other limits are in a
-    /// `ControlledDummy`), so the context stays the size of an object's fields.
-    Dummy { in_content_stream: bool, max_decoded_stream: usize },
+    Dummy { in_content_stream: bool, limits: crate::DecodeLimits },
     ControlledDummy(Arc<ControlledDummy>),
 }
 
@@ -137,7 +135,7 @@ enum ReaderContextInner<'a> {
 struct ControlledDummy {
     in_content_stream: bool,
     limits: crate::DecodeLimits,
-    control: Option<crate::cancel::Control>,
+    control: crate::cancel::Control,
 }
 
 /// Context for reading PDF objects.
@@ -160,35 +158,34 @@ impl<'a> ReaderContext<'a> {
     }
 
     pub(crate) fn dummy_with_limits(limits: crate::DecodeLimits) -> Self {
-        Self::dummy_with_control(limits, None)
+        Self(ReaderContextInner::Dummy { in_content_stream: false, limits })
     }
 
     pub(crate) fn dummy_with_control(limits: crate::DecodeLimits, control: Option<crate::cancel::Control>) -> Self {
-        let max_decoded_stream = limits.max_decoded_stream();
-        if control.is_none() && limits == crate::DecodeLimits::DEFAULT.with_max_decoded_stream(max_decoded_stream) {
-            return Self(ReaderContextInner::Dummy { in_content_stream: false, max_decoded_stream });
+        match control {
+            Some(control) => Self(ReaderContextInner::ControlledDummy(Arc::new(ControlledDummy { in_content_stream: false, limits, control }))),
+            None => Self::dummy_with_limits(limits),
         }
-        Self(ReaderContextInner::ControlledDummy(Arc::new(ControlledDummy { in_content_stream: false, limits, control })))
     }
 
     pub(crate) fn control(&self) -> Option<&crate::cancel::Control> {
         match &self.0 {
             ReaderContextInner::Shared(inner) => inner.xref.control(),
             ReaderContextInner::Dummy { .. } => None,
-            ReaderContextInner::ControlledDummy(inner) => inner.control.as_ref().filter(|c| c.active()),
+            ReaderContextInner::ControlledDummy(inner) => Some(&inner.control).filter(|c| c.active()),
         }
     }
 
     pub(crate) fn decode_limits(&self) -> crate::DecodeLimits {
         match &self.0 {
             ReaderContextInner::Shared(inner) => inner.xref.decode_limits(),
-            ReaderContextInner::Dummy { max_decoded_stream, .. } => crate::DecodeLimits::DEFAULT.with_max_decoded_stream(*max_decoded_stream),
+            ReaderContextInner::Dummy { limits, .. } => *limits,
             ReaderContextInner::ControlledDummy(inner) => inner.limits,
         }
     }
 
     pub(crate) fn dummy_ref() -> &'static Self {
-        &Self(ReaderContextInner::Dummy { in_content_stream: true, max_decoded_stream: crate::filter::MAX_DECODED_STREAM })
+        &Self(ReaderContextInner::Dummy { in_content_stream: true, limits: crate::DecodeLimits::DEFAULT })
     }
 
     #[inline]
