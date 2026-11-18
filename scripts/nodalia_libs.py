@@ -9,10 +9,11 @@ mirror into the same tree under Nodalia's names, and records it on `nodalia/<lib
     nodalia_libs.py generate libs SHA      commit the renamed tree of SHA on nodalia/libs
     nodalia_libs.py lookup libs SHA        print the nodalia/libs commit made from SHA
 
-Every generated commit has two parents: the previous generated commit (so the branch's first
-parent history is a list of renamed snapshots) and the upstream commit it was made from (so the
-upstream history, authors and attributions stay reachable). Its message ends with
-`Upstream-Commit: <sha>`, which is how `lookup` and the apps' weekly sync find it.
+Every generated commit's parent is the previous generated commit, so the branch is a list of
+renamed snapshots. Its message ends with `Upstream-Commit: <sha>`, the mirror commit it was made
+from, whose history, authors and attributions stay on the mirror; the trailer is how `lookup` and
+the apps' weekly sync find it. Upstream's `.github/workflows` are left out: they are not this
+branch's CI, and the workflow's token may not push workflow files.
 
 What is renamed, and what is not, is listed in RULES below. Licence texts, NOTICE (which gets a
 paragraph saying where the code comes from), ATTRIBUTION and third-party code under `vendor/` keep
@@ -342,13 +343,19 @@ def generate(library: str, upstream_sha: str, repo: Path) -> str:
             Renamer(work, spec.get("file_renames", {}),
                     lambda lib, rev: generate(lib, rev, repo), names=names).run()
             notice(work, library, full)
+            # Upstream's CI is not this branch's: it would run on every push, and a workflow
+            # token may not write workflow files.
+            shutil.rmtree(work / ".github" / "workflows", ignore_errors=True)
             git("add", "-A", cwd=work)
             tree = git("write-tree", cwd=work)
         finally:
             git("worktree", "remove", "--force", str(work), cwd=repo)
-    parents = ["-p", full]
+    # One parent: the previous generated commit. The upstream commit is named by the trailer and
+    # its history stays on the mirror; as a parent it would bring upstream's workflow files into
+    # the push, which the workflow's token may not do.
+    parents: list[str] = []
     try:
-        parents = ["-p", git("rev-parse", f"origin/{spec['branch']}", cwd=repo)] + parents
+        parents = ["-p", git("rev-parse", f"origin/{spec['branch']}", cwd=repo)]
     except subprocess.CalledProcessError:
         pass
     date = git("show", "-s", "--format=%cI", full, cwd=repo)

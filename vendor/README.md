@@ -45,9 +45,9 @@ What never changes: licence texts, `NOTICE` (it gains a paragraph saying where t
 from), `ATTRIBUTION.md`, third-party code under `vendor/`, links and credits, and the lower-case
 product words that are file signatures, so documents saved before keep opening.
 
-Each generated commit has two parents: the previous generated commit and the upstream commit it
-was made from, so the full history and its authors stay reachable. Its message ends with
-`Upstream-Commit: <sha>`. `nodalia_libs.py lookup libs <upstream sha>` prints the matching
+Each generated commit follows the previous one, and its message ends with
+`Upstream-Commit: <sha>`: the mirror commit it was made from, where the full history and its
+authors stay. Upstream's `.github/workflows` are left out, since they are not these branches' CI. `nodalia_libs.py lookup libs <upstream sha>` prints the matching
 commit; an app moves to it, and its weekly upstream sync keeps it there, with
 `nodalia_libs.py app <checkout> --repo <foundation clone>`, which renames the app's uses and
 maps every pinned SHA. The workflow runs when a `vendor/` branch moves, every Monday before the
