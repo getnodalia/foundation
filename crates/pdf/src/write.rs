@@ -10,11 +10,13 @@ pub use krilla as backend;
 
 // Require the root workspace patch; an unpatched backend can abort during unwind, writes
 // RGB blending groups and no print output intent, and has no optional content.
-const _: bool = backend::NODALIA_UNWIND_POISONING;
-const _: bool = backend::NODALIA_PRINT_COLOR;
-const _: bool = backend::NODALIA_OPTIONAL_CONTENT;
+const _: bool = backend::CRAFT_UNWIND_POISONING;
+const _: bool = backend::CRAFT_PRINT_COLOR;
+const _: bool = backend::CRAFT_OPTIONAL_CONTENT;
 
 pub mod print;
+#[cfg(feature = "write-svg")]
+pub mod svg;
 
 use backend::configure::{Archival, Configuration, ConfigurationBuilder, ConfigurationError, PdfVersion};
 use backend::text::{Font, Tag};
