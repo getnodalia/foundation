@@ -15,6 +15,7 @@ profile; this repository holds everything an app needs to build, test and releas
 | [`standards/release.md`](standards/release.md) | Versioning and the release pipeline per platform |
 | [`standards/agents.md`](standards/agents.md) | What every `AGENTS.md` contains, and the rules every agent follows |
 | [`standards/ndl.md`](standards/ndl.md) | How apps consume the Nodalia Design Language |
+| [`brand/`](brand/README.md) | The Nodalia identity: mark, wordmark, colours, type, website and app icons |
 | [`standards/shared-libraries.md`](standards/shared-libraries.md) | Which shared libraries exist and when to add one |
 | [`.github/workflows/`](.github/workflows) | Reusable workflows: `rust-gate`, `git-sources`, `agents-check`, `packaging-lint`, `ast-grep`, `nix`, `freebsd`, `changed-paths`, `release-tag`, `release-publish` |
 | [`scripts/`](scripts) | `check_pins.py` (every action pinned to a SHA) and `pin_actions.py` (pins tags to the commits they name today) |
