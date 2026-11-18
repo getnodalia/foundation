@@ -199,14 +199,19 @@ class Renamer:
         self.all_dirs = all_dirs
         self.product_re = re.compile(r"(?<![A-Za-z0-9_])(" + "|".join(PRODUCT_NAMES) +
                                      r")(?![A-Za-z0-9_])" + CREDIT)
+        # Third-party code under vendor/ is never renamed, so the names it defines stay too.
+        kept = vendored_variables(root)
+        head = r"(?<![A-Za-z0-9_])CRAFT_"
+        tail = r"(?![A-Za-z0-9_])"
         if env_names is None:
-            self.env_re = re.compile(r"(?<![A-Za-z0-9_])CRAFT_(?=[A-Z0-9])")
+            alt = "|".join(re.escape(n[len("CRAFT_"):]) for n in sorted(kept, key=len, reverse=True))
+            self.env_re = re.compile(head + (f"(?!(?:{alt}){tail})" if kept else "") + "(?=[A-Z0-9])")
         else:
             # Only the libraries' own variables: an app's own CRAFT_* names (installer
             # properties a previous install saved) keep working.
-            self.env_re = re.compile(r"(?<![A-Za-z0-9_])CRAFT_(?=(?:" + "|".join(
-                re.escape(n[len("CRAFT_"):]) for n in sorted(env_names, key=len, reverse=True)) +
-                r")(?![A-Za-z0-9_]))") if env_names else None
+            names_ = sorted(set(env_names) - kept, key=len, reverse=True)
+            alt = "|".join(re.escape(n[len("CRAFT_"):]) for n in names_)
+            self.env_re = re.compile(f"{head}(?=(?:{alt}){tail})") if names_ else None
         mirrored = "|".join(re.escape(r) for r in MIRRORED)
         self.git_re = re.compile(r"https://github\.com/storytold/(" + mirrored + r")(?:\.git)?\b")
         generated = "|".join(re.escape(r) for r in GENERATED_REPOS)
@@ -441,6 +446,22 @@ def mirror_packages(repo: Path) -> dict[str, str]:
                     names[m.group(1)] = "nodalia-" + new_crate_suffix(m.group(1)[len("craft-"):])
     names.update({**EXTRA_NAMES, **SIBLING_CRATES})
     return names
+
+
+def vendored_variables(root: Path) -> set[str]:
+    """The CRAFT_* names defined by the third-party code under vendor/."""
+    found: set[str] = set()
+    base = Path(root) / "vendor"
+    if not base.is_dir():
+        return found
+    for path in base.rglob("*"):
+        if path.is_file() and path.stat().st_size < 4_000_000:
+            try:
+                text = path.read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError):
+                continue
+            found.update(re.findall(r"CRAFT_[A-Z0-9_]*[A-Z0-9]", text))
+    return found
 
 
 def library_variables(repo: Path) -> set[str]:

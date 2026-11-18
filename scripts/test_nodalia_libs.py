@@ -52,6 +52,14 @@ class TextTests(unittest.TestCase):
         self.assertEqual(r.text("CRAFT_FONTS_DIR CRAFT_USER_DIR CRAFT_FONTS_DIRS", False),
                          "NODALIA_FONTS_DIR CRAFT_USER_DIR CRAFT_FONTS_DIRS")
 
+    def test_names_defined_by_vendored_code_stay(self):
+        root = Path(self.tmp.name)
+        (root / "vendor" / "krilla").mkdir(parents=True)
+        (root / "vendor" / "krilla" / "lib.rs").write_text("pub const CRAFT_OPTIONAL_CONTENT: bool = true;")
+        r = renamer(root)
+        self.assertEqual(r.text("CRAFT_OPTIONAL_CONTENT CRAFT_FONTS_DIR", False),
+                         "CRAFT_OPTIONAL_CONTENT NODALIA_FONTS_DIR")
+
     def test_links_keep_their_words(self):
         src = "see https://github.com/storytold/craft-libs/pull/29 and craft-libs"
         self.assertEqual(self.r.text(src, False),
