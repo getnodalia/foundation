@@ -4314,3 +4314,9 @@ document scrollbar width	Wide	Ancha
 	Only web (http, https) and email addresses open, and Papel asks first, as for other links.	Solo se abren direcciones web (http, https) y de correo, y Papel pregunta antes, como con otros vínculos.
 	Papel's checks now find no problems for {level}. This is not a validator result. Save to keep the changes.	Las comprobaciones de Papel ya no encuentran problemas para {level}. No es el resultado de un validador. Guarda para conservar los cambios.
 	Papel's checks found no problems for {level}. This is not a validator result.	Las comprobaciones de Papel no encontraron problemas para {level}. No es el resultado de un validador.
+	Main menu	Menú principal
+	Report a problem	Informar de un problema
+	Part of Nodalia	Parte de Nodalia
+	Read, sign, edit and organize PDFs, in pure Rust.	Lee, firma, edita y organiza PDF, en Rust puro.
+	Licence: MIT OR Apache-2.0	Licencia: MIT OR Apache-2.0
+	Includes work by other open-source authors (see NOTICE).	Incluye trabajo de otros autores de código abierto (ver NOTICE).
