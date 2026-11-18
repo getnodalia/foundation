@@ -93,6 +93,11 @@ LIBRARIES = {
     # Windows printing: alampy's winprint.rs with upstream's GDI helper crate.
     "winprint": {"mirror": "vendor/winprint.rs/main", "branch": "nodalia/winprint",
                  "upstream": "storytold/winprint.rs"},
+    # Toma's media crates (codecs, containers, frames, time), which Pulso uses. Toma's own rename
+    # rules make them, so they carry the same names as in Toma's repository.
+    "toma": {"mirror": "vendor/filmcraft/main", "branch": "nodalia/toma",
+             "upstream": "storytold/filmcraft", "rules": "getnodalia/toma",
+             "packages": ("filmcraft-", "toma-")},
 }
 
 # A git dependency on one of these repositories is a dependency on another generated library:
@@ -128,6 +133,20 @@ def crate_names(root: Path) -> dict[str, str]:
                           re.M)
         if match:
             names[match.group(1)] = "nodalia-" + new_crate_suffix(match.group(1)[len("craft-"):])
+    for old, new in {**EXTRA_NAMES, **SIBLING_CRATES}.items():
+        names.setdefault(old, new)
+    return names
+
+
+def dependency_names(root: Path) -> dict[str, str]:
+    """Every `craft-*` package the tree's manifests depend on, mapped to its Nodalia name: what
+    a tree outside the libraries names without defining."""
+    names: dict[str, str] = {}
+    for manifest in root.rglob("Cargo.toml"):
+        if any(part in SKIP_DIRS for part in manifest.relative_to(root).parts):
+            continue
+        for old in re.findall(r'^\s*(craft-[A-Za-z0-9-]*[A-Za-z0-9])\s*=', manifest.read_text(errors="replace"), re.M):
+            names[old] = "nodalia-" + new_crate_suffix(old[len("craft-"):])
     for old, new in {**EXTRA_NAMES, **SIBLING_CRATES}.items():
         names.setdefault(old, new)
     return names
@@ -287,6 +306,18 @@ class MissingCommit(Exception):
     """An upstream commit that the mirrors in this repository do not hold (yet)."""
 
 
+def app_rules(slug: str, repo: Path) -> tuple[Path, Path]:
+    """An app's rebrand.py and its rules (without the formatter step), cloned once per repo."""
+    home = Path(git("rev-parse", "--absolute-git-dir", cwd=repo)) / "nodalia-rules" / slug.replace("/", "-")
+    if not (home / "scripts" / "rebrand.py").exists():
+        git("clone", "--quiet", "--depth", "1", f"https://github.com/{slug}", str(home))
+    config = home / "rebrand-no-after.toml"
+    rules = (home / ".github" / "rebrand.toml").read_text()
+    # A library is not formatted: its users never check its style, and a formatter would need cargo.
+    config.write_text(re.sub(r"^after\s*=.*$", "", rules, flags=re.M))
+    return home / "scripts" / "rebrand.py", config
+
+
 def generate(library: str, upstream_sha: str, repo: Path) -> str:
     """Commit the renamed tree of upstream_sha on top of the branch; return the new commit."""
     found = lookup(library, upstream_sha, repo)
@@ -301,8 +332,15 @@ def generate(library: str, upstream_sha: str, repo: Path) -> str:
         work = Path(tmp) / "tree"
         git("worktree", "add", "--detach", str(work), full, cwd=repo)
         try:
+            names = None
+            if "rules" in spec:
+                script, config = app_rules(spec["rules"], repo)
+                subprocess.run([sys.executable, str(script), "apply", "--root", str(work),
+                                "--config", str(config)], check=True, stdout=subprocess.DEVNULL)
+                # The app's rules renamed its own packages; the libraries' are left to rename.
+                names = dependency_names(work)
             Renamer(work, spec.get("file_renames", {}),
-                    lambda lib, rev: generate(lib, rev, repo)).run()
+                    lambda lib, rev: generate(lib, rev, repo), names=names).run()
             notice(work, library, full)
             git("add", "-A", cwd=work)
             tree = git("write-tree", cwd=work)
@@ -389,6 +427,22 @@ def mirror_packages(repo: Path) -> dict[str, str]:
     return names
 
 
+def renamed_packages(app: Path) -> dict[str, str]:
+    """Packages of the libraries renamed by an app's rules (filmcraft-media -> toma-media) that
+    the app's manifests name. Old pins hold packages the mirror's tip has dropped, so the names
+    come from the app rather than from the mirror."""
+    prefixes = [spec["packages"] for spec in LIBRARIES.values() if "packages" in spec]
+    names: dict[str, str] = {}
+    for manifest in app.rglob("Cargo.toml"):
+        if any(part in SKIP_DIRS for part in manifest.relative_to(app).parts):
+            continue
+        text = manifest.read_text(errors="replace")
+        for old, new in prefixes:
+            for name in re.findall(r"(?<![A-Za-z0-9_-])" + re.escape(old) + r"[A-Za-z0-9-]*[A-Za-z0-9]", text):
+                names[name] = new + name[len(old):]
+    return names
+
+
 def library_of(sha: str, repo: Path) -> str | None:
     """The generated library whose mirror holds commit sha, if any."""
     try:
@@ -412,6 +466,8 @@ def migrate_app(app: Path, repo: Path, allow_generate: bool) -> int:
     Nodalia's names at the matching Nodalia commit.
     """
     names = mirror_packages(repo)
+    names.update(dependency_names(app))
+    names.update(renamed_packages(app))
     shas: set[str] = set()
     for path in app.rglob("*"):
         rel = path.relative_to(app)
@@ -476,7 +532,7 @@ def main() -> int:
         unknown = set(args.library) - set(LIBRARIES)
         if unknown:
             parser.error(f"unknown libraries: {', '.join(sorted(unknown))}")
-        for library in args.library or ["winprint", "libs", "i18n", "fonts"]:
+        for library in args.library or ["winprint", "libs", "i18n", "fonts", "toma"]:
             for line in update(library, args.repo):
                 print(f"{library} {line}")
         return 0

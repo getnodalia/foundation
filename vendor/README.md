@@ -31,7 +31,7 @@ request). Without the branch the commit would not be reachable here.
 
 Apps never depend on a mirror directly: they depend on the same code under Nodalia's names,
 which `scripts/nodalia_libs.py` makes from the mirrors and the **Nodalia libraries** workflow
-publishes on four branches of its own:
+publishes on branches of its own:
 
 | Branch | Made from | What changes |
 |---|---|---|
@@ -39,6 +39,7 @@ publishes on four branches of its own:
 | `nodalia/i18n` | `vendor/craft-i18n/*` | the same, and each app's catalog has the app's name (`pdfcraft.tsv` is `papel.tsv`, `wordcraft.tsv` is `letra.tsv`) |
 | `nodalia/fonts` | `vendor/craft-fonts/*` | the same (`NODALIA_FONTS_DIR`) |
 | `nodalia/winprint` | `vendor/winprint.rs/*` | the GDI helper crate is `nodalia-winprint-gdi` |
+| `nodalia/toma` | `vendor/filmcraft/*` | renamed by Toma's own rules (`.github/rebrand.toml` in getnodalia/toma), so its media crates are `toma-*` exactly as in Toma; Pulso uses them |
 
 What never changes: licence texts, `NOTICE` (it gains a paragraph saying where the tree comes
 from), `ATTRIBUTION.md`, third-party code under `vendor/`, links and credits, and the lower-case

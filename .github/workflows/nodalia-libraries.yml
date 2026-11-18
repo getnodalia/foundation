@@ -2,7 +2,7 @@ name: Nodalia libraries
 
 # Publishes the shared libraries under Nodalia's names. The mirrors on vendor/* stay exactly as
 # upstream published them; scripts/nodalia_libs.py renames every new commit of a mirror and
-# records it on nodalia/libs, nodalia/i18n, nodalia/fonts and nodalia/winprint (see
+# records it on nodalia/libs, nodalia/i18n, nodalia/fonts, nodalia/winprint and nodalia/toma (see
 # vendor/README.md). Runs when a mirror moves, before the apps' Monday upstream syncs, and on
 # request for a commit an app pins.
 
@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       library:
-        description: "Library to generate commits for (libs, i18n, fonts, winprint); empty: none"
+        description: "Library to generate commits for (libs, i18n, fonts, winprint, toma); empty: none"
         type: string
         default: ""
       commits:
