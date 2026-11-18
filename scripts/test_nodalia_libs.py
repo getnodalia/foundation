@@ -47,6 +47,11 @@ class TextTests(unittest.TestCase):
                          'env::var("NODALIA_FONTS_DIR")')
         self.assertEqual(self.r.text("MYCRAFT_X", False), "MYCRAFT_X")
 
+    def test_an_apps_own_variables_stay(self):
+        r = renamer(Path(self.tmp.name), env_names={"CRAFT_FONTS_DIR"})
+        self.assertEqual(r.text("CRAFT_FONTS_DIR CRAFT_USER_DIR CRAFT_FONTS_DIRS", False),
+                         "NODALIA_FONTS_DIR CRAFT_USER_DIR CRAFT_FONTS_DIRS")
+
     def test_links_keep_their_words(self):
         src = "see https://github.com/storytold/craft-libs/pull/29 and craft-libs"
         self.assertEqual(self.r.text(src, False),

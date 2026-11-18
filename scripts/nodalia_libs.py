@@ -170,7 +170,8 @@ def directory_renames(root: Path) -> dict[str, str]:
 class Renamer:
     def __init__(self, root: Path, file_renames: dict[str, str], rev_map=None,
                  names: dict[str, str] | None = None, sha_map: dict[str, str] | None = None,
-                 skip: set[str] | None = None, products: bool = True):
+                 skip: set[str] | None = None, products: bool = True,
+                 env_names: set[str] | None = None):
         self.root = root
         self.products = products
         self.rev_map = rev_map
@@ -198,7 +199,14 @@ class Renamer:
         self.all_dirs = all_dirs
         self.product_re = re.compile(r"(?<![A-Za-z0-9_])(" + "|".join(PRODUCT_NAMES) +
                                      r")(?![A-Za-z0-9_])" + CREDIT)
-        self.env_re = re.compile(r"(?<![A-Za-z0-9_])CRAFT_(?=[A-Z0-9])")
+        if env_names is None:
+            self.env_re = re.compile(r"(?<![A-Za-z0-9_])CRAFT_(?=[A-Z0-9])")
+        else:
+            # Only the libraries' own variables: an app's own CRAFT_* names (installer
+            # properties a previous install saved) keep working.
+            self.env_re = re.compile(r"(?<![A-Za-z0-9_])CRAFT_(?=(?:" + "|".join(
+                re.escape(n[len("CRAFT_"):]) for n in sorted(env_names, key=len, reverse=True)) +
+                r")(?![A-Za-z0-9_]))") if env_names else re.compile(r"(?!x)x")
         mirrored = "|".join(re.escape(r) for r in MIRRORED)
         self.git_re = re.compile(r"https://github\.com/storytold/(" + mirrored + r")(?:\.git)?\b")
         generated = "|".join(re.escape(r) for r in GENERATED_REPOS)
@@ -434,6 +442,18 @@ def mirror_packages(repo: Path) -> dict[str, str]:
     return names
 
 
+def library_variables(repo: Path) -> set[str]:
+    """The CRAFT_* variables the libraries read or set, at the tips of their mirrors."""
+    tips = [f"origin/{LIBRARIES[lib]['mirror']}" for lib in ("libs", "i18n", "fonts")]
+    try:
+        out = git("grep", "-ohE", r"CRAFT_[A-Z0-9_]*[A-Z0-9]", *tips, cwd=repo)
+    except subprocess.CalledProcessError:
+        out = ""
+    names = {line.split(":", 1)[-1] for line in out.splitlines()}
+    return {n for n in names if n.startswith("CRAFT_")} | {
+        "CRAFT_FONTS_DIR", "CRAFT_FONTS_REQUIRED", "CRAFT_I18N_DIR", "CRAFT_I18N_REQUIRED"}
+
+
 def renamed_packages(app: Path) -> dict[str, str]:
     """Packages of the libraries renamed by an app's rules (filmcraft-media -> toma-media) that
     the app's manifests name. Old pins hold packages the mirror's tip has dropped, so the names
@@ -504,7 +524,7 @@ def migrate_app(app: Path, repo: Path, allow_generate: bool) -> int:
         return 1
     file_renames = dict(LIBRARIES["i18n"]["file_renames"])
     Renamer(app, file_renames, names=names, sha_map=sha_map, skip=APP_SKIP,
-            products=False).run()
+            products=False, env_names=library_variables(repo)).run()
     old_rev = app / "craft-i18n.rev"
     if old_rev.exists():
         old_rev.rename(app / "nodalia-i18n.rev")
