@@ -170,9 +170,8 @@ pub struct Img {
     pub w: f32,
     pub h: f32,
     pub alt: String,
-    /// Placement and drawing metadata for formats that keep it (ODT). `None` is inline;
-    /// `Some` may also be inline, retaining rotation, mirroring or explicit stacking order.
-    /// The Float wrap, not the Option, determines anchoring.
+    /// How a floating picture is placed and wrapped, for formats that keep it (ODT); `None`: in
+    /// line with the text.
     pub float: Option<Box<nodalia_wordmodel::para::Float>>,
     /// The embedded object this picture shows, kept whole (ODT only; see [`OdfObject`]).
     pub object: Option<Arc<OdfObject>>,
@@ -677,8 +676,6 @@ pub struct Para {
     pub kind: Kind,
     pub list: Option<ListInfo>,
     pub align: Option<Align>,
-    /// The paragraph reads right to left (OOXML `w:bidi`, RTF `\rtlpar`).
-    pub rtl: bool,
     pub page_break: bool,
     /// Keep the paragraph on the same page as the next one (ODT `fo:keep-with-next`).
     pub keep_next: bool,
@@ -881,10 +878,6 @@ pub struct Cell {
     /// The width, points, the source gives a cell spanning one column (HTML): see
     /// [`FTable::widths_from_cells`].
     pub width: Option<f32>,
-    /// Whether the source explicitly started a vertical merge (`mso-yfti-vmerge:restart`).
-    pub vmerge_restart: bool,
-    /// Whether this covered placeholder was synthesized by [`FTable::insert_covered`].
-    pub synthetic_covered: bool,
 }
 
 /// A cell's background picture: the picture at its own size, how it fills the cell, and where an
@@ -911,8 +904,6 @@ impl Default for Cell {
             direction: Default::default(),
             picture: None,
             width: None,
-            vmerge_restart: false,
-            synthetic_covered: false,
         }
     }
 }
@@ -1005,8 +996,8 @@ impl FTable {
             let mut g = 0usize;
             let mut ci = 0usize;
             while let Some(c) = self.rows.get(r).and_then(|row| row.get(ci)) {
-                let (span, rs, vmerge_restart) = (c.colspan.clamp(1, 63) as usize, c.rowspan.clamp(1, 1000) as usize, c.vmerge_restart);
-                if rs > 1 {
+                let (span, rs, covered) = (c.colspan.clamp(1, 63) as usize, c.rowspan.clamp(1, 1000) as usize, c.covered);
+                if rs > 1 && !covered {
                     for k in 1..rs {
                         work += 1;
                         if work > MAX_COVERED_WORK {
@@ -1023,14 +1014,8 @@ impl FTable {
                             }
                             x += cc.colspan.clamp(1, 63) as usize;
                         }
-                        if at < row.len() && x == g && row[at].covered && (vmerge_restart || row[at].synthetic_covered) {
-                            // Row already has a matching explicit continuation (when this cell had
-                            // `mso-yfti-vmerge:restart`) or a synthetic placeholder from an earlier
-                            // row. Avoid adding a duplicate covered cell which would make the row ragged.
-                            continue;
-                        }
                         if row.len() < 64 {
-                            row.insert(at, Cell { colspan: span as u32, covered: true, synthetic_covered: true, ..Default::default() });
+                            row.insert(at, Cell { colspan: span as u32, covered: true, ..Default::default() });
                         }
                     }
                 }

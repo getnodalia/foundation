@@ -11,43 +11,16 @@ rust-version = "1.95"
 repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
-nodalia-evm = { path = "crates/evm" }
-nodalia-java-class = { path = "crates/java-class" }
-nodalia-sourcemap = { path = "crates/sourcemap" }
-nodalia-pcap = { path = "crates/pcap" }
-nodalia-har = { path = "crates/har" }
-nodalia-xfdf = { path = "crates/xfdf" }
-nodalia-jsonc = { path = "crates/jsonc" }
-nodalia-palette = { path = "crates/palette" }
-nodalia-score = { path = "crates/score" }
-nodalia-shx = { path = "crates/shx" }
-nodalia-http-url = { path = "crates/http-url" }
-nodalia-usd = { path = "crates/usd" }
-nodalia-smime = { path = "crates/smime" }
-nodalia-ssip = { path = "crates/ssip" }
-nodalia-ber = { path = "crates/ber" }
-nodalia-proto = { path = "crates/proto" }
-nodalia-render-parity = { path = "crates/render-parity" }
 acadrust = "=0.6.6"
 log = "0.4"
 # internal: add each crate here as `craft-<name> = { path = "crates/<name>" }`
-nodalia-plist = { path = "crates/plist" }
-nodalia-wasm = { path = "crates/wasm" }
 nodalia-platform = { path = "crates/platform" }
 nodalia-aep = { path = "crates/aep" }
 nodalia-affinity = { path = "crates/affinity" }
-nodalia-ai = { path = "crates/ai" }
 nodalia-ai-core = { path = "crates/ai-core" }
-nodalia-anima-format = { path = "crates/anima-format" }
 nodalia-pdf = { path = "crates/pdf", version = "=0.1.0" }
-nodalia-pe = { path = "crates/pe" }
-nodalia-ps = { path = "crates/ps", version = "=0.1.0" }
 nodalia-pdn = { path = "crates/pdn" }
 nodalia-plate-test = { path = "crates/plate-test" }
-pdf-writer = "0.15"
-miniz_oxide = "0.8"
-weezl = "0.1"
-skrifa = "0.47"
 krilla = { version = "=0.8.2", default-features = false, features = ["raster-images"] }
 hayro = { version = "=0.7.1", default-features = false }
 hayro-interpret = { version = "=0.7.0", default-features = false, features = ["embed-fonts", "embed-cmaps"] }
@@ -55,19 +28,12 @@ hayro-syntax = { version = "=0.7.2", default-features = false, features = ["std"
 bytemuck = "1"
 kurbo = "0.13"
 thiserror = "2"
-nodalia-gzip = { path = "crates/gzip" }
-nodalia-celdas-format = { path = "crates/celdas-format" }
 nodalia-aaf = { path = "crates/aaf" }
 nodalia-atomic = { path = "crates/atomic" }
-nodalia-xtask = { path = "crates/xtask" }
 nodalia-captions = { path = "crates/captions" }
 nodalia-cfb = { path = "crates/cfb" }
 nodalia-codepage = { path = "crates/codepage" }
 nodalia-cms = { path = "crates/cms" }
-nodalia-cloud = { path = "crates/cloud" }
-nodalia-cloud-local = { path = "crates/cloud-local" }
-nodalia-color = { path = "crates/color" }
-nodalia-frame = { path = "crates/frame" }
 nodalia-crs = { path = "crates/crs" }
 nodalia-crw = { path = "crates/crw" }
 nodalia-csv = { path = "crates/csv" }
@@ -76,13 +42,10 @@ nodalia-dialogs = { path = "crates/dialogs" }
 nodalia-doc-binary = { path = "crates/doc-binary" }
 nodalia-docx = { path = "crates/docx" }
 nodalia-document-bundle = { path = "crates/document-bundle" }
-nodalia-mcmat = { path = "crates/mcmat" }
-nodalia-lamina-format = { path = "crates/lamina-format" }
 nodalia-pliego-format = { path = "crates/pliego-format" }
 nodalia-dxf = { path = "crates/dxf" }
 nodalia-drawingml = { path = "crates/drawingml" }
 nodalia-eps = { path = "crates/eps" }
-nodalia-elf = { path = "crates/elf" }
 nodalia-file-formats = { path = "crates/file-formats" }
 nodalia-file-import = { path = "crates/file-import" }
 vectorcraft-doc = { git = "https://github.com/getnodalia/foundation", rev = "6b3a6b8788ebcb420d69449199cbdf323888d27e" }
@@ -93,7 +56,6 @@ nodalia-doc = { path = "crates/doc" }
 nodalia-docpath = { path = "crates/docpath" }
 nodalia-dpx = { path = "crates/dpx" }
 nodalia-dwg = { path = "crates/dwg" }
-nodalia-fcproj-format = { path = "crates/fcproj-format" }
 nodalia-ecproj-format = { path = "crates/ecproj-format" }
 nodalia-figma-rest = { path = "crates/figma-rest" }
 nodalia-exr = { path = "crates/exr" }
@@ -112,28 +74,21 @@ nodalia-heif = { path = "crates/heif" }
 nodalia-fig = { path = "crates/fig" }
 nodalia-fonts-build = { path = "crates/fonts-build" }
 nodalia-i18n = { path = "crates/i18n" }
-nodalia-ipc = { path = "crates/ipc" }
 nodalia-idml = { path = "crates/idml" }
 nodalia-indd = { path = "crates/indd" }
 nodalia-jmap = { path = "crates/jmap" }
 nodalia-ical = { path = "crates/ical" }
 nodalia-jpeg = { path = "crates/jpeg" }
-nodalia-control-protocol = { path = "crates/control-protocol" }
-nodalia-jsonrpc = { path = "crates/jsonrpc" }
-nodalia-mcp = { path = "crates/mcp" }
-nodalia-jxl = { path = "crates/jxl" }
 nodalia-kiwi = { path = "crates/kiwi" }
 nodalia-keymap = { path = "crates/keymap" }
 nodalia-assuan = { path = "crates/assuan" }
 nodalia-kra = { path = "crates/kra" }
 nodalia-audio = { path = "crates/audio" }
+# No default features, so nodalia-audio's `encode` builds nodalia-media without `isobmff`.
 nodalia-latex = { path = "crates/latex" }
 nodalia-markdown = { path = "crates/markdown" }
-nodalia-macho = { path = "crates/macho" }
 nodalia-math = { path = "crates/math" }
-# No default features: nodalia-audio turns on the nodalia-media modules each of its features needs.
 nodalia-media = { path = "crates/media", default-features = false }
-nodalia-media-source = { path = "crates/media-source" }
 nodalia-materialx = { path = "crates/materialx" }
 nodalia-media-testkit = { path = "crates/media-testkit" }
 nodalia-midi = { path = "crates/midi" }
@@ -156,12 +111,9 @@ nodalia-lienzo-bundle = { path = "crates/lienzo-bundle" }
 nodalia-pkcs7 = { path = "crates/pkcs7" }
 nodalia-plotter = { path = "crates/plotter" }
 nodalia-prepress = { path = "crates/prepress" }
-nodalia-press-print = { path = "crates/press-print" }
 nodalia-print = { path = "crates/print" }
 nodalia-proof = { path = "crates/proof" }
 nodalia-raster-codecs = { path = "crates/raster-codecs" }
-nodalia-image-codecs = { path = "crates/image-codecs" }
-nodalia-dds = { path = "crates/dds" }
 nodalia-psd = { path = "crates/psd" }
 nodalia-pst = { path = "crates/pst" }
 nodalia-quit = { path = "crates/quit" }
@@ -173,16 +125,12 @@ nodalia-settings = { path = "crates/settings" }
 nodalia-sound-format = { path = "crates/sound-format" }
 nodalia-time = { path = "crates/time" }
 nodalia-silhouette-studio = { path = "crates/silhouette-studio" }
-nodalia-suite-account = { path = "crates/suite-account" }
 nodalia-svg = { path = "crates/svg" }
 nodalia-stencil-format = { path = "crates/stencil-format" }
 nodalia-stencil-document = { path = "crates/stencil-document" }
 nodalia-svg-paths = { path = "crates/svg-paths" }
 nodalia-stream-codecs = { path = "crates/stream-codecs" }
-nodalia-testkit = { path = "crates/testkit" }
 nodalia-text = { path = "crates/text" }
-nodalia-texture-archive = { path = "crates/texture-archive" }
-nodalia-texture = { path = "crates/texture" }
 nodalia-tga = { path = "crates/tga" }
 nodalia-timeline = { path = "crates/timeline" }
 nodalia-tiff = { path = "crates/tiff" }
@@ -193,7 +141,6 @@ nodalia-vcard = { path = "crates/vcard" }
 nodalia-pluma-format = { path = "crates/pluma-format" }
 nodalia-vectordrawable = { path = "crates/vectordrawable" }
 nodalia-xls = { path = "crates/xls" }
-nodalia-xfl = { path = "crates/xfl" }
 nodalia-wordmodel = { path = "crates/wordmodel" }
 nodalia-xlsx = { path = "crates/xlsx" }
 indd = { git = "https://github.com/getnodalia/foundation", rev = "7f3060e5bce78d21ea70e0d5eacb96edce15dfbe" }
@@ -201,8 +148,6 @@ nodalia-xcf = { path = "crates/xcf" }
 nodalia-xml = { path = "crates/xml" }
 nodalia-zip = { path = "crates/zip" }
 nodalia-y4m = { path = "crates/y4m" }
-nodalia-sniff = { path = "crates/sniff" }
-nodalia-tar = { path = "crates/tar" }
 nodalia-epub = { path = "crates/epub" }
 nodalia-ews = { path = "crates/ews" }
 nodalia-video = { path = "crates/video" }
@@ -212,8 +157,6 @@ nodalia-web-host = { path = "crates/web-host" }
 nodalia-webp = { path = "crates/webp" }
 egui = { version = "0.37", default-features = false }
 md5 = { package = "md-5", version = "0.10", default-features = false }
-jxl-oxide = { version = "0.12", default-features = false }
-jixel = "=0.3.4"
 rayon = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -225,14 +168,13 @@ chrono = { version = "0.4.45", default-features = false, features = ["std"] }
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
-unexpected_cfgs = { level = "warn", check-cfg = ["cfg(nodalia_pdf_unicode_fixtures)"] }
-
-[workspace.lints.cargo]
 unused_workspace_dependencies = "allow"
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(nodalia_pdf_unicode_fixtures)"] }
 
 [workspace.lints.clippy]
 cognitive_complexity = "deny"
 too_many_arguments = "deny"
+unused_workspace_dependencies = "allow"
 wildcard_imports = "deny"
 dbg_macro = "warn"
 todo = "warn"

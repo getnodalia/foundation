@@ -39,13 +39,13 @@ mod decoder;
 #[cfg(feature = "mp3-encode")]
 mod encoder;
 #[cfg(feature = "mp3-encode")]
-pub(crate) mod filterbank;
+mod filterbank;
 #[cfg(feature = "mp3-encode")]
 mod huffman;
 mod huffman_tables;
 #[cfg(feature = "mp3-encode")]
 mod quantize;
-pub(crate) mod tables;
+mod tables;
 
 #[cfg(feature = "mp3-decode")]
 pub use decoder::{Decoder, InfoTag};

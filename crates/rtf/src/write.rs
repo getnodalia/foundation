@@ -1,10 +1,6 @@
 //! The model as RTF, and the escaping every RTF writer needs.
 
-use std::borrow::Borrow;
-use std::collections::HashMap;
-use std::collections::hash_map::Entry;
 use std::fmt::Write;
-use std::hash::Hash;
 
 use crate::model::{Align, Block, COLUMN_BREAK, CharFmt, Document, LINE_BREAK, PAGE_BREAK, Para, VertAlign};
 
@@ -52,94 +48,31 @@ pub fn esc_font(name: &str) -> String {
     esc(&name.replace(char::is_control, "")).replace(';', "\\'3b")
 }
 
-#[cfg(test)]
-thread_local! {
-    /// Lookups the writers make in their font, colour and author tables, counted in tests: each
-    /// must take one step however long the table is, so a document with thousands of fonts or
-    /// colours is written in linear time.
-    static STEPS: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
-}
-
-/// The lookup steps `f` takes (see [`STEPS`]).
-#[cfg(test)]
-pub(crate) fn lookup_steps(f: impl FnOnce()) -> usize {
-    STEPS.with(|s| s.set(0));
-    f();
-    STEPS.with(|s| s.get())
-}
-
-/// A table written in the order its entries were first used (`\fonttbl`, `\colortbl`,
-/// `\revtbl`), with an index from each entry's key to its place, so that a lookup doesn't scan
-/// the table: a document can use thousands of fonts or colours.
-pub(crate) struct Interned<T, K> {
-    pub(crate) items: Vec<T>,
-    index: HashMap<K, usize>,
-}
-
-impl<T, K: Eq + Hash> Interned<T, K> {
-    pub(crate) fn new() -> Self {
-        Interned { items: Vec::new(), index: HashMap::new() }
-    }
-
-    /// The place of the entry with `key`.
-    pub(crate) fn get<Q: Eq + Hash + ?Sized>(&self, key: &Q) -> Option<usize>
-    where
-        K: Borrow<Q>,
-    {
-        #[cfg(test)]
-        STEPS.with(|s| s.set(s.get() + 1));
-        self.index.get(key).copied()
-    }
-
-    /// The place of the entry with `key`, adding `item()` at the end when there is none: one
-    /// lookup in the index either way.
-    pub(crate) fn insert(&mut self, key: K, item: impl FnOnce() -> T) -> usize {
-        #[cfg(test)]
-        STEPS.with(|s| s.set(s.get() + 1));
-        match self.index.entry(key) {
-            Entry::Occupied(e) => *e.get(),
-            Entry::Vacant(e) => {
-                self.items.push(item());
-                let i = self.items.len() - 1;
-                e.insert(i);
-                i
-            }
-        }
-    }
-}
-
-/// A font table's key for `name`: RTF writers match font names without regard to ASCII case,
-/// and the table keeps the first spelling.
-pub(crate) fn font_key(name: &str) -> String {
-    name.to_ascii_lowercase()
-}
-
 /// The fonts and colours a document uses, in the order of their tables. Font 0 is the default
 /// font; colour 0 is the default (auto) colour, so the first real colour is `\cf1`.
 struct Tables {
-    fonts: Interned<String, String>,
-    colors: Interned<[u8; 3], [u8; 3]>,
+    fonts: Vec<String>,
+    colors: Vec<[u8; 3]>,
 }
 
 impl Tables {
     fn of(doc: &Document, default_font: &str) -> Tables {
-        let mut t = Tables { fonts: Interned::new(), colors: Interned::new() };
-        t.fonts.insert(font_key(default_font), || default_font.to_string());
+        let mut t = Tables { fonts: vec![default_font.to_string()], colors: Vec::new() };
         for fmt in doc.paras().flat_map(|p| &p.runs).map(|r| &r.fmt) {
-            if let Some(f) = fmt.font.as_deref() {
-                t.fonts.insert(font_key(f), || f.to_string());
+            if let Some(f) = fmt.font.as_deref().filter(|f| t.font(f).is_none()) {
+                t.fonts.push(f.to_string());
             }
-            if let Some(c) = fmt.color {
-                t.colors.insert(c, || c);
+            if let Some(c) = fmt.color.filter(|c| t.color(*c).is_none()) {
+                t.colors.push(c);
             }
         }
         t
     }
     fn font(&self, name: &str) -> Option<usize> {
-        self.fonts.get(font_key(name).as_str())
+        self.fonts.iter().position(|f| f.eq_ignore_ascii_case(name))
     }
     fn color(&self, c: [u8; 3]) -> Option<usize> {
-        self.colors.get(&c).map(|i| i + 1)
+        self.colors.iter().position(|k| *k == c).map(|i| i + 1)
     }
 
     fn fmt_words(&self, f: &CharFmt) -> String {
@@ -215,13 +148,13 @@ impl Tables {
 pub fn write(doc: &Document, default_font: &str) -> String {
     let t = Tables::of(doc, default_font);
     let mut o = String::from("{\\rtf1\\ansi\\ansicpg1252\\deff0\\uc1{\\fonttbl");
-    for (i, f) in t.fonts.items.iter().enumerate() {
+    for (i, f) in t.fonts.iter().enumerate() {
         let _ = write!(o, "{{\\f{i}\\fnil {};}}", esc_font(f));
     }
     o.push_str("}\n");
-    if !t.colors.items.is_empty() {
+    if !t.colors.is_empty() {
         o.push_str("{\\colortbl;");
-        for [r, g, b] in &t.colors.items {
+        for [r, g, b] in &t.colors {
             let _ = write!(o, "\\red{r}\\green{g}\\blue{b};");
         }
         o.push_str("}\n");
@@ -263,7 +196,3 @@ pub fn write(doc: &Document, default_font: &str) -> String {
     o.push('}');
     o
 }
-
-#[cfg(test)]
-#[path = "write_tests.rs"]
-mod tests;

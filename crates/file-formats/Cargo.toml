@@ -9,39 +9,11 @@ rust-version.workspace = true
 
 [dependencies]
 nodalia-eps = { workspace = true }
-nodalia-image-codecs = { workspace = true, optional = true }
-nodalia-raw = { workspace = true, optional = true }
-nodalia-ora = { workspace = true, optional = true }
-nodalia-kra = { workspace = true, optional = true }
-nodalia-lienzo-bundle = { workspace = true, optional = true }
 nodalia-idml = { workspace = true }
 nodalia-svg = { workspace = true }
 nodalia-zip = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-
-[features]
-default = []
-# These flags report which shared parser/codec families a client builds. The application still
-# selects the corresponding shared crates in its dependency graph.
-raster-codecs = ["dep:nodalia-image-codecs"]
-heif = ["raster-codecs", "nodalia-image-codecs/heif"]
-avif = ["raster-codecs", "nodalia-image-codecs/avif"]
-pdf = []
-svg = []
-ora = ["dep:nodalia-ora"]
-kra = ["dep:nodalia-kra"]
-xcf = []
-pdn = []
-raw = ["dep:nodalia-raw"]
-psd = []
-affinity = []
-pcraft = ["dep:nodalia-lienzo-bundle"]
-ase = []
-office = []
-designcraft = []
-stencilcraft = []
-plotter = []
 
 [lints]
 workspace = true

@@ -24,7 +24,7 @@ pub(crate) fn decode(method: Encryption, data: &mut [u8], bid: u64) {
 }
 
 /// Encodes `data` in place (the test writer's side).
-#[cfg(any(test, feature = "test-support"))]
+#[cfg(any(test, feature = "test-writer"))]
 pub(crate) fn encode(method: Encryption, data: &mut [u8], bid: u64) {
     match method {
         Encryption::None => {}

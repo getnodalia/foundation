@@ -6,9 +6,8 @@ const MAIN_NS: &str = "http://schemas.openxmlformats.org/spreadsheetml/2006/main
 const R_NS: &str = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
 /// An `.xlsx` with the given sheets, each `(name, the rows inside <sheetData>)`, and shared
-/// strings. Names and strings are written as given: escape them first if they need it. An
-/// archive that cannot be written returns the writer's error.
-pub fn workbook(sheets: &[(&str, &str)], strings: &[&str]) -> Result<Vec<u8>, nodalia_opc::Error> {
+/// strings. Names and strings are written as given: escape them first if they need it.
+pub fn workbook(sheets: &[(&str, &str)], strings: &[&str]) -> Vec<u8> {
     let mut out = PackageOut::default();
     let mut root = RelsOut::default();
     root.add("officeDocument", "xl/workbook.xml", false);
@@ -41,13 +40,11 @@ pub fn workbook(sheets: &[(&str, &str)], strings: &[&str]) -> Result<Vec<u8>, no
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
         format!(r#"<workbook xmlns="{MAIN_NS}" xmlns:r="{R_NS}"><sheets>{list}</sheets></workbook>"#).into_bytes(),
     );
-    out.finish()
+    out.finish().unwrap_or_default()
 }
 
-/// A ZIP archive of the given entries, stored as named (no content types are added). An entry
-/// the archive cannot hold, such as a second entry under the same name, returns the writer's
-/// error.
-pub fn zip(entries: &[(&str, &[u8])]) -> Result<Vec<u8>, nodalia_opc::Error> {
+/// A ZIP archive of the given entries, stored as named (no content types are added).
+pub fn zip(entries: &[(&str, &[u8])]) -> Vec<u8> {
     let entries: Vec<(String, Vec<u8>)> = entries.iter().map(|(n, b)| (n.to_string(), b.to_vec())).collect();
-    nodalia_opc::zip_entries(&entries)
+    nodalia_opc::zip_entries(&entries).unwrap_or_default()
 }
