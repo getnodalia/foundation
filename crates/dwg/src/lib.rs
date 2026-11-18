@@ -113,6 +113,7 @@ mod native {
         }
         let mut notes = read_notes(&outcome.stats);
         let mut doc = outcome.document;
+        guarded(AssertUnwindSafe(|| restore_model_space(&mut doc))).map_err(|_| "the DWG model space check failed".to_string())?;
         notes.extend(
             guarded(AssertUnwindSafe(|| application_objects(&mut doc))).map_err(|_| "the DWG application object conversion failed".to_string())?,
         );
@@ -391,6 +392,7 @@ mod native {
     fn post_process(doc: &mut acadrust::CadDocument) -> usize {
         super::fail_in_test("post_process");
         current_style_names(doc);
+        viewport_ids(doc);
         table_merges(doc);
         table_cell_heights(doc);
         table_style_rows(doc, false);
@@ -399,6 +401,44 @@ mod native {
     }
 
     /// Runs `f`, turning a panic into an error (the reader and writer are guarded the same way).
+    /// Gives the model space back its name when the file damaged it. The header still names
+    /// the model space's block record by handle, and without the name every entity in it would
+    /// land in an ordinary block: the drawing would open empty and say nothing. Nothing is lost
+    /// once the name is back, so the read needs no note. True when the name was restored.
+    pub(crate) fn restore_model_space(doc: &mut acadrust::CadDocument) -> bool {
+        if doc.block_records.iter().any(|b| b.is_model_space()) {
+            return false;
+        }
+        let handle = doc.header.model_space_block_handle;
+        let Some(name) = doc.block_records.iter().find(|b| handle != acadrust::Handle::NULL && b.handle == handle).map(|b| b.name.clone()) else {
+            return false;
+        };
+        doc.block_records.rename(&name, "*Model_Space").is_ok()
+    }
+
+    /// Recreate each paper-space viewport's sequential ID before exporting DWG as DXF.
+    /// Some acadrust versions number only the active layout, leaving inactive IDs at zero.
+    fn viewport_ids(doc: &mut acadrust::CadDocument) {
+        use acadrust::tables::TableEntry;
+        let blocks: Vec<_> = doc
+            .block_records
+            .iter()
+            .filter(|b| b.name().to_ascii_uppercase().starts_with("*PAPER_SPACE"))
+            .map(|b| b.entity_handles.clone())
+            .collect();
+        for handles in blocks {
+            let mut id = 0i16;
+            for handle in handles {
+                if let Some(acadrust::entities::EntityType::Viewport(v)) = doc.get_entity_mut(handle) {
+                    id = id.saturating_add(1);
+                    if v.id == 0 {
+                        v.id = id;
+                    }
+                }
+            }
+        }
+    }
+
     fn guarded<R>(f: impl FnOnce() -> R + std::panic::UnwindSafe) -> Result<R, ()> {
         std::panic::catch_unwind(f).map_err(|_| ())
     }
