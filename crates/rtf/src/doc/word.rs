@@ -21,14 +21,10 @@ impl Reader {
         self.finish_multibyte();
         let on = p != Some(0);
         let pv = p.unwrap_or(0);
-        self.note_defshp(w);
         if self.skip_destination_word(w, pv) {
             return;
         }
-        if self.shape_word(w, p, first_in_group) {
-            return;
-        }
-        if self.shppict_word(w) || self.start_header_footer_word(w) {
+        if w == "shppict" || self.start_header_footer_word(w) {
             return;
         }
         if self.start_note_word(w) {
@@ -42,8 +38,6 @@ impl Reader {
                 }
                 Dest::Pict => {
                     self.pict_depth = Some(self.depth());
-                    self.pict_defshp = false;
-                    self.pict_after_shape = self.pict_follows_shape();
                     self.pict_hex.clear();
                     self.pict_half = None;
                     self.pict_kind = 0;
@@ -81,7 +75,6 @@ impl Reader {
             "row" => self.end_row(),
             "line" | "softline" => self.ch('\n'),
             "tab" => self.ch('\t'),
-            "chpgn" => self.page_number_symbol(),
             "page" | "softpage" => self.ch('\u{000C}'),
             "column" => self.ch('\u{000E}'),
             "emdash" => self.ch('—'),
@@ -290,13 +283,8 @@ impl Reader {
                     self.defs.push(d);
                 }
             }
-            "field" => {
-                self.start_field();
-                self.open_field();
-            }
-            "fldlock" => self.field_word(w),
+            "field" => self.start_field(),
             "fldrslt" => {
-                self.field_word(w);
                 let link = self.st.field.and_then(|i| self.fields.get(i)).and_then(|s| hyperlink(s));
                 if link.is_some() {
                     self.st.fmt.link = link.as_deref().and_then(model::kept_link);
@@ -471,8 +459,6 @@ impl Reader {
             }
             Dest::RevTbl if !matches!(word, "u" | "uc") => true,
             Dest::RevTbl => false,
-            // Read by `shape_word`, which takes every word there.
-            Dest::ShpInst | Dest::ShpSn | Dest::ShpSv => true,
             Dest::Pict => {
                 self.picture_word(word, value);
                 true
