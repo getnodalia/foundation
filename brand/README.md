@@ -18,12 +18,10 @@ Collected on 2026-11-18 from `nodalia-web` (`assets/`), `nodalia-design` (`docs/
 | `app-icons/*.png`, `*.svg` | Every app's icon, 512 × 512 (Brújula and Nodalix OS as SVG) | each app's repository; Luz rendered from its theme SVG |
 | `app-icons/linux-theme/` | The same portraits fitted to the Colloid tile, as Nodalix OS shows them (`dev.danielmiguelt.<App>.svg`) | `nodalix-icon-theme/src/apps/scalable` |
 | `fonts/` | Sora, Inter, IBM Plex Sans and IBM Plex Mono, each with its `OFL.txt` | `nodalia-design` |
-| `dmg-backgrounds/` | The Finder window background of every app's macOS DMG: SVG master and a 2× PNG (1320 × 800) | generated with `tools/dmg-background` |
+| `dmg-backgrounds/` | The Finder window background of every app's macOS DMG: SVG master and a 2× PNG (1320 × 800) | generated with `nodalia-design/tools/dmg-background` |
 | `ndl/` | The NDL guide: design language, tokens, components, iconography, the Creator and Engineering suite specs, and the token JSON files | `nodalia-design/docs`, `packages/tokens/src` |
-| `tools/app-portrait/` | Turns a public-domain portrait into an app icon illustration | `nodalia-design/tools` |
-| `tools/dmg-background/` | Draws the DMG backgrounds (`--all` regenerates `dmg-backgrounds/`) | `nodalia-design/tools` |
 
-`nodalia-design` stays the source for NDL, the fonts and the tools, and each app's repository for
+`nodalia-design` stays the source for NDL and the fonts, and keeps the two generators (`tools/app-portrait` for the icon portraits, `tools/dmg-background` for the DMG windows); and each app's repository for
 its icon. When one of them changes, refresh the copy here.
 
 ## Logo
@@ -109,7 +107,7 @@ Every Nodalia app icon is a portrait of a historical figure tied to what the app
 black and white on a full-bleed field of the app's accent, on a 512 tile with a 112 radius. The
 portraits come from public-domain sources, recorded in each app's `ATTRIBUTION` and
 `assets/app-icon/README.md`; the illustrations are Nodalia's own work. A new app gets its own
-figure, made with `tools/app-portrait`. The rule is in `ndl/iconography.md`.
+figure, made with `nodalia-design/tools/app-portrait`. The rule is in `ndl/iconography.md`.
 
 `nodalix-icon-theme` keeps the icons of third-party applications as they are; only Nodalia's own
 apps use the portraits.
