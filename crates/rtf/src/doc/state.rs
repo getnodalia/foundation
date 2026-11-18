@@ -148,8 +148,6 @@ pub(super) struct St {
     pub(super) hidden: bool,
     // Paragraph properties.
     pub(super) align: Option<Align>,
-    /// `\rtlpar`: the paragraph reads right to left.
-    pub(super) rtldir: Option<bool>,
     pub(super) style: i32,
     pub(super) intbl: bool,
     pub(super) ls: Option<i32>,
@@ -187,7 +185,6 @@ impl Default for St {
             uc: 1,
             hidden: false,
             align: None,
-            rtldir: None,
             style: 0,
             intbl: false,
             ls: None,
