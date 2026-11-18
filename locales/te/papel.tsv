@@ -3475,3 +3475,53 @@ document scrollbar width	Wide	వెడల్పు
 	…or paste the raw text here; # headings, - bullets	…లేదా ముడి పాఠాన్ని ఇక్కడ అతికించండి; # శీర్షికలు, - జాబితాలు
 	− Page {p}	− పేజీ {p}
 	−LOC	−పంక్తులు
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	ట్యాబ్‌లకు ఎడమవైపు, టైటిల్ బార్ చూపించే చోట, ఒక లోగో లేదా పేరు: Papel యొక్కది లేదా మీ సంస్థది.
+	A PNG or SVG file. It is read from this place each time Papel starts.	ఒక PNG లేదా SVG ఫైల్. Papel ప్రారంభమైన ప్రతిసారీ ఈ స్థానం నుండి చదవబడుతుంది.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	స్కాన్ చేసిన పేజీలోలాగా పేజీ కంటెంట్‌లో భాగమైన సంతకం ఫీల్డ్ గానీ వ్యాఖ్యానం గానీ కాదు, కాబట్టి దాన్ని ఒక్కదాన్నే తొలగించలేము, దాన్ని దాచడానికి Papel పేజీలోని భాగాలను చెరిపివేయదు. దాన్ని తీసివేయడానికి ఆ ప్రాంతాన్ని రెడాక్ట్ చేయండి (రెడాక్ట్ చేయి), లేదా సంతకం ఒక ప్రత్యేక చిత్రమైతే PDFను సవరించు ద్వారా ఆ చిత్రాన్ని తొలగించండి.
+	About Papel	Papel గురించి
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Papel తదుపరిసారి ప్రారంభమైనప్పుడు వర్తిస్తుంది. G-SYNC, FreeSync లేదా ఇతర వేరియబుల్ రిఫ్రెష్ రేట్ ఉన్న డిస్‌ప్లేలో విండో మినుకుమినుకుమంటే OpenGL ఎంచుకోండి.
+	Ask to make Papel the default PDF app	PDF ఫైళ్లకు Papelను డిఫాల్ట్ యాప్‌గా చేయాలా అని అడగండి
+	Choose Papel for .pdf files in Windows Settings.	Windows సెట్టింగ్‌లలో .pdf ఫైళ్ల కోసం Papelను ఎంచుకోండి.
+	Combine files in Papel…	Papelలో ఫైళ్లను కలుపు…
+	Convert to PDF with Papel	Papelతో PDFగా మార్చు
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papelలో మీరు తెరిచే ఫైల్‌లు ఇక్కడ కనిపిస్తాయి. PDFను తెరవడానికి దాన్ని ఎక్కడైనా లాగి వదలండి.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Finder నుండి: ఫైల్‌లను ఎంచుకుని, కుడి-క్లిక్ > Quick Actions > “Combine files in Papel”. జాబితాలో లేదా? Quick Actions > Customize‌లో ఒకసారి ఆన్ చేయండి.
+	Hide Papel	Papelను దాచు
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	హంగేరియన్ OCR కోసం Tesseract 5 మరియు hun భాషా మోడల్‌తో కూడిన డెస్క్‌టాప్ యాప్ అవసరం. ఇన్‌స్టాల్ చేసిన తర్వాత Papelను పునఃప్రారంభించండి.
+	Make Papel your default PDF app?	PDF ఫైళ్లకు Papelను డిఫాల్ట్ యాప్‌గా చేయాలా?
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	అది లేకుండా కొత్త సందేశాన్ని తెరవండి, Papel {name}ను దాని ఫోల్డర్‌లో చూపుతుంది, మీరే దాన్ని జోడించవచ్చు.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	పేజీ {page}లో Papel చదవగలిగే దానికంటే ఎక్కువ కంటెంట్ ఉంది: దానిలో కొంత భాగం గీయబడదు, దాని వచనంలో కొంత భాగాన్ని మాత్రమే వెతకడం లేదా కాపీ చేయడం సాధ్యం.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Type 3 ఫాంట్‌లను ఉపయోగించే పేజీలు చిత్రాలుగా ముద్రించబడతాయి, ఎందుకంటే వాటిని ముద్రించేటప్పుడు Windows Papel ను మూసివేయవచ్చు. ఇతర పేజీలు ఎప్పటిలాగే ముద్రించబడతాయి.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	ఈ పేజీలోని కొంత భాగం చూపబడలేదు: దాని కంటెంట్ ఒక పేజీకి Papel గీసే గరిష్ఠ పరిమితిని మించింది.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel సక్రమంగా మూసివేయబడలేదు. ఈ పత్రాలలో ఆటోసేవ్ అయిన మార్పులు ఉన్నాయి:
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	పరికర తయారీదారులు ఇన్‌స్టాల్ చేసే లైబ్రరీల కోసం Papel వెతుకుతుంది. మీ పరికరం దొరకకపోతే మాత్రమే ఒకటి ఎంచుకోండి.
+	Papel on GitHub	GitHubలో Papel
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel ప్రొవైడర్ పేజీని తెరుస్తుంది, అక్కడ మీ CPF, PIN, వన్-టైమ్ కోడ్‌తో సైన్ ఇన్ అవ్వండి.
+	Papel web page	Papel వెబ్ పేజీ
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel ఆఫ్‌లైన్‌లో పనిచేస్తుంది. టెలిమెట్రీ లేదు, ఖాతా అవసరం లేదు, మీరు ప్రొవైడర్‌ను జోడిస్తే తప్ప క్లౌడ్ ప్రాసెసింగ్ ఉండదు.
+	Papel {v} is available.	Papel {v} అందుబాటులో ఉంది.
+	Papel's own	Papel యొక్కది
+	Quit Papel	Papel నుండి నిష్క్రమించు
+	Reopen the files that were open when Papel last closed	Papelను చివరిసారి మూసివేసినప్పుడు తెరిచి ఉన్న ఫైల్‌లను మళ్లీ తెరువు
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	తెల్ల కాగితంపై సంతకం చేసి, ప్రకాశవంతమైన, సమానమైన వెలుతురులో దాని ఫోటో తీయండి (ఫ్లాష్ ఉపయోగించండి). ఫోటోను ఎంచుకోండి లేదా ఇక్కడ వదలండి: Papel సంతకాన్ని కనుగొని కాగితాన్ని తొలగిస్తుంది.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	టెక్స్ట్ గుర్తింపు ఇన్‌స్టాల్ కాలేదు: దాని మోడల్ ఫైల్‌లు లేవు. Papelను మళ్లీ ఇన్‌స్టాల్ చేయండి, లేదా వాటిని కలిగి ఉన్న ఫోల్డర్‌కు PDFCRAFT_MODELSను సెట్ చేయండి.
+	The Dock shows it the next time Papel opens.	తదుపరిసారి Papel తెరిచినప్పుడు Dock దీన్ని చూపుతుంది.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	ఈ ఫారం {u}కు సమర్పించమని అడుగుతోంది; Papel ఫారం డేటాను పంపదు. మీరు నింపిన వివరాలను ఉంచుకోవడానికి పత్రాన్ని సేవ్ చేయండి.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	కీ macOS Keychainలో ఉంది; దాన్ని ఉపయోగించడానికి Papelను అనుమతించమని Keychain అడగవచ్చు.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	కీ Windows సర్టిఫికెట్ స్టోర్‌లో ఉంది; దాన్ని ఉపయోగించడానికి Papelను అనుమతించమని Windows అడగవచ్చు.
+	The module's tokens hold no digital ID Papel can sign with.	మాడ్యూల్ టోకెన్లలో Papel సంతకం చేయగల డిజిటల్ ఐడీ ఏదీ లేదు.
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	టెక్స్ట్ గుర్తింపు మోడల్‌లు ఇన్‌స్టాల్ చేయబడలేదు (Papelను మళ్లీ ఇన్‌స్టాల్ చేయండి, లేదా వాటిని కలిగి ఉన్న ఫోల్డర్‌కు PDFCRAFT_MODELSను సెట్ చేయండి)
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	ఈ ఫారంలో XFA డేటా కూడా ఉంది, దాన్ని చదవడానికి Papelలో ఇంకా మద్దతు లేదు. మీరు దీని ఫీల్డ్‌లను నింపవచ్చు, కానీ Acrobat బదులుగా XFA విలువలను చూపించవచ్చు.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	ఈ ఇన్‌స్టాలేషన్ Debian ప్యాకేజీకి చెందింది. Papel‌ను నవీకరించడానికి మీ సిస్టమ్ సాఫ్ట్‌వేర్ మేనేజర్‌ను ఉపయోగించండి.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	ఈ ఇన్‌స్టాలేషన్ RPM ప్యాకేజీకి చెందింది. Papel‌ను నవీకరించడానికి మీ సిస్టమ్ సాఫ్ట్‌వేర్ మేనేజర్‌ను ఉపయోగించండి.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	ఇది డైనమిక్ XFA ఫారం, దీన్ని ప్రదర్శించడానికి Papelలో ఇంకా మద్దతు లేదు. మీరు చూస్తున్నది ఫైల్‌లోని ప్లేస్‌హోల్డర్ పేజీ.
+	Use your system software manager to update Papel.	Papel‌ను నవీకరించడానికి మీ సిస్టమ్ సాఫ్ట్‌వేర్ మేనేజర్‌ను ఉపయోగించండి.
+	Welcome to Papel	Papelకు స్వాగతం
+	Your default email app can't take a file from Papel.	మీ డిఫాల్ట్ ఇమెయిల్ యాప్ Papel నుండి ఫైల్‌ను తీసుకోలేదు.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} ఫారాన్ని {url}కు సమర్పిస్తుంది; Papel ఫారం డేటాను పంపదు. మీరు నింపిన వివరాలను ఉంచుకోవడానికి పత్రాన్ని సేవ్ చేయండి.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} పేజీలలో Papel చదవగలిగే దానికంటే ఎక్కువ కంటెంట్ ఉంది, మొదటిది పేజీ {page}: వాటిలో కొన్ని భాగాలు గీయబడవు, వాటి వచనంలో కొంత భాగాన్ని మాత్రమే వెతకడం లేదా కాపీ చేయడం సాధ్యం.
+	{program} can't take a file from Papel.	{program} Papel నుండి ఫైల్‌ను తీసుకోలేదు.
+	This document's script is asking	ఈ పత్రం యొక్క స్క్రిప్ట్ అడుగుతోంది
+	Document: {name}	పత్రం: {name}
+	This request comes from the document, not Papel. Only enter a password if you trust this document.	ఈ అభ్యర్థన Papel నుండి కాదు, పత్రం నుండి వస్తోంది. ఈ పత్రాన్ని మీరు నమ్మితేనే పాస్‌వర్డ్ నమోదు చేయండి.

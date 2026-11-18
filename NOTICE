@@ -1,6 +1,6 @@
 
 Nodalia
 
-This tree is nodalia-i18n, made from storytold/craft-i18n at 0fe05b17f21827d6a911875090cbf6c4cef5428e by renaming it
+This tree is nodalia-i18n, made from storytold/craft-i18n at 81e4f1a99b4ac140aae52093a91a95eb6f8cfbb5 by renaming it
 (scripts/nodalia_libs.py in https://github.com/getnodalia/foundation). Its code and assets keep the licences, copyright
 notices and credits above and in ATTRIBUTION.md, unchanged.

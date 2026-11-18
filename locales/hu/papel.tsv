@@ -3678,3 +3678,62 @@ document scrollbar width	Wide	Széles
 	…or paste the raw text here; # headings, - bullets	…vagy illessze be ide a nyers szöveget; # címsorok, - felsorolások
 	− Page {p}	− {p}. oldal
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Egy logó vagy név a lapoktól balra, ahol a címsor mutatná: a Papel sajátja vagy a cégedé.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Egy PNG vagy SVG fájl. A Papel minden indításakor erről a helyről olvassa be.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Az oldal tartalmának részét képező aláírás – például egy beszkennelt oldalon – nem mező és nem megjegyzés, ezért nem távolítható el önmagában, és a Papel nem töröl részeket az oldalból az elrejtéséhez. Az eltávolításhoz takarja ki az adott területet (Kitakarás), vagy ha az aláírás külön kép, törölje a képet a „PDF szerkesztése” eszközzel.
+	About Papel	A Papelról
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	A Papel következő indításakor lép érvénybe. Válassza az OpenGL-t, ha az ablak villog egy G-SYNC, FreeSync vagy más változó frissítési gyakoriságú kijelzőn.
+	Ask to make Papel the default PDF app	Kérdezzen rá a Papel alapértelmezett PDF-alkalmazásként való beállítására
+	Choose Papel for .pdf files in Windows Settings.	Válassza a Papel alkalmazást a .pdf fájlokhoz a Windows Gépházban.
+	Combine files in Papel…	Fájlok egyesítése a Papelban…
+	Convert to PDF with Papel	Átalakítás PDF-fé a Papeltal
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	A Papelban megnyitott fájlok itt jelennek meg. Húzz ide egy PDF-et a megnyitáshoz.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	A Finderben: jelölje ki a fájlokat, majd jobb klikk > Gyorsműveletek > “Combine files in Papel”. Nem látszik? Egyszer kapcsolja be: Gyorsműveletek > Testreszabás.
+	Hide Papel	Papel elrejtése
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	A magyar OCR-hez az asztali alkalmazás, a Tesseract 5 és a hun nyelvi modell szükséges. Telepítés után indítsd újra a Papelot.
+	Make Papel your default PDF app?	Legyen a Papel az alapértelmezett PDF-alkalmazás?
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Még nincs telepített bővítmény. Telepítsen egy .wasm bővítményt a Papel kibővítéséhez.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Nyiss egy új üzenetet nélküle, és a Papel megmutatja a(z) {name} fájlt a mappájában, hogy magad csatolhasd.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	A(z) {page}. oldal több tartalmat tartalmaz, mint amennyit a Papel be tud olvasni: egy része nem rajzolódik ki, és a szövegének csak egy része kereshető vagy másolható.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	A Type 3 betűtípust használó oldalak képként nyomtatódnak, mert a Windows bezárhatja a Papelot a nyomtatásuk közben. A többi oldal a szokásos módon nyomtatódik.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Az oldal egy része nem látható: a tartalma túllépi azt a legtöbbet, amit a Papel egy oldalra kirajzol.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	A Papel nem szabályosan állt le. Ezekben a dokumentumokban automatikusan mentett módosítások voltak:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	A Papel grafikus processzor nélkül rajzol, ezért lassú lehet. A grafikus illesztőprogram frissítése segíthet.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	A Papel megőrzi, amin éppen dolgozott. Ha a fájlválasztó már működik, válassza az Újrapróbálás lehetőséget.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	A Papel megkeresi az eszközgyártók által telepített könyvtárakat. Csak akkor válasszon egyet, ha az eszköze nem található.
+	Papel on GitHub	Papel a GitHubon
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	A Papel megnyitja a szolgáltató oldalát, ahol CPF-fel, PIN-kóddal és egyszer használatos kóddal jelentkezik be.
+	Papel web page	A Papel weblapja
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	A Papel offline működik. Nincs telemetria, nincs fiók, és nincs felhőfeldolgozás, amíg nem adsz hozzá szolgáltatót.
+	Papel {v} is available.	Elérhető a Papel {v}.
+	Papel's own	A Papel sajátja
+	Quit Papel	Kilépés a Papelból
+	Reopen the files that were open when Papel last closed	A Papel legutóbbi bezárásakor megnyitott fájlok újranyitása
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Írja alá a nevét egy fehér papírlapon, és fényképezze le erős, egyenletes fényben (vakuval). Válassza ki a fényképet, vagy húzza ide: a Papel megkeresi az aláírást, és eltávolítja a papírt.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	A szövegfelismerés nincs telepítve: hiányoznak a modellfájljai. Telepítsd újra a Papelot, vagy állítsd a PDFCRAFT_MODELS változót az őket tartalmazó mappára.
+	The Dock shows it the next time Papel opens.	A Dock a Papel következő megnyitásakor mutatja.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	A Papel által íráshoz használt betűtípusok nem tudják megjeleníteni ezt: „{c}” ({code}), ezért minden PDF-megjelenítőben ? látszik a helyén. A szöveg mentve van.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Az űrlap ide kéri a beküldést: {u}; a Papel nem küld űrlapadatot. Mentsd a dokumentumot, hogy megmaradjanak a beírásaid.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	A kulcs a macOS Kulcskarikában van, amely megkérdezheti, engedélyezed-e a Papelnak a használatát.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	A kulcs a Windows tanúsítványtárolójában van, amely megkérdezheti, engedélyezed-e a Papelnak a használatát.
+	The module's tokens hold no digital ID Papel can sign with.	A modul tokenjein nincs olyan digitális azonosító, amellyel a Papel aláírhat.
+	The PIN goes only to the card; Papel doesn't keep it.	A PIN-kód csak a kártyához kerül; a Papel nem tárolja.
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	a szövegfelismerés modelljei nincsenek telepítve (telepítsd újra a Papelot, vagy állítsd a PDFCRAFT_MODELS változót az őket tartalmazó mappára)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	A mező betűtípusa nem tudja megjeleníteni ezt: „{c}” ({code}), ezért a Papel ? jelet mutat a helyén. Az érték mentve van, és a többi PDF-megjelenítő ebből rajzolja újra a mezőt.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Ez az űrlap XFA-adatokat is tartalmaz, amelyeket a Papel még nem olvas. Kitöltheted a mezőit, de az Acrobat helyettük az XFA-értékeket mutathatja.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Ezt a telepítést egy Debian-csomag kezeli. A Papel frissítéséhez használd a rendszer szoftverkezelőjét.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Ezt a telepítést egy RPM-csomag kezeli. A Papel frissítéséhez használd a rendszer szoftverkezelőjét.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Ez egy dinamikus XFA-űrlap, amelyet a Papel még nem tud megjeleníteni. Amit látsz, a fájl helyőrző oldala.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	ez az aláírási szolgáltatás nem használható: böngészőben történő OAuth-bejelentkezést igényel, amelyet a Papel még nem támogat
+	Use your system software manager to update Papel.	A Papel frissítéséhez használd a rendszer szoftverkezelőjét.
+	Welcome to Papel	Üdvözöljük a Papelban
+	Your default email app can't take a file from Papel.	Az alapértelmezett e-mail alkalmazásod nem tud fájlt fogadni a Papelból.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} ide küldi az űrlapot: {url}; a Papel nem küld űrlapadatot. Mentsd a dokumentumot, hogy megmaradjanak a beírásaid.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} oldal több tartalmat tartalmaz, mint amennyit a Papel be tud olvasni, elsőként a(z) {page}. oldal: részeik nem rajzolódnak ki, és a szövegüknek csak egy része kereshető vagy másolható.
+	{program} can't take a file from Papel.	A(z) {program} nem tud fájlt fogadni a Papelból.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} ebben a dokumentumban olyan címet próbált megnyitni, amelyet a Papel nem nyit meg: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} ebben a dokumentumban olyan címet próbált megnyitni, amelyet a Papel nem nyit meg: {e}. Dokumentumokból csak webes (http, https) és e-mail (mailto) hivatkozások nyílnak meg.
+	This document's script is asking	A dokumentum szkriptje kérdez
+	Document: {name}	Dokumentum: {name}
+	This request comes from the document, not Papel. Only enter a password if you trust this document.	Ez a kérés a dokumentumtól származik, nem a PdfCrafttól. Csak akkor adjon meg jelszót, ha megbízik ebben a dokumentumban.

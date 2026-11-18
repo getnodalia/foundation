@@ -3311,3 +3311,46 @@ calendar weekday	We	พ
 	− Page {p}	− หน้า {p}
 	−Bin	−Bin
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	โลโก้หรือชื่อทางซ้ายของแท็บ ตรงที่แถบชื่อเรื่องจะแสดง: ของ Papel เอง หรือของบริษัทคุณ
+	A PNG or SVG file. It is read from this place each time Papel starts.	ไฟล์ PNG หรือ SVG ระบบจะอ่านจากตำแหน่งนี้ทุกครั้งที่ Papel เริ่มทำงาน
+	About Papel	เกี่ยวกับ Papel
+	Combine files in Papel…	รวมไฟล์ใน Papel…
+	Convert to PDF with Papel	แปลงเป็น PDF ด้วย Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	ไฟล์ที่คุณเปิดใน Papel จะแสดงที่นี่ วาง PDF ที่ใดก็ได้เพื่อเปิด
+	Hide Papel	ซ่อน Papel
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	หน้า {page} มีเนื้อหามากกว่าที่ Papel อ่านได้: บางส่วนจะไม่ถูกวาด และค้นหาหรือคัดลอกข้อความของหน้านี้ได้เพียงบางส่วน
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	บางส่วนของหน้านี้ไม่ได้แสดง: เนื้อหาเกินขีดสูงสุดที่ Papel วาดได้ต่อหนึ่งหน้า
+	Papel can't check this signature yet: {}.	Papel ยังตรวจสอบลายเซ็นนี้ไม่ได้: {}
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel ปิดตัวลงอย่างไม่ปกติ เอกสารเหล่านี้มีการเปลี่ยนแปลงที่ถูกบันทึกอัตโนมัติไว้:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel กำลังวาดโดยไม่ใช้หน่วยประมวลผลกราฟิก จึงอาจทำงานช้า การอัปเดตไดรเวอร์กราฟิกอาจช่วยได้
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel จะค้นหาไลบรารีที่ผู้ผลิตอุปกรณ์ติดตั้งไว้ เลือกเองเฉพาะเมื่อไม่พบอุปกรณ์ของคุณ
+	Papel on GitHub	Papel บน GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel จะเปิดหน้าของผู้ให้บริการ ซึ่งคุณลงชื่อเข้าใช้ด้วย CPF, PIN และรหัสใช้ครั้งเดียว
+	Papel web page	หน้าเว็บ Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel ทำงานแบบออฟไลน์ ไม่มีการเก็บข้อมูลการใช้งาน ไม่ต้องมีบัญชี และไม่ประมวลผลบนคลาวด์ เว้นแต่คุณจะเพิ่มผู้ให้บริการเอง
+	Papel {c} is up to date.	Papel {c} เป็นรุ่นล่าสุดแล้ว
+	Papel {v} is available.	มี Papel {v} ให้ใช้งานแล้ว
+	Papel's own	ของ Papel เอง
+	Quit Papel	ออกจาก Papel
+	Reopen the files that were open when Papel last closed	เปิดไฟล์ที่เปิดค้างไว้ตอนปิด Papel ครั้งล่าสุดอีกครั้ง
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	เซ็นชื่อบนกระดาษขาวแล้วถ่ายรูปในที่สว่างสม่ำเสมอ (ใช้แฟลช) เลือกรูปถ่ายหรือวางที่นี่ Papel จะหาลายเซ็นและเอาพื้นกระดาษออก
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	ยังไม่ได้ติดตั้งการรู้จำข้อความ: ไม่พบไฟล์โมเดล โปรดติดตั้ง Papel ใหม่ หรือตั้ง PDFCRAFT_MODELS ไปยังโฟลเดอร์ที่มีไฟล์เหล่านั้น
+	The Dock shows it the next time Papel opens.	Dock จะแสดงไอคอนนี้เมื่อเปิด Papel ครั้งถัดไป
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	แบบอักษรที่ Papel ใช้เขียนวาด “{c}” ({code}) ไม่ได้ จึงแสดงเป็น ? ในโปรแกรมอ่าน PDF ทุกตัว ข้อความถูกบันทึกไว้แล้ว
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	แบบฟอร์มขอให้ส่งไปที่ {u} แต่ Papel ไม่ส่งข้อมูลแบบฟอร์ม บันทึกเอกสารเพื่อเก็บสิ่งที่คุณกรอก
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	กุญแจอยู่ใน Keychain ของ macOS ซึ่งอาจถามเพื่ออนุญาตให้ Papel ใช้งาน
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	กุญแจอยู่ในที่เก็บใบรับรองของ Windows ซึ่งอาจถามเพื่ออนุญาตให้ Papel ใช้งาน
+	The signer's certificate has critical extensions Papel does not recognize ({}).	ใบรับรองของผู้เซ็นมีส่วนขยายสำคัญที่ Papel ไม่รู้จัก ({})
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	ยังไม่ได้ติดตั้งโมเดลการรู้จำข้อความ (ติดตั้ง Papel ใหม่ หรือตั้ง PDFCRAFT_MODELS ไปยังโฟลเดอร์ที่มีไฟล์เหล่านั้น)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	แบบอักษรของช่องนี้วาด “{c}” ({code}) ไม่ได้ Papel จึงแสดง ? แทน ค่าถูกบันทึกไว้ และโปรแกรมอ่าน PDF อื่นจะวาดช่องใหม่จากค่านั้น
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	แบบฟอร์มนี้มีข้อมูล XFA ด้วย ซึ่ง Papel ยังอ่านไม่ได้ คุณกรอกช่องได้ แต่ Acrobat อาจแสดงค่าของ XFA แทน
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	นี่เป็นแบบฟอร์ม XFA แบบไดนามิก ซึ่ง Papel ยังแสดงไม่ได้ สิ่งที่คุณเห็นคือหน้าตัวแทนของไฟล์
+	Welcome to Papel	ยินดีต้อนรับสู่ Papel
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} จะส่งแบบฟอร์มไปที่ {url} แต่ Papel ไม่ส่งข้อมูลแบบฟอร์ม บันทึกเอกสารเพื่อเก็บสิ่งที่คุณกรอก
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} หน้ามีเนื้อหามากกว่าที่ Papel อ่านได้ เริ่มจากหน้า {page}: บางส่วนจะไม่ถูกวาด และค้นหาหรือคัดลอกข้อความของหน้าเหล่านี้ได้เพียงบางส่วน
+	{who} in this document tried to open an address Papel won't open: {e}.	{who}ในเอกสารนี้พยายามเปิดที่อยู่ที่ Papel จะไม่เปิด: {e}
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who}ในเอกสารนี้พยายามเปิดที่อยู่ที่ Papel จะไม่เปิด: {e} เอกสารเปิดได้เฉพาะลิงก์เว็บ (http, https) และอีเมล (mailto)
+	This document's script is asking	สคริปต์ของเอกสารนี้กำลังถาม
+	Document: {name}	เอกสาร: {name}
+	This request comes from the document, not Papel. Only enter a password if you trust this document.	คำขอนี้มาจากเอกสาร ไม่ใช่จาก Papel ป้อนรหัสผ่านเฉพาะเมื่อคุณเชื่อถือเอกสารนี้เท่านั้น

@@ -88,7 +88,7 @@
 	A line has width 0, the thinnest the printer can draw	Una línea tiene grosor 0, el más fino que puede dibujar la impresora
 	A line is {} pt wide	Una línea mide {} pt de grosor
 	A link	Un enlace
-	A link or special file, which isn't followed	Un enlace o archivo especial, que no se sigue
+	A link or special file, which isn't followed	A link or special file, which isn't followed
 	A local model is not a frontier cloud model: it can be wrong, and a long answer takes its time on CPU. Check anything critical, and mind a model's size against this machine before downloading it.	Un modelo local no es un modelo puntero en la nube: puede equivocarse, y una respuesta larga tarda lo suyo en la CPU. Compruebe todo lo crítico y valore el tamaño del modelo frente a esta máquina antes de descargarlo.
 	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Un logotipo o un nombre a la izquierda de las pestañas, donde lo mostraría una barra de título: el de Papel o el de tu empresa.
 	A mesh shading's colours change too sharply between its corners to convert to CMYK exactly	Los colores de un sombreado de malla cambian demasiado bruscamente entre sus vértices para convertirlos a CMYK con exactitud
@@ -784,7 +784,7 @@ certificate	Basic constraints	Restricciones básicas
 	Could not save: {e}	No se pudo guardar: {e}
 	Couldn't add {name}: {e}	No se pudo añadir {name}: {e}
 	Couldn't attach the file	No se pudo adjuntar el archivo
-	Couldn't be read: {reason}	No se pudo leer: {reason}
+	Couldn't be read: {reason}	Couldn't be read: {reason}
 	Couldn't combine files: {e}	No se pudieron combinar los archivos: {e}
 	Couldn't copy the image: {e}	No se pudo copiar la imagen: {e}
 	Couldn't create a PDF: {e}	No se pudo crear un PDF: {e}
@@ -1700,7 +1700,7 @@ certificate	Key usage	Uso de la clave
 	Larger drawing tools. Use two fingers to move or zoom; use Hand to move with one finger.	Herramientas de dibujo más grandes. Usa dos dedos para mover o ampliar, o la herramienta Mano para mover con un dedo.
 	Larger pages	Páginas más grandes
 	Larger text	Texto más grande
-	Larger than 512 MiB	Mayor de 512 MiB
+	Larger than 512 MiB	Larger than 512 MiB
 	Larger thumbnails	Miniaturas más grandes
 	Last page	Última página
 	Later in calculation order	Después en el orden de cálculo
@@ -1758,14 +1758,14 @@ certificate	Key usage	Uso de la clave
 	List items belong in a list. Fix the list's tags.	Los elementos de lista van dentro de una lista. Corrige las etiquetas de la lista.
 	List labels and bodies belong in a list item. Fix the list's tags.	Las etiquetas y los cuerpos de lista van dentro de un elemento de lista. Corrige las etiquetas de la lista.
 	Listing scanners…	Buscando escáneres…
-	Listing the folder…	Listando la carpeta…
+	Listing the folder…	Listing the folder…
 	Lists	Listas
 	Load document font	Cargar fuente del documento
 	Load font…	Cargar fuente…
 	Load more sheets, then choose Continue; or choose Finish to keep what was scanned.	Cargue más hojas y elija Continuar; o elija Terminar para conservar lo escaneado.
 	Load sheets in the feeder, then choose Try again.	Cargue hojas en el alimentador y elija Reintentar.
-	Load to edit	Cargar para editar
-	Loading {name}…	Cargando {name}…
+	Load to edit	Load to edit
+	Loading {name}…	Loading {name}…
 	Loading…	Cargando…
 	Local and private	Local y privado
 	Local cross-PDF links require the desktop app	Los enlaces locales entre PDF requieren la aplicación de escritorio
@@ -1789,8 +1789,7 @@ certificate	Key usage	Uso de la clave
 	Low resolution	Baja resolución
 	Low Resolution (150 dpi)	Baja resolución (150 ppp)
 	LOW-CONFIDENCE WORDS	PALABRAS DE CONFIANZA BAJA
-	Lowering this forgets the oldest files. At 0 there is no list.	Si lo reduces, se olvidan los archivos más antiguos. Con 0 no hay lista.
-	Main menu	Menú principal
+	Lowering this forgets the oldest files. At 0 there is no list.	Lowering this forgets the oldest files. At 0 there is no list.
 	Make accessible	Hacer accesible
 	Make Current Properties Default	Usar las propiedades actuales como predeterminadas
 	Make default paper size	Establecer como tamaño de papel predeterminado
@@ -1831,7 +1830,7 @@ calendar date	March	marzo
 	Match field sizes	Igualar el tamaño de los campos
 	Match page at 100%	Ajustar el papel a la página al 100 %
 	Matches what was signed	Coincide con lo firmado
-	Matches: {matches}. Files with matches: {files}. PDFs read to the end: {searched} of {found}.	Coincidencias: {matches}. Archivos con coincidencias: {files}. PDF leídos hasta el final: {searched} de {found}.
+	Matches: {matches}. Files with matches: {files}. PDFs read to the end: {searched} of {found}.	Matches: {matches}. Files with matches: {files}. PDFs read to the end: {searched} of {found}.
 	Maximum	Máxima
 	maximum	el máximo
 	May	mayo
@@ -2081,7 +2080,7 @@ scroll speed	Normal	Normal
 	Not present	No presente
 	Not rated	Sin valorar
 	Not replaced: {why}	No se ha reemplazado: {why}
-	Not searched: {n}	Sin buscar: {n}
+	Not searched: {n}	Not searched: {n}
 	not the first child of its list	no es el primer hijo de su lista
 	not the first or last child of its table	no es ni el primer ni el último hijo de su tabla
 	Note	Nota
@@ -2295,7 +2294,7 @@ animation effects	On	Activados
 	Pages per sheet:	Páginas por hoja:
 	Pages selected	Páginas seleccionadas
 	Pages that are only pictures of text can't be read aloud or searched. Recognize text (OCR) to add a text layer.	Las páginas que son solo imágenes de texto no se pueden leer en voz alta ni permiten búsquedas. Reconoce el texto (OCR) para añadir una capa de texto.
-	Pages that couldn't be read: {n}	Páginas que no se pudieron leer: {n}
+	Pages that couldn't be read: {n}	Pages that couldn't be read: {n}
 	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Las páginas que usan fuentes Type 3 se imprimen como imágenes, porque Windows puede cerrar Papel al imprimirlas. Las demás páginas se imprimen como siempre.
 	Pages to Print	Páginas que imprimir
 	Pages whose text couldn't be read: {n}. A match on them isn't listed.	Páginas cuyo texto no se pudo leer: {n}. Las coincidencias en ellas no se muestran.
@@ -2516,7 +2515,7 @@ certificate	Public key	Clave pública
 	Read to end of document	Leer hasta el final del documento
 	Read {n} words on {m} of {t} pages	Se leyeron {n} palabras en {m} de {t} páginas
 	Reading colours	Colores de lectura
-	Reading file {n} of {total}: {name}	Leyendo el archivo {n} de {total}: {name}
+	Reading file {n} of {total}: {name}	Reading file {n} of {total}: {name}
 	Reading options…	Opciones de lectura…
 	Reading page {page}…	Leyendo página {page}…
 	Reading Preferences	Preferencias de lectura
@@ -2533,7 +2532,7 @@ certificate	Public key	Clave pública
 	Reasons: {reasons}	Motivos: {reasons}
 	Reassign	Reasignar
 	Recent colours	Colores recientes
-	Recent files to keep	Archivos recientes que conservar
+	Recent files to keep	Recent files to keep
 	Recipients	Destinatarios
 	Recognize scanned text automatically	Reconocer automáticamente el texto escaneado
 	Recognize Text	Reconocer texto
@@ -2897,8 +2896,8 @@ calendar weekday	Sa	Sá
 	Scroll tabs left	Desplazar las pestañas a la izquierda
 	Scroll tabs right	Desplazar las pestañas a la derecha
 	Scroll the page	Desplazar la página
-	Search a folder	Buscar en una carpeta
-	Search a folder…	Buscar en una carpeta…
+	Search a folder	Search a folder
+	Search a folder…	Search a folder…
 	Search comments	Buscar en los comentarios
 	Search complete.	Búsqueda completada.
 	Search panel	Panel de búsqueda
@@ -2908,7 +2907,7 @@ calendar weekday	Sa	Sá
 	Search tools…	Buscar herramientas…
 	Searchable Image	Imagen con texto buscable
 	Searchable Image (Exact)	Imagen con búsqueda (exacta)
-	Searching a folder needs the desktop app	Buscar en una carpeta requiere la aplicación de escritorio
+	Searching a folder needs the desktop app	Searching a folder needs the desktop app
 	Searching…	Buscando…
 	Searching… {s} of {p} pages	Buscando… {s} de {p} páginas
 	Searching… {s}/{p}	Buscando… {s}/{p}
@@ -3052,7 +3051,7 @@ key	Shift	Mayús
 	Show Report	Mostrar informe
 	Show template {name}	Mostrar la plantilla {name}
 	Show the accessibility report	Mostrar el informe de accesibilidad
-	Show the current page number over the document	Mostrar el número de página actual sobre el documento
+	Show the current page number over the document	Show the current page number over the document
 	Show the Discord button in the title bar and the community card on Home	Mostrar el botón de Discord en la barra de título y la tarjeta de la comunidad en Inicio
 	Show the formatting toolbar when editing text	Mostrar la barra de formato al editar texto
 	Show the menus in the macOS menu bar	Mostrar los menús en la barra de menús de macOS
@@ -3199,9 +3198,9 @@ action wizard	Start	Iniciar
 	Still waiting for your email app…	Aún esperando a tu aplicación de correo…
 	Stop	Stop
 	Stop reading	Detener lectura
-	Stopped at {limit} matches.	Se detuvo en {limit} coincidencias.
-	Stopped before the end.	Se detuvo antes del final.
-	Stopped: too many files took too long to read.	Detenido: demasiados archivos tardaron demasiado en leerse.
+	Stopped at {limit} matches.	Stopped at {limit} matches.
+	Stopped before the end.	Stopped before the end.
+	Stopped: too many files took too long to read.	Stopped: too many files took too long to read.
 	Store JPEG images as JPEG XL (smaller, can be undone; needs a reader that supports JPEG XL)	Guardar las imágenes JPEG como JPEG XL (más pequeñas, reversible; requiere un lector compatible con JPEG XL)
 	Straighten scanned page	Enderezar página escaneada
 	Straighten skewed scans	Enderezar las páginas escaneadas torcidas
@@ -3294,7 +3293,6 @@ certificate	Subject	Titular
 	Text opacity	Opacidad del texto
 	Text recognition cancelled. {summary}	Se canceló el reconocimiento de texto. {summary}
 	Text recognition is already running	El reconocimiento de texto ya está en ejecución
-	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PAPEL_MODELS to the folder that holds them.	El reconocimiento de texto no está instalado: faltan sus archivos de modelo. Reinstala Papel o indica en PAPEL_MODELS la carpeta que los contiene.
 	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	El reconocimiento de texto no está instalado: faltan sus archivos de modelo. Reinstala Papel o define PDFCRAFT_MODELS con la carpeta que los contiene.
 	Text recognition isn't installed: its models are missing (run `cargo xtask models`, or set PDFCRAFT_MODELS).	El reconocimiento de texto no está instalado: faltan sus modelos (ejecuta `cargo xtask models` o define PDFCRAFT_MODELS).
 	Text rendering	Representación del texto
@@ -3521,7 +3519,7 @@ calendar weekday	Th	Ju
 	The replacement file doesn't have that many pages.	El archivo de reemplazo no tiene tantas páginas.
 	the request stopped without an answer	la solicitud terminó sin respuesta
 	The resolution of an image can't be measured	No se puede medir la resolución de una imagen
-	The rest are left out of this list.	El resto no aparece en esta lista.
+	The rest are left out of this list.	The rest are left out of this list.
 	The restrictions apply to recipients without “All permissions”. It's applied when you save.	Las restricciones se aplican a los destinatarios sin «Todos los permisos». Se aplica al guardar.
 	The reverse sides already scanned are kept.	Los reversos ya escaneados se conservan.
 	The reverse sides were cancelled: their document was closed.	Se cancelaron los reversos: se cerró su documento.
@@ -3546,7 +3544,7 @@ calendar weekday	Th	Ju
 	The scanner reported a lamp or device error.	El escáner indicó un error de lámpara o del dispositivo.
 	The scanner reported a paper problem (a jam or several sheets fed together).	El escáner indicó un problema de papel (un atasco o varias hojas juntas).
 	The screen's own pixels per inch. Calibrate with a ruler so that Actual size (100%) shows pages at their real size.	Los píxeles por pulgada reales de la pantalla. Calibre con una regla para que el tamaño real (100 %) muestre las páginas a su tamaño verdadero.
-	The search stopped unexpectedly.	La búsqueda se detuvo inesperadamente.
+	The search stopped unexpectedly.	The search stopped unexpectedly.
 	The searchable copies are written here under the source names	Las copias con búsqueda se escriben aquí con los nombres de origen
 	The security settings don't allow screen readers to read the text	La configuración de seguridad no permite que los lectores de pantalla lean el texto
 	The selected area has been copied ({w} × {h} pixels)	Se ha copiado el área seleccionada ({w} × {h} píxeles)
@@ -3709,7 +3707,7 @@ calendar weekday	Th	Ju
 	This file is already as small as it can be made ({size}). No copy was saved.	Este archivo ya es lo más pequeño posible ({size}). No se guardó ninguna copia.
 	this file isn't XFDF, FDF, XML or text form data	este archivo no contiene datos de formulario XFDF, FDF, XML ni de texto
 	This file was damaged and has been repaired. Saving keeps the repaired version.	Este archivo estaba dañado y se ha reparado. Al guardar se conserva la versión reparada.
-	This folder is too large or too deep to search all of it.	Esta carpeta es demasiado grande o profunda para buscar en toda ella.
+	This folder is too large or too deep to search all of it.	This folder is too large or too deep to search all of it.
 	This folder isn't available right now. It may have moved, or its drive or cloud sync is offline.	Esta carpeta no está disponible ahora. Puede que se haya movido o que su unidad o la sincronización en la nube estén sin conexión.
 	This font file cannot be used. Choose a readable TTF, OTF or TTC file.	No se puede usar este archivo de fuente. Elija un archivo TTF, OTF o TTC legible.
 	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Este formulario también contiene datos XFA, que Papel aún no lee. Puedes rellenar sus campos, pero Acrobat puede mostrar los valores XFA en su lugar.
@@ -3725,7 +3723,7 @@ calendar weekday	Th	Ju
 	This is the last PDF in its folder	Este es el último PDF de su carpeta
 	This key is used for “{what}” and can't be changed.	Esta tecla se usa para «{what}» y no se puede cambiar.
 	This key moves around the interface on its own. Add Ctrl to use it.	Esta tecla se mueve por la interfaz por sí sola. Añada Ctrl para usarla.
-	This large file is being read from disk to save memory, so it can't be edited, filled in or signed yet.	Este archivo grande se lee desde el disco para ahorrar memoria, así que todavía no se puede editar, rellenar ni firmar.
+	This large file is being read from disk to save memory, so it can't be edited, filled in or signed yet.	This large file is being read from disk to save memory, so it can't be edited, filled in or signed yet.
 	This machine: {ram} GB RAM, {disk} GB free	Esta máquina: {ram} GB de RAM, {disk} GB libres
 	This measurement needs at least {n} points.	Esta medición necesita al menos {n} puntos.
 	This page contains objects that cannot be selected together.	Esta página contiene objetos que no se pueden seleccionar juntos.
@@ -3760,7 +3758,7 @@ calendar weekday	Th	Ju
 	Timestamps and revocation information need the desktop app. Turn them off in Preferences ▸ Signatures to sign here.	Los sellos de tiempo y la información de revocación requieren la aplicación de escritorio. Desactívelos en Preferencias > Firmas para firmar aquí.
 	to	a
 	To change locked fields, also set Locked to No.	Para cambiar campos bloqueados, establece también «Bloqueado» en «No».
-	To print this large file, load all of it first with Load to edit.	Para imprimir este archivo grande, cárgalo entero antes con Cargar para editar.
+	To print this large file, load all of it first with Load to edit.	To print this large file, load all of it first with Load to edit.
 	to {n}	a {n}
 	To:	Hasta:
 	Today	Hoy
@@ -3773,7 +3771,7 @@ calendar weekday	Th	Ju
 	Too many copies: increase the spacing or the size.	Demasiadas copias: aumente el espaciado o el tamaño.
 	Too many spot inks to separate: {names}	Demasiadas tintas planas para separar: {names}
 	Too many windows are open	Hay demasiadas ventanas abiertas
-	Took too long to read	Tardó demasiado en leerse
+	Took too long to read	Took too long to read
 	Tools panel side	Lado del panel de herramientas
 	Tools shown in All tools	Herramientas que se muestran en Todas las herramientas
 	Tooltip	Información sobre herramientas
@@ -4251,3 +4249,76 @@ document scrollbar width	Wide	Ancha
 	Custom calculation script:	Script de cálculo personalizado:
 	This script is too long to edit here ({kib} KiB); its start is shown. It is kept as it is.	Este script es demasiado largo para editarlo aquí ({kib} KiB); se muestra su comienzo. Se conserva tal cual.
 	A script edited here can be at most 256 KiB long; that change wasn't made.	Un script editado aquí puede tener como máximo 256 KiB; ese cambio no se aplicó.
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Un logotipo o un nombre a la izquierda de las pestañas, donde lo mostraría una barra de título: el de Papel o el de tu empresa.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Un archivo PNG o SVG. Se lee desde esta ubicación cada vez que se inicia Papel.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Una firma que forma parte del contenido de una página, como en una página escaneada, no es un campo ni una anotación, así que no se puede quitar por sí sola, y Papel no borra partes de una página para ocultarla. Para quitarla, censure esa zona (Censurar) o, si la firma es una imagen aparte, elimine la imagen con Editar un PDF.
+	About Papel	Acerca de Papel
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Se aplica la próxima vez que se inicie Papel. Elige OpenGL si la ventana parpadea en una pantalla con G-SYNC, FreeSync u otra frecuencia de actualización variable.
+	Ask to make Papel the default PDF app	Preguntar si se desea usar Papel como aplicación predeterminada para PDF
+	Choose Papel for .pdf files in Windows Settings.	Elija Papel para los archivos .pdf en la configuración de Windows.
+	Combine files in Papel…	Combinar archivos en Papel…
+	Convert to PDF with Papel	Convertir a PDF con Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Los archivos que abras en Papel aparecerán aquí. Suelta un PDF en cualquier parte para abrirlo.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Desde el Finder: selecciona archivos y luego clic derecho > Acciones rápidas > “Combine files in Papel”. ¿No aparece? Actívala una vez en Acciones rápidas > Personalizar.
+	Hide Papel	Ocultar Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	El OCR húngaro requiere la aplicación de escritorio con Tesseract 5 y el modelo de idioma hun. Reinicia Papel después de la instalación.
+	Make Papel your default PDF app?	¿Usar Papel como aplicación predeterminada para PDF?
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Aún no hay complementos instalados. Instale un complemento .wasm para ampliar Papel.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Abre un mensaje nuevo sin él y Papel mostrará {name} en su carpeta para que lo adjuntes tú.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	La página {page} contiene más contenido del que Papel puede leer: una parte no se dibuja y solo una parte de su texto se puede buscar o copiar.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Las páginas que usan fuentes Type 3 se imprimen como imágenes, porque Windows puede cerrar Papel al imprimirlas. Las demás páginas se imprimen como siempre.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Parte de esta página no se muestra: su contenido supera el máximo que Papel dibuja para una página.
+	Papel can't check this signature yet: {}.	Papel todavía no puede comprobar esta firma: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel no se cerró correctamente. Estos documentos tenían cambios que se guardaron automáticamente:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel está dibujando sin procesador gráfico, así que puede ir lento. Actualizar el controlador gráfico puede ayudar.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel conserva lo que estabas haciendo. Cuando el selector de archivos funcione, elige Reintentar.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel busca las bibliotecas que instalan los fabricantes de dispositivos. Elija una solo si no se encuentra su dispositivo.
+	Papel on GitHub	Papel en GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel abre la página del proveedor, donde inicia sesión con su CPF, PIN y código de un solo uso.
+	Papel web page	Página web de Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel funciona sin conexión. Sin telemetría, sin cuenta y sin procesamiento en la nube, salvo que añadas un proveedor.
+	Papel {v} is available.	Papel {v} está disponible.
+	Papel's own	El de Papel
+	Plugins are sandboxed WebAssembly packages. They survive Papel updates as long as their API version is supported.	Los complementos son paquetes WebAssembly aislados. Sobreviven a las actualizaciones de Papel mientras su versión de API sea compatible.
+	Quit Papel	Salir de Papel
+	Reopen the files that were open when Papel last closed	Volver a abrir los archivos que estaban abiertos al cerrar Papel por última vez
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Firma en una hoja de papel blanco y hazle una foto con luz intensa y uniforme (usa el flash). Elige la foto o suéltala aquí: Papel encuentra la firma y elimina el papel.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	El reconocimiento de texto no está instalado: faltan sus archivos de modelo. Reinstala Papel o define PDFCRAFT_MODELS con la carpeta que los contiene.
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	El certificado de {} tiene extensiones críticas que Papel no reconoce, así que no se usa para avalar a {}.
+	The Dock shows it the next time Papel opens.	El Dock lo mostrará la próxima vez que se abra Papel.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Las fuentes con las que escribe Papel no pueden mostrar «{c}» ({code}), así que aparece como ? en todos los visores de PDF. El texto se guarda.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	El formulario pide enviarse a {u}; Papel no envía datos de formulario. Guarda el documento para conservar lo que has introducido.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	La clave está en el Llavero de macOS, que puede pedirte permiso para que Papel la use.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	La clave está en el almacén de certificados de Windows, que puede pedirte permiso para que Papel la use.
+	The module's tokens hold no digital ID Papel can sign with.	Los tokens del módulo no contienen ningún ID digital con el que Papel pueda firmar.
+	The PIN goes only to the card; Papel doesn't keep it.	El PIN solo va a la tarjeta; Papel no lo guarda.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	El certificado del firmante tiene extensiones críticas que Papel no reconoce ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	los modelos de reconocimiento de texto no están instalados (reinstala Papel o define PDFCRAFT_MODELS con la carpeta que los contiene)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	La fuente de este campo no puede mostrar «{c}» ({code}), así que Papel muestra ? en su lugar. El valor se guarda y los demás visores de PDF vuelven a dibujar el campo a partir de él.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Este formulario también contiene datos XFA, que Papel aún no lee. Puedes rellenar sus campos, pero Acrobat puede mostrar los valores XFA en su lugar.
+	This form has too many fields, or a field name too long, for Papel to read them all. Any signature among the rest is not listed, so the document is treated as signed.	Este formulario tiene demasiados campos, o un nombre de campo demasiado largo, para que Papel los lea todos. Las firmas que haya entre los demás no aparecen en la lista, así que el documento se considera firmado.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Esta instalación pertenece a un paquete Debian. Usa el gestor de software del sistema para actualizar Papel.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Esta instalación pertenece a un paquete RPM. Usa el gestor de software del sistema para actualizar Papel.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Este es un formulario XFA dinámico, que Papel aún no puede mostrar. Lo que ves es la página de marcador de posición del archivo.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	este servicio de firma no se puede usar: requiere iniciar sesión con OAuth en un navegador, algo que Papel aún no admite
+	Use your system software manager to update Papel.	Usa el gestor de software del sistema para actualizar Papel.
+	Welcome to Papel	Te damos la bienvenida a Papel
+	Your default email app can't take a file from Papel.	Tu aplicación de correo predeterminada no puede recibir un archivo de Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} envía el formulario a {url}; Papel no envía datos de formulario. Guarda el documento para conservar lo que has introducido.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} páginas contienen más contenido del que Papel puede leer, la página {page} la primera: partes de ellas no se dibujan y solo una parte de su texto se puede buscar o copiar.
+	{program} can't take a file from Papel.	{program} no puede recibir un archivo de Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} de este documento intentó abrir una dirección que Papel no abre: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} de este documento intentó abrir una dirección que Papel no abre: {e}. Desde los documentos solo se abren enlaces web (http, https) y de correo (mailto).
+	Check for updates when Papel starts	Buscar actualizaciones al iniciar Papel
+	Only web (http, https) and email addresses open, and Papel asks first, as for other links.	Solo se abren direcciones web (http, https) y de correo, y Papel pregunta antes, como con otros vínculos.
+	Papel's checks now find no problems for {level}. This is not a validator result. Save to keep the changes.	Las comprobaciones de Papel ya no encuentran problemas para {level}. No es el resultado de un validador. Guarda para conservar los cambios.
+	Papel's checks found no problems for {level}. This is not a validator result.	Las comprobaciones de Papel no encontraron problemas para {level}. No es el resultado de un validador.
+	Main menu	Menú principal
+	Report a problem	Informar de un problema
+	Part of Nodalia	Parte de Nodalia
+	Read, sign, edit and organize PDFs, in pure Rust.	Lee, firma, edita y organiza PDF, en Rust puro.
+	Licence: MIT OR Apache-2.0	Licencia: MIT OR Apache-2.0
+	Includes work by other open-source authors (see NOTICE).	Incluye trabajo de otros autores de código abierto (ver NOTICE).
+	This document's script is asking	El script de este documento pregunta
+	This request comes from the document, not Papel. Only enter a password if you trust this document.	Esta solicitud procede del documento, no de Papel. Introduzca una contraseña solo si confía en este documento.

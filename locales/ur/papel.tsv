@@ -2909,3 +2909,33 @@ calendar weekday	We	بد
 	… and {n} more	… اور {n} مزید
 	−Bin	−Bin
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	About Papel	Papel کے بارے میں
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papel میں کھولی گئی فائلیں یہاں دکھائی دیتی ہیں۔ PDF کھولنے کے لیے اسے کہیں بھی چھوڑیں۔
+	Papel can't check this signature yet: {}.	Papel ابھی یہ دستخط جانچ نہیں سکتا: {}۔
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel معمول کے مطابق بند نہیں ہوا۔ ان دستاویزات کی تبدیلیاں خودکار محفوظ ہوئی تھیں:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel گرافکس پروسیسر کے بغیر ڈرائنگ کر رہا ہے، اس لیے سست ہو سکتا ہے۔ گرافکس ڈرائیور تازہ کرنے سے مدد مل سکتی ہے۔
+	Papel on GitHub	GitHub پر Papel
+	Papel web page	Papel ویب صفحہ
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel آف لائن کام کرتا ہے۔ جب تک آپ کوئی فراہم کنندہ شامل نہ کریں، نہ ٹیلی میٹری ہوتی ہے، نہ اکاؤنٹ درکار ہے، نہ کلاؤڈ پر عمل کاری ہوتی ہے۔
+	Papel {v} is available.	Papel {v} دستیاب ہے۔
+	Reopen the files that were open when Papel last closed	Papel کے آخری بار بند ہوتے وقت کھلی فائلیں دوبارہ کھولیں
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	سفید کاغذ کی ایک شیٹ پر دستخط کریں اور تیز، یکساں روشنی میں (فلیش استعمال کر کے) اس کی تصویر لیں۔ تصویر منتخب کریں یا یہاں چھوڑیں: Papel دستخط ڈھونڈ کر کاغذ ہٹا دیتا ہے۔
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	متن کی شناخت نصب نہیں: ماڈل فائلیں غائب ہیں۔ Papel دوبارہ نصب کریں یا PDFCRAFT_MODELS کو ان کے فولڈر پر مقرر کریں۔
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	{} کے سرٹیفکیٹ میں ایسی اہم توسیعات ہیں جنہیں Papel نہیں پہچانتا، اس لیے اسے {} کی ضمانت کے لیے استعمال نہیں کیا جاتا۔
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papel جن فونٹس سے لکھتا ہے وہ “{c}” ({code}) نہیں بنا سکتے، اس لیے یہ ہر PDF ناظر میں ? کے طور پر دکھائی دیتا ہے۔ متن محفوظ ہو گیا ہے۔
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	فارم {u} پر جمع کرانے کو کہتا ہے؛ Papel فارم کا ڈیٹا نہیں بھیجتا۔ اندراجات رکھنے کے لیے دستاویز محفوظ کریں۔
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	کلید macOS Keychain میں ہے، جو Papel کو اسے استعمال کرنے کی اجازت مانگ سکتا ہے۔
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	کلید Windows سرٹیفکیٹ ذخیرے میں ہے، جو Papel کو اسے استعمال کرنے کی اجازت مانگ سکتا ہے۔
+	The signer's certificate has critical extensions Papel does not recognize ({}).	دستخط کنندہ کے سرٹیفکیٹ میں ایسی اہم توسیعات ہیں جنہیں Papel نہیں پہچانتا ({})۔
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	متن کی شناخت کے ماڈل نصب نہیں (Papel دوبارہ نصب کریں یا PDFCRAFT_MODELS کو ان کے فولڈر پر مقرر کریں)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	اس خانے کا فونٹ “{c}” ({code}) نہیں بنا سکتا، اس لیے Papel اس کی جگہ ? دکھاتا ہے۔ قدر محفوظ ہو جاتی ہے، اور دوسرے PDF ویوئر اسی سے خانہ دوبارہ بناتے ہیں۔
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	اس فارم میں XFA ڈیٹا بھی ہے، جسے Papel ابھی نہیں پڑھتا۔ آپ خانے بھر سکتے ہیں، لیکن Acrobat ان کی جگہ XFA قدریں دکھا سکتا ہے۔
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	یہ متحرک XFA فارم ہے، جسے Papel ابھی نہیں دکھا سکتا۔ آپ کو فائل کا جگہ رکھنے والا صفحہ نظر آ رہا ہے۔
+	Welcome to Papel	Papel میں خوش آمدید
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} فارم {url} پر جمع کراتا ہے؛ Papel فارم کا ڈیٹا نہیں بھیجتا۔ اندراجات رکھنے کے لیے دستاویز محفوظ کریں۔
+	{who} in this document tried to open an address Papel won't open: {e}.	اس دستاویز میں {who} نے ایسا پتہ کھولنے کی کوشش کی جسے Papel نہیں کھولے گا: {e}۔
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	اس دستاویز میں {who} نے ایسا پتہ کھولنے کی کوشش کی جسے Papel نہیں کھولے گا: {e}۔ دستاویزات سے صرف ویب (http، https) اور ای میل (mailto) لنکس کھلتے ہیں۔
+	This document's script is asking	اس دستاویز کا اسکرپٹ پوچھ رہا ہے
+	Document: {name}	دستاویز: {name}
+	This request comes from the document, not Papel. Only enter a password if you trust this document.	یہ درخواست دستاویز کی طرف سے ہے، Papel کی طرف سے نہیں۔ پاس ورڈ صرف تب درج کریں جب آپ کو اس دستاویز پر بھروسہ ہو۔

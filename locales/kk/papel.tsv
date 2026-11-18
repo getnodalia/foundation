@@ -3648,3 +3648,63 @@ document scrollbar width	Wide	Кең
 	…or paste the raw text here; # headings, - bullets	…немесе бастапқы мәтінді осында қойыңыз; # тақырыптар, - тізімдер
 	− Page {p}	− {p}-бет
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Қойындылардың сол жағында, тақырып жолағы көрсететін жерде, логотип немесе атау: Papel-тың өзінікі немесе компанияңыздікі.
+	A PNG or SVG file. It is read from this place each time Papel starts.	PNG немесе SVG файлы. Papel әр іске қосылғанда осы орыннан оқылады.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	Бет мазмұнының бөлігі болып табылатын қолтаңба, мысалы сканерленген бетте, өріс те, аңдатпа да емес, сондықтан оны жеке алып тастау мүмкін емес, ал Papel оны жасыру үшін беттің бөліктерін өшірмейді. Оны алып тастау үшін сол аймақты жасырыңыз (Жасыру) немесе қолтаңба бөлек сурет болса, суретті «PDF түзету» арқылы жойыңыз.
+	About Papel	Papel туралы
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	Papel келесі рет іске қосылғанда қолданылады. G-SYNC, FreeSync немесе басқа айнымалы жаңарту жиілігі бар дисплейде терезе жыпылықтаса, OpenGL таңдаңыз.
+	Ask to make Papel the default PDF app	Papel қолданбасын әдепкі PDF қолданбасы ету туралы сұрау
+	Choose Papel for .pdf files in Windows Settings.	Windows параметрлерінде .pdf файлдары үшін Papel қолданбасын таңдаңыз.
+	Combine files in Papel…	Файлдарды Papel ішінде біріктіру…
+	Convert to PDF with Papel	Papel арқылы PDF пішіміне түрлендіру
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papel-те ашқан файлдарыңыз осында көрсетіледі. PDF файлын ашу үшін оны кез келген жерге апарып тастаңыз.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Finder-ден: файлдарды таңдап, тінтуірдің оң жағын басыңыз > Жылдам әрекеттер > “Combine files in Papel”. Тізімде жоқ па? Жылдам әрекеттер > Баптау бөлімінде бір рет қосыңыз.
+	Hide Papel	Papel жасыру
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	Венгр тіліндегі OCR үшін Tesseract 5 және hun тілдік моделі бар жұмыс үстелі қолданбасы қажет. Орнатқаннан кейін Papel қолданбасын қайта іске қосыңыз.
+	Make Papel your default PDF app?	Papel қолданбасын әдепкі PDF қолданбасы ету керек пе?
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	Әлі орнатылған плагиндер жоқ. Papel мүмкіндіктерін кеңейту үшін .wasm плагинін орнатыңыз.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Файлсыз жаңа хат ашыңыз, Papel {name} файлын қалтасында көрсетеді, оны өзіңіз тіркей аласыз.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	{page}-бет Papel оқи алатыннан көп мазмұн қамтиды: бір бөлігі сызылмайды, ал мәтінінің тек бір бөлігін табуға не көшіруге болады.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Type 3 қаріптерін пайдаланатын беттер сурет ретінде басып шығарылады, себебі оларды басып шығару кезінде Windows Papel бағдарламасын жауып тастауы мүмкін. Басқа беттер әдеттегідей басып шығарылады.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	Бұл беттің бір бөлігі көрсетілмеген: оның мазмұны Papel бір бетке салатын ең көп мөлшерден асады.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel қалыпты жабылмады. Осы құжаттардың өзгерістері автосақталды:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel графикалық процессорсыз сурет салуда, сондықтан баяу жұмыс істеуі мүмкін. Графикалық драйверді жаңарту көмектесуі мүмкін.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel істеп жатқан жұмысыңызды сақтап тұр. Файл таңдағыш жұмыс істей бастағанда, Қайталап көру түймесін таңдаңыз.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel құрылғы өндірушілері орнататын кітапханаларды іздейді. Құрылғыңыз табылмаса ғана біреуін таңдаңыз.
+	Papel on GitHub	GitHub-тағы Papel
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel провайдер бетін ашады, онда CPF, PIN және бір реттік кодпен кіресіз.
+	Papel web page	Papel веб-сайты
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel офлайн жұмыс істейді. Провайдер қоспағаныңызша телеметрия да, тіркелгі де, бұлтта өңдеу де жоқ.
+	Papel {v} is available.	Papel {v} қолжетімді.
+	Papel's own	Papel-тың өзінікі
+	Plugins are sandboxed WebAssembly packages. They survive Papel updates as long as their API version is supported.	Плагиндер — құмсалғыштағы WebAssembly пакеттері. Олар API нұсқасы қолдау тапқанша Papel жаңартуларынан кейін де сақталады.
+	Quit Papel	Papel-тан шығу
+	Reopen the files that were open when Papel last closed	Papel соңғы рет жабылғанда ашық болған файлдарды қайта ашу
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Ақ қағаз парағына қол қойып, оны жарық әрі біркелкі жарықта суретке түсіріңіз (жарқылды қосыңыз). Суретті таңдаңыз немесе осында тастаңыз: Papel қолтаңбаны тауып, қағазды алып тастайды.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Мәтінді тану орнатылмаған: модель файлдары жоқ. Papel қайта орнатыңыз немесе PDFCRAFT_MODELS айнымалысына олар жатқан қалтаны көрсетіңіз.
+	The Dock shows it the next time Papel opens.	Dock оны Papel келесі ашылғанда көрсетеді.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Papel жазатын қаріптер «{c}» ({code}) таңбасын сала алмайды, сондықтан ол барлық PDF қарау құралдарында ? болып көрінеді. Мәтін сақталады.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Форма {u} адресіне жіберілуді сұрайды; Papel форма деректерін жібермейді. Енгізген деректеріңізді сақтап қалу үшін құжатты сақтаңыз.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Кілт macOS Keychain ішінде; ол Papel-ге оны пайдалануға рұқсат сұрауы мүмкін.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Кілт Windows сертификаттар қоймасында; ол Papel-ге оны пайдалануға рұқсат сұрауы мүмкін.
+	The module's tokens hold no digital ID Papel can sign with.	Модуль токендерінде Papel қол қоя алатын цифрлық ID жоқ.
+	The PIN goes only to the card; Papel doesn't keep it.	PIN код тек картаға жіберіледі; Papel оны сақтамайды.
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	мәтінді тану модельдері орнатылмаған (Papel қайта орнатыңыз немесе PDFCRAFT_MODELS айнымалысына олар жатқан қалтаны көрсетіңіз)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Бұл өрістің қаріпі «{c}» ({code}) таңбасын сала алмайды, сондықтан Papel оның орнына ? көрсетеді. Мән сақталады, ал басқа PDF қарау құралдары өрісті соған қарап қайта салады.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Бұл формада Papel әлі оқымайтын XFA деректері де бар. Өрістерін толтыра аласыз, бірақ Acrobat орнына XFA мәндерін көрсетуі мүмкін.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	Бұл орнатылымды Debian пакеті басқарады. Papel бағдарламасын жаңарту үшін жүйенің бағдарламалар менеджерін пайдаланыңыз.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	Бұл орнатылымды RPM пакеті басқарады. Papel бағдарламасын жаңарту үшін жүйенің бағдарламалар менеджерін пайдаланыңыз.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Бұл динамикалық XFA формасы, оны Papel әлі көрсете алмайды. Көріп тұрғаныңыз — файлдың орынбасар беті.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	бұл қолтаңба қызметін пайдалану мүмкін емес: ол браузерде OAuth арқылы кіруді талап етеді, ал Papel оны әлі қолдамайды
+	Use your system software manager to update Papel.	Papel бағдарламасын жаңарту үшін жүйенің бағдарламалар менеджерін пайдаланыңыз.
+	Welcome to Papel	Papel-ге қош келдіңіз
+	Your default email app can't take a file from Papel.	Әдепкі email қосымшаңыз Papel-тан файл қабылдай алмайды.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} форманы {url} адресіне жібереді; Papel форма деректерін жібермейді. Енгізген деректеріңізді сақтап қалу үшін құжатты сақтаңыз.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} бет Papel оқи алатыннан көп мазмұн қамтиды, біріншісі — {page}-бет: олардың бөліктері сызылмайды, ал мәтінінің тек бір бөлігін табуға не көшіруге болады.
+	{program} can't take a file from Papel.	{program} Papel-тан файл қабылдай алмайды.
+	{who} in this document tried to open an address Papel won't open: {e}.	Осы құжаттағы {who} Papel ашпайтын адресті ашпақ болды: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Осы құжаттағы {who} Papel ашпайтын адресті ашпақ болды: {e}. Құжаттардан тек веб (http, https) және email (mailto) сілтемелері ашылады.
+	This document's script is asking	Осы құжаттың скрипті сұрап тұр
+	Document: {name}	Құжат: {name}
+	This request comes from the document, not Papel. Only enter a password if you trust this document.	Бұл сұрау Papel-тан емес, құжаттан келді. Құпиясөзді осы құжатқа сенсеңіз ғана енгізіңіз.
