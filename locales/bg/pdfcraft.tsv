@@ -3753,3 +3753,6 @@ document scrollbar width	Wide	Широка
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} изпраща формуляра до {url}; Papel не изпраща данни от формуляри. Запишете документа, за да запазите въведеното.
 	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} страници съдържат повече съдържание, отколкото Papel може да прочете, първата е страница {page}: части от тях не са изчертани, а само част от текста им може да бъде намерена или копирана.
 	{program} can't take a file from Papel.	{program} не може да приеме файл от Papel.
+	This document's script is asking	Скриптът на този документ пита
+	Document: {name}	Документ: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Тази заявка идва от документа, а не от PdfCraft. Въвеждайте парола само ако имате доверие на този документ.

@@ -4096,3 +4096,5 @@ calendar weekday	We	dc.
 	{program} can't take a file from Papel.	{program} no pot rebre un fitxer de Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} d'aquest document ha intentat obrir una adreça que Papel no obre: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} d'aquest document ha intentat obrir una adreça que Papel no obre: {e}. Als documents només s'hi poden obrir enllaços web (http, https) i de correu electrònic (mailto).
+	This document's script is asking	L'script d'aquest document pregunta
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Aquesta sol·licitud prové del document, no de PdfCraft. Introduïu una contrasenya només si confieu en aquest document.

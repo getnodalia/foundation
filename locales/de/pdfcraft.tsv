@@ -4043,3 +4043,6 @@ document scrollbar width	Wide	Breit
 	{program} can't take a file from Papel.	{program} kann keine Datei von Papel übernehmen.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} in diesem Dokument wollte eine Adresse öffnen, die Papel nicht öffnet: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} in diesem Dokument wollte eine Adresse öffnen, die Papel nicht öffnet: {e}. Aus Dokumenten heraus öffnet Papel nur Web-Links (http, https) und E-Mail-Links (mailto).
+	This document's script is asking	Das Skript dieses Dokuments fragt
+	Document: {name}	Dokument: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Diese Anfrage stammt vom Dokument, nicht von PdfCraft. Geben Sie ein Passwort nur ein, wenn Sie diesem Dokument vertrauen.

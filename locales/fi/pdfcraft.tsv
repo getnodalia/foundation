@@ -3904,3 +3904,5 @@ calendar weekday	We	Ke
 	{program} can't take a file from Papel.	{program} ei voi ottaa vastaan tiedostoa Papelilta.
 	{who} in this document tried to open an address Papel won't open: {e}.	Tämän asiakirjan {who} yritti avata osoitteen, jota Papel ei avaa: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Tämän asiakirjan {who} yritti avata osoitteen, jota Papel ei avaa: {e}. Asiakirjoista avautuvat vain verkkolinkit (http, https) ja sähköpostilinkit (mailto).
+	This document's script is asking	Tämän asiakirjan skripti kysyy
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Tämä pyyntö tulee asiakirjasta, ei PdfCraftista. Kirjoita salasana vain, jos luotat tähän asiakirjaan.

@@ -4096,3 +4096,5 @@ calendar weekday	We	Mi
 	{program} can't take a file from Papel.	{program} nu poate primi un fișier de la Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} din acest document a încercat să deschidă o adresă pe care Papel nu o deschide: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} din acest document a încercat să deschidă o adresă pe care Papel nu o deschide: {e}. Din documente se deschid doar linkuri web (http, https) și de e-mail (mailto).
+	This document's script is asking	Scriptul acestui document întreabă
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Această solicitare vine de la document, nu de la PdfCraft. Introduceți o parolă doar dacă aveți încredere în acest document.

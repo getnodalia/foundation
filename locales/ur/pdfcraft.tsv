@@ -2936,3 +2936,6 @@ calendar weekday	We	بد
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} فارم {url} پر جمع کراتا ہے؛ Papel فارم کا ڈیٹا نہیں بھیجتا۔ اندراجات رکھنے کے لیے دستاویز محفوظ کریں۔
 	{who} in this document tried to open an address Papel won't open: {e}.	اس دستاویز میں {who} نے ایسا پتہ کھولنے کی کوشش کی جسے Papel نہیں کھولے گا: {e}۔
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	اس دستاویز میں {who} نے ایسا پتہ کھولنے کی کوشش کی جسے Papel نہیں کھولے گا: {e}۔ دستاویزات سے صرف ویب (http، https) اور ای میل (mailto) لنکس کھلتے ہیں۔
+	This document's script is asking	اس دستاویز کا اسکرپٹ پوچھ رہا ہے
+	Document: {name}	دستاویز: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	یہ درخواست دستاویز کی طرف سے ہے، PdfCraft کی طرف سے نہیں۔ پاس ورڈ صرف تب درج کریں جب آپ کو اس دستاویز پر بھروسہ ہو۔

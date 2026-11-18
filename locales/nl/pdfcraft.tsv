@@ -2626,3 +2626,6 @@ calendar weekday	We	Wo
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} verzendt het formulier naar {url}; Papel verstuurt geen formuliergegevens. Sla het document op om je invoer te bewaren.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} in dit document probeerde een adres te openen dat Papel niet opent: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} in dit document probeerde een adres te openen dat Papel niet opent: {e}. Alleen webkoppelingen (http, https) en e-mailkoppelingen (mailto) openen vanuit documenten.
+	This document's script is asking	Het script van dit document vraagt
+	Document: {name}	Document: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Dit verzoek komt van het document, niet van PdfCraft. Voer alleen een wachtwoord in als u dit document vertrouwt.

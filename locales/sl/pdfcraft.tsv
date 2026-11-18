@@ -3701,3 +3701,6 @@ document scrollbar width	Wide	Široka
 	{program} can't take a file from Papel.	{program} ne more sprejeti datoteke iz Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} v tem dokumentu je poskusil odpreti naslov, ki ga Papel ne odpre: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} v tem dokumentu je poskusil odpreti naslov, ki ga Papel ne odpre: {e}. Iz dokumentov se odpirajo samo spletne (http, https) in e-poštne (mailto) povezave.
+	This document's script is asking	Skript tega dokumenta sprašuje
+	Document: {name}	Dokument: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Ta zahteva prihaja iz dokumenta, ne iz programa PdfCraft. Geslo vnesite le, če temu dokumentu zaupate.

@@ -3875,3 +3875,6 @@ document scrollbar width	Wide	太い
 	{program} can't take a file from Papel.	{program} は Papel からファイルを受け取れません。
 	{who} in this document tried to open an address Papel won't open: {e}.	この文書内の{who}が、Papel では開けないアドレスを開こうとしました：{e}。
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	この文書内の{who}が、Papel では開けないアドレスを開こうとしました：{e}。文書から開けるのは、ウェブ（http、https）とメール（mailto）のリンクだけです。
+	This document's script is asking	この文書のスクリプトからの質問
+	Document: {name}	文書: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	この要求は PdfCraft ではなく文書から送られています。この文書を信頼できる場合にのみパスワードを入力してください。

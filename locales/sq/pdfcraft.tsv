@@ -3537,3 +3537,6 @@ signature pad	Type	Shkruaj
 	{program} can't take a file from Papel.	{program} nuk mund të marrë skedar nga Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} në këtë dokument u përpoq të hapte një adresë që Papel nuk e hap: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} në këtë dokument u përpoq të hapte një adresë që Papel nuk e hap: {e}. Nga dokumentet hapen vetëm lidhjet e uebit (http, https) dhe të emailit (mailto).
+	This document's script is asking	Skripti i këtij dokumenti po pyet
+	Document: {name}	Dokumenti: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Kjo kërkesë vjen nga dokumenti, jo nga PdfCraft. Futni një fjalëkalim vetëm nëse i besoni këtij dokumenti.

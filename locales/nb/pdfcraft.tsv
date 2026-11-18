@@ -3083,3 +3083,6 @@ calendar weekday	We	on
 	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} sider inneholder mer innhold enn Papel kan lese, først side {page}: deler av dem tegnes ikke, og bare en del av teksten deres kan søkes i eller kopieres.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} i dette dokumentet prøvde å åpne en adresse Papel ikke åpner: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} i dette dokumentet prøvde å åpne en adresse Papel ikke åpner: {e}. Bare nettlenker (http, https) og e-postlenker (mailto) åpnes fra dokumenter.
+	This document's script is asking	Skriptet i dette dokumentet spør
+	Document: {name}	Dokument: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Denne forespørselen kommer fra dokumentet, ikke fra PdfCraft. Skriv bare inn et passord hvis du stoler på dette dokumentet.

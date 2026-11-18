@@ -3589,3 +3589,6 @@ document scrollbar width	Wide	Πλατύ
 	{program} can't take a file from Papel.	Το {program} δεν μπορεί να δεχτεί αρχείο από το Papel.
 	{who} in this document tried to open an address Papel won't open: {e}.	Το στοιχείο {who} σε αυτό το έγγραφο προσπάθησε να ανοίξει διεύθυνση που το Papel δεν επιτρέπει: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	Το στοιχείο {who} σε αυτό το έγγραφο προσπάθησε να ανοίξει μη επιτρεπόμενη διεύθυνση: {e}. Από τα έγγραφα ανοίγουν μόνο σύνδεσμοι ιστού (http, https) και ηλεκτρονικού ταχυδρομείου (mailto).
+	This document's script is asking	Το σενάριο αυτού του εγγράφου ρωτά
+	Document: {name}	Έγγραφο: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	Αυτό το αίτημα προέρχεται από το έγγραφο, όχι από το PdfCraft. Εισαγάγετε κωδικό πρόσβασης μόνο αν εμπιστεύεστε αυτό το έγγραφο.

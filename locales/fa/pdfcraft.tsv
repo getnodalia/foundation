@@ -2778,3 +2778,6 @@ calendar weekday	We	چه
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} فرم را به {url} ارسال می‌کند؛ Papel داده‌های فرم را ارسال نمی‌کند. سند را ذخیره کنید تا ورودی‌هایتان حفظ شوند.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} در این سند تلاش کرد نشانیای را باز کند که Papel باز نمی‌کند: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} در این سند تلاش کرد نشانیای را باز کند که Papel باز نمی‌کند: {e}. از میان سند‌ها فقط پیوند‌های وب (http، https) و ایمیل (mailto) باز می‌شوند.
+	This document's script is asking	اسکریپت این سند می‌پرسد
+	Document: {name}	سند: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	این درخواست از سند است، نه از PdfCraft. فقط در صورتی گذرواژه وارد کنید که به این سند اعتماد دارید.

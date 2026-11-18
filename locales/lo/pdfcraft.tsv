@@ -3069,3 +3069,6 @@ signature pad	Type	ພິມ
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} ສົ່ງຟອມໄປທີ່ {url}; Papel ບໍ່ໄດ້ສົ່ງຂໍ້ມູນຟອມ. ກະລຸນາບັນທຶກເອກະສານເພື່ອຮັກສາສິ່ງທີ່ທ່ານປ້ອນໄວ້.
 	{who} in this document tried to open an address Papel won't open: {e}.	{who} ໃນເອກະສານນີ້ພະຍາຍາມເປີດທີ່ຢູ່ທີ່ Papel ບໍ່ສາມາດເປີດໄດ້: {e}.
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} ໃນເອກະສານນີ້ພະຍາຍາມເປີດທີ່ຢູ່ທີ່ Papel ບໍ່ສາມາດເປີດໄດ້: {e}. ສະເພາະລິ້ງເວັບ (http, https) ແລະ ອີເມວ (mailto) ເທົ່ານັ້ນທີ່ສາມາດເປີດຈາກເອກະສານໄດ້.
+	This document's script is asking	ສະຄຣິບຂອງເອກະສານນີ້ກຳລັງຖາມ
+	Document: {name}	ເອກະສານ: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	ຄຳຂໍນີ້ມາຈາກເອກະສານ, ບໍ່ແມ່ນຈາກ PdfCraft. ໃສ່ລະຫັດຜ່ານສະເພາະເມື່ອທ່ານໄວ້ວາງໃຈເອກະສານນີ້ເທົ່ານັ້ນ.

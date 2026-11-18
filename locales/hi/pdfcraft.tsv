@@ -3783,3 +3783,6 @@ calendar weekday	We	बुध
 	{program} can't take a file from Papel.	{program} Papel से फ़ाइल नहीं ले सकता।
 	{who} in this document tried to open an address Papel won't open: {e}.	इस दस्तावेज़ में {who} ने एक ऐसा पता खोलने की कोशिश की जो Papel नहीं खोलता: {e}।
 	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	इस दस्तावेज़ में {who} ने एक ऐसा पता खोलने की कोशिश की जो Papel नहीं खोलता: {e}। दस्तावेज़ों से केवल वेब (http, https) और ईमेल (mailto) लिंक खुलते हैं।
+	This document's script is asking	इस दस्तावेज़ की स्क्रिप्ट पूछ रही है
+	Document: {name}	दस्तावेज़: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	यह अनुरोध दस्तावेज़ से आया है, PdfCraft से नहीं। पासवर्ड तभी दर्ज करें जब आपको इस दस्तावेज़ पर भरोसा हो।

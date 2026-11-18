@@ -3522,3 +3522,6 @@ document scrollbar width	Wide	వెడల్పు
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} ఫారాన్ని {url}కు సమర్పిస్తుంది; Papel ఫారం డేటాను పంపదు. మీరు నింపిన వివరాలను ఉంచుకోవడానికి పత్రాన్ని సేవ్ చేయండి.
 	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} పేజీలలో Papel చదవగలిగే దానికంటే ఎక్కువ కంటెంట్ ఉంది, మొదటిది పేజీ {page}: వాటిలో కొన్ని భాగాలు గీయబడవు, వాటి వచనంలో కొంత భాగాన్ని మాత్రమే వెతకడం లేదా కాపీ చేయడం సాధ్యం.
 	{program} can't take a file from Papel.	{program} Papel నుండి ఫైల్‌ను తీసుకోలేదు.
+	This document's script is asking	ఈ పత్రం యొక్క స్క్రిప్ట్ అడుగుతోంది
+	Document: {name}	పత్రం: {name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	ఈ అభ్యర్థన PdfCraft నుండి కాదు, పత్రం నుండి వస్తోంది. ఈ పత్రాన్ని మీరు నమ్మితేనే పాస్‌వర్డ్ నమోదు చేయండి.

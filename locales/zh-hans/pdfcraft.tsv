@@ -3843,3 +3843,6 @@ document scrollbar width	Wide	宽
 	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} 将表单提交到{url}；Papel 不发送表单数据。请保存文档以保留填写内容。
 	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	有 {n} 页的内容超过 Papel 能读取的量（最先是第 {page} 页）：其中部分没有绘制，文字也只有部分能搜索或复制。
 	{program} can't take a file from Papel.	{program} 无法从 Papel 接收文件。
+	This document's script is asking	此文档的脚本正在询问
+	Document: {name}	文档：{name}
+	This request comes from the document, not PdfCraft. Only enter a password if you trust this document.	此请求来自文档，而非 PdfCraft。仅在您信任此文档时才输入密码。
