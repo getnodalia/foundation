@@ -8,6 +8,7 @@
 //! blobs/<blake3>.zst       content-addressed binary data
 //! thumb.png                optional thumbnail
 //! composite/preview.png    optional flattened preview
+//! composite/full.png       optional full-canvas flattened image
 //! save.lock                directory bundles only: held while a save runs (empty)
 //! ```
 //!
@@ -30,14 +31,20 @@
 //! assert_eq!(manifest.document["name"], "Untitled");
 //! assert_eq!(manifest.thumbnail, None);
 //! ```
+#![warn(missing_docs)]
 
 mod limits;
 mod migrate;
 mod read;
 
+/// Lossless brush-tip envelope used by Lienzo preset libraries.
+pub mod tip;
+
 use serde::{Deserialize, Serialize};
 
-pub use limits::{Limits, MAX_DEPTH, MAX_GROUP_DEPTH, MAX_MANIFEST_ITEMS, check_manifest, manifest_depth, parse_manifest};
+pub use limits::{
+    Limits, MAX_DEPTH, MAX_GROUP_DEPTH, MAX_MANIFEST_ITEMS, check_manifest, check_manifest_with_cancel, manifest_depth, parse_manifest,
+};
 pub use migrate::{Step, migrate};
 pub use read::{read_manifest, read_manifest_with};
 
@@ -62,6 +69,8 @@ pub const MANIFEST: &str = "manifest.json";
 pub const THUMB: &str = "thumb.png";
 /// The flattened preview entry, a PNG, in [`COMPOSITE_DIR`].
 pub const COMPOSITE: &str = "composite/preview.png";
+/// The optional full-canvas flattened image, a PNG, in [`COMPOSITE_DIR`].
+pub const FULL_COMPOSITE: &str = "composite/full.png";
 /// The file a directory save holds an exclusive lock on while it runs. ZIP bundles do not have it.
 pub const SAVE_LOCK: &str = "save.lock";
 
@@ -92,36 +101,35 @@ pub fn is_valid_hash(hash: &str) -> bool {
 /// absent. [`read_manifest`] reads one: a missing `thumbnail` or `composite` reads as `None`,
 /// members the type does not name are skipped, and a preview that names any entry other than
 /// [`THUMB`] or [`COMPOSITE`] is refused.
+/// `full_composite` names [`FULL_COMPOSITE`] when present and is omitted on serialization
+/// when absent, preserving the bytes of manifests without it.
 ///
 /// The struct is `#[non_exhaustive]`: build one with [`Manifest::new`] and set the previews.
 ///
-/// ```compile_fail
-/// let _ = nodalia_lienzo_format::Manifest { format_version: 1, generator: String::new(), document: (), thumbnail: None, composite: None };
-/// ```
-///
-/// It has no `Deserialize`, so a manifest is read only through [`read_manifest`]:
-///
-/// ```compile_fail
-/// let _: nodalia_lienzo_format::Manifest<serde_json::Value> = serde_json::from_str("{}").unwrap();
-/// ```
+/// It has no `Deserialize`, so a manifest is read only through [`read_manifest`].
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[non_exhaustive]
 pub struct Manifest<D> {
+    #[allow(missing_docs)]
     pub format_version: u32,
     /// Free-form writer identification, for example `photocraft-format 0.1.0`.
     pub generator: String,
+    #[allow(missing_docs)]
     pub document: D,
     /// The thumbnail entry, [`THUMB`]. [`read_manifest`] refuses any other name.
     pub thumbnail: Option<String>,
     /// The flattened preview entry, [`COMPOSITE`]. [`read_manifest`] refuses any other name.
     pub composite: Option<String>,
+    /// The full-canvas flattened image, [`FULL_COMPOSITE`]. [`read_manifest`] refuses any other name.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub full_composite: Option<String>,
 }
 
 impl<D> Manifest<D> {
     /// A manifest at [`FORMAT_VERSION`] written by `generator`, holding `document`, with no
     /// previews.
     pub fn new(generator: impl Into<String>, document: D) -> Self {
-        Manifest { format_version: FORMAT_VERSION, generator: generator.into(), document, thumbnail: None, composite: None }
+        Manifest { format_version: FORMAT_VERSION, generator: generator.into(), document, thumbnail: None, composite: None, full_composite: None }
     }
 }
 
@@ -129,15 +137,14 @@ impl<D> Manifest<D> {
 /// [`tile_path`]. `hash` is read as written; [`TileRef::path`] checks it.
 ///
 /// The struct is `#[non_exhaustive]`: build one with [`TileRef::new`].
-///
-/// ```compile_fail
-/// let _ = nodalia_lienzo_format::TileRef { tx: 0, ty: 0, hash: String::new() };
-/// ```
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[non_exhaustive]
 pub struct TileRef {
+    /// Tile column.
     pub tx: i32,
+    /// Tile row.
     pub ty: i32,
+    #[allow(missing_docs)]
     pub hash: Hash,
 }
 
@@ -156,18 +163,12 @@ impl TileRef {
 /// Why a manifest could not be read.
 ///
 /// [`Error::TooNew`] is `#[non_exhaustive]`: match it with `..`.
-///
-/// ```compile_fail
-/// fn found(e: nodalia_lienzo_format::Error) -> u32 {
-///     match e {
-///         nodalia_lienzo_format::Error::TooNew { found, supported: _, generator: _ } => found,
-///         _ => 0,
-///     }
-/// }
-/// ```
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 pub enum Error {
+    /// A cancellation-aware validation observed the caller's request.
+    #[error("manifest check canceled")]
+    Cancelled,
     /// The manifest breaks the format.
     #[error("corrupt .pcraft bundle: {0}")]
     Corrupt(String),
@@ -193,3 +194,10 @@ pub enum Error {
     #[error("manifest JSON: {0}")]
     Json(#[from] serde_json::Error),
 }
+
+#[cfg(test)]
+extern crate self as nodalia_lienzo_format;
+
+#[cfg(test)]
+#[path = "../tests/main.rs"]
+mod integration;

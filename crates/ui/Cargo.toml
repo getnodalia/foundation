@@ -5,79 +5,58 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 rust-version.workspace = true
-description = "Reusable egui controls and icon catalogs for Craft frontends"
+description = "Runtime, contract, components, patterns and shell of the craft UI library, on egui"
+autotests = false
+
+[lib]
+# Every test lives in the `it` integration binary, so `cargo test` builds the library once.
+test = false
 
 [lints]
 workspace = true
 
-[dependencies]
-nodalia-fonts-build = { workspace = true }
-nodalia-i18n = { workspace = true }
-egui = { workspace = true }
-epaint = { version = "0.37", default-features = false }
-log = "0.4"
-serde = { version = "1", features = ["derive"], optional = true }
-# Same version as epaint's, for reading a face's character map.
-skrifa = { version = "0.44", default-features = false, features = ["std"] }
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-# Screenshot and input tests of an app's screens (the screen-testing feature).
-egui_kittest = { version = "0.37", features = ["snapshot", "wgpu"], optional = true }
-# The versions egui_system_font_provider 0.37 uses.
-fontique = { version = "0.11.1", default-features = false, features = ["system", "fontconfig-dlopen"], optional = true }
-unicode-script = { version = "0.5.8", optional = true }
-
-# Fetching served fonts (`fonts::UiFonts::served_faces`); already in every eframe web build.
-[target.'cfg(target_arch = "wasm32")'.dependencies]
-js-sys = "0.3"
-wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4"
-web-sys = { version = "0.3", features = ["Window", "RequestInit", "Response", "console"] }
-
-# Fading a native window while it is dragged (`NSWindow.alphaValue`); winit already uses these.
-[target.'cfg(target_os = "macos")'.dependencies]
-objc2 = "0.6"
-objc2-app-kit = { version = "0.3", default-features = false, features = ["std", "objc2-core-foundation", "NSApplication", "NSEvent", "NSResponder", "NSScreen", "NSWindow"] }
-objc2-foundation = { version = "0.3", default-features = false, features = ["std", "NSArray", "NSEnumerator", "NSString"] }
-
 [features]
 default = []
-serde = ["dep:serde"]
-# Floating windows may move to their own OS windows (desktop egui backends with viewports).
-native-windows = []
+# `shell::app`: the eframe entry point.
+app = ["nodalia-ui-shell/app"]
+# `nodalia_ui::testing`: the fixture and suite runner, with every crate's test helpers.
+testing = [
+    "nodalia-ui-contract/testing",
+    "nodalia-ui-widgets/testing",
+    "nodalia-ui-panels/testing",
+    "nodalia-ui-canvas/testing",
+    "nodalia-ui-patterns/testing",
+    "nodalia-ui-shell/testing",
+]
+# `nodalia_ui::testing::snapshot`: stories rendered to images offscreen (desktop only).
+snapshot = ["testing", "nodalia-ui-contract/snapshot"]
 # Draw colour glyphs (COLR, sbix, CBDT), e.g. colour emoji.
-color_fonts = ["epaint/color_fonts"]
+color_fonts = ["nodalia-ui-contract/color_fonts"]
 # Find installed fonts for characters the app's faces lack (desktop only).
-system_fonts = ["dep:fontique", "dep:unicode-script"]
-# `docking::testing`: a headless driver for application docking tests.
-testing = []
-# nodalia_ui::testing: per-language screenshot tests and IME smoke tests with egui_kittest
-# (desktop only).
-screen-testing = ["dep:egui_kittest"]
+system_fonts = ["nodalia-ui-contract/system_fonts"]
+# `share`, `account`: the share dialog and the account menu (nodalia-cloud-ui).
+share = ["nodalia-cloud-ui/share"]
+# `cloud`: Open and Save against cloud storage (nodalia-cloud-ui).
+cloud = ["share", "nodalia-cloud-ui/cloud"]
+
+[dependencies]
+nodalia-ui-contract = { workspace = true }
+nodalia-ui-widgets = { workspace = true }
+nodalia-ui-panels = { workspace = true }
+nodalia-ui-canvas = { workspace = true }
+nodalia-ui-patterns = { workspace = true }
+nodalia-ui-shell = { workspace = true }
+nodalia-cloud-ui = { workspace = true }
 
 [dev-dependencies]
-# serde: the IME tests read events that only the suite's egui fork has from JSON.
-egui = { workspace = true, features = ["default_fonts", "serde"] }
-serde_json = "1"
-egui_extras = { version = "0.37", default-features = false, features = ["svg"] }
-image = { version = "0.25", default-features = false, features = ["png"] }
-
-[[example]]
-name = "docking_native"
-required-features = ["native-windows"]
+nodalia-ui = { path = ".", features = ["testing"] }
+nodalia-behavior = { workspace = true }
+nodalia-i18n = { workspace = true, features = ["collate"] }
+egui = { workspace = true }
+syn = { version = "2", features = ["full"] }
+toml = { version = "1.1", default-features = false, features = ["std", "parse", "serde"] }
 
 [[test]]
-name = "screens"
-required-features = ["screen-testing"]
-
-[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
-egui_kittest = { version = "0.37", features = ["wgpu"] }
-eframe = { version = "0.37", default-features = false, features = ["wgpu", "x11", "default_fonts"] }
-
-# The browser test (tests/web_fonts.rs).
-[target.'cfg(target_arch = "wasm32")'.dev-dependencies]
-js-sys = "0.3"
-wasm-bindgen = "0.2"
-wasm-bindgen-futures = "0.4"
-wasm-bindgen-test = "0.3"
-web-sys = { version = "0.3", features = ["Window", "Response"] }
+name = "it"
+path = "tests/it/main.rs"
+harness = false

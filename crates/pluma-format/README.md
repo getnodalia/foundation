@@ -34,6 +34,12 @@ reads one, and `Contents::read(json)` reads `format`, `version`, `document`, `im
 `profiles` and skips `generator`, `preview` and `pdf` as the JSON is read, so their base64 is not
 buffered or kept. Both read the files Pluma opens:
 
+`Contents::read_with_pdf_preference(json)` returns `(contents, pdf_compatible)` in that same
+envelope pass. It reads an optional boolean `pdfCompatible`, falling back to a non-null `pdf`
+member when the preference is absent or null. It neither retains nor decodes the PDF payload.
+Repeated PDF members use their last value, and the array form returns false. A non-boolean
+preference is an error in this opt-in method; `Contents::read` keeps ignoring that field.
+
 - They return `ReadError::Envelope(Error::Format)` for another format name and
   `ReadError::Envelope(Error::TooNew)` for a version newer than `VERSION`, after the JSON reads;
   `ReadError::Json` otherwise.
@@ -94,19 +100,21 @@ let pdf = file.pdf.map(|p| entries.bytes(&p)).transpose()?.flatten();
   for version 4 and entries of at least `INLINE_MAX` bytes, inline otherwise. `Tail::write_to`
   writes the marker and the entries.
 - `base64::encode`, `decode` and `decoded_len` handle the `data` members.
+- `Image::len_with_check` and `bytes_at_most_with_check` accept a fallible checkpoint called
+  during bounded scans, base64 decoding and blob copying. The checkpoint error is returned
+  unchanged; `Ok(None)` keeps `bytes_at_most`'s meaning. `base64::decoded_len_with_check` and
+  `decode_with_check` expose the same checkpoints for standalone base64 data.
 
 Size limits on the JSON and on decompression stay with each reader.
 
 ## Testing
 
-`cargo test -p nodalia-pluma-format` runs `tests/envelope.rs`, which compares files written
-through `File` and `Tail` with JSON written out by hand in Pluma's layout (compact and
-pretty, version 4 with data after the JSON, version 2 under the former name), reads them back,
-and checks `split_tail`, `marker_at`, `sniff` on plain, gzip and truncated gzip input, the limits
-`Entries` and `Image::bytes` put on the bytes copied, members of the wrong shape or repeated, the
-array form, the format and version checks of `File::read` and `Contents::read`, and the base64
-vectors of RFC 4648. The doctests check that the public structs and `ReadError` cannot be built or
-matched exhaustively from another crate.
+`cargo test -p nodalia-pluma-format` runs `tests/envelope.rs`, which reads back files written
+through `File` and `Tail` (compact and pretty, version 4 with data after the JSON, version 2
+under the former name) and checks `split_tail`, `sniff` on plain, gzip and truncated gzip input,
+the limits `Entries` and `Image::bytes` put on the bytes copied, the array form, and the format
+and version checks of `File::read` and `Contents::read`. A unit test in `src/base64.rs` checks the
+base64 vectors of RFC 4648.
 
 `.github/workflows/vectorcraft-format.yml` runs fmt, clippy and the tests on Linux and Windows,
 and a `wasm32-unknown-unknown` check.

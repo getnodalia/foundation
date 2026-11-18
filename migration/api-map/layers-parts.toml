@@ -1,0 +1,317 @@
+# API map of the "Layers parts" family: old path to new path and setter renames.
+# Covers the tree data, the blend rows, the filter bar, the options dialog and the thumbnail key of nodalia-layers.
+
+family = "Layers parts"
+new_module = "nodalia_layers::ui"
+
+[[type]]
+name = "LayerTree"
+old = "nodalia_layers::ui::tree::LayerTree"
+new = "nodalia_layers::ui::tree::LayerTree"
+status = "same"
+note = "`blend_modes` returns `Vec<Entry<String>>` and `accepts_drop` takes `&ReorderMove<LayerRowKey<Id>>` and `nodalia_keymap::Mods`."
+
+[[type]]
+name = "LayerInfo"
+old = "nodalia_layers::ui::tree::LayerInfo"
+new = "nodalia_layers::ui::tree::LayerInfo"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "LayerKind"
+old = "nodalia_layers::ui::tree::LayerKind"
+new = "nodalia_layers::ui::tree::LayerKind"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "LayerPart"
+old = "nodalia_layers::ui::tree::LayerPart"
+new = "nodalia_layers::ui::tree::LayerPart"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "MaskInfo"
+old = "nodalia_layers::ui::tree::MaskInfo"
+new = "nodalia_layers::ui::tree::MaskInfo"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "LayerLocks"
+old = "nodalia_layers::ui::tree::LayerLocks"
+new = "nodalia_layers::ui::tree::LayerLocks"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "LockKind"
+old = "nodalia_layers::ui::tree::LockKind"
+new = "nodalia_layers::ui::tree::LockKind"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "LayerSelection"
+old = "nodalia_layers::ui::tree::LayerSelection"
+new = "nodalia_layers::ui::tree::LayerSelection"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "LayerRowKey"
+old = "nodalia_layers::ui::tree::LayerRowKey"
+new = "nodalia_layers::ui::tree::LayerRowKey"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "SubRowGroup"
+old = "nodalia_layers::ui::tree::SubRowGroup"
+new = "nodalia_layers::ui::tree::SubRowGroup"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "SubRows"
+old = "nodalia_layers::ui::tree::SubRows"
+new = "nodalia_layers::ui::tree::SubRows"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "SubRow"
+old = "nodalia_layers::ui::tree::SubRow"
+new = "nodalia_layers::ui::tree::SubRow"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "LayerProperties"
+old = "nodalia_layers::ui::tree::LayerProperties"
+new = "nodalia_layers::ui::tree::LayerProperties"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "LayersFooterState"
+old = "nodalia_layers::ui::tree::LayersFooterState"
+new = "nodalia_layers::ui::tree::LayersFooterState"
+status = "same"
+note = "Plain data, now `#[non_exhaustive]` with constructors; build a value with its `new` or `Default` and set the fields."
+
+[[type]]
+name = "BlendChoice"
+old = "nodalia_ui::controls::blend_choice::BlendChoice"
+new = ""
+status = "removed"
+note = "A blend list is `Vec<nodalia_ui::contract::Entry<String>>`: `Entry::new(key, label)` per mode and `Entry::separator()` for each group break."
+
+[[type]]
+name = "BlendRows"
+old = "nodalia_layers::ui::rows::BlendRows"
+new = "nodalia_layers::ui::rows::BlendRows"
+status = "same"
+
+[[type]]
+name = "BlendRowsOutput"
+old = "nodalia_layers::ui::rows::BlendRowsOutput"
+new = "nodalia_layers::ui::rows::BlendRowsOutput"
+status = "same"
+
+[[type]]
+name = "LayerPropertyEdit"
+old = "nodalia_layers::ui::rows::LayerPropertyEdit"
+new = "nodalia_layers::ui::rows::LayerPropertyEdit"
+status = "same"
+note = "`BlendHover` is gone: the hovered mode is the `Update` of `Blend`, and closing the list without a pick is its `Cancel`."
+
+[[type]]
+name = "BlendRowsLabels"
+old = "nodalia_layers::ui::rows::BlendRowsLabels"
+new = ""
+status = "removed"
+note = "Replaced by `BlendRowsWords` (ids `blendRows.*`); read it with `Env::of(ui).words::<BlendRowsWords>()`."
+
+[[type]]
+name = "BlendRowsWords"
+old = ""
+new = "nodalia_layers::ui::rows::BlendRowsWords"
+status = "replaced"
+note = "The words of the blend, opacity, lock and fill rows; ids `blendRows.*` (legacy `layers.blendMode`, `layers.opacity`, `layers.fill`, `layers.lock`, `layers.lock*`). The Opacity, Fill and Lock captions carry no colon."
+
+[[type]]
+name = "FilterBy"
+old = "nodalia_layers::ui::filter::FilterBy"
+new = "nodalia_layers::ui::filter::FilterBy"
+status = "same"
+
+[[type]]
+name = "FilterKind"
+old = "nodalia_layers::ui::filter::FilterKind"
+new = "nodalia_layers::ui::filter::FilterKind"
+status = "same"
+
+[[type]]
+name = "LayerFilter"
+old = "nodalia_layers::ui::filter::LayerFilter"
+new = "nodalia_layers::ui::filter::LayerFilter"
+status = "same"
+
+[[type]]
+name = "LayerFilterBar"
+old = "nodalia_layers::ui::filter::LayerFilterBar"
+new = "nodalia_layers::ui::filter::LayerFilterBar"
+status = "same"
+
+[[type]]
+name = "LayerFilterOutput"
+old = "nodalia_layers::ui::filter::LayerFilterOutput"
+new = "nodalia_layers::ui::filter::LayerFilterOutput"
+status = "same"
+
+[[type]]
+name = "LayerFilterLabels"
+old = "nodalia_layers::ui::filter::LayerFilterLabels"
+new = ""
+status = "removed"
+note = "Replaced by `LayerFilterWords` (ids `layerFilterBar.*`)."
+
+[[type]]
+name = "LayerFilterWords"
+old = ""
+new = "nodalia_layers::ui::filter::LayerFilterWords"
+status = "replaced"
+note = "The words of the filter bar; ids `layerFilterBar.*` (legacy `layers.filter.*`); the clear-search word is the search field's own."
+
+[[type]]
+name = "LayersSettings"
+old = "nodalia_layers::ui::options::LayersSettings"
+new = "nodalia_layers::ui::options::LayersSettings"
+status = "same"
+
+[[type]]
+name = "LayersOptions"
+old = "nodalia_layers::ui::options::LayersOptions"
+new = "nodalia_layers::ui::options::LayersOptions"
+status = "same"
+
+[[type]]
+name = "LayersOptionsDialog"
+old = "nodalia_layers::ui::options::LayersOptionsDialog"
+new = "nodalia_layers::ui::options::LayersOptionsDialog"
+status = "same"
+
+[[type]]
+name = "LayersOptionsLabels"
+old = "nodalia_layers::ui::options::LayersOptionsLabels"
+new = ""
+status = "removed"
+note = "Replaced by `LayersOptionsWords` (ids `layersOptionsDialog.*`)."
+
+[[type]]
+name = "LayersOptionsWords"
+old = ""
+new = "nodalia_layers::ui::options::LayersOptionsWords"
+status = "replaced"
+note = "The words of Layers Panel Options; ids `layersOptionsDialog.*` (legacy `layers.options.*`); the per-size description word is gone with the sample's side in points."
+
+[[type]]
+name = "paint_sample_thumbnail"
+old = "nodalia_layers::ui::options::paint_sample_thumbnail"
+new = ""
+status = "removed"
+note = "Each thumbnail-size radio shows a `nodalia_ui::display::Picture` of a sample image at the size's token."
+
+[[type]]
+name = "ThumbContents"
+old = "nodalia_layers::ui::thumbs::ThumbContents"
+new = "nodalia_layers::ui::thumbs::ThumbContents"
+status = "same"
+note = "Now `#[non_exhaustive]`; build a key with its constructors."
+
+[[type]]
+name = "LayerThumbKind"
+old = "nodalia_layers::ui::thumbs::LayerThumbKind"
+new = "nodalia_layers::ui::thumbs::LayerThumbKind"
+status = "same"
+note = "Now `#[non_exhaustive]`; build a key with its constructors."
+
+[[type]]
+name = "LayerThumb"
+old = "nodalia_layers::ui::thumbs::LayerThumb"
+new = "nodalia_layers::ui::thumbs::LayerThumb"
+status = "same"
+note = "Now `#[non_exhaustive]`; build a key with its constructors."
+
+[[type]]
+name = "FakeLayers"
+old = ""
+new = "nodalia_layers::ui::mock::FakeLayers"
+status = "replaced"
+note = "Public behind the crate's `screen-testing` feature, with public fields; `flat` and `take_info_calls` are always present."
+
+[[type]]
+name = "FakeLayer"
+old = ""
+new = "nodalia_layers::ui::mock::FakeLayer"
+status = "replaced"
+note = "Public behind the crate's `screen-testing` feature."
+
+[[setter]]
+type = "BlendRows"
+old = "new(id_salt, properties, blend_modes)"
+new = "new(properties, blend_modes)"
+note = "`blend_modes` is `&[Entry<String>]`; the id salt is gone."
+
+[[setter]]
+type = "BlendRows"
+old = "labels(BlendRowsLabels)"
+new = ""
+note = "Words are the installed `BlendRowsWords`."
+
+[[setter]]
+type = "BlendRows"
+old = "locks(bool)"
+new = "locks(bool)"
+
+[[setter]]
+type = "LayerFilterBar"
+old = "new(id_salt, &mut LayerFilter)"
+new = "new(Bind<LayerFilter>)"
+note = "`Bind::bound(&mut filter)` writes through; `LayerFilterOutput::edit` carries the change for a given value."
+
+[[setter]]
+type = "LayerFilterBar"
+old = "blend_modes(&[BlendChoice])"
+new = "blend_modes(&[Entry<String>])"
+
+[[setter]]
+type = "LayerFilterBar"
+old = "labels(LayerFilterLabels)"
+new = ""
+note = "Words are the installed `LayerFilterWords`."
+
+[[setter]]
+type = "LayersOptionsDialog"
+old = "new()"
+new = "new(LayersOptions)"
+
+[[setter]]
+type = "LayersOptionsDialog"
+old = "initial(LayersOptions)"
+new = ""
+note = "Pass the options to `new`."
+
+[[setter]]
+type = "LayerTree"
+old = "accepts_drop(&Move<LayerRowKey<Id>>, Modifiers)"
+new = "accepts_drop(&ReorderMove<LayerRowKey<Id>>, Mods)"
+note = "`Mods` is `nodalia_keymap::Mods`; `ReorderMove` is `nodalia_ui::contract::ReorderMove`."
+
+[[call]]
+old = "LayersOptionsDialog::new().initial(options)"
+new = "LayersOptionsDialog::new(options)"
+note = "The dialog takes the options it opens with."
