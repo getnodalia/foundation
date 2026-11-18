@@ -1,7 +1,7 @@
 use serde_json::{Value, json};
 
 use super::hammer;
-use crate::gltf::{MAX_ZERO_COMPONENTS, glb_container, read, split_glb, write_glb};
+use crate::gltf::{MAX_UV_SETS, MAX_ZERO_COMPONENTS, base64_decode, glb_container, read, split_glb, uri_decode, write_glb};
 use crate::{
     AlphaMode, ChannelPath, Corner, Error, IDENTITY, Image, Interpolation, LightKind, Limits, Material, Mesh, NONE, Node, Part, Projection, Scene,
     TextureRef, UvTransform, Wrap, face_normal, no_external, transform_point,
@@ -288,6 +288,18 @@ fn texture_and_sampler_inventory_includes_unreferenced_entries() {
 }
 
 #[test]
+fn base64_and_uri_decoding() {
+    assert_eq!(base64_decode("aGVsbG8=").unwrap(), b"hello");
+    assert_eq!(base64_decode("aGVs\nbG8").unwrap(), b"hello");
+    assert_eq!(base64_decode("-_8").unwrap(), [0xfb, 0xff]);
+    assert!(base64_decode("a$b").is_none());
+    assert_eq!(uri_decode("a%20b%2Fc"), "a b/c");
+    assert_eq!(uri_decode("a%+1b"), "a%+1b");
+    assert_eq!(uri_decode("a%4"), "a%4");
+    assert_eq!(uri_decode("%"), "%");
+}
+
+#[test]
 fn glb_container_checks() {
     let glb = quad();
     let (json, bin) = split_glb(&glb).unwrap();
@@ -414,6 +426,20 @@ fn primitives_of_a_mesh_share_its_pools() {
     let short = b.f32s(&[0.0, 0.0, 1.0], "VEC3", 3);
     let s = parse(&one_mesh(&b, json!({ "attributes": { "POSITION": p, "NORMAL": short } }))).unwrap();
     assert!(s.meshes[0].normals.is_empty());
+}
+
+#[test]
+fn uv_sets_past_the_bound_are_not_read() {
+    let mut b = B::default();
+    let p = b.f32s(&QUAD[..9], "VEC3", 3);
+    let t = b.f32s(&[0.5; 6], "VEC2", 2);
+    let mut attrs = json!({ "POSITION": p });
+    for k in 0..MAX_UV_SETS + 2 {
+        attrs[format!("TEXCOORD_{k}")] = json!(t);
+    }
+    let s = parse(&one_mesh(&b, json!({ "attributes": attrs }))).unwrap();
+    assert_eq!(s.meshes[0].uv_sets.len(), MAX_UV_SETS);
+    s.validate().unwrap();
 }
 
 #[test]
@@ -923,4 +949,33 @@ fn morph_targets_and_other_scenes_are_named_in_warnings() {
     assert_eq!(s.warnings, [morphs]);
     let s = parse(&one_mesh(&b, plain.clone())).unwrap();
     assert!(s.warnings.is_empty(), "{:?}", s.warnings);
+}
+
+#[test]
+fn strict_uri_decoding_preserves_exact_names_and_rejects_invalid_utf8() {
+    use crate::gltf::uri_decode_strict;
+    for (input, expected) in [
+        ("", Some("")),
+        ("a+b", Some("a+b")),
+        ("a%20b", Some("a b")),
+        ("é/%E2%82%AC", Some("é/€")),
+        ("%", Some("%")),
+        ("%2", Some("%2")),
+        ("%GG", Some("%GG")),
+        ("%252e%252e", Some("%2e%2e")),
+        ("%2e%2e%2fmesh.bin", Some("../mesh.bin")),
+        ("%00", Some("\0")),
+        ("%FF", None),
+        ("%C0%AF", None),
+        ("%ED%A0%80", None),
+        ("%E2%82", None),
+    ] {
+        assert_eq!(uri_decode_strict(input).as_deref(), expected, "{input}");
+    }
+    // Keep the existing API's replacement-character behavior unchanged.
+    assert_eq!(uri_decode("%FF"), "�");
+    let input = "%41%GG+é".repeat(100_000);
+    let decoded = uri_decode_strict(&input).unwrap();
+    assert_eq!(decoded, "A%GG+é".repeat(100_000));
+    assert!(decoded.len() <= input.len());
 }

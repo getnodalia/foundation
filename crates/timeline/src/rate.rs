@@ -1,9 +1,6 @@
 //! Frame counts and frame rates as documents write them.
-#![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
 
-use crate::rates::FrameRate;
-
-use crate::time::Tick;
+use crate::time::{FrameRate, Tick};
 
 /// Frame count nearest to `t` at `rate`.
 pub fn frames_round(rate: FrameRate, t: Tick) -> i64 {
@@ -65,9 +62,8 @@ pub fn rate_from_f64(r: f64) -> FrameRate {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nodalia_ui::testing::trial;
 
-    #[trial]
+    #[test]
     fn rates() {
         assert_eq!(rate_from_timebase(24, true), FrameRate::FPS_23_976);
         assert_eq!(rate_from_timebase(30, true), FrameRate::FPS_29_97);

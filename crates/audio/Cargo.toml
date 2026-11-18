@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-audio"
 description = "Audio file I/O and codecs: WAV/AIFF read and write, FLAC encoder, AAC and ALAC decoders and encoders, AC-3/E-AC-3 decoder and encoder, MP3 decoder and encoder, Opus decoder and encoder, Vorbis encoder, MP1/MP2 decoders."
 version.workspace = true
@@ -101,6 +100,62 @@ nodalia-media-testkit = { workspace = true }
 nodalia-media = { workspace = true, features = ["vmd"] }
 proptest = { workspace = true }
 serde_json = { workspace = true }
+
+[[test]]
+name = "audio"
+required-features = ["decode", "lossless-encode", "peaks"]
+
+[[test]]
+name = "vmd"
+required-features = ["vmd-decode"]
+
+[[test]]
+name = "codecs"
+required-features = ["decode", "encode"]
+
+[[test]]
+name = "mp2_encoder_oracle"
+required-features = ["mpa-encode"]
+
+[[test]]
+name = "adpcm_oracle"
+required-features = ["adpcm"]
+
+[[test]]
+name = "flac_decode"
+required-features = ["flac-decode", "flac-encode"]
+
+[[test]]
+name = "vorbis_decode_oracle"
+required-features = ["vorbis-decode", "vorbis-encode", "decode"]
+
+[[test]]
+name = "vorbis_decode_hostile"
+required-features = ["vorbis-decode", "vorbis-encode"]
+
+[[test]]
+name = "vorbis_decode_synthetic"
+required-features = ["vorbis-decode"]
+
+[[test]]
+name = "gsm_oracle"
+required-features = ["gsm"]
+
+[[test]]
+name = "qoa_oracle"
+required-features = ["qoa"]
+
+[[test]]
+name = "g722_oracle"
+required-features = ["g722"]
+
+[[test]]
+name = "g726_oracle"
+required-features = ["g726"]
+
+[[test]]
+name = "sbc_oracle"
+required-features = ["sbc"]
 
 [[example]]
 name = "info"

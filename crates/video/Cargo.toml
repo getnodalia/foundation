@@ -18,7 +18,7 @@ workspace = true
 screen-video = ["dep:miniz_oxide"]
 # Every codec feature turns on one codec module; none is on by default.
 # DNxHD / DNxHR (SMPTE ST 2019-1): decoder and encoder.
-dnx = ["dep:nodalia-media"]
+dnx = []
 # APV (Advanced Professional Video, RFC 9924): decoder and encoder; `apv-decode` or `apv-encode` for one of them.
 apv = ["apv-decode", "apv-encode"]
 apv-decode = ["nodalia-media/bitstream"]
@@ -58,7 +58,7 @@ vp9-decode = ["nodalia-media/bitstream"]
 vp9-encode = ["nodalia-media/isobmff"]
 # AV1: decoder and encoder; `av1-decode` or `av1-encode` for one of them.
 av1 = ["av1-decode", "av1-encode"]
-av1-decode = ["dep:nodalia-media"]
+av1-decode = []
 av1-encode = ["nodalia-media/isobmff"]
 # Tiled AV1 fallback for frames that exceed the clean-room encoder's single-tile limits.
 av1-large-encode = ["av1-encode", "dep:rav1e"]
@@ -70,7 +70,7 @@ threads = ["dep:rayon", "rav1e?/threading"]
 
 [dependencies]
 miniz_oxide = { workspace = true, optional = true }
-nodalia-media = { workspace = true, optional = true }
+nodalia-media = { workspace = true }
 nodalia-jpeg = { workspace = true, optional = true }
 thiserror = { workspace = true }
 rayon = { workspace = true, optional = true }

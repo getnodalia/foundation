@@ -11,3 +11,5 @@ workspace=true
 [dependencies]
 serde={workspace=true}
 thiserror={workspace=true}
+[dev-dependencies]
+nodalia-testkit = { workspace = true }

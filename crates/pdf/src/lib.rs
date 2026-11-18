@@ -13,7 +13,6 @@ pub mod filters;
 #[cfg(feature = "interpret")]
 pub use hayro_interpret as interpret;
 mod link;
-pub mod settings;
 #[cfg(feature = "read")]
 pub use hayro_syntax as syntax;
 pub use link::safe_url;
@@ -36,10 +35,3 @@ pub mod write_raster;
 
 /// Low-level, direct-to-output framing of new classic-xref PDF files.
 pub mod classic;
-
-#[cfg(test)]
-extern crate self as nodalia_pdf;
-
-#[cfg(test)]
-#[path = "../tests/main.rs"]
-mod integration;

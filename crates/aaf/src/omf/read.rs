@@ -2,7 +2,7 @@
 
 use std::collections::{HashMap, HashSet};
 
-use nodalia_timeline::{FrameRate, Tick};
+use nodalia_timeline::time::{FrameRate, Tick};
 
 use super::bento::Container;
 use crate::model::{CClip, CItem, CKind, CTrack, CTransition, Composition, Document, Gain, Source, units_to_ticks};

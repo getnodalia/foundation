@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-settings"
 version.workspace = true
 edition.workspace = true
@@ -11,21 +10,13 @@ description = "Shared settings storage for the Craft suite: platform folders, co
 [lints]
 workspace = true
 
-[features]
-# The in-memory `SettingsFiles` for tests in other crates (`nodalia_settings::testing`).
-testing = []
-
 [dependencies]
 nodalia-atomic = { workspace = true }
-nodalia-host = { workspace = true }
 serde = { version = "1", features = ["derive"] }
-serde_json = { workspace = true }
-toml = { version = "1.1", default-features = false, features = ["std", "parse", "serde"] }
 toml_edit = { version = "0.25", features = ["serde"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 dirs = "7"
 
 [dev-dependencies]
-nodalia-settings = { path = ".", features = ["testing"] }
 tempfile = "3"

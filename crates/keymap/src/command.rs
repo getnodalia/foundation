@@ -1,6 +1,5 @@
 //! Commands with parameters and their binding keys.
 
-use std::borrow::Cow;
 use std::fmt;
 
 use serde::{Deserialize, Serialize};
@@ -13,7 +12,6 @@ pub const MAX_KEY: usize = 256;
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CommandRef {
-    /// The command's id.
     pub id: String,
     /// `Null` for no parameters.
     #[serde(default)]
@@ -26,7 +24,6 @@ impl CommandRef {
         CommandRef { id: id.into(), params: Value::Null }
     }
 
-    /// A command with the parameters its binding runs it with.
     pub fn with_params(id: impl Into<String>, params: Value) -> CommandRef {
         CommandRef { id: id.into(), params }
     }
@@ -34,21 +31,15 @@ impl CommandRef {
     /// The binding key: the id, or `id {json}` with object keys sorted and no spaces. `Null` and
     /// an empty object give the bare id.
     pub fn key(&self) -> String {
-        self.key_text().into_owned()
-    }
-
-    /// [`key`](Self::key), borrowing the id when it is the whole key: a lookup by key of a command without parameters
-    /// allocates nothing.
-    pub fn key_text(&self) -> Cow<'_, str> {
         match &self.params {
-            Value::Null => Cow::Borrowed(&self.id),
-            Value::Object(m) if m.is_empty() => Cow::Borrowed(&self.id),
+            Value::Null => self.id.clone(),
+            Value::Object(m) if m.is_empty() => self.id.clone(),
             p => {
                 let mut out = String::with_capacity(self.id.len() + 16);
                 out.push_str(&self.id);
                 out.push(' ');
                 write_canonical(p, &mut out);
-                Cow::Owned(out)
+                out
             }
         }
     }

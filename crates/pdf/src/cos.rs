@@ -13,6 +13,7 @@
 
 mod budget;
 mod bytes;
+/// Content streams: operators with source spans, inline images, the serializer, matrices.
 #[cfg(feature = "content")]
 pub mod content;
 mod document;

@@ -12,6 +12,7 @@
 
 mod sequence;
 mod smf;
+/// Source-timed SMF compatibility model, including tolerant and SMPTE reading.
 pub mod source_timed;
 pub mod sync;
 

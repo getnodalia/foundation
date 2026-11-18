@@ -4,7 +4,7 @@
 //!
 //! - [`model`]: a [`model::Document`] of compositions (tracks of fillers, source clips and
 //!   overlapping transitions, with clip gain and markers) and the media sources they reference,
-//!   with exact times ([`nodalia_timeline::Tick`]).
+//!   with exact times ([`nodalia_timeline::time::Tick`]).
 //! - [`aaf`]: Advanced Authoring Format, Edit Protocol, in structured storage (`nodalia-cfb`).
 //! - [`omf`]: OMF Interchange 2.0 in a Bento container; sound only.
 //!
@@ -19,7 +19,6 @@
 //!
 //! Input is untrusted: a damaged or crafted file gives an [`Error`] or a [`Report`] entry, never
 //! a panic, a hang or an allocation sized by a count in the file.
-#![warn(missing_docs)]
 
 pub mod aaf;
 pub mod model;
@@ -41,12 +40,7 @@ pub use nodalia_timeline::time;
 pub enum Error {
     /// The bytes are not a readable document of the format.
     #[error("{format} parse error: {message}")]
-    Parse {
-        /// The format that failed to parse.
-        format: &'static str,
-        /// What was wrong.
-        message: String,
-    },
+    Parse { format: &'static str, message: String },
     /// The document has no composition.
     #[error("the document contains no timeline")]
     Empty,
@@ -55,19 +49,15 @@ pub enum Error {
     Other(String),
 }
 
-/// `Result` with this crate's [`Error`].
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Who a written file says made it (the AAF `Identification` object, the OMF `IDNT` object).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Identity<'a> {
-    /// The company that made the product.
     pub company: &'a str,
-    /// The product name.
     pub product: &'a str,
     /// The product's version, as text.
     pub version: &'a str,
-    /// The platform the product ran on.
     pub platform: &'a str,
     /// AAF `ProductID`: an AUID naming the product.
     pub product_id: [u8; 16],

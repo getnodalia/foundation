@@ -1,5 +1,4 @@
 [package]
-autotests = false
 name = "nodalia-crw"
 description = "Clean-room Canon CRW (CIFF) raw decoder: the heap container, the derived entropy coding, sensor levels and as-shot white balance."
 version.workspace = true
@@ -15,6 +14,7 @@ workspace = true
 thiserror = { workspace = true }
 
 [dev-dependencies]
+proptest = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 # Pinned digests of the decoded CC0 sample files (tests/samples.rs); not a product dependency.

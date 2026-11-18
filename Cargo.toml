@@ -11,6 +11,8 @@ rust-version = "1.95"
 repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
+nodalia-xfa = { path = "crates/xfa" }
+nodalia-evm = { path = "crates/evm" }
 nodalia-java-class = { path = "crates/java-class" }
 nodalia-sourcemap = { path = "crates/sourcemap" }
 nodalia-pcap = { path = "crates/pcap" }
@@ -35,7 +37,6 @@ nodalia-wasm = { path = "crates/wasm" }
 nodalia-platform = { path = "crates/platform" }
 nodalia-aep = { path = "crates/aep" }
 nodalia-affinity = { path = "crates/affinity" }
-nodalia-win32 = { path = "crates/win32" }
 nodalia-ai = { path = "crates/ai" }
 nodalia-ai-core = { path = "crates/ai-core" }
 nodalia-anima-format = { path = "crates/anima-format" }
@@ -58,8 +59,10 @@ thiserror = "2"
 nodalia-gzip = { path = "crates/gzip" }
 nodalia-celdas-format = { path = "crates/celdas-format" }
 nodalia-aaf = { path = "crates/aaf" }
-nodalia-behavior = { path = "crates/behavior" }
 nodalia-atomic = { path = "crates/atomic" }
+# The ArtCraft Launcher's app list for AI agents (storytold/craft-ai-integrations, crates/app/ai-agents).
+nodalia-ai-agents = { git = "https://github.com/storytold/craft-ai-integrations", rev = "d94a3593adcff504eaaad9e5aee4c84fd2f07a72" }
+nodalia-dex = { path = "crates/dex" }
 nodalia-xtask = { path = "crates/xtask" }
 nodalia-captions = { path = "crates/captions" }
 nodalia-cfb = { path = "crates/cfb" }
@@ -67,18 +70,13 @@ nodalia-codepage = { path = "crates/codepage" }
 nodalia-cms = { path = "crates/cms" }
 nodalia-cloud = { path = "crates/cloud" }
 nodalia-cloud-local = { path = "crates/cloud-local" }
-nodalia-cloud-ui = { path = "crates/cloud-ui" }
 nodalia-color = { path = "crates/color" }
-nodalia-color-ui = { path = "crates/color-ui" }
+nodalia-color-transform = { path = "crates/color-transform" }
 nodalia-frame = { path = "crates/frame" }
 nodalia-crs = { path = "crates/crs" }
 nodalia-crw = { path = "crates/crw" }
 nodalia-csv = { path = "crates/csv" }
 nodalia-dav = { path = "crates/dav" }
-nodalia-automation = { path = "crates/automation" }
-nodalia-browse = { path = "crates/browse" }
-craft = { path = "crates/craft" }
-nodalia-design-lint = { path = "crates/design-lint" }
 nodalia-dialogs = { path = "crates/dialogs" }
 nodalia-doc-binary = { path = "crates/doc-binary" }
 nodalia-docx = { path = "crates/docx" }
@@ -96,15 +94,13 @@ vectorcraft-doc = { git = "https://github.com/getnodalia/foundation", rev = "6b3
 vectorcraft-eps = { git = "https://github.com/getnodalia/foundation", rev = "6b3a6b8788ebcb420d69449199cbdf323888d27e" }
 vectorcraft-geom = { git = "https://github.com/getnodalia/foundation", rev = "6b3a6b8788ebcb420d69449199cbdf323888d27e" }
 vectorcraft-pathops = { git = "https://github.com/getnodalia/foundation", rev = "6b3a6b8788ebcb420d69449199cbdf323888d27e" }
-# The ArtCraft Launcher's list of apps AI agents may use, shared with the launcher and the MCP gateway.
-nodalia-ai-agents = { git = "https://github.com/storytold/craft-ai-integrations", rev = "35e0352666a117407d62230a6c6c2366f3e21a3b" }
 nodalia-doc = { path = "crates/doc" }
 nodalia-docpath = { path = "crates/docpath" }
 nodalia-dpx = { path = "crates/dpx" }
-nodalia-draw = { path = "crates/draw" }
 nodalia-dwg = { path = "crates/dwg" }
 nodalia-fcproj-format = { path = "crates/fcproj-format" }
 nodalia-ecproj-format = { path = "crates/ecproj-format" }
+nodalia-esign = { path = "crates/esign" }
 nodalia-figma-rest = { path = "crates/figma-rest" }
 nodalia-exr = { path = "crates/exr" }
 nodalia-flags = { path = "crates/flags" }
@@ -121,28 +117,21 @@ nodalia-html = { path = "crates/html" }
 nodalia-heif = { path = "crates/heif" }
 nodalia-fig = { path = "crates/fig" }
 nodalia-fonts-build = { path = "crates/fonts-build" }
-nodalia-font-subset = { path = "crates/font-subset" }
-# The HarfBuzz subsetter from storytold's HarfBuzz fork (branch rust-subset-15.0.0: HarfBuzz 15.0.0 plus rust/harfbuzz-subset-sys).
-harfbuzz-subset-sys = { git = "https://github.com/storytold/harfbuzz.git", rev = "f32ed1e548eaa8852bff47e49a90629a013a2faa" }
-nodalia-host = { path = "crates/host" }
 nodalia-i18n = { path = "crates/i18n" }
 nodalia-ipc = { path = "crates/ipc" }
 nodalia-idml = { path = "crates/idml" }
 nodalia-indd = { path = "crates/indd" }
 nodalia-jmap = { path = "crates/jmap" }
 nodalia-ical = { path = "crates/ical" }
-nodalia-imaging = { path = "crates/imaging" }
 nodalia-jpeg = { path = "crates/jpeg" }
-nodalia-control = { path = "crates/control" }
 nodalia-control-protocol = { path = "crates/control-protocol" }
 nodalia-jsonrpc = { path = "crates/jsonrpc" }
 nodalia-mcp = { path = "crates/mcp" }
-nodalia-jxl = { path = "crates/jxl" }
+nodalia-jxl = { path = "crates/jxl", default-features = false }
 nodalia-kiwi = { path = "crates/kiwi" }
 nodalia-keymap = { path = "crates/keymap" }
 nodalia-assuan = { path = "crates/assuan" }
 nodalia-kra = { path = "crates/kra" }
-nodalia-layers = { path = "crates/layers" }
 nodalia-audio = { path = "crates/audio" }
 nodalia-latex = { path = "crates/latex" }
 nodalia-markdown = { path = "crates/markdown" }
@@ -173,7 +162,6 @@ nodalia-lienzo-bundle = { path = "crates/lienzo-bundle" }
 nodalia-pkcs7 = { path = "crates/pkcs7" }
 nodalia-plotter = { path = "crates/plotter" }
 nodalia-prepress = { path = "crates/prepress" }
-nodalia-pages = { path = "crates/pages" }
 nodalia-press-print = { path = "crates/press-print" }
 nodalia-print = { path = "crates/print" }
 nodalia-proof = { path = "crates/proof" }
@@ -185,14 +173,16 @@ nodalia-pst = { path = "crates/pst" }
 nodalia-quit = { path = "crates/quit" }
 nodalia-rtf = { path = "crates/rtf" }
 nodalia-raw = { path = "crates/raw" }
+nodalia-geom = { path = "crates/geom" }
+nodalia-develop = { path = "crates/develop" }
+nodalia-develop-model = { path = "crates/develop-model" }
 nodalia-sheet = { path = "crates/sheet" }
 nodalia-sketch = { path = "crates/sketch" }
-nodalia-review = { path = "crates/review" }
 nodalia-settings = { path = "crates/settings" }
-nodalia-trama-format = { path = "crates/trama-format" }
 nodalia-sound-format = { path = "crates/sound-format" }
 nodalia-time = { path = "crates/time" }
 nodalia-silhouette-studio = { path = "crates/silhouette-studio" }
+nodalia-suite-account = { path = "crates/suite-account" }
 nodalia-svg = { path = "crates/svg" }
 nodalia-stencil-format = { path = "crates/stencil-format" }
 nodalia-stencil-document = { path = "crates/stencil-document" }
@@ -206,19 +196,7 @@ nodalia-tga = { path = "crates/tga" }
 nodalia-timeline = { path = "crates/timeline" }
 nodalia-tiff = { path = "crates/tiff" }
 nodalia-metadata = { path = "crates/metadata" }
-nodalia-table = { path = "crates/table" }
-nodalia-theme = { path = "crates/theme" }
-nodalia-theme-editor = { path = "crates/theme-editor" }
-nodalia-theme-store = { path = "crates/theme-store" }
 nodalia-ui = { path = "crates/ui" }
-nodalia-ui-canvas = { path = "crates/ui-canvas" }
-nodalia-ui-contract = { path = "crates/ui-contract" }
-nodalia-ui-panels = { path = "crates/ui-panels" }
-nodalia-ui-patterns = { path = "crates/ui-patterns" }
-nodalia-ui-shell = { path = "crates/ui-shell" }
-nodalia-ui-test-kit = { path = "crates/ui-test-kit" }
-nodalia-ui-widgets = { path = "crates/ui-widgets" }
-nodalia-ui-macros = { path = "crates/ui-macros" }
 nodalia-update = { path = "crates/update" }
 nodalia-vcard = { path = "crates/vcard" }
 nodalia-pluma-format = { path = "crates/pluma-format" }
@@ -234,24 +212,18 @@ nodalia-zip = { path = "crates/zip" }
 nodalia-y4m = { path = "crates/y4m" }
 nodalia-sniff = { path = "crates/sniff" }
 nodalia-tar = { path = "crates/tar" }
-nodalia-format = { path = "crates/format" }
-nodalia-mcp-server = { path = "crates/mcp-server" }
 nodalia-epub = { path = "crates/epub" }
 nodalia-ews = { path = "crates/ews" }
 nodalia-video = { path = "crates/video" }
 nodalia-web-api = { path = "crates/web-api" }
 nodalia-window = { path = "crates/window" }
-# egui's colour types alone, for crates that convert to and from them without egui.
-ecolor = { version = "0.37", default-features = false }
 nodalia-web-host = { path = "crates/web-host" }
 nodalia-webp = { path = "crates/webp" }
 egui = { version = "0.37", default-features = false }
-bitflags = "2"
 md5 = { package = "md-5", version = "0.10", default-features = false }
 jxl-oxide = { version = "0.12", default-features = false }
 jixel = "=0.3.4"
 rayon = "1"
-smallvec = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 proptest = "1"
@@ -284,20 +256,20 @@ hayro-jbig2 = { path = "vendor/hayro-jbig2" }
 hayro-cmap = { path = "vendor/hayro-cmap" }
 hayro-postscript = { path = "vendor/hayro-postscript" }
 linesweeper = { path = "vendor/linesweeper" }
-ecolor = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-emath = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-epaint = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-epaint_default_fonts = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-egui = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-egui-winit = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-egui-wgpu = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-egui_glow = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-egui_extras = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-egui_kittest = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-egui_system_font_provider = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-eframe = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-egui_demo_lib = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
-egui_inspection = { git = "https://github.com/getnodalia/foundation", rev = "e9711ca9b69772f875ae0d1cef1977ff8c16234d" }
+ecolor = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+emath = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+epaint = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+epaint_default_fonts = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+egui = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+egui-winit = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+egui-wgpu = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+egui_glow = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+egui_extras = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+egui_kittest = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+egui_system_font_provider = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+eframe = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+egui_demo_lib = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
+egui_inspection = { git = "https://github.com/getnodalia/foundation", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
 winit = { git = "https://github.com/getnodalia/foundation", rev = "a517b3846ee8457d84ee4975110bfda6797c44dc" }
 
 # symphonia's FLAC decoder restores LPC samples as `residual + (prediction as i32)`. In a valid

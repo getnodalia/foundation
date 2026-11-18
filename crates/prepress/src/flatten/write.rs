@@ -40,10 +40,8 @@ use crate::ink::{Ink, InkColor, InkId, InkSet, Overprint, Process, to_pdf_color}
 
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
-/// Why writing a flattened page failed.
 pub enum WriteError {
     #[error(transparent)]
-    #[allow(missing_docs)]
     Pdf(#[from] pdf_write::WriteError),
     /// An ink isn't in the set or a spot's Lab alternate can't be converted.
     #[error("color {0:?} can't be written")]
@@ -51,28 +49,14 @@ pub enum WriteError {
     /// A DeviceN space would have more colorants than the output's PDF version takes
     /// ([`max_colorants`]).
     #[error("a DeviceN space of {colorants} colorants; this output takes at most {max}")]
-    Colorants {
-        /// Colorants the space would have.
-        colorants: usize,
-        /// Most colorants the output takes.
-        max: usize,
-    },
+    Colorants { colorants: usize, max: usize },
     /// A complex region paints more spot inks than [`plates`](crate::plates::plates) separates;
     /// `unseparated` are the ones past the limit.
     #[error("a complex region paints {inks} spot inks; at most {max} are separated, not {}", some_names(.unseparated))]
-    SpotInks {
-        /// Spot inks the region paints.
-        inks: usize,
-        /// Most spot inks that are separated.
-        max: usize,
-        /// Names of the spot inks past the limit.
-        unseparated: Vec<String>,
-    },
+    SpotInks { inks: usize, max: usize, unseparated: Vec<String> },
     #[error("the page box is empty or not finite")]
-    #[allow(missing_docs)]
     Page,
     #[error("image: {0}")]
-    #[allow(missing_docs)]
     Image(&'static str),
     /// Display-list features the writer doesn't write yet.
     #[error("not written yet: {0}")]
@@ -151,7 +135,6 @@ pub struct FontMap {
 type Shared = (FontBytes, Option<Font>);
 
 impl FontMap {
-    /// Create an empty map.
     pub fn new() -> Self {
         Self::default()
     }
@@ -161,7 +144,6 @@ impl FontMap {
         self.fonts.values().map(Vec::len).sum()
     }
 
-    /// Whether no font program has been seen.
     pub fn is_empty(&self) -> bool {
         self.fonts.is_empty()
     }

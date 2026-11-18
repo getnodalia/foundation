@@ -1,17 +1,20 @@
-//! Whole documents flattened: pages, boxes, metadata and shared fonts carry over, and each
-//! page's plates match the source.
+//! Whole documents flattened: pages, boxes, metadata, output intent and shared fonts carry over,
+//! and each page's plates match the source.
 //!
-//! The test needs Inter from `NODALIA_PDF_TEST_FONT_DIR` or `~/.cache/nodalia-pdf-test-fonts`, and is
-//! skipped when it is missing.
+//! The text cases need Inter from `NODALIA_PDF_TEST_FONT_DIR` or `~/.cache/nodalia-pdf-test-fonts`,
+//! and are skipped when it is missing.
 #![cfg(feature = "flatten")]
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::path::PathBuf;
 use std::time::Instant;
 
-use nodalia_pdf::syntax::object::Rect as PdfRect;
-use nodalia_pdf::syntax::object::dict::keys::{BLEED_BOX, TRIM_BOX};
+use nodalia_pdf::syntax::object::dict::keys::{BLEED_BOX, DEST_OUTPUT_PROFILE, OUTPUT_CONDITION_IDENTIFIER, OUTPUT_INTENTS, TRIM_BOX};
+use nodalia_pdf::syntax::object::{Array, Dict, Rect as PdfRect, Stream, String as PdfString};
+use nodalia_pdf::write::backend;
 use nodalia_pdf::write::backend::color::cmyk;
+use nodalia_pdf::write::backend::color::device_n::{self, Colorant, DeviceNSpace, Process};
+use nodalia_pdf::write::backend::configure::PdfVersion;
 use nodalia_pdf::write::backend::geom::{PathBuilder, Point, Rect as KRect};
 use nodalia_pdf::write::backend::metadata::DateTime;
 use nodalia_pdf::write::backend::num::NormalizedF32;
@@ -20,10 +23,13 @@ use nodalia_pdf::write::backend::paint::Fill;
 use nodalia_pdf::write::backend::surface::Surface;
 use nodalia_pdf::write::backend::text::{Font, GlyphId, KrillaGlyph};
 use nodalia_pdf::write::backend::{GroupColorSpace, SerializeSettings};
+use nodalia_pdf::write::print::{self, PrintColor};
 use nodalia_pdf::write::{Metadata, Writer};
 use nodalia_plate_test::reference;
 use nodalia_plate_test::structure;
-use nodalia_prepress::flatten::{FlattenDocumentOptions, FlattenOptions, FlattenPageOptions, flatten_document, flatten_page};
+use nodalia_prepress::flatten::{
+    FlattenDocumentOptions, FlattenOptions, FlattenPageOptions, flatten_document, flatten_document_with_progress, flatten_page,
+};
 use nodalia_prepress::{Options, Plates, plates};
 
 const DPI: f32 = 36.0;
@@ -219,4 +225,154 @@ fn a_document_flattens_page_by_page_and_keeps_boxes_metadata_and_shared_fonts() 
         })
         .sum();
     eprintln!("source {} bytes; flattened document {} bytes; three flatten_page outputs {single} bytes", source.len(), out.len());
+}
+
+#[test]
+fn a_page_range_flattens_only_those_pages() {
+    let Some(font) = inter() else { return };
+    let t = Instant::now();
+    let source = three_pages(&font);
+    eprintln!("three_pages {:?}", t.elapsed());
+    let mut calls = Vec::new();
+    let opts = FlattenDocumentOptions { pages: Some(1..3), ..opts() };
+    let t = Instant::now();
+    let (out, report) = flatten_document_with_progress(&source, &opts, &mut |done, total| calls.push((done, total))).unwrap();
+    eprintln!("flatten {:?}", t.elapsed());
+    let doc = nodalia_pdf::open_slice(&out, None).unwrap();
+    assert_eq!(doc.pages().len(), 2);
+    assert_eq!(doc.pages()[0].render_dimensions(), SIZES[1]);
+    assert_eq!(doc.pages()[1].render_dimensions(), SIZES[2]);
+    assert_eq!(report.pages.iter().map(|(p, _)| *p).collect::<Vec<_>>(), [1, 2]);
+    assert_eq!(calls, [(1, 2), (2, 2)]);
+
+    let opts = FlattenDocumentOptions { pages: Some(2..4), ..FlattenDocumentOptions::default() };
+    assert!(flatten_document(&source, &opts).is_err());
+}
+
+#[test]
+fn the_source_output_intent_is_written_once() {
+    let color = PrintColor {
+        profile: nodalia_cms::builtin::COATED_CMYK_ICC,
+        condition_identifier: "Test coated",
+        condition: Some("A coated test condition"),
+        registry_name: None,
+        info: Some("A coated test condition"),
+    };
+    let mut writer = Writer::new(print::settings(color).unwrap(), Metadata::default());
+    for _ in 0..2 {
+        let mut page = writer.document_mut().start_page_with(PageSettings::from_wh(100.0, 100.0).unwrap());
+        let mut s = page.surface();
+        rect(&mut s, 10.0, 10.0, 60.0, 60.0, fill(255, 0, 0, 0));
+        s.push_opacity(NormalizedF32::new(0.5).unwrap());
+        rect(&mut s, 30.0, 30.0, 90.0, 90.0, fill(0, 0, 0, 255));
+        s.pop();
+        s.finish();
+        page.finish();
+    }
+    let source = writer.finish().unwrap();
+    let (out, report) = flatten_document(&source, &opts()).unwrap();
+    assert!(report.other_intents.is_empty());
+    assert_opaque(&out);
+
+    let doc = nodalia_pdf::open_slice(&out, None).unwrap();
+    let xref = doc.xref();
+    let catalog = xref.get::<Dict<'_>>(xref.root_id()).unwrap();
+    let intents: Vec<Dict<'_>> = catalog.get::<Array<'_>>(OUTPUT_INTENTS).unwrap().iter::<Dict<'_>>().collect();
+    assert_eq!(intents.len(), 1);
+    let id = intents[0].get::<PdfString<'_>>(OUTPUT_CONDITION_IDENTIFIER).unwrap();
+    assert_eq!(id.as_bytes(), b"Test coated");
+    let icc = intents[0].get::<Stream<'_>>(DEST_OUTPUT_PROFILE).unwrap().decoded().unwrap();
+    assert_eq!(&*icc, nodalia_cms::builtin::COATED_CMYK_ICC);
+    assert_eq!(count(&out, b"/DestOutputProfile"), 1);
+}
+
+/// PDF/X-1a output: the source's DeviceN fill (cyan and a spot, NChannel at 1.7) is written at
+/// 1.4 without the 1.6 NChannel attributes, and the PDF/X version goes to Info and XMP.
+#[test]
+fn pdf_x1a_output_is_pdf_14_without_nchannel() {
+    let gold = cmyk::Color::new(0, 51, 255, 26);
+    let space = DeviceNSpace::new(vec![Colorant::Process(Process::Cyan), Colorant::Spot { name: "Gold".to_owned(), alternate: gold }]).unwrap();
+    let color = device_n::Color::new(vec![255, 128], space).unwrap();
+    let mut writer = Writer::new(print::settings(PrintColor::fogra39(nodalia_cms::builtin::COATED_FOGRA39_ICC)).unwrap(), Metadata::default());
+    let mut page = writer.document_mut().start_page_with(PageSettings::from_wh(100.0, 100.0).unwrap());
+    let mut s = page.surface();
+    rect(&mut s, 10.0, 10.0, 60.0, 60.0, Fill { paint: backend::color::Color::from(color).into(), ..Default::default() });
+    s.push_opacity(NormalizedF32::new(0.5).unwrap());
+    rect(&mut s, 30.0, 30.0, 90.0, 90.0, fill(0, 0, 0, 255));
+    s.pop();
+    s.finish();
+    page.finish();
+    let source = writer.finish().unwrap();
+    assert!(count(&source, b"/NChannel") > 0);
+
+    let opts = FlattenDocumentOptions {
+        version: PdfVersion::Pdf14,
+        pdfx_version: Some("PDF/X-1:2003".to_owned()),
+        pdfx_conformance: Some("PDF/X-1a:2003".to_owned()),
+        ..opts()
+    };
+    let (out, _) = flatten_document(&source, &opts).unwrap();
+    assert_opaque(&out);
+    assert!(out.starts_with(b"%PDF-1.4"));
+    assert_eq!(count(&out, b"NChannel"), 0);
+    assert_eq!(count(&out, b"/GTS_PDFXVersion(PDF/X-1:2003)"), 1);
+    assert_eq!(count(&out, b"/GTS_PDFXConformance(PDF/X-1a:2003)"), 1);
+    assert_eq!(count(&out, b"<pdfxid:GTS_PDFXVersion>PDF/X-1:2003</pdfxid:GTS_PDFXVersion>"), 1);
+    assert_eq!(count(&out, b"<pdf:PDFVersion>1.4</pdf:PDFVersion>"), 1);
+    let gold_plate = separate(&out, 0);
+    assert!(tint(&gold_plate, "Gold", 20.0, 20.0) > 100);
+}
+
+/// A 16 × 16 Adobe CMYK JPEG of C 100%, and a 16 × 16 gray JPEG of 25% gray (ImageMagick).
+const CYAN_JPEG: &[u8] = include_bytes!("fixtures/cyan-cmyk.jpg");
+const GRAY_JPEG: &[u8] = include_bytes!("fixtures/gray-25.jpg");
+
+#[test]
+fn untouched_jpeg_images_are_written_as_they_are() {
+    let image = |cs: &str, decode: &str, data: &[u8]| {
+        let mut obj = format!(
+            "<< /Type /XObject /Subtype /Image /Width 16 /Height 16 /ColorSpace /{cs} {decode} /BitsPerComponent 8 \
+             /Filter /DCTDecode /Length {} >> stream\n",
+            data.len()
+        )
+        .into_bytes();
+        obj.extend_from_slice(data);
+        obj.extend_from_slice(b"\nendstream");
+        obj
+    };
+    // The images, and a half-transparent black square away from them.
+    let content = "q 50 0 0 50 10 10 cm /Im1 Do Q q 50 0 0 50 70 10 cm /Im2 Do Q \
+        q /GS1 gs 0 0 0 1 k 140 10 50 50 re f Q";
+    let objects =
+        [image("DeviceCMYK", "/Decode [1 0 1 0 1 0 1 0]", CYAN_JPEG), image("DeviceGray", "", GRAY_JPEG), b"<< /Type /ExtGState /ca 0.5 >>".to_vec()];
+    let mut pdf = b"%PDF-1.7\n".to_vec();
+    pdf.extend_from_slice(b"1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n");
+    pdf.extend_from_slice(b"2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n");
+    pdf.extend_from_slice(
+        b"3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 200 70] /Contents 4 0 R \
+          /Resources << /XObject << /Im1 5 0 R /Im2 6 0 R >> /ExtGState << /GS1 7 0 R >> >> >> endobj\n",
+    );
+    pdf.extend_from_slice(format!("4 0 obj << /Length {} >> stream\n{content}\nendstream endobj\n", content.len()).as_bytes());
+    for (i, body) in objects.iter().enumerate() {
+        pdf.extend_from_slice(format!("{} 0 obj ", i + 5).as_bytes());
+        pdf.extend_from_slice(body);
+        pdf.extend_from_slice(b" endobj\n");
+    }
+    pdf.extend_from_slice(b"trailer << /Root 1 0 R >>\n%%EOF");
+
+    let (out, report) = flatten_document(&pdf, &opts()).unwrap();
+    assert_eq!(report.totals.images, 2);
+    assert!(report.totals.flattened > 0);
+    assert_opaque(&out);
+    assert_eq!(count(&out, CYAN_JPEG), 1, "the CMYK JPEG is written as it is");
+    assert_eq!(count(&out, GRAY_JPEG), 1, "the gray JPEG is written as it is");
+    assert_eq!(count(&out, b"/DCTDecode"), 2);
+    let (a, b) = (separate(&pdf, 0), separate(&out, 0));
+    for (x, y) in [(35.0, 35.0), (95.0, 35.0), (165.0, 35.0)] {
+        for ink in ["Cyan", "Magenta", "Yellow", "Black"] {
+            let (want, got) = (tint(&a, ink, x, y), tint(&b, ink, x, y));
+            assert!(want.abs_diff(got) <= 3, "{ink} at ({x}, {y}): {got}, the source has {want}");
+        }
+    }
+    assert!(tint(&b, "Cyan", 35.0, 35.0) > 240 && tint(&b, "Black", 95.0, 35.0) > 150);
 }

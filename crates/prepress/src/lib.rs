@@ -24,10 +24,3 @@ pub use output::{Output, OutputError};
 pub use plates::{
     Band, Conversion, Error, Fallback, MAX_BANDED_PIXELS, MAX_PLATE_PIXELS, MAX_SPOT_INKS, Options, Plates, plates, plates_in_bands, press_profile,
 };
-
-#[cfg(test)]
-extern crate self as nodalia_prepress;
-
-#[cfg(test)]
-#[path = "../tests/main.rs"]
-mod integration;

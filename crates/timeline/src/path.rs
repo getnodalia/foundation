@@ -1,7 +1,6 @@
 //! Media references in interchange documents: `file://` URLs, absolute and relative paths.
 //!
 //! Lexical only (no file system access): a document read on one machine names media on another.
-#![deny(clippy::unwrap_used, clippy::expect_used, clippy::panic, clippy::unimplemented, clippy::todo, clippy::unreachable)]
 
 fn is_windows_abs(p: &str) -> bool {
     let b = p.as_bytes();
@@ -226,9 +225,8 @@ pub fn extension(path: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use nodalia_ui::testing::trial;
 
-    #[trial]
+    #[test]
     fn percent_decode_requires_hex_digits() {
         assert_eq!(file_url_to_path("file:///a/100%+5x.mov"), "/a/100%+5x.mov");
         assert_eq!(file_url_to_path("file:///a/100%-1x.mov"), "/a/100%-1x.mov");
@@ -236,7 +234,7 @@ mod tests {
         assert_eq!(file_url_to_path("file:///a/b%20c.mov"), "/a/b c.mov");
     }
 
-    #[trial]
+    #[test]
     fn urls() {
         assert_eq!(file_url_to_path("file://localhost/Users/me/My%20Clip.mov"), "/Users/me/My Clip.mov");
         assert_eq!(file_url_to_path("file:///C:/Media/a.mxf"), "C:/Media/a.mxf");
@@ -251,7 +249,7 @@ mod tests {
         }
     }
 
-    #[trial]
+    #[test]
     fn file_url_localhost_prefix_host_is_kept() {
         assert_eq!(file_url_to_path("file://localhost-nas/share/a.mov"), "//localhost-nas/share/a.mov");
         assert_eq!(file_url_to_path("file://LOCALHOSTX/a"), "//LOCALHOSTX/a");
@@ -259,7 +257,7 @@ mod tests {
         assert_eq!(file_url_to_path("file://LocalHost/a"), "/a");
     }
 
-    #[trial]
+    #[test]
     fn paths() {
         assert_eq!(resolve_path("media/a.mov", Some("/proj")), "/proj/media/a.mov");
         assert_eq!(resolve_path("../a.mov", Some("/proj/x/")), "/proj/a.mov");
@@ -276,7 +274,7 @@ mod tests {
 
     /// `join` over the path forms a document folder can take. Each row is (folder, reference,
     /// expected, the rule it shows).
-    #[trial]
+    #[test]
     fn relative_references_join_their_folder() {
         const ROWS: &[(&str, &str, &str, &str)] = &[
             // POSIX, absolute
@@ -322,7 +320,7 @@ mod tests {
         }
     }
 
-    #[trial]
+    #[test]
     fn unicode_file_urls_do_not_panic_or_lose_the_path() {
         for (url, path) in [("file://srv/日本語.mov", "//srv/日本語.mov"), ("file://localhost/media/漢字.mov", "/media/漢字.mov")] {
             assert_eq!(file_url_to_path(url), path);
