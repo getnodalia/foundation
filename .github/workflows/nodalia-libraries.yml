@@ -1,0 +1,83 @@
+name: Nodalia libraries
+
+# Publishes the shared libraries under Nodalia's names. The mirrors on vendor/* stay exactly as
+# upstream published them; scripts/nodalia_libs.py renames every new commit of a mirror and
+# records it on nodalia/libs, nodalia/i18n, nodalia/fonts and nodalia/winprint (see
+# vendor/README.md). Runs when a mirror moves, before the apps' Monday upstream syncs, and on
+# request for a commit an app pins.
+
+on:
+  push:
+    branches: ["vendor/**"]
+  schedule:
+    - cron: "23 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      library:
+        description: "Library to generate commits for (libs, i18n, fonts, winprint); empty: none"
+        type: string
+        default: ""
+      commits:
+        description: "Upstream commits of that library, space separated"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nodalia-libraries
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Generate and publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+          path: tools
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: repo
+          fetch-depth: 0
+      - name: Fetch the mirrors and the generated branches
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin \
+            '+refs/heads/vendor/*:refs/remotes/origin/vendor/*' \
+            '+refs/heads/nodalia/*:refs/remotes/origin/nodalia/*'
+      - name: Generate
+        working-directory: repo
+        env:
+          LIBRARY: ${{ inputs.library }}
+          COMMITS: ${{ inputs.commits }}
+        run: |
+          set -euo pipefail
+          script="$GITHUB_WORKSPACE/tools/scripts/nodalia_libs.py"
+          {
+            echo "## Generated"
+            echo
+            echo '```'
+            python3 "$script" update --repo .
+            if [ -n "$LIBRARY" ] && [ -n "$COMMITS" ]; then
+              # shellcheck disable=SC2086 # one argument per commit
+              python3 "$script" generate "$LIBRARY" $COMMITS --repo .
+            fi
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Publish
+        working-directory: repo
+        run: |
+          set -euo pipefail
+          for ref in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin/nodalia/); do
+            branch="${ref#origin/}"
+            # Fast-forward only: a generated branch never loses a commit an app may pin.
+            git push origin "refs/remotes/${ref}:refs/heads/${branch}"
+          done
