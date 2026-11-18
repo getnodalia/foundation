@@ -27,18 +27,28 @@ The two generators also live in `nodalia-design`: `tools/app-portrait` for the i
 
 ## Logo
 
+The company logo comes in three forms: the **mark** (the `n` with its node), the **wordmark**
+(mark and name, the full logo) and the **name** alone. Each has light, dark and monochrome
+versions; the mark and the wordmark also come on a plate.
+
 | File | Use |
 |---|---|
-| `logo/nodalia-mark.svg` | The mark on its dark rounded tile: the default square logo (avatars, social cards) |
-| `logo/nodalia-mark-bare.svg` | The mark alone, light, for dark backgrounds |
-| `logo/nodalia-mark-bare-dark.svg` | The mark alone, dark, for light backgrounds |
-| `logo/nodalia-logo.svg` | The mark as the website header uses it |
-| `logo/nodalia-wordmark.svg` | Mark and name, as on the website |
-| `logo/nodalia-wordmark-white.svg` | Mark and name, light, for dark backgrounds |
-| `logo/nodalia-wordmark-black.svg` | Mark and name, dark, for light backgrounds |
-| `logo/nodalia-wordmark-badge.svg` | Mark and name on a dark badge that reads on light and dark pages (README headers) |
-| `logo/nodalia-placa-preview.png` | The wordmark plate on light and on dark, 1440 × 300: a reference, not a master |
-| `logo/favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Browser and home-screen icons |
+| `logo/nodalia-mark.svg` | The mark on its dark tile: the default square logo (avatars, app stores, the GitHub organisation) |
+| `logo/nodalia-mark-light.svg` | The mark on a light tile |
+| `logo/nodalia-mark-bare.svg`, `nodalia-mark-bare-dark.svg` | The mark alone, light (for dark backgrounds) and dark (for light backgrounds) |
+| `logo/nodalia-mark-mono-white.svg`, `nodalia-mark-mono-black.svg` | The mark in one colour, node included: engraving, stamps, single-ink print |
+| `logo/nodalia-wordmark-white.svg`, `nodalia-wordmark-black.svg` | The full logo, light (for dark backgrounds) and dark (for light backgrounds) |
+| `logo/nodalia-wordmark-mono-white.svg`, `nodalia-wordmark-mono-black.svg` | The full logo in one colour |
+| `logo/nodalia-wordmark-badge.svg`, `nodalia-wordmark-badge-light.svg` | The full logo on a dark and on a light plate: README headers, slides |
+| `logo/nodalia-name-white.svg`, `nodalia-name-black.svg` | The name alone, where the mark already appears nearby |
+| `logo/nodalia-wordmark.svg`, `nodalia-logo.svg` | The wordmark and the mark exactly as the website header uses them |
+| `logo/nodalia-social-card.svg` | 1200 × 630 card for link previews (Open Graph, social posts) |
+| `logo/nodalia-placa-preview.png` | The plate on light and on dark, 1440 × 300: a reference, not a master |
+| `logo/favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Browser and home-screen icons; the SVG favicon follows the system theme |
+| `logo/png/<name>/` | PNG of every variant: marks at 16, 32, 48, 64, 128, 256, 512 and 1024 px, wordmarks, plates and name at 64, 128, 256 and 512 px high; `png/nodalia-social-card.png` |
+
+`nodalia-mark.svg` and `nodalia-wordmark-black.svg` are the masters. `logo/render.py` derives the
+other variants and every PNG from them; run it after changing a master.
 
 The mark is an `n` built from one bar and one arch, with a small square at its foot, the node,
 filled with the only gradient the brand uses. It is drawn on a 64 × 64 grid. The wordmark is lower
