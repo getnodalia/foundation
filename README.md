@@ -20,6 +20,7 @@ profile; this repository holds everything an app needs to build, test and releas
 | [`scripts/`](scripts) | `check_pins.py` (every action pinned to a SHA) and `pin_actions.py` (pins tags to the commits they name today) |
 | [`templates/`](templates) | `AGENTS.md`, `NODALIA_MIGRATION.md`, `SECURITY.md`, PR and issue templates, `renovate.json`, `.coderabbit.yaml`, a caller CI workflow |
 | [`vendor/README.md`](vendor/README.md) | The libraries and build inputs that came from `storytold`, kept here with history and licences on `vendor/*` branches |
+| [`brand/`](brand) | The Nodalia logo, wordmarks and every app's icon, with colours and how to use them |
 | [`status/ecosystem.md`](status/ecosystem.md) | Every repository: category, migration state, CI, NDL, independence, release |
 
 ## Using a shared workflow
