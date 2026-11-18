@@ -84,20 +84,20 @@ uses a gradient or a glow. Inside the apps every colour comes from the NDL token
 | Brújula | `#0C9A58` | Browser | Juan Sebastián Elcano |
 | Buzón | `#D4241B` | Communication | Rowland Hill |
 | Celdas | `#1D6B3B` | Office | Blaise Pascal |
-| Forja | `#96501F` | Engineering | Leonardo da Vinci |
-| Hito | `#3D9A2B` | Office | Henry Gantt (icon not released yet) |
+| Forja | `#96501F` | Engineering | Gustave Eiffel |
+| Hito | `#3D9A2B` | Office | Lillian Moller Gilbreth |
 | Lámina | `#7C1F41` | Office | Cicero |
 | Letra | `#1C86D2` | Office | Miguel de Cervantes |
 | Lienzo | `#EE3B6B` | Creator | Diego Velázquez |
 | Luz | `#F59300` | Creator | Louis Daguerre |
 | Nodalix OS | `#0A93B8` | Operating system | (Nodalix mark) |
 | Papel | `#68778F` | Office | Aldus Manutius |
-| Pliego | `#3340D0` | Creator | Johannes Gutenberg |
+| Pliego | `#3340D0` | Creator | Benjamin Franklin |
 | Pluma | `#EE5A14` | Creator | René Descartes |
 | Pulso | `#6FB312` | Creator | Eadweard Muybridge |
 | Toma | `#C2188F` | Creator | Georges Méliès |
 | Torno | `#8C7419` | Engineering | Henry Maudslay |
-| Trama | `#8B2FD6` | Creator | Joseph Marie Jacquard |
+| Trama | `#8B2FD6` | Creator | Charles Babbage |
 | Vinilo | `#5A27D6` | Music | Ludwig van Beethoven |
 | Vortia | `#0B55DB` | Engineering | Daniel Bernoulli |
 
