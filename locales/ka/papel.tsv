@@ -2909,3 +2909,30 @@ calendar weekday	We	ოთხ
 	… and {n} more	… და კიდევ {n}
 	−Bin	−Bin
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	About Papel	Papel-ის შესახებ
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Papel-ში გახსნილი ფაილები აქ გამოჩნდება. PDF-ის გასახსნელად ჩააგდეთ ის ნებისმიერ ადგილას.
+	Papel can't check this signature yet: {}.	Papel ამ ხელმოწერას ჯერ ვერ ამოწმებს: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel ნორმალურად არ დაიხურა. ამ დოკუმენტებს ჰქონდა ცვლილებები, რომლებიც ავტომატურად შეინახა:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel გრაფიკული პროცესორის გარეშე ხატავს, ამიტომ შეიძლება ნელა იმუშაოს. შესაძლოა, გრაფიკის დრაივერის განახლებამ უშველოს.
+	Papel on GitHub	Papel GitHub-ზე
+	Papel web page	Papel-ის ვებგვერდი
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel ხაზგარეშე მუშაობს. არანაირი ტელემეტრია, ანგარიში ან ღრუბლოვანი დამუშავება, თუ თავად არ დაამატებთ მომწოდებელს.
+	Papel {v} is available.	ხელმისაწვდომია Papel {v}.
+	Reopen the files that were open when Papel last closed	ფაილების ხელახლა გახსნა, რომლებიც Papel-ის ბოლო დახურვისას იყო გახსნილი
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	მოაწერეთ ხელი თეთრ ფურცელზე და გადაუღეთ ფოტო კაშკაშა, თანაბარ განათებაში (გამოიყენეთ ფლეში). აირჩიეთ ფოტო ან ჩააგდეთ აქ: Papel იპოვის ხელმოწერას და ქაღალდს მოაცილებს.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	ტექსტის ამოცნობა დაყენებული არ არის: მისი მოდელის ფაილები აკლია. ხელახლა დააყენეთ Papel ან მიუთითეთ PDFCRAFT_MODELS-ში საქაღალდე, სადაც ისინია.
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	{}-ის სერტიფიკატს აქვს კრიტიკული გაფართოებები, რომლებსაც Papel ვერ ცნობს, ამიტომ {}-ის დასადასტურებლად არ გამოიყენება.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	შრიფტები, რომლებითაც Papel წერს, ვერ ხატავს „{c}“-ს ({code}), ამიტომ ის ყველა PDF პროგრამაში ?-ად ჩანს. ტექსტი ინახება.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	ფორმა ითხოვს, რომ გაიგზავნოს მისამართზე {u}; Papel ფორმის მონაცემებს არ აგზავნის. შეყვანილის შესანარჩუნებლად შეინახეთ დოკუმენტი.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	გასაღები macOS Keychain-შია, რომელმაც შეიძლება Papel-ისთვის მისი გამოყენების ნებართვა მოითხოვოს.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	გასაღები Windows-ის სერტიფიკატების საცავშია, რომელმაც შეიძლება Papel-ისთვის მისი გამოყენების ნებართვა მოითხოვოს.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	ხელმომწერის სერტიფიკატს აქვს კრიტიკული გაფართოებები, რომლებსაც Papel ვერ ცნობს ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	ტექსტის ამოცნობის მოდელები დაყენებული არ არის (ხელახლა დააყენეთ Papel ან მიუთითეთ PDFCRAFT_MODELS-ში საქაღალდე, სადაც ისინია)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	ამ ველის შრიფტი ვერ ხატავს „{c}“-ს ({code}), ამიტომ Papel მის ნაცვლად ?-ს აჩვენებს. მნიშვნელობა ინახება და სხვა PDF პროგრამები ველს მისგან ხელახლა ხატავს.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	ეს ფორმა XFA მონაცემებსაც შეიცავს, რომლებსაც Papel ჯერ არ კითხულობს. მისი ველების შევსება შეგიძლიათ, მაგრამ Acrobat-მა შეიძლება XFA მნიშვნელობები აჩვენოს.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	ეს დინამიკური XFA ფორმაა, რომლის ჩვენებაც Papel-ს ჯერ არ შეუძლია. რასაც ხედავთ, ფაილის ჩანაცვლების გვერდია.
+	Welcome to Papel	კეთილი იყოს თქვენი მობრძანება Papel-ში
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} ფორმას მისამართზე {url} აგზავნის; Papel ფორმის მონაცემებს არ აგზავნის. შეყვანილის შესანარჩუნებლად შეინახეთ დოკუმენტი.
+	{who} in this document tried to open an address Papel won't open: {e}.	ამ დოკუმენტში {who} ცდილობდა გაეხსნა მისამართი, რომელსაც Papel არ ხსნის: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	ამ დოკუმენტში {who} ცდილობდა გაეხსნა მისამართი, რომელსაც Papel არ ხსნის: {e}. დოკუმენტებიდან მხოლოდ ვებ (http, https) და ელფოსტის (mailto) ბმულები იხსნება.

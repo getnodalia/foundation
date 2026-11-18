@@ -3865,3 +3865,62 @@ document scrollbar width	Wide	عريض
 	…or paste the raw text here; # headings, - bullets	…أو الصق النص الخام هنا؛ # عناوين، - تعداد نقطي
 	− Page {p}	− صفحة {p}
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	شعار أو اسم على يسار علامات التبويب، حيث يُعرض عادةً في شريط العنوان: شعار Papel أو شعار شركتك.
+	A PNG or SVG file. It is read from this place each time Papel starts.	ملف PNG أو SVG. يُقرأ من هذا المكان في كل مرة يبدأ فيها Papel.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	التوقيع الذي يكون جزءًا من محتوى الصفحة، كما في صفحة ممسوحة ضوئيًا، ليس حقلًا ولا تعليقًا توضيحيًا، لذا لا يمكن إزالته وحده، ولا يمسح Papel أجزاءً من الصفحة لإخفائه. لإزالته، احجب تلك المنطقة (حجب)، أو إذا كان التوقيع صورة مستقلة فاحذف الصورة باستخدام تحرير ملف PDF.
+	About Papel	حول Papel
+	Applies the next time Papel starts. Choose OpenGL if the window flickers on a display with G-SYNC, FreeSync or another variable refresh rate.	يُطبَّق عند تشغيل Papel في المرة القادمة. اختر OpenGL إذا كانت النافذة تومض على شاشة تدعم G-SYNC أو FreeSync أو معدل تحديث متغيرًا آخر.
+	Ask to make Papel the default PDF app	السؤال عن جعل Papel تطبيق PDF الافتراضي
+	Choose Papel for .pdf files in Windows Settings.	اختر Papel لملفات .pdf في إعدادات Windows.
+	Combine files in Papel…	دمج الملفات في Papel…
+	Convert to PDF with Papel	تحويل إلى PDF باستخدام Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	الملفات التي تفتحها في Papel تظهر هنا. أفلت ملف PDF في أي مكان لفتحه.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	من Finder: حدّد الملفات، ثم انقر بزر الماوس الأيمن > الإجراءات السريعة > “Combine files in Papel”. غير موجود؟ فعّله مرة واحدة من الإجراءات السريعة > تخصيص.
+	Hide Papel	إخفاء Papel
+	Hungarian OCR requires the desktop app with Tesseract 5 and the hun language model. Restart Papel after installation.	يتطلب OCR للمجرية تطبيق سطح المكتب مع Tesseract 5 ونموذج اللغة hun. أعد تشغيل Papel بعد التثبيت.
+	Make Papel your default PDF app?	هل تريد جعل Papel تطبيق PDF الافتراضي؟
+	No plugins installed yet. Install a .wasm plug-in to extend Papel.	لا توجد إضافات مثبّتة بعد. ثبّت إضافة .wasm لتوسيع Papel.
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	افتح رسالة جديدة بدونه، وسيُظهر Papel الملف {name} في مجلده لتتمكن من إرفاقه بنفسك.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	تحتوي الصفحة {page} على محتوى أكثر مما يستطيع Papel قراءته: جزء منها لا يُرسم، ولا يمكن البحث إلا في جزء من نصها أو نسخه.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	الصفحات التي تستخدم خطوط Type 3 تُطبع كصور، لأن Windows قد يغلق Papel أثناء طباعتها. تُطبع الصفحات الأخرى كالمعتاد.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	جزء من هذه الصفحة غير معروض: محتواها يتجاوز الحد الأقصى الذي يرسمه Papel لصفحة واحدة.
+	Papel can't check this signature yet: {}.	لا يستطيع Papel التحقق من هذا التوقيع بعد: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	لم يُغلق Papel بشكل طبيعي. هذه المستندات فيها تغييرات حُفظت تلقائيًا:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	يرسم Papel دون معالج رسوميات، لذا قد يكون بطيئًا. تحديث تعريف بطاقة الرسوميات قد يفيد.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	يحتفظ Papel بما كنت تعمل عليه. عندما يعمل منتقي الملفات، اختر حاول مجددًا.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	يبحث Papel عن المكتبات التي يثبّتها مصنّعو الأجهزة. اختر واحدة فقط إذا لم يُعثر على جهازك.
+	Papel on GitHub	Papel على GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	يفتح Papel صفحة المزوّد، حيث تسجّل الدخول برقم CPF ورمز PIN ورمز لمرة واحدة.
+	Papel web page	صفحة Papel على الويب
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	يعمل Papel دون اتصال. لا قياس عن بُعد ولا حساب ولا معالجة سحابية إلا إذا أضفت مزوّدًا.
+	Papel {v} is available.	Papel {v} متاح.
+	Papel's own	شعار Papel
+	Quit Papel	إنهاء Papel
+	Reopen the files that were open when Papel last closed	إعادة فتح الملفات التي كانت مفتوحة عند آخر إغلاق لـ Papel
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	وقّع على ورقة بيضاء والتقط لها صورة في إضاءة ساطعة ومتساوية (استخدم الفلاش). اختر الصورة أو أفلتها هنا: يعثر Papel على التوقيع ويزيل الورق.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	التعرف على النص غير مثبت: ملفات نماذجه مفقودة. أعد تثبيت Papel، أو اضبط PDFCRAFT_MODELS على المجلد الذي يحتويها.
+	The Dock shows it the next time Papel opens.	يعرضها Dock في المرة التالية التي يُفتح فيها Papel.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	الخطوط التي يكتب بها Papel لا تستطيع رسم «{c}» ({code})، لذا يظهر بشكل ? في كل برامج عرض PDF. النص محفوظ.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	النموذج يطلب إرساله إلى {u}؛ Papel لا يرسل بيانات النماذج. احفظ المستند للاحتفاظ بما أدخلته.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	المفتاح موجود في سلسلة مفاتيح macOS، وقد تطلب الإذن لـ Papel باستخدامه.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	المفتاح موجود في مخزن شهادات Windows، وقد يطلب الإذن لـ Papel باستخدامه.
+	The module's tokens hold no digital ID Papel can sign with.	لا تحتوي رموز هذه الوحدة على معرّف رقمي يمكن لـ Papel التوقيع به.
+	The PIN goes only to the card; Papel doesn't keep it.	يذهب رمز PIN إلى البطاقة فقط؛ ولا يحتفظ به Papel.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	لشهادة الموقّع امتدادات حرجة لا يتعرّف عليها Papel ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	نماذج التعرف على النص غير مثبتة (أعد تثبيت Papel، أو اضبط PDFCRAFT_MODELS على المجلد الذي يحتويها)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	خط هذا الحقل لا يستطيع رسم «{c}» ({code})، لذا يعرض Papel علامة ? مكانه. القيمة محفوظة، وتعيد برامج عرض PDF الأخرى رسم الحقل منها.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	هذا النموذج يحتوي أيضًا على بيانات XFA، لا يقرؤها Papel بعد. يمكنك تعبئة حقوله، لكن Acrobat قد يعرض قيم XFA بدلًا منها.
+	This form has too many fields, or a field name too long, for Papel to read them all. Any signature among the rest is not listed, so the document is treated as signed.	يحتوي هذا النموذج على حقول كثيرة جدًا، أو على اسم حقل طويل جدًا، فلا يقرؤها Papel كلها. ولا يظهر في القائمة أي توقيع في الحقول الباقية، لذا يُعامَل المستند على أنه موقَّع.
+	This installation is owned by a Debian package. Use your system software manager to update Papel.	هذه النسخة مثبّتة بواسطة حزمة Debian. استخدم مدير برامج النظام لتحديث Papel.
+	This installation is owned by an RPM package. Use your system software manager to update Papel.	هذه النسخة مثبّتة بواسطة حزمة RPM. استخدم مدير برامج النظام لتحديث Papel.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	هذا نموذج XFA ديناميكي، لا يستطيع Papel عرضه بعد. ما تراه هو الصفحة البديلة للملف.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	لا يمكن استخدام خدمة التوقيع هذه: فهي تتطلب تسجيل الدخول عبر OAuth في متصفح، وهو ما لا يدعمه Papel بعد
+	Use your system software manager to update Papel.	استخدم مدير برامج النظام لتحديث Papel.
+	Welcome to Papel	مرحبًا بك في Papel
+	Your default email app can't take a file from Papel.	لا يستطيع تطبيق البريد الافتراضي استلام ملف من Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} يرسل النموذج إلى {url}؛ Papel لا يرسل بيانات النماذج. احفظ المستند للاحتفاظ بما أدخلته.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	تحتوي {n} صفحات على محتوى أكثر مما يستطيع Papel قراءته، أولها الصفحة {page}: أجزاء منها لا تُرسم، ولا يمكن البحث إلا في جزء من نصها أو نسخه.
+	{program} can't take a file from Papel.	لا يستطيع {program} استلام ملف من Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} في هذا المستند حاول فتح عنوان لن يفتحه Papel: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} في هذا المستند حاول فتح عنوان لن يفتحه Papel: {e}. روابط الويب (http, https) والبريد (mailto) وحدها تُفتح من المستندات.

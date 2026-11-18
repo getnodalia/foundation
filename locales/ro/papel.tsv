@@ -4045,3 +4045,54 @@ calendar weekday	We	Mi
 	− Page {p}	− Pagina {p}
 	−Bin	−Bin
 	−LOC	−LOC
+# The rows above that name the app, under its Nodalia name, Papel.
+	A logo or name at the left of the tabs, where a title bar would show one: Papel's own, or your company's.	Un logo sau un nume în stânga filelor, unde o bară de titlu ar afișa unul: al Papel sau al companiei tale.
+	A PNG or SVG file. It is read from this place each time Papel starts.	Un fișier PNG sau SVG. Este citit din acest loc la fiecare pornire a Papel.
+	A signature that is part of a page's content, like a scanned page, is not a field or an annotation, so it can't be removed on its own, and Papel doesn't erase parts of a page to hide it. To take it out, redact that area (Redact), or delete the picture with Edit PDF when the signature is an image of its own.	O semnătură care face parte din conținutul unei pagini, ca pe o pagină scanată, nu este un câmp sau o adnotare, așa că nu poate fi eliminată separat, iar Papel nu șterge părți dintr-o pagină pentru a o ascunde. Pentru a o elimina, anonimizați zona respectivă (Anonimizare) sau, dacă semnătura este o imagine separată, ștergeți imaginea cu Editare PDF.
+	About Papel	Despre Papel
+	Combine files in Papel…	Combinare fișiere în Papel…
+	Convert to PDF with Papel	Conversie în PDF cu Papel
+	Files you open in Papel appear here. Drop a PDF anywhere to open it.	Fișierele pe care le deschideți în Papel apar aici. Plasați un PDF oriunde pentru a-l deschide.
+	From Finder: select files, then right-click > Quick Actions > Combine files in Papel. Not listed? Turn it on once under Quick Actions > Customize.	Din Finder: selectați fișierele, apoi clic dreapta > Acțiuni rapide > Combine files in Papel. Nu apare? Activați-o o dată la Acțiuni rapide > Personalizare.
+	Hide Papel	Ascundere Papel
+	Open a new message without it, and Papel will show {name} in its folder so you can attach it yourself.	Deschideți un mesaj nou fără el, iar Papel va afișa {name} în folderul său, ca să îl puteți atașa singur.
+	Page {page} holds more content than Papel can read: part of it isn't drawn, and only part of its text can be found or copied.	Pagina {page} conține mai mult conținut decât poate citi Papel: o parte nu este desenată, iar doar o parte din textul ei poate fi căutată sau copiată.
+	Pages that use Type 3 fonts print as images, because Windows can close Papel while printing them. The other pages print as usual.	Paginile care folosesc fonturi Type 3 se imprimă ca imagini, deoarece Windows poate închide Papel în timp ce le imprimă. Celelalte pagini se imprimă ca de obicei.
+	Part of this page isn't shown: its content goes past the most Papel draws for one page.	O parte din această pagină nu este afișată: conținutul ei depășește maximul pe care Papel îl desenează pentru o pagină.
+	Papel can't check this signature yet: {}.	Papel nu poate verifica încă această semnătură: {}.
+	Papel didn't shut down normally. These documents had changes that were autosaved:	Papel nu s-a închis normal. Aceste documente aveau modificări salvate automat:
+	Papel is drawing without a graphics processor, so it may be slow. Updating the graphics driver may help.	Papel desenează fără procesor grafic, așa că poate fi lent. Actualizarea driverului plăcii video poate ajuta.
+	Papel is keeping what you were doing. Once the file chooser works, choose Try again.	Papel păstrează ce făceați. După ce selectorul de fișiere funcționează, alegeți Reîncercați.
+	Papel looks for the libraries device vendors install. Choose one only if your device isn't found.	Papel caută bibliotecile instalate de producătorii dispozitivelor. Alegeți una doar dacă dispozitivul nu este găsit.
+	Papel on GitHub	Papel pe GitHub
+	Papel opens the provider's page, where you sign in with your CPF, PIN and one-time code.	Papel deschide pagina furnizorului, unde vă conectați cu CPF, PIN și un cod de unică folosință.
+	Papel web page	Pagina web Papel
+	Papel works offline. No telemetry, no account, and no cloud processing unless you add a provider.	Papel funcționează offline. Fără telemetrie, fără cont și fără procesare în cloud, cu excepția cazului în care adăugați un furnizor.
+	Papel {c} is up to date.	Papel {c} este la zi.
+	Papel {v} is available.	Este disponibil Papel {v}.
+	Papel's own	Al Papel
+	Quit Papel	Ieșire din Papel
+	Reopen the files that were open when Papel last closed	Redeschide fișierele care erau deschise la ultima închidere a Papel
+	Sign a sheet of white paper and take a photo of it in bright, even light (use the flash). Choose the photo or drop it here: Papel finds the signature and removes the paper.	Semnați o foaie de hârtie albă și fotografiați-o în lumină puternică și uniformă (folosiți blițul). Alegeți fotografia sau plasați-o aici: Papel găsește semnătura și elimină hârtia.
+	Text recognition isn't installed: its model files are missing. Reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them.	Recunoașterea textului nu este instalată: lipsesc fișierele modelului. Reinstalați Papel sau setați PDFCRAFT_MODELS la folderul care le conține.
+	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.	The certificate of {} has critical extensions Papel does not recognize, so it is not used to vouch for {}.
+	The Dock shows it the next time Papel opens.	Dock-ul o va afișa la următoarea deschidere a Papel.
+	The fonts Papel writes with can't draw “{c}” ({code}), so it shows as ? in every PDF viewer. The text is saved.	Fonturile cu care scrie Papel nu pot desena „{c}” ({code}), așa că apare ca ? în orice vizualizator PDF. Textul se salvează.
+	The form asks to be submitted to {u}; Papel doesn't send form data. Save the document to keep your entries.	Formularul cere să fie trimis la {u}; Papel nu trimite date de formular. Salvați documentul pentru a păstra ce ați completat.
+	The key is in the macOS Keychain, which may ask to allow Papel to use it.	Cheia se află în Keychain-ul macOS, care poate cere permisiunea ca Papel să o folosească.
+	The key is in the Windows certificate store, which may ask to allow Papel to use it.	Cheia se află în depozitul de certificate Windows, care poate cere permisiunea ca Papel să o folosească.
+	The PIN goes only to the card; Papel doesn't keep it.	PIN-ul ajunge doar la card; Papel nu îl păstrează.
+	The signer's certificate has critical extensions Papel does not recognize ({}).	Certificatul semnatarului are extensii critice pe care Papel nu le recunoaște ({}).
+	the text recognition models are not installed (reinstall Papel, or set PDFCRAFT_MODELS to the folder that holds them)	modelele de recunoaștere a textului nu sunt instalate (reinstalați Papel sau setați PDFCRAFT_MODELS la folderul care le conține)
+	This field's font can't draw “{c}” ({code}), so Papel shows ? in its place. The value is saved, and other PDF viewers redraw the field from it.	Fontul acestui câmp nu poate desena „{c}” ({code}), așa că Papel afișează ? în locul lui. Valoarea se salvează, iar alte vizualizatoare PDF redesenează câmpul pe baza ei.
+	This form also contains XFA data, which Papel doesn't read yet. You can fill its fields, but Acrobat may show the XFA values instead.	Acest formular conține și date XFA, pe care Papel nu le citește încă. Puteți completa câmpurile, dar Acrobat poate afișa în schimb valorile XFA.
+	This form has too many fields, or a field name too long, for Papel to read them all. Any signature among the rest is not listed, so the document is treated as signed.	Acest formular are prea multe câmpuri sau un nume de câmp prea lung pentru ca Papel să le poată citi pe toate. Nicio semnătură dintre celelalte nu apare în listă, așa că documentul este tratat ca semnat.
+	This is a dynamic XFA form, which Papel can't display yet. What you see is the file's placeholder page.	Acesta este un formular XFA dinamic, pe care Papel nu îl poate afișa încă. Ce vedeți este pagina de rezervă a fișierului.
+	this signing service can't be used: it needs OAuth sign-in in a browser, which Papel doesn't support yet	acest serviciu de semnare nu poate fi folosit: necesită autentificare OAuth într-un browser, pe care Papel nu o acceptă încă
+	Welcome to Papel	Bun venit în Papel
+	Your default email app can't take a file from Papel.	Aplicația dvs. de e-mail implicită nu poate primi un fișier de la Papel.
+	{name} submits the form to {url}; Papel doesn't send form data. Save the document to keep your entries.	{name} trimite formularul la {url}; Papel nu trimite date de formular. Salvați documentul pentru a păstra ce ați completat.
+	{n} pages hold more content than Papel can read, page {page} first: parts of them aren't drawn, and only part of their text can be found or copied.	{n} pagini conțin mai mult conținut decât poate citi Papel, începând cu pagina {page}: unele părți nu sunt desenate, iar doar o parte din textul lor poate fi căutată sau copiată.
+	{program} can't take a file from Papel.	{program} nu poate primi un fișier de la Papel.
+	{who} in this document tried to open an address Papel won't open: {e}.	{who} din acest document a încercat să deschidă o adresă pe care Papel nu o deschide: {e}.
+	{who} in this document tried to open an address Papel won't open: {e}. Only web (http, https) and email (mailto) links open from documents.	{who} din acest document a încercat să deschidă o adresă pe care Papel nu o deschide: {e}. Din documente se deschid doar linkuri web (http, https) și de e-mail (mailto).
