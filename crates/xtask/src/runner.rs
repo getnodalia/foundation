@@ -731,7 +731,7 @@ mod tests {
         // The test binary itself, given a flag it does not know, exits with a failure status.
         let Ok(exe) = std::env::current_exe() else { panic!("no test executable") };
         let mut child = Command::new(&exe);
-        child.arg("--craft-xtask-unknown-flag").stdout(Stdio::null()).stderr(Stdio::null());
+        child.arg("--nodalia-xtask-unknown-flag").stdout(Stdio::null()).stderr(Stdio::null());
         let Err(e) = run(child, "child") else { panic!("an unknown flag passed") };
         assert!(e.starts_with("child: exited with "), "{e}");
 

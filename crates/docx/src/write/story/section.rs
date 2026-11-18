@@ -158,7 +158,7 @@ fn sectpr_body(w: &mut W, s: &SectionProps) {
                 a.insert(0, ("w:type", g.kind.ooxml().to_string()));
             }
             if g.char_space != 0 {
-                let cs = g.char_space.clamp(-craft_wordmodel::section::MAX_CHAR_SPACE, nodalia_wordmodel::section::MAX_CHAR_SPACE);
+                let cs = g.char_space.clamp(-nodalia_wordmodel::section::MAX_CHAR_SPACE, nodalia_wordmodel::section::MAX_CHAR_SPACE);
                 a.push(("w:charSpace", n(cs as i64)));
             }
             let refs: Vec<(&str, &str)> = a.iter().map(|(k, v)| (*k, v.as_str())).collect();

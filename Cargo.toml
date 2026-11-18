@@ -11,9 +11,12 @@ rust-version = "1.95"
 repository = "https://github.com/getnodalia/foundation"
 
 [workspace.dependencies]
+nodalia-evm = { path = "crates/evm" }
+nodalia-java-class = { path = "crates/java-class" }
 nodalia-sourcemap = { path = "crates/sourcemap" }
 nodalia-pcap = { path = "crates/pcap" }
 nodalia-har = { path = "crates/har" }
+nodalia-xfdf = { path = "crates/xfdf" }
 nodalia-jsonc = { path = "crates/jsonc" }
 nodalia-palette = { path = "crates/palette" }
 nodalia-score = { path = "crates/score" }
@@ -170,6 +173,7 @@ nodalia-settings = { path = "crates/settings" }
 nodalia-sound-format = { path = "crates/sound-format" }
 nodalia-time = { path = "crates/time" }
 nodalia-silhouette-studio = { path = "crates/silhouette-studio" }
+nodalia-suite-account = { path = "crates/suite-account" }
 nodalia-svg = { path = "crates/svg" }
 nodalia-stencil-format = { path = "crates/stencil-format" }
 nodalia-stencil-document = { path = "crates/stencil-document" }

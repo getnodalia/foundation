@@ -283,7 +283,7 @@ fn generate_fixtures() {
 /// A generator that exits with failure: this test binary given an option libtest rejects.
 fn failing_generator() -> std::process::Command {
     let mut c = std::process::Command::new(std::env::current_exe().unwrap());
-    c.arg("--craft-media-no-such-option");
+    c.arg("--nodalia-media-no-such-option");
     c
 }
 
