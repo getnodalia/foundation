@@ -32,6 +32,12 @@ class TextTests(unittest.TestCase):
         self.assertEqual(self.r.text("craft_media_testkit::x()", False), "nodalia_media_testkit::x()")
         self.assertEqual(self.r.text("craft_pcraft_format", False), "nodalia_lienzo_format")
 
+    def test_a_minus_sign_is_not_part_of_a_name(self):
+        # `-craft_ui::X` negates a constant; only a kebab name `foo-craft-ui` is left alone.
+        self.assertEqual(self.r.text("clamp(-craft_ui::MAX, craft_ui::MAX)", False),
+                         "clamp(-nodalia_ui::MAX, nodalia_ui::MAX)")
+        self.assertEqual(self.r.text("my-craft-ui", False), "my-craft-ui")
+
     def test_longer_names_are_left_alone(self):
         # Not a crate: a file name that merely starts like one.
         self.assertEqual(self.r.text('"craft-coated-fogra39.icc"', False), '"craft-coated-fogra39.icc"')
