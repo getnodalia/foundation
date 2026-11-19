@@ -190,7 +190,7 @@ class Renamer:
         pairs.sort(key=lambda kv: -len(kv[0]))
         self.table = dict(pairs)
         self.name_re = re.compile(
-            r"(?<![A-Za-z0-9_-])(" + "|".join(re.escape(k) for k, _ in pairs) + r")(?![A-Za-z0-9])")
+            r"(?<![A-Za-z0-9_])(?<![A-Za-z0-9]-)(" + "|".join(re.escape(k) for k, _ in pairs) + r")(?![A-Za-z0-9])")
         # Path components: `crates/pcraft-format/...`, `"../pcraft-format"`.
         all_dirs = {**self.dirs, **file_renames}
         self.dir_re = (re.compile(r"(?<=[/\"'`(\s])(" + "|".join(
@@ -301,7 +301,7 @@ def git(*args: str, cwd: Path | None = None, env: dict | None = None) -> str:
 
 # Bump when the renaming changes what a generated tree holds: commits made by an older generator
 # are then made again (the branch keeps the old ones, which apps already pin).
-GENERATOR = 2
+GENERATOR = 3
 FORMAT = "%H %(trailers:key=Upstream-Commit,valueonly,separator=) %(trailers:key=Generator,valueonly,separator=)"
 
 
