@@ -9,7 +9,7 @@ runners, no personal computers, no paid trials. A workflow that cannot run that 
 | Layer | When | What | Rules |
 |---|---|---|---|
 | 1. PR validation | every PR and push to the default branch | format, lint, build or type check, unit tests, `git-sources`, agent instructions, workflow lint | fast (target under 20 min); Linux only unless the change is platform code; cancels superseded PR runs |
-| 2. Deep validation | nightly, pushes to `release`, and PRs that touch the platform's own files | integration and regression tests, platform matrix (macOS, Windows, Windows ARM64, FreeBSD), packaging smoke tests, Nix evaluation, licence audit, CodeQL, Scorecard | path-filtered so an unrelated PR never queues macOS; never required on ordinary PRs |
+| 2. Deep validation | nightly, pushes to `release`, and PRs that touch the platform's own files | integration and regression tests, platform matrix (Windows, Windows ARM64, FreeBSD), packaging smoke tests, Nix evaluation, licence audit, CodeQL, Scorecard | path-filtered so an unrelated PR never queues a heavy platform; never required on ordinary PRs |
 | 3. Release | manual dispatch or push to `release`; tags are pushed by a maintainer | build from an immutable commit, checksums, signing/notarisation when configured, install and launch tests, draft release, publish after review | never cancelled; publishes only when every required platform built and passed its smoke test |
 
 ## Shared workflows
@@ -49,9 +49,10 @@ repository needs the same thing.
   never save their own.
 - Job and check names are stable: a renamed check breaks branch protection.
 - No check that always passes, no `continue-on-error` on a gate, no skipped tests to get green.
-- macOS: the organization has 5 concurrent macOS slots in total. A PR workflow that needs macOS is
-  path-filtered to the files that can break it. Prefer one universal build over separate arm64 and
-  x86_64 jobs.
+- macOS: the organization has 5 concurrent macOS slots in total, so macOS jobs run **only for
+  releases** (`release-macos.yml`, called by `release-auto.yml` with a tag, or by hand with
+  `workflow_dispatch`). Never on pull requests, pushes to the default branch or schedules. Prefer one
+  universal build over separate arm64 and x86_64 jobs.
 - Private repositories: check the plan's included minutes before adding a scheduled job.
 
 ## Required checks

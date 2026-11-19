@@ -57,7 +57,7 @@ Nodalix OS is critical: changes to ISO/kernel/GNOME/NxPM/package repositories, s
 - Require pull requests. Require human approval where there is another maintainer available; never make the author approve their own PR.
 - Initially require only a stable fast CI check after it has passed on a PR. Add security/coverage/Sonar checks only after they are verified and do not make them intermittently skip.
 - Do not require release, deployment, platform-specific, scheduled, or informational checks on ordinary PRs.
-- `getnodalia` is on GitHub Team (since 12 November 2026), so organization rulesets are available. Still add a required check only after it has passed on the default branch and on a representative PR. macOS jobs share 5 concurrent slots across the organization: run them nightly, on release branches or on path-filtered PRs, never on every PR of every repo.
+- `getnodalia` is on GitHub Team (since 12 November 2026), so organization rulesets are available. Still add a required check only after it has passed on the default branch and on a representative PR. macOS jobs share 5 concurrent slots across the organization: they run only for releases (or by hand), never on pull requests, pushes or schedules, and are never a required check.
 
 ## Dependency and permissions hygiene
 
