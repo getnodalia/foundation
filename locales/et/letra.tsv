@@ -2204,3 +2204,9 @@
 @msg	a diagram holds at most {MAX_ITEMS} items	skeem mahutab kuni {MAX_ITEMS} elementi
 @msg	unknown decorative text style `{id}`	tundmatu dekoratiivteksti laad `{id}`
 	select a shape or decorative text first	vali kõigepealt kujund või dekoratiivtekst
+	Arrange All	Korralda kõik
+	No other Letra windows are open.	Muid WordCrafti aknaid pole avatud.
+	Switch Windows	Vaheta akent
+	Switch\nWindows	Vaheta\nakent
+	Synchronous Scrolling	Sünkroonne kerimine
+	View Side by Side	Kuva kõrvuti

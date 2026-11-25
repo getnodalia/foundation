@@ -2310,3 +2310,29 @@
 @msg	a diagram holds at most {MAX_ITEMS} items	図解には最大 {MAX_ITEMS} 個の項目を含められます
 @msg	unknown decorative text style `{id}`	不明な装飾文字のスタイル `{id}`
 	select a shape or decorative text first	先に図形または装飾文字を選択してください
+	Arrange All	整列
+	No other Letra windows are open.	ほかに開いている Letra のウィンドウはありません。
+	Switch Windows	ウィンドウの切り替え
+	Switch\nWindows	ウィンドウの\n切り替え
+	Synchronous Scrolling	同時にスクロール
+	View Side by Side	並べて比較
+	A free word processor, written in Rust.	Rust で書かれた自由なワープロ。
+	Back	戻る
+	Licences	ライセンス
+	MIT OR Apache-2.0. Includes open-source work by other authors; see NOTICE.	MIT OR Apache-2.0。他の作者によるオープンソースの成果を含みます。NOTICE をご覧ください。
+	Part of Nodalia	Nodalia の一部
+	Report a problem	問題を報告
+	Source code	ソースコード
+	Window controls:	ウィンドウ操作ボタン:
+	‹ About Letra	‹ Letra について
+	Keyboard shortcuts	キーボード ショートカット
+	Check for updates…	アップデートを確認…
+	Quit	終了
+	Main menu	メイン メニュー
+	Screen paper color:	画面上の用紙の色:
+	Document background	文書の背景
+	Soft green	やわらかい緑
+	Warm cream	あたたかいクリーム
+	Soft gray	やわらかいグレー
+	Status bar count:	ステータス バーのカウント:
+	You can also right-click the count in the status bar to change it.	ステータス バーのカウントを右クリックしても変更できます。

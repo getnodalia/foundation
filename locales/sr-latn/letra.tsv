@@ -2218,3 +2218,9 @@
 @msg	a diagram holds at most {MAX_ITEMS} items	dijagram može da sadrži najviše {MAX_ITEMS} stavki
 @msg	unknown decorative text style `{id}`	nepoznat stil ukrasnog teksta `{id}`
 	select a shape or decorative text first	prvo izaberite oblik ili ukrasni tekst
+	Arrange All	Rasporedi sve
+	No other Letra windows are open.	Nema drugih otvorenih Letra prozora.
+	Switch Windows	Promeni prozor
+	Switch\nWindows	Promeni\nprozor
+	Synchronous Scrolling	Sinhrono pomeranje
+	View Side by Side	Prikaži uporedo

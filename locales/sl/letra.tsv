@@ -2845,3 +2845,11 @@ preview	Title	Naslov
 @msg	a diagram holds at most {MAX_ITEMS} items	diagram lahko vsebuje največ {MAX_ITEMS} elementov
 @msg	unknown decorative text style `{id}`	neznan slog okrasnega besedila `{id}`
 	select a shape or decorative text first	najprej izberite obliko ali okrasno besedilo
+	Arrange All	Razporedi vse
+	No other Letra windows are open.	Ni odprtih drugih oken Letra.
+	only the desktop app has several windows	samo namizna aplikacija ima več oken
+	Switch Windows	Preklopi okna
+	Switch\nWindows	Preklopi\nokna
+	Synchronous Scrolling	Sinhrono pomikanje
+	turn on View Side by Side first	najprej vklopi Ogled drug ob drugem
+	View Side by Side	Ogled drug ob drugem

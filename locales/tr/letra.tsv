@@ -2559,3 +2559,11 @@ preview	Title	Örnek
 @msg	a diagram holds at most {MAX_ITEMS} items	bir diyagram en fazla {MAX_ITEMS} öğe içerebilir
 @msg	unknown decorative text style `{id}`	bilinmeyen dekoratif metin stili `{id}`
 	select a shape or decorative text first	önce bir şekil veya dekoratif metin seçin
+	Arrange All	Tümünü Düzenle
+	No other Letra windows are open.	Başka açık Letra penceresi yok.
+	only the desktop app has several windows	birden çok pencere yalnızca masaüstü uygulamasında vardır
+	Switch Windows	Pencere Değiştir
+	Switch\nWindows	Pencere\nDeğiştir
+	Synchronous Scrolling	Eşzamanlı Kaydırma
+	turn on View Side by Side first	önce Yan Yana Görüntüle'yi açın
+	View Side by Side	Yan Yana Görüntüle

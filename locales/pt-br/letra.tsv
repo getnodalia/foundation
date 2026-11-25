@@ -2252,3 +2252,581 @@
 @msg	a diagram holds at most {MAX_ITEMS} items	um diagrama pode conter no máximo {MAX_ITEMS} itens
 @msg	unknown decorative text style `{id}`	estilo de texto decorativo desconhecido `{id}`
 	select a shape or decorative text first	selecione primeiro uma forma ou um texto decorativo
+	*Bold* and _italic_ as real formatting	*Negrito* e _itálico_ como formatação real
+	1×2 Empty Matrix	Matriz vazia 1×2
+	1×3 Empty Matrix	Matriz vazia 1×3
+	2×1 Empty Matrix	Matriz vazia 2×1
+	2×2 Determinant	Determinante 2×2
+	2×2 Empty Matrix	Matriz vazia 2×2
+	2×2 Identity Matrix	Matriz identidade 2×2
+	2×2 Identity Matrix (sparse)	Matriz identidade 2×2 (esparsa)
+	2×2 Matrix in Brackets	Matriz 2×2 entre colchetes
+	2×2 Matrix in Double Bars	Matriz 2×2 entre barras duplas
+	2×2 Matrix in Parentheses	Matriz 2×2 entre parênteses
+	2×3 Empty Matrix	Matriz vazia 2×3
+	3×1 Empty Matrix	Matriz vazia 3×1
+	3×2 Empty Matrix	Matriz vazia 3×2
+	3×3 Empty Matrix	Matriz vazia 3×3
+	3×3 Identity Matrix	Matriz identidade 3×3
+	3×3 Identity Matrix (sparse)	Matriz identidade 3×3 (esparsa)
+	a shape inside a drawing canvas is placed by the canvas	uma forma dentro de uma tela de desenho é posicionada pela tela
+	A xor B	A xor B
+	AaBbCcDd	AaBbCcDd
+	Absolute value cases	Casos de valor absoluto
+	Accents	Acentos
+	Accept All Changes and Stop Tracking	Aceitar todas as alterações e parar o controle
+	Accept and Move to Next	Aceitar e ir para a próxima
+	Acute	Acento agudo
+	Add a period with double-space	Adicionar ponto final com espaço duplo
+	Add to AutoCorrect	Adicionar à AutoCorreção
+	Advanced Properties…	Propriedades avançadas…
+	All - Linear	Tudo - Linear
+	All - Professional	Tudo - Profissional
+	Angle Brackets	Colchetes angulares
+	Angle Brackets with Separator	Colchetes angulares com separador
+	Angle Brackets with Two Separators	Colchetes angulares com dois separadores
+	Annotation Reference	Referência de anotação
+	Annotation Subject	Assunto da anotação
+	Annotation Text	Texto da anotação
+	APA	APA
+	Applies the next time Letra starts.	Aplica-se na próxima vez que o Letra for iniciado.
+numerals	Arabic	Arábicos
+	Arrange All	Organizar tudo
+	ASAP	O MAIS RÁPIDO POSSÍVEL
+	Auto orientation	Orientação automática
+	AutoCorrect Options…	Opções de AutoCorreção…
+	Automatically add words to list (First Letter)	Adicionar palavras à lista automaticamente (Primeira Letra)
+	Automatically add words to list (INitial CAps)	Adicionar palavras à lista automaticamente (DUas MAiúsculas)
+	B4 (JIS)   10.12" × 14.33"	B4 (JIS)   10,12" × 14,33"
+	B5 (JIS)   7.17" × 10.12"	B5 (JIS)   7,17" × 10,12"
+	Baseline Dots	Pontos na linha de base
+	Basic Math	Matemática básica
+	Bayes' rule	Regra de Bayes
+	Binomial Coefficient	Coeficiente binomial
+	Binomial Coefficient (angle)	Coeficiente binomial (angular)
+	Binomial Coefficient with Angle Brackets	Coeficiente binomial com colchetes angulares
+	Binomial expansion of (x+a)ⁿ	Expansão binomial de (x+a)ⁿ
+	Body text in a short paragraph to show spacing.	Texto do corpo em um parágrafo curto para mostrar o espaçamento.
+	Book Title	Título do livro
+	Bookmark text	Texto do indicador
+	Bookmarks	Indicadores
+	Boxed Formula	Fórmula emoldurada
+	Boxed Formula (example)	Fórmula emoldurada (exemplo)
+	Boxed Formulas	Fórmulas emolduradas
+	Braces	Chaves
+	Braces with Separator	Chaves com separador
+	Brackets	Colchetes
+	Brackets with Separators	Colchetes com separadores
+	Breve	Breve
+	Brighter +20%	Mais claro +20%
+	Brightness, contrast and sharpness	Brilho, contraste e nitidez
+	Built-in Heading styles	Estilos internos de título
+	Can't find a command? Press Alt+Q and type what you want to do.	Não encontra um comando? Pressione Alt+Q e digite o que deseja fazer.
+	Capitalize the first word of a sentence	Iniciar a primeira palavra da frase com maiúscula
+	Cases (Three Conditions)	Casos (três condições)
+	Cases (Two Conditions)	Casos (duas condições)
+	Cases and Stacks	Casos e empilhamentos
+	Ceiling	Teto
+	Centered as Group	Centralizado como grupo
+	Change in y over change in x	Variação em y sobre variação em x
+	Change to Level 1	Alterar para Nível 1
+	Change to Level 2	Alterar para Nível 2
+	Change to Level 3	Alterar para Nível 3
+	Change to Level 4	Alterar para Nível 4
+	Change to Level 5	Alterar para Nível 5
+	Change to Level 6	Alterar para Nível 6
+	Change to Level 7	Alterar para Nível 7
+	Change to Level 8	Alterar para Nível 8
+	Change to Level 9	Alterar para Nível 9
+	Change to:	Alterar para:
+	Change…	Alterar…
+	Check	Cáron
+	Check for\nUpdates…	Verificar se há\natualizações…
+	Checking for updates…	Verificando se há atualizações…
+	Chicago	Chicago
+	Circle area from its radius	Área do círculo a partir do seu raio
+	Circled Dot	Ponto circulado
+	Circled Plus	Mais circulado
+	Circled Times	Multiplicação circulada
+	Close Document	Fechar documento
+	Colon Equal	Dois-pontos igual
+	Common Accent Objects	Objetos de acentuação comuns
+	Common Brackets	Colchetes comuns
+	Common Fractions	Frações comuns
+	Common Functions	Funções comuns
+	Common Large Operators	Operadores grandes comuns
+	Common Operator Structures	Estruturas de operadores comuns
+	Common Operators	Operadores comuns
+	Common Radicals	Radicais comuns
+	Common Subscripts and Superscripts	Subscritos e sobrescritos comuns
+	CONFIDENTIAL	CONFIDENCIAL
+numerals	Context	Contexto
+	Continue without restoring	Continuar sem restaurar
+	Contour Integral	Integral de contorno
+	Contour Integral with Limits	Integral de contorno com limites
+	Contour Integral with Stacked Limits	Integral de contorno com limites empilhados
+	Contour Integrals	Integrais de contorno
+	Convert between built-up and linear form	Converter entre formato profissional e linear
+	Coproduct	Coproduto
+	Coproduct with Limits	Coproduto com limites
+	Coproduct with Lower Limit	Coproduto com limite inferior
+	Coproduct with Subscript-Superscript Limits	Coproduto com limites em subscrito e sobrescrito
+	Corporate Author	Autor institucional
+	Cosecant Function	Função cossecante
+	Cosine 2x	Cosseno de 2x
+	Cosine Function	Função cosseno
+	Cotangent Function	Função cotangente
+	Could not check for updates:\n{error}	Não foi possível verificar se há atualizações:\n{error}
+	Couldn't get the list of languages: {error}	Não foi possível obter a lista de idiomas: {error}
+	Couldn't install: {error}	Não foi possível instalar: {error}
+	Couldn't remove: {error}	Não foi possível remover: {error}
+	Couldn't save {name}, so it is still open and nothing was lost: {error}	Não foi possível salvar {name}, portanto ele continua aberto e nada foi perdido: {error}
+	Couldn't turn on downloading: {error}	Não foi possível ativar o download: {error}
+	Crop on the page works on unturned pictures: set Rotation to 0° first, or use the crop boxes	O corte na página funciona em imagens não rotacionadas: defina a rotação como 0° primeiro ou use as caixas de corte
+	Ctrl+Enter starts a new page. Much tidier than pressing Enter until it happens.	Ctrl+Enter inicia uma nova página. Muito mais prático do que pressionar Enter repetidamente.
+	Ctrl+H finds and replaces text, formatting and special characters.	Ctrl+H localiza e substitui texto, formatação e caracteres especiais.
+	Ctrl+K turns the selected text into a link.	Ctrl+K transforma o texto selecionado em um link.
+	Ctrl+Shift+G counts your words, characters and paragraphs.	Ctrl+Shift+G conta suas palavras, caracteres e parágrafos.
+	Cube Root	Raiz cúbica
+	Current - Linear	Atual - Linear
+	Current - Professional	Atual - Profissional
+	Current Document	Documento atual
+	Custom Document Properties	Propriedades personalizadas do documento
+	Darker −20%	Mais escuro −20%
+	Default Paragraph Font	Fonte padrão do parágrafo
+	Delta Equal To	Delta igual a
+	Delta over arrow	Delta sobre seta
+	Derivative as a limit	Derivada como um limite
+	Diagonal Dots	Pontos diagonais
+	Differential	Diferencial
+	Differential theta	Diferencial teta
+	Differential x	Diferencial x
+	Differential y	Diferencial y
+	Differentials	Diferenciais
+	Discard the recovery copy of {name}?	Descartar a cópia de recuperação de {name}?
+	Discard…	Descartar…
+	Display server:	Servidor de exibição:
+	DO NOT COPY	NÃO COPIAR
+	Dock Left	Fixar à esquerda
+	Dock Right	Fixar à direita
+	Double Bar	Barra dupla
+	Double Dot	Ponto duplo
+	Double Integral	Integral dupla
+	Double Integral with Limits	Integral dupla com limites
+	Double Integral with Stacked Limits	Integral dupla com limites empilhados
+	Double Left Arrow with Text Above	Seta dupla para a esquerda com texto acima
+	Double Left Arrow with Text Below	Seta dupla para a esquerda com texto abaixo
+	Double Left Right Arrow with Text Above	Seta dupla bidirecional com texto acima
+	Double Left Right Arrow with Text Below	Seta dupla bidirecional com texto abaixo
+	Double Right Arrow with Text Above	Seta dupla para a direita com texto acima
+	Double Right Arrow with Text Below	Seta dupla para a direita com texto abaixo
+	Double Square Brackets	Colchetes duplos
+	Double summation	Somatório duplo
+	Double Vertical Bars	Barras verticais duplas
+	Download fetches the dictionary from LibreOffice's dictionary collection into the dictionaries folder. Each keeps its own licence (GPL, LGPL or MPL) and stays a separate file that Letra only reads.	O botão Baixar obtém o dicionário do acervo de dicionários do LibreOffice para a pasta de dicionários. Cada um mantém sua própria licença (GPL, LGPL ou MPL) e permanece um arquivo separado que o Letra apenas lê.
+	Downloading the {language} dictionary…	Baixando o dicionário de {language}…
+	Downloading…	Baixando…
+	DRAFT	RASCUNHO
+	Editing is blocked in Viewing mode.	A edição está bloqueada no modo de visualização.
+	Emphasis Mark	Marca de ênfase
+	Empty Matrices	Matrizes vazias
+	Endnote Reference	Referência de nota de fim
+	Endnote Text	Texto da nota de fim
+	Enter bookmark name:	Digite o nome do indicador:
+	Entire caption	Legenda inteira
+	Envelope #10   4.12" × 9.50"	Envelope nº 10   4,12" × 9,50"
+	Envelope Address	Endereço do envelope
+	Envelope DL   4.33" × 8.66"	Envelope DL   4,33" × 8,66"
+	Envelope Return	Remetente do envelope
+	Equal by Definition	Igual por definição
+	Equal Equal	Igual duplo
+	Euler's identity	Identidade de Euler
+	Executive   7.25" × 10.50"	Executivo   7,25" × 10,50"
+	Exponential	Exponencial
+	Exponential series	Série exponencial
+	Extra space	Espaço extra
+	F4 repeats your last action. Formatting ten headings is suddenly one click and nine taps.	F4 repete sua última ação. Formatar dez títulos se torna apenas um clique e nove toques.
+	F7 checks the spelling and grammar of the whole document.	F7 verifica a ortografia e a gramática do documento inteiro.
+	File type	Tipo de arquivo
+	Find “{text}” in the document	Localizar “{text}” no documento
+	Flat OpenDocument Text (*.fodt)	Texto OpenDocument plano (*.fodt)
+	Float	Flutuar
+	Floor	Piso
+	Folder path	Caminho da pasta
+	Footnote Reference	Referência de nota de rodapé
+	Footnote Text	Texto da nota de rodapé
+	For which item:	Para qual item:
+	Frames and effects	Molduras e efeitos
+	Full Saturation 100%	Saturação máxima 100%
+	GB/T 7714	GB/T 7714
+	Get the list of languages again	Obter a lista de idiomas novamente
+	Getting the list of languages…	Obtendo a lista de idiomas…
+	GOST (name sort)	GOST (ordem por nome)
+	GOST (title sort)	GOST (ordem por título)
+	Grave	Acento grave
+	Gray 0%	Cinza 0%
+	Greek Letters	Letras gregas
+	Grid Table 1 Light	Tabela com grade 1 Clara
+	Grid Table 4 – Blue	Tabela com grade 4 – Azul
+	Grid Table 4 – Green	Tabela com grade 4 – Verde
+	Grid Table 4 – Orange	Tabela com grade 4 – Laranja
+	Grid Table 4 – Purple	Tabela com grade 4 – Roxo
+	Grouping Character Above	Caractere de agrupamento acima
+	Grouping Character Below	Caractere de agrupamento abaixo
+	Harvard (Anglia)	Harvard (Anglia)
+	Hat	Circunflexo
+	Heading	Título
+	Heading text	Texto do título
+numerals	Hindi	Hindi
+	Hyperbolic Cosecant Function	Função cossecante hiperbólica
+	Hyperbolic Cosine Function	Função cosseno hiperbólico
+	Hyperbolic Cotangent Function	Função cotangente hiperbólica
+	Hyperbolic Functions	Funções hiperbólicas
+	Hyperbolic Secant Function	Função secante hiperbólica
+	Hyperbolic Sine Function	Função seno hiperbólico
+	Hyperbolic Tangent Function	Função tangente hiperbólica
+	Hyperlink	Hiperlink
+	Hypotenuse	Hipotenusa
+	Identity Matrices	Matrizes identidade
+	IEEE	IEEE
+	Ignore Once	Ignorar uma vez
+	Imported 1 source	1 fonte bibliográfica importada
+	Imported {n} sources	{n} fontes bibliográficas importadas
+	Index Heading	Título do índice
+	Index {n}	Índice {n}
+	Install	Instalar
+	Install ({size})	Instalar ({size})
+	Install Language Pack	Instalar pacote de idiomas
+	Installed	Instalado
+	Installing turns on downloading of fonts and Language packs from GitHub.	A instalação ativa o download de fontes e pacotes de idiomas do GitHub.
+	Installing… {percent}%	Instalando… {percent}%
+	Integral of e^(−x²)	Integral de e^(−x²)
+	Integral with Limits	Integral com limites
+	Integral with Stacked Limits	Integral com limites empilhados
+	Integrals	Integrais
+	Intense Quote	Citação destacada
+	Intense Reference	Referência destacada
+	Intersection with Limits	Interseção com limites
+	Intersection with Lower Limit	Interseção com limite inferior
+	Intersection with Subscript-Superscript Limits	Interseção com limites em subscrito e sobrescrito
+	Inverse	Invertido
+	Inverse Cosecant Function	Função cossecante inversa
+	Inverse Cosine Function	Função cosseno inverso
+	Inverse Cotangent Function	Função cotangente inversa
+	Inverse Functions	Funções inversas
+	Inverse Hyperbolic Cosecant Function	Função cossecante hiperbólica inversa
+	Inverse Hyperbolic Cosine Function	Função cosseno hiperbólico inverso
+	Inverse Hyperbolic Cotangent Function	Função cotangente hiperbólica inversa
+	Inverse Hyperbolic Functions	Funções hiperbólicas inversas
+	Inverse Hyperbolic Secant Function	Função secante hiperbólica inversa
+	Inverse Hyperbolic Sine Function	Função seno hiperbólico inverso
+	Inverse Hyperbolic Tangent Function	Função tangente hiperbólica inversa
+	Inverse Secant Function	Função secante inversa
+	Inverse Sine Function	Função seno inverso
+	Inverse Tangent Function	Função tangente inversa
+	ISO 690 (author-date)	ISO 690 (autor-data)
+	ISO 690 (numerical)	ISO 690 (numérico)
+	Item Color	Cor do item
+	Journal article	Artigo de periódico
+	Justification of a display equation	Alinhamento de uma equação destacada
+	Language data	Dados de idioma
+	Language Packs	Pacotes de idiomas
+	Language packs aren't available in the browser	Pacotes de idiomas não estão disponíveis no navegador
+	Language packs aren't available in the browser.	Os pacotes de idiomas não estão disponíveis no navegador.
+	Language packs come from a test source: {source}	Os pacotes de idiomas vêm de uma fonte de teste: {source}
+	Language packs need the font store folder, and there is none on this computer.	Os pacotes de idiomas precisam da pasta de armazenamento de fontes, e não há nenhuma neste computador.
+	Left Arrow with Text Above	Seta para a esquerda com texto acima
+	Left Arrow with Text Below	Seta para a esquerda com texto abaixo
+	Left Bracket Twice	Colchete esquerdo duplo
+	Left Right Arrow Above	Seta bidirecional acima
+	Left Right Arrow with Text Above	Seta bidirecional com texto acima
+	Left Right Arrow with Text Below	Seta bidirecional com texto abaixo
+	Left Subscript-Superscript	Subscrito e sobrescrito à esquerda
+	Leftwards Arrow Above	Seta para a esquerda acima
+	Leftwards Harpoon Above	Arpão para a esquerda acima
+	Legal   8.50" × 14.00"	Ofício   8,50" × 14,00"
+	Less Contrast −20%	Menos contraste −20%
+template	Letter	Carta
+	Letter   8.50" × 11.00"	Carta   8,50" × 11,00"
+	Letter-Like Symbols	Símbolos semelhantes a letras
+	Level 5	Nível 5
+	Level 6	Nível 6
+	Level 7	Nível 7
+	Level 8	Nível 8
+	Level 9	Nível 9
+	Licence: {licence}. Source: {source}	Licença: {licence}. Fonte: {source}
+	Limit	Limite
+	Limit and	Limite e
+	Limit Example	Exemplo de limite
+	Line Number	Número de linha
+	Linear Fraction	Fração linear
+	Linux display server	Servidor de exibição Linux
+	List Paragraph	Parágrafo de lista
+	List Table 3 – Blue	Tabela de lista 3 – Azul
+	List Table 3 – Green	Tabela de lista 3 – Verde
+	List Table 3 – Orange	Tabela de lista 3 – Laranja
+	List Table 3 – Purple	Tabela de lista 3 – Roxo
+	Local recovery is unavailable or still loading.	A recuperação local está indisponível ou ainda carregando.
+	Log	Log
+	Logarithm	Logaritmo
+	Logarithm with Base	Logaritmo com base
+	Logical AND	E lógico
+	Logical AND with Limits	E lógico com limites
+	Logical OR	OU lógico
+	Logical OR with Limits	OU lógico com limites
+	Macro name:	Nome da macro:
+	Matrices with Brackets	Matrizes com colchetes
+	Maximum Example	Exemplo de máximo
+	Measured By	Medido por
+	Midline Dots	Pontos na linha média
+	Minus Equal	Menos igual
+	Missing Fonts	Fontes ausentes
+	MLA	MLA
+	More Contrast +20%	Mais contraste +20%
+	More options	Mais opções
+	Move Pane: {title}	Mover o painel: {title}
+	Muted 50%	Atenuado 50%
+	Natural Logarithm	Logaritmo natural
+	Negated Relations	Relações negadas
+	No items to show.	Nenhum item para exibir.
+	No new sources in that file	Nenhuma nova fonte bibliográfica nesse arquivo
+	No other Letra windows are open.	Nenhuma outra janela do Letra está aberta.
+	No recovery copies.	Nenhuma cópia de recuperação.
+	No Scaling	Sem dimensionamento
+	Normal Indent	Recuo normal
+	Normal probability density	Densidade de probabilidade normal
+	Normal Table	Tabela normal
+	Not in Dictionary	Não consta no dicionário
+	Number the equation; the number sits at the right margin (or type # then the number)	Numerar a equação; o número fica na margem direita (ou digite # seguido do número)
+	n×n Identity Matrix	Matriz identidade n×n
+	n×n Matrix	Matriz n×n
+	One half	Um meio
+	Only label and number	Apenas rótulo e número
+	Only text properties can be changed.	Apenas propriedades de texto podem ser alteradas.
+	Only you can turn on downloading: click the button yourself. Agents can install once it is on.	Somente você pode ativar o download: Clique no botão você mesmo. Os agentes poderão instalar assim que estiver ativado.
+spacing	Open	Aberto
+	OpenDocument Text Template (*.ott)	Modelo de texto OpenDocument (*.ott)
+	Operator Structures	Estruturas de operadores
+	Operators	Operadores
+	Other Large Operators	Outros operadores grandes
+	Outward Brackets	Colchetes invertidos
+	Overbar	Barra superior
+	Overbars and Underbars	Barras superiores e inferiores
+	Overbrace	Chave superior
+	Page color	Cor da página
+	Page number	Número de página
+	Pages in the range	Páginas no intervalo
+	Pane Options	Opções do painel
+	Parentheses	Parênteses
+	Parentheses with Separator	Parênteses com separador
+	Partial Differential	Diferencial parcial
+	Pi Over 2	Pi sobre 2
+	Picture border	Borda da imagem
+	Picture transparency	Transparência da imagem
+	Plain Table 1	Tabela simples 1
+	Plus Equal	Mais igual
+	Power series of (1+x)ⁿ	Série de potências de (1+x)ⁿ
+	Product	Produtório
+	Product of A	Produtório de A
+	Product with Limits	Produtório com limites
+	Product with Lower Limit	Produtório com limite inferior
+	Product with Subscript-Superscript Limits	Produtório com limites em subscrito e sobrescrito
+	Products and Coproducts	Produtórios e coprodutos
+	Property names are 1–{max} characters.	Nomes de propriedade têm de 1 a {max} caracteres.
+	Property values are at most {max} bytes.	Valores de propriedade têm no máximo {max} bytes.
+	Quadratic Root	Fórmula quadrática
+	Quote	Citação
+	Radical with Degree	Radical com índice
+	Radicals	Radicais
+	Reading Page Color	Cor da página de leitura
+	Record…	Gravar…
+	Recover documents	Recuperar documentos
+	Recovery copy	Cópia de recuperação
+	Recovery is disabled while this document has a password.	A recuperação fica desativada enquanto este documento tiver uma senha.
+	Reference type:	Tipo de referência:
+	Reject All Changes and Stop Tracking	Rejeitar todas as alterações e parar o controle
+	Reject and Move to Next	Rejeitar e ir para a próxima
+	Remove Language Pack	Remover pacote de idiomas
+	Remove the space before the punctuation	Remover o espaço antes da pontuação
+	Resize Pane	Redimensionar o painel
+	Restore opens an unsaved copy. Your original file stays unchanged.	A restauração abre uma cópia não salva. Seu arquivo original permanece inalterado.
+	Right Arrow with Text Above	Seta para a direita com texto acima
+	Right Arrow with Text Below	Seta para a direita com texto abaixo
+	Right Bracket Twice	Colchete direito duplo
+	Rightwards Arrow Above	Seta para a direita acima
+	Rightwards Harpoon Above	Arpão para a direita acima
+	Roots of ax²+bx+c	Raízes de ax²+bx+c
+	Rounded	Arredondado
+	Run	Executar
+	SAMPLE	EXEMPLO
+	Saturation and recolor	Saturação e recoloração
+	Scale Font Sizes	Dimensionar tamanhos de fonte
+	Scale to paper size	Ajustar ao tamanho do papel
+	Secant Function	Função secante
+	Select a place in this document:	Selecione um local neste documento:
+	Select a property to change.	Selecione uma propriedade para alterar.
+	Select Canvas Member	Selecionar item da tela
+	Separate text with	Separar texto com
+	Sepia	Sépia
+	Set left- and first-indent with tabs and backspaces	Definir recuo esquerdo e de primeira linha com tabs e backspaces
+	Set the colors in the Text Pane to use custom colors.	Defina as cores no painel de texto para usar cores personalizadas.
+	Shape color	Cor da forma
+	Shift+Enter starts a new line without starting a new paragraph.	Shift+Enter inicia uma nova linha sem iniciar um novo parágrafo.
+	Show the equation in the line of text	Exibir a equação no corpo do texto
+	Show the equation on a line of its own	Exibir a equação em sua própria linha
+	Show/Hide ¶ (Ctrl+Shift+8) shows the spaces, tabs and breaks hiding in your text.	Mostrar/Ocultar ¶ (Ctrl+Shift+8) exibe os espaços, tabulações e quebras ocultos no seu texto.
+	Shown in substitute fonts. Click for details.	Exibido em fontes substitutas. Clique para ver detalhes.
+	Sides of a right triangle	Lados de um triângulo retângulo
+	Simple Frame	Moldura simples
+	Sine and cosine series of f(x)	Série de senos e cossenos de f(x)
+	Sine Function	Função seno
+	Sine theta	Seno de teta
+	Single Brackets	Delimitadores simples
+	Single Left Angle	Colchete angular esquerdo simples
+	Single Left Bar	Barra esquerda simples
+	Single Left Brace	Chave esquerda simples
+	Single Left Bracket	Colchete esquerdo simples
+	Single Left Parenthesis	Parêntese esquerdo simples
+	Single Right Brace	Chave direita simples
+	Single Right Bracket	Colchete direito simples
+	Single Right Parenthesis	Parêntese direito simples
+	SIST02	SIST02
+	Skewed Fraction	Fração chanfrada
+	Small change	Pequena variação
+	Soft Edge	Borda suave
+	Spanish (Latin America)	Espanhol (América Latina)
+	Spanish (Uruguay)	Espanhol (Uruguai)
+	Sparse Matrices	Matrizes esparsas
+	Spelling and grammar are checked in English (United States).	A ortografia e a gramática são verificadas em inglês (Estados Unidos).
+	Square Root	Raiz quadrada
+	Square Root with Degree	Raiz quadrada com índice
+	Square Union	União quadrada
+	Stack Object	Objeto empilhado
+	Stack Object (Three)	Objeto empilhado (três)
+	Stacked Fraction	Fração empilhada
+	Stacked, no bar	Empilhado, sem barra
+	Statement   5.50" × 8.50"	Statement   5,50" × 8,50"
+	Status bar	Barra de status
+	Status bar count:	Contagem da barra de status:
+	Stop Recording	Parar gravação
+	Style: APA	Estilo: APA
+	Styles Pane Position	Posição do painel de estilos
+	Subscript-Superscript	Subscrito-sobrescrito
+	Subscripts and Superscripts	Subscritos e sobrescritos
+	Suggestions	Sugestões
+	Sum of cosines	Soma de cossenos
+	Sum or difference of sines	Soma ou diferença de senos
+	Summation	Somatório
+	Summation from 0 to n	Somatório de 0 a n
+	Summation over binomials	Somatório sobre binômios
+	Summation with Limits	Somatório com limites
+	Summation with Lower Limit	Somatório com limite inferior
+	Summation with Subscript Limit	Somatório com limite em subscrito
+	Summation with Subscript-Superscript Limits	Somatório com limites em subscrito e sobrescrito
+	Summations	Somatórios
+	Surface Integral	Integral de superfície
+	Surface Integral with Limits	Integral de superfície com limites
+	Surface Integral with Stacked Limits	Integral de superfície com limites empilhados
+	Switch Windows	Alternar janelas
+	Switch\nWindows	Alternar\njanelas
+	Synchronous Scrolling	Rolagem sincronizada
+numerals	System	Sistema
+	Table Grid	Grade da tabela
+	Table of Figures	Tabela de Figuras
+	Tabloid   11.00" × 17.00"	Tabloide   11,00" × 17,00"
+	Tangent formula	Fórmula da tangente
+	Tangent Function	Função tangente
+	Text over Colon Equal	Texto sobre dois-pontos igual
+	Text over Equal	Texto sobre igual
+	Text properties only: Word's number, date and yes-no types aren't offered.	Somente propriedades de texto: os tipos Número, Data e Sim ou Não, não estão disponíveis.
+	Text Size	Tamanho do texto
+	The document or selection changed. Check again to continue.	O documento ou a seleção mudou. Verifique novamente para continuar.
+	The number must be a divisor of {max}.	O número deve ser um divisor de {max}.
+	The spelling and grammar check is complete.	A verificação ortográfica e gramatical está concluída.
+	The spelling and hyphenation data Letra uses, and their licences.	Os dados de ortografia e hifenização usados pelo Letra e suas licenças.
+	The spelling dictionary for {language} couldn't be read, so it isn't checked. File: {file}. Reason: {reason}	Não foi possível ler o dicionário ortográfico de {language}, portanto ele não será verificado. Arquivo: {file}. Motivo: {reason}
+	The {language} dictionary couldn't be downloaded: {error}	Não foi possível baixar o dicionário de {language}: {error}
+	The {language} dictionary is installed.	O dicionário de {language} está instalado.
+	There are no macros yet. Record one to add it here.	Ainda não há macros. Grave um para adicioná-lo aqui.
+	Thick Frame	Moldura espessa
+	Thin	Fina
+	This cannot be undone. Your original file stays unchanged.	Isso não pode ser desfeito. Seu arquivo original permanece inalterado.
+	This document has no custom properties.	Este documento não possui propriedades personalizadas.
+	Tilde	Til
+preview	Title	Título
+	TOA Heading	Título do Índice de Autoridades
+	TOC Heading	Título do sumário
+	Top of the Document	Início do documento
+	Track\nChanges	Controlar\nalterações
+	Track\nChanges ✓	Controlar\nalterações ✓
+	Trigonometric Functions	Funções trigonométricas
+	Triple Dot	Ponto triplo
+	Triple Integral	Integral tripla
+	Triple Integral with Limits	Integral tripla com limites
+	Triple Integral with Stacked Limits	Integral tripla com limites empilhados
+	Turabian	Turabian
+	Type a page number, or +2 / -1.	Digite um número de página ou +2 / -1.
+	Type equations in LaTeX	Digitar equações em LaTeX
+	Type equations in the linear format (UnicodeMath)	Digitar equações no formato linear (UnicodeMath)
+	Type normal (non-math) text in the equation	Digitar texto normal (não matemático) na equação
+	Underbar	Barra inferior
+	Underbrace	Chave inferior
+	Union of intersections	União de interseções
+	Union with Limits	União com limites
+	Union with Lower Limit	União com limite inferior
+	Union with Plus	União disjunta (com sinal de mais)
+	Union with Subscript-Superscript Limits	União com limites em subscrito e sobrescrito
+	Unions and Intersections	Uniões e interseções
+	Up Diagonal Dots	Pontos diagonais ascendentes
+	Update check is not supported in the web browser.	A verificação de atualizações não é suportada no navegador web.
+	URGENT	URGENTE
+	Vector A	Vetor A
+	Vector AB	Vetor AB
+	Vertical Bars	Barras verticais
+	Vertical Dots	Pontos verticais
+	View and edit the document's custom properties.	Exibir e editar as propriedades personalizadas do documento.
+	View Side by Side	Exibir lado a lado
+	Viewing	Visualização
+	Viewing — view the file but make no changes	Visualização — ver o arquivo sem fazer alterações
+	Vivid 200%	Vívido 200%
+	Volume Integral	Integral de volume
+	Volume Integral with Limits	Integral de volume com limites
+	Volume Integral with Stacked Limits	Integral de volume com limites empilhados
+	Wait for the print job to finish submitting before closing.	Aguarde a impressão concluir antes de fechar.
+	Wildcards (regex)	Caracteres curinga (regex)
+	Word sources	Fontes do Word
+	Letra {version} is currently the newest version available.	O Letra {version} é a versão mais recente disponível no momento.
+	x bar	x barra
+	Yields	Produz
+	You can also right-click the count in the status bar to change it.	Você também pode clicar com o botão direito na contagem na barra de status para alterá-la.
+	{field}, record {n}	{field}, registro {n}
+	{font} isn't installed on this computer, so its text is shown in {shown}. Line breaks and page count can differ from where the document was made. If you have the font file, add it with Add Font… at the end of this list.	{font} não está instalada neste computador, portanto seu texto é exibido em {shown}. As quebras de linha e a contagem de páginas podem ser diferentes de onde o documento foi criado. Se você tiver o arquivo da fonte, adicione-o com Adicionar fonte… no final desta lista.
+	{language} (dictionary unreadable)	{language} (dicionário ilegível)
+	{language} ({region})	{language} ({region})
+	{language} proofing isn't installed.	A revisão de texto para {language} não está instalada.
+	{language}: {file} (unreadable: {reason})	{language}: {file} (ilegível: {reason})
+	{name} options	Opções de {name}
+	{n} KB	{n} KB
+	{n} MB	{n} MB
+	{paper}   {width} × {height}	{paper}   {width} × {height}
+	A free word processor, written in Rust.	Um processador de texto livre, escrito em Rust.
+	Back	Voltar
+	Licences	Licenças
+	MIT OR Apache-2.0. Includes open-source work by other authors; see NOTICE.	MIT OR Apache-2.0. Inclui trabalho de código aberto de outros autores; veja NOTICE.
+	Part of Nodalia	Parte da Nodalia
+	Report a problem	Relatar um problema
+	Source code	Código-fonte
+	Window controls:	Controles da janela:
+	‹ About Letra	‹ Sobre o Letra
+	Keyboard shortcuts	Atalhos de teclado
+	Check for updates…	Verificar atualizações…
+	Quit	Sair
+	Main menu	Menu principal
+	Screen paper color:	Cor do papel na tela:
+	Document background	Fundo do documento
+	Soft green	Verde suave
+	Warm cream	Creme quente
+	Soft gray	Cinza suave
+	✓ None	✓ Nenhum
+	➕ New comment	➕ Novo comentário
+	📂  Browse…	📂  Procurar…
