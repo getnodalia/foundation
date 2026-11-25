@@ -2572,3 +2572,11 @@ preview	Title	Naslov
 @msg	a diagram holds at most {MAX_ITEMS} items	dijagram može sadržavati najviše {MAX_ITEMS} stavki
 @msg	unknown decorative text style `{id}`	nepoznat stil ukrasnog teksta `{id}`
 	select a shape or decorative text first	najprije odaberite oblik ili ukrasni tekst
+	Arrange All	Posloži sve
+	No other Letra windows are open.	Nema drugih otvorenih Letra prozora.
+	only the desktop app has several windows	samo desktop aplikacija ima više prozora
+	Switch Windows	Promijeni prozor
+	Switch\nWindows	Promijeni\nprozor
+	Synchronous Scrolling	Sinkrono pomicanje
+	turn on View Side by Side first	najprije uključite Prikaži jedan pored drugog
+	View Side by Side	Prikaži jedan pored drugog

@@ -2698,3 +2698,9 @@ preview	Title	Titel
 @msg	a diagram holds at most {MAX_ITEMS} items	ett diagram kan innehålla högst {MAX_ITEMS} objekt
 @msg	unknown decorative text style `{id}`	okänt format för dekorativ text `{id}`
 	select a shape or decorative text first	markera först en form eller dekorativ text
+	Arrange All	Ordna alla
+	No other Letra windows are open.	Inga andra Letra-fönster är öppna.
+	only the desktop app has several windows	bara skrivbordsappen har flera fönster
+	Synchronous Scrolling	Synkron rullning
+	turn on View Side by Side first	aktivera Visa sida vid sida först
+	View Side by Side	Visa sida vid sida

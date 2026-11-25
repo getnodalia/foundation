@@ -2283,3 +2283,29 @@
 @msg	a diagram holds at most {MAX_ITEMS} items	схема може містити щонайбільше {MAX_ITEMS} елементів
 @msg	unknown decorative text style `{id}`	невідомий стиль декоративного тексту `{id}`
 	select a shape or decorative text first	спочатку виберіть фігуру або декоративний текст
+	Arrange All	Упорядкувати все
+	No other Letra windows are open.	Інших вікон Letra не відкрито.
+	Switch Windows	Перемкнути вікна
+	Switch\nWindows	Перемкнути\nвікна
+	Synchronous Scrolling	Синхронне прокручування
+	View Side by Side	Переглянути поруч
+	A free word processor, written in Rust.	Вільний текстовий редактор, написаний на Rust.
+	Back	Назад
+	Licences	Ліцензії
+	MIT OR Apache-2.0. Includes open-source work by other authors; see NOTICE.	MIT OR Apache-2.0. Містить відкриту роботу інших авторів; див. NOTICE.
+	Part of Nodalia	Частина Nodalia
+	Report a problem	Повідомити про проблему
+	Source code	Вихідний код
+	Window controls:	Кнопки вікна:
+	‹ About Letra	‹ Про Letra
+	Keyboard shortcuts	Сполучення клавіш
+	Check for updates…	Перевірити оновлення…
+	Quit	Вийти
+	Main menu	Головне меню
+	Screen paper color:	Колір паперу на екрані:
+	Document background	Тло документа
+	Soft green	М'який зелений
+	Warm cream	Теплий кремовий
+	Soft gray	М'який сірий
+	Status bar count:	Лічильник у рядку стану:
+	You can also right-click the count in the status bar to change it.	Також можна клацнути правою кнопкою на лічильнику в рядку стану, щоб змінити його.

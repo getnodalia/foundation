@@ -2667,3 +2667,11 @@ template	Letter	Thư
 @msg	a diagram holds at most {MAX_ITEMS} items	một sơ đồ chứa tối đa {MAX_ITEMS} mục
 @msg	unknown decorative text style `{id}`	kiểu chữ trang trí không xác định `{id}`
 	select a shape or decorative text first	hãy chọn một hình hoặc chữ trang trí trước
+	Arrange All	Sắp xếp tất cả
+	No other Letra windows are open.	Không có cửa sổ Letra nào khác đang mở.
+	only the desktop app has several windows	chỉ ứng dụng máy tính mới có nhiều cửa sổ
+	Switch Windows	Chuyển cửa sổ
+	Switch\nWindows	Chuyển\ncửa sổ
+	Synchronous Scrolling	Cuộn đồng bộ
+	turn on View Side by Side first	hãy bật Xem song song trước
+	View Side by Side	Xem song song

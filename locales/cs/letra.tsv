@@ -2644,3 +2644,11 @@ preview	Title	Ukázka
 @msg	a diagram holds at most {MAX_ITEMS} items	diagram obsahuje nejvýše {MAX_ITEMS} položek
 @msg	unknown decorative text style `{id}`	neznámý styl ozdobného textu `{id}`
 	select a shape or decorative text first	nejprve vyberte obrazec nebo ozdobný text
+	Arrange All	Uspořádat vše
+	No other Letra windows are open.	Nejsou otevřena žádná další okna Letra.
+	only the desktop app has several windows	více oken má jen desktopová aplikace
+	Switch Windows	Přepnout okna
+	Switch\nWindows	Přepnout\nokna
+	Synchronous Scrolling	Synchronní posouvání
+	turn on View Side by Side first	nejdřív zapněte Zobrazit vedle sebe
+	View Side by Side	Zobrazit vedle sebe

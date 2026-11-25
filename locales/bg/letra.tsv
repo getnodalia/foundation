@@ -2587,3 +2587,11 @@
 @msg	a diagram holds at most {MAX_ITEMS} items	една схема съдържа най-много {MAX_ITEMS} елемента
 @msg	unknown decorative text style `{id}`	непознат стил на декоративен текст `{id}`
 	select a shape or decorative text first	първо изберете фигура или декоративен текст
+	Arrange All	Подреди всички
+	No other Letra windows are open.	Няма други отворени прозорци на Letra.
+	only the desktop app has several windows	няколко прозореца има само в настолното приложение
+	Switch Windows	Превключване на прозорци
+	Switch\nWindows	Превключване\nна прозорци
+	Synchronous Scrolling	Синхронно превъртане
+	turn on View Side by Side first	първо включете Преглед един до друг
+	View Side by Side	Преглед един до друг

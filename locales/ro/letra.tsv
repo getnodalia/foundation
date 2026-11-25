@@ -3020,3 +3020,11 @@ preview	Title	Titlu
 @msg	a diagram holds at most {MAX_ITEMS} items	o diagramă poate conține cel mult {MAX_ITEMS} elemente
 @msg	unknown decorative text style `{id}`	stil de text decorativ necunoscut `{id}`
 	select a shape or decorative text first	selectați mai întâi o formă sau un text decorativ
+	Arrange All	Aranjează toate
+	No other Letra windows are open.	Nu sunt deschise alte ferestre Letra.
+	only the desktop app has several windows	doar aplicația desktop are mai multe ferestre
+	Switch Windows	Comută ferestrele
+	Switch\nWindows	Comută\nferestrele
+	Synchronous Scrolling	Derulare sincronă
+	turn on View Side by Side first	activează mai întâi Vizualizare alăturată
+	View Side by Side	Vizualizare alăturată
