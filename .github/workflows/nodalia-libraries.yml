@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
     inputs:
       library:
-        description: "Library to generate commits for (libs, i18n, fonts, winprint, toma); empty: none"
+        description: "Library to generate commits for (libs, i18n, fonts, winprint, toma, ai-integrations); empty: none"
         type: string
         default: ""
       commits:
