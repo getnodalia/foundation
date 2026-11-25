@@ -2798,3 +2798,28 @@ preview	Title	Título
 	only in Markdown Source	solo en el origen Markdown
 	only the desktop app has several windows	solo la aplicación de escritorio admite varias ventanas
 	turn on View Side by Side first	activa primero Ver en paralelo
+	(no title)	(sin título)
+	Add to document	Añadir al documento
+	Added to this document	Añadida a este documento
+	Already in My library	Ya está en Mi biblioteca
+	Bibliography entry	Entrada de la bibliografía
+	Citation style	Estilo de citas
+	Exported {n} sources	Se exportaron {n} fuentes
+	Import pasted text	Importar el texto pegado
+	In the text	En el texto
+	Missing: {fields}	Falta: {fields}
+	My library is empty. Import a bibliography or save sources from a document.	Tu biblioteca está vacía. Importa una bibliografía o guarda fuentes de un documento.
+	My library	Mi biblioteca
+	No sources match your search.	Ninguna fuente coincide con la búsqueda.
+	Paste BibTeX, RIS or CSL-JSON here	Pega aquí BibTeX, RIS o CSL-JSON
+	Paste…	Pegar texto…
+	Save to My library	Guardar en Mi biblioteca
+	Saved to My library	Guardada en Mi biblioteca
+	Search by author, title, year, DOI or tag	Buscar por autor, título, año, DOI o etiqueta
+	Select a source to see how it is cited and listed in the current style.	Elige una fuente para ver cómo se cita y se lista en el estilo actual.
+	author	autor
+	title	título
+	year	año
+	Import Sources	Importar fuentes
+	Export Sources	Exportar fuentes
+	My Library	Mi biblioteca
