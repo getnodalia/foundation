@@ -62,7 +62,7 @@ CREDIT = r"(?!\s+(?:contributors|maintainers|authors|Team)\b)"
 
 # Repositories that are mirrored in foundation: a git dependency on one of them moves here and
 # keeps its rev, since the mirrors keep every upstream SHA.
-MIRRORED = ["craft-libs", "craft-i18n", "craft-fonts", "egui", "winit", "winprint.rs",
+MIRRORED = ["craft-libs", "craft-i18n", "craft-fonts", "craft-ai-integrations", "egui", "winit", "winprint.rs",
             "indd-utils", "filmcraft", "vectorcraft", "craft-media"]
 
 # Words that are not crate names but name the libraries themselves.
@@ -70,6 +70,7 @@ EXTRA_NAMES = {
     "craft-libs": "nodalia-libs",
     "craft-i18n": "nodalia-i18n",
     "craft-fonts": "nodalia-fonts",
+    "craft-ai-integrations": "nodalia-ai-integrations",
 }
 
 SKIP_FILES = {"NOTICE", "ATTRIBUTION.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE",
@@ -91,6 +92,9 @@ LIBRARIES = {
                               "craft-launcher.tsv": "launcher.tsv"}},
     "fonts": {"mirror": "vendor/craft-fonts/main", "branch": "nodalia/fonts",
               "upstream": "storytold/craft-fonts"},
+    # AI agent integrations (craft-ai-*), a git dependency of the libraries' workspace.
+    "ai-integrations": {"mirror": "vendor/craft-ai-integrations/main", "branch": "nodalia/ai-integrations",
+                        "upstream": "storytold/craft-ai-integrations"},
     # Windows printing: alampy's winprint.rs with upstream's GDI helper crate.
     "winprint": {"mirror": "vendor/winprint.rs/main", "branch": "nodalia/winprint",
                  "upstream": "storytold/winprint.rs"},
@@ -103,7 +107,8 @@ LIBRARIES = {
 
 # A git dependency on one of these repositories is a dependency on another generated library:
 # it moves to that library's commit made from the same upstream rev.
-GENERATED_REPOS = {"winprint.rs": "winprint", "craft-libs": "libs"}
+GENERATED_REPOS = {"winprint.rs": "winprint", "craft-libs": "libs",
+                   "craft-ai-integrations": "ai-integrations"}
 
 # Packages of the other generated libraries, which a tree names without defining them.
 SIBLING_CRATES = {"craft-winprint-gdi": "nodalia-winprint-gdi"}
@@ -301,7 +306,7 @@ def git(*args: str, cwd: Path | None = None, env: dict | None = None) -> str:
 
 # Bump when the renaming changes what a generated tree holds: commits made by an older generator
 # are then made again (the branch keeps the old ones, which apps already pin).
-GENERATOR = 3
+GENERATOR = 4
 FORMAT = "%H %(trailers:key=Upstream-Commit,valueonly,separator=) %(trailers:key=Generator,valueonly,separator=)"
 
 
@@ -447,7 +452,7 @@ APP_SKIP = {"vendor", "licenses", "docs/release-notes", "docs/upstream.md", "doc
 def mirror_packages(repo: Path) -> dict[str, str]:
     """Every craft-* package defined at the tips of the mirrored libraries, with its Nodalia name."""
     names: dict[str, str] = {}
-    for library in ("libs", "winprint"):
+    for library in ("libs", "winprint", "ai-integrations"):
         tip = f"origin/{LIBRARIES[library]['mirror']}"
         for path in git("ls-tree", "-r", "--name-only", tip, cwd=repo).splitlines():
             if path.endswith("Cargo.toml") and not path.startswith("vendor/"):
