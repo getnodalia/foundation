@@ -3702,3 +3702,34 @@ document scrollbar width	Wide	Широка
 	This document's script is asking	Скриптът на този документ пита
 	Document: {name}	Документ: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Тази заявка идва от документа, а не от Papel. Въвеждайте парола само ако имате доверие на този документ.
+template	Start from a template	Започнете от шаблон
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Спокойни, готови страници, които можете да попълните веднага. Всяка е обикновен PDF с истински полета за формуляр.
+template	Business	Бизнес
+template	Forms	Формуляри
+template	Personal	Лични
+template	Invoice	Фактура
+template	Itemised, with totals and payment notes	По позиции, с общи суми и бележки за плащане
+template	Quote	Оферта
+template	An offer with terms and a place to accept it	Предложение с условия и място за приемането му
+template	Receipt	Разписка
+template	Proof of payment, with the way it was paid	Доказателство за плащане с начина на плащане
+template	Letter	Писмо
+template	A clean letterhead and a page to write on	Чист бланков заглавен ред и страница за писане
+template	Meeting minutes	Протокол от заседание
+template	Attendees, decisions and who does what by when	Присъстващи, решения и кой какво прави до кога
+template	Registration form	Регистрационен формуляр
+template	Contact details, choices and a signature	Данни за контакт, избори и подпис
+template	Timesheet	Присъствен лист
+template	A week of hours, day by day	Седмица часове, ден по ден
+template	Expense report	Отчет за разходи
+template	Itemised expenses with a total to approve	Подробни разходи с обща сума за одобрение
+template	Résumé	Автобиография
+template	A calm two-column page about you	Спокойна страница в две колони за вас
+template	Weekly planner	Седмичен планер
+template	Seven days and a space for what matters	Седем дни и място за важното
+template	Checklist	Контролен списък
+template	Tick things off, with room for notes	Отбелязвайте задачите, с място за бележки
+template	Study notes	Учебни бележки
+template	Cues, notes and a summary, in three zones	Ключови думи, бележки и резюме в три зони
+template	Certificate	Сертификат
+template	A landscape page to recognise an achievement	Хоризонтална страница за признание на постижение

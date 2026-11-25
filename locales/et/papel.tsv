@@ -1,0 +1,44 @@
+# Eesti (et) interface catalog for Papel.
+# Columns, separated by a TAB:  context <TAB> English source text <TAB> translation
+#   context  usually empty. `@plural`, `@id` and `@msg` mean something to the apps; any other
+#            word is a label that tells apart two meanings of the same English.
+#   escapes  \n  \t  \\  inside a column. `{name}` placeholders must appear in both columns (in any
+#            order), and a trailing "…" in one needs one in the other.
+#   @plural  English `one|other`; the translation lists this language's plural forms, `|`-separated.
+#   Lines starting with # and blank lines are ignored. A missing entry shows in English.
+#
+# Clean room: every entry was written from the plain meaning of the English text in ordinary
+# computing vocabulary. No other product's localisation, string table or translated UI was
+# consulted or copied; add entries the same way.
+
+template	Start from a template	Alusta mallist
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Rahulikud valmislehed, mida saab kohe täita. Iga leht on tavaline PDF päris vormiväljadega.
+template	Business	Äri
+template	Forms	Vormid
+template	Personal	Isiklik
+template	Invoice	Arve
+template	Itemised, with totals and payment notes	Ridade kaupa, summade ja maksemärkustega
+template	Quote	Hinnapakkumine
+template	An offer with terms and a place to accept it	Pakkumine tingimuste ja kohaga selle vastuvõtmiseks
+template	Receipt	Kviitung
+template	Proof of payment, with the way it was paid	Maksetõend koos makseviisiga
+template	Letter	Kiri
+template	A clean letterhead and a page to write on	Puhas kirjapea ja leht kirjutamiseks
+template	Meeting minutes	Koosoleku protokoll
+template	Attendees, decisions and who does what by when	Osalejad, otsused ja kes mida millal teeb
+template	Registration form	Registreerimisvorm
+template	Contact details, choices and a signature	Kontaktandmed, valikud ja allkiri
+template	Timesheet	Tunniaruanne
+template	A week of hours, day by day	Nädal tunde, päev päeva haaval
+template	Expense report	Kuluaruanne
+template	Itemised expenses with a total to approve	Üksikud kulud kinnitamisele minevate kogusummaga
+template	Résumé	CV
+template	A calm two-column page about you	Rahulik kahe veeruga leht sinust
+template	Weekly planner	Nädalaplaneerija
+template	Seven days and a space for what matters	Seitse päeva ja ruumi olulisele
+template	Checklist	Kontrollnimekiri
+template	Tick things off, with room for notes	Märgi ülesanded tehtuks, märkmete jaoks on ruumi
+template	Study notes	Õppemärkmed
+template	Cues, notes and a summary, in three zones	Märksõnad, märkmed ja kokkuvõte kolmes alas
+template	Certificate	Tunnistus
+template	A landscape page to recognise an achievement	Rõhtleht saavutuse tunnustamiseks

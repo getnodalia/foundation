@@ -4188,3 +4188,34 @@ document scrollbar width	Wide	Larga
 	−LOC	−LOC
 	This document's script is asking	O script deste documento está perguntando
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Esta solicitação vem do documento, não do Papel. Digite uma senha somente se você confiar neste documento.
+template	Start from a template	Começar por um modelo
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Páginas tranquilas e prontas para preencher na hora. Cada uma é um PDF comum com campos de formulário reais.
+template	Business	Negócios
+template	Forms	Formulários
+template	Personal	Pessoal
+template	Invoice	Fatura
+template	Itemised, with totals and payment notes	Com itens, totais e observações de pagamento
+template	Quote	Orçamento
+template	An offer with terms and a place to accept it	Uma proposta com condições e um lugar para aceitá-la
+template	Receipt	Recibo
+template	Proof of payment, with the way it was paid	Comprovante de pagamento, com a forma de pagamento
+template	Letter	Carta
+template	A clean letterhead and a page to write on	Um papel timbrado limpo e uma página para escrever
+template	Meeting minutes	Ata de reunião
+template	Attendees, decisions and who does what by when	Participantes, decisões e quem faz o quê até quando
+template	Registration form	Formulário de inscrição
+template	Contact details, choices and a signature	Dados de contato, opções e assinatura
+template	Timesheet	Folha de horas
+template	A week of hours, day by day	Uma semana de horas, dia a dia
+template	Expense report	Relatório de despesas
+template	Itemised expenses with a total to approve	Despesas detalhadas com um total para aprovar
+template	Résumé	Currículo
+template	A calm two-column page about you	Uma página tranquila em duas colunas sobre você
+template	Weekly planner	Planejador semanal
+template	Seven days and a space for what matters	Sete dias e um espaço para o que importa
+template	Checklist	Lista de tarefas
+template	Tick things off, with room for notes	Marque as tarefas, com espaço para anotações
+template	Study notes	Anotações de estudo
+template	Cues, notes and a summary, in three zones	Palavras-chave, anotações e resumo, em três áreas
+template	Certificate	Certificado
+template	A landscape page to recognise an achievement	Uma página em paisagem para reconhecer uma conquista

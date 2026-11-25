@@ -3651,3 +3651,34 @@ document scrollbar width	Wide	Кең
 	This document's script is asking	Осы құжаттың скрипті сұрап тұр
 	Document: {name}	Құжат: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Бұл сұрау Papel-тан емес, құжаттан келді. Құпиясөзді осы құжатқа сенсеңіз ғана енгізіңіз.
+template	Start from a template	Үлгіден бастаңыз
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Бірден толтыруға болатын тыныш, дайын беттер. Әрқайсысы нақты форма өрістері бар қарапайым PDF.
+template	Business	Бизнес
+template	Forms	Пішіндер
+template	Personal	Жеке
+template	Invoice	Шот-фактура
+template	Itemised, with totals and payment notes	Жолдары бойынша, қорытындылар мен төлем ескертпелерімен
+template	Quote	Баға ұсынысы
+template	An offer with terms and a place to accept it	Шарттары мен келісім беретін орны бар ұсыныс
+template	Receipt	Түбіртек
+template	Proof of payment, with the way it was paid	Төлем тәсілі көрсетілген төлем растамасы
+template	Letter	Хат
+template	A clean letterhead and a page to write on	Таза бланк және жазуға арналған бет
+template	Meeting minutes	Жиын хаттамасы
+template	Attendees, decisions and who does what by when	Қатысушылар, шешімдер және кім неге дейін не істейді
+template	Registration form	Тіркеу пішіні
+template	Contact details, choices and a signature	Байланыс деректері, таңдаулар және қол
+template	Timesheet	Уақыт табелі
+template	A week of hours, day by day	Бір апталық сағаттар, күн сайын
+template	Expense report	Шығыстар есебі
+template	Itemised expenses with a total to approve	Бекітуге арналған қорытындысы бар егжей-тегжейлі шығыстар
+template	Résumé	Түйіндеме
+template	A calm two-column page about you	Сіз туралы екі бағанды тыныш бет
+template	Weekly planner	Апталық жоспарлағыш
+template	Seven days and a space for what matters	Жеті күн және маңыздыға арналған орын
+template	Checklist	Тексеру тізімі
+template	Tick things off, with room for notes	Тапсырмаларды белгілеңіз, жазбаларға орын бар
+template	Study notes	Оқу жазбалары
+template	Cues, notes and a summary, in three zones	Негізгі сөздер, жазбалар және қорытынды, үш аймақта
+template	Certificate	Сертификат
+template	A landscape page to recognise an achievement	Жетістікті мойындауға арналған көлденең бет

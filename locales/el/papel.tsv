@@ -3540,3 +3540,34 @@ document scrollbar width	Wide	Πλατύ
 	This document's script is asking	Το σενάριο αυτού του εγγράφου ρωτά
 	Document: {name}	Έγγραφο: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Αυτό το αίτημα προέρχεται από το έγγραφο, όχι από το Papel. Εισαγάγετε κωδικό πρόσβασης μόνο αν εμπιστεύεστε αυτό το έγγραφο.
+template	Start from a template	Ξεκινήστε από ένα πρότυπο
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Ήρεμες, έτοιμες σελίδες που μπορείτε να συμπληρώσετε αμέσως. Η καθεμία είναι ένα κανονικό PDF με πραγματικά πεδία φόρμας.
+template	Business	Επιχείρηση
+template	Forms	Φόρμες
+template	Personal	Προσωπικά
+template	Invoice	Τιμολόγιο
+template	Itemised, with totals and payment notes	Αναλυτικό, με σύνολα και σημειώσεις πληρωμής
+template	Quote	Προσφορά
+template	An offer with terms and a place to accept it	Μια προσφορά με όρους και χώρο αποδοχής
+template	Receipt	Απόδειξη
+template	Proof of payment, with the way it was paid	Απόδειξη πληρωμής, με τον τρόπο πληρωμής
+template	Letter	Επιστολή
+template	A clean letterhead and a page to write on	Μια καθαρή επικεφαλίδα και μια σελίδα για γράψιμο
+template	Meeting minutes	Πρακτικά συνάντησης
+template	Attendees, decisions and who does what by when	Συμμετέχοντες, αποφάσεις και ποιος κάνει τι και μέχρι πότε
+template	Registration form	Φόρμα εγγραφής
+template	Contact details, choices and a signature	Στοιχεία επικοινωνίας, επιλογές και υπογραφή
+template	Timesheet	Φύλλο ωρών
+template	A week of hours, day by day	Μια εβδομάδα ωρών, μέρα με τη μέρα
+template	Expense report	Έκθεση εξόδων
+template	Itemised expenses with a total to approve	Αναλυτικά έξοδα με σύνολο προς έγκριση
+template	Résumé	Βιογραφικό
+template	A calm two-column page about you	Μια ήρεμη σελίδα δύο στηλών για εσάς
+template	Weekly planner	Εβδομαδιαίος προγραμματιστής
+template	Seven days and a space for what matters	Επτά ημέρες και χώρος για ό,τι μετράει
+template	Checklist	Λίστα ελέγχου
+template	Tick things off, with room for notes	Τσεκάρετε εργασίες, με χώρο για σημειώσεις
+template	Study notes	Σημειώσεις μελέτης
+template	Cues, notes and a summary, in three zones	Λέξεις-κλειδιά, σημειώσεις και περίληψη, σε τρεις ζώνες
+template	Certificate	Πιστοποιητικό
+template	A landscape page to recognise an achievement	Μια οριζόντια σελίδα για την αναγνώριση ενός επιτεύγματος

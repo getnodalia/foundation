@@ -3494,3 +3494,34 @@ signature pad	Type	Shkruaj
 	This document's script is asking	Skripti i këtij dokumenti po pyet
 	Document: {name}	Dokumenti: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Kjo kërkesë vjen nga dokumenti, jo nga Papel. Futni një fjalëkalim vetëm nëse i besoni këtij dokumenti.
+template	Start from a template	Filloni nga një shabllon
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Faqe të qeta e të gatshme që mund t’i plotësoni menjëherë. Secila është një PDF e zakonshme me fusha formulari të vërteta.
+template	Business	Biznes
+template	Forms	Formularë
+template	Personal	Personal
+template	Invoice	Faturë
+template	Itemised, with totals and payment notes	Me zëra, me totale dhe shënime pagese
+template	Quote	Ofertë
+template	An offer with terms and a place to accept it	Një ofertë me kushte dhe vend për ta pranuar
+template	Receipt	Faturë pagese
+template	Proof of payment, with the way it was paid	Provë pagese, me mënyrën e pagesës
+template	Letter	Letër
+template	A clean letterhead and a page to write on	Një kokë e pastër letre dhe një faqe për të shkruar
+template	Meeting minutes	Procesverbal mbledhjeje
+template	Attendees, decisions and who does what by when	Të pranishmit, vendimet dhe kush çfarë bën deri kur
+template	Registration form	Formular regjistrimi
+template	Contact details, choices and a signature	Të dhëna kontakti, zgjedhje dhe firmë
+template	Timesheet	Fletë orësh
+template	A week of hours, day by day	Një javë orësh, ditë pas dite
+template	Expense report	Raport shpenzimesh
+template	Itemised expenses with a total to approve	Shpenzime të detajuara me një total për miratim
+template	Résumé	CV
+template	A calm two-column page about you	Një faqe e qetë me dy kolona për ju
+template	Weekly planner	Planifikues javor
+template	Seven days and a space for what matters	Shtatë ditë dhe hapësirë për atë që ka rëndësi
+template	Checklist	Listë kontrolli
+template	Tick things off, with room for notes	Shënoni detyrat, me vend për shënime
+template	Study notes	Shënime studimi
+template	Cues, notes and a summary, in three zones	Fjalë kyçe, shënime dhe përmbledhje, në tri zona
+template	Certificate	Çertifikatë
+template	A landscape page to recognise an achievement	Një faqe horizontale për të njohur një arritje

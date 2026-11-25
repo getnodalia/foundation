@@ -2912,3 +2912,34 @@ calendar weekday	We	بد
 	This document's script is asking	اس دستاویز کا اسکرپٹ پوچھ رہا ہے
 	Document: {name}	دستاویز: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	یہ درخواست دستاویز کی طرف سے ہے، Papel کی طرف سے نہیں۔ پاس ورڈ صرف تب درج کریں جب آپ کو اس دستاویز پر بھروسہ ہو۔
+template	Start from a template	ٹیمپلیٹ سے شروع کریں
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	پرسکون، تیار صفحات جنہیں آپ فوراً بھر سکتے ہیں۔ ہر ایک اصل فارم فیلڈز والی عام PDF ہے۔
+template	Business	کاروبار
+template	Forms	فارم
+template	Personal	ذاتی
+template	Invoice	انوائس
+template	Itemised, with totals and payment notes	مدوار، کل رقم اور ادائیگی کے نوٹس کے ساتھ
+template	Quote	کوٹیشن
+template	An offer with terms and a place to accept it	شرائط اور منظوری کی جگہ کے ساتھ ایک پیشکش
+template	Receipt	رسید
+template	Proof of payment, with the way it was paid	ادائیگی کے طریقے کے ساتھ ادائیگی کا ثبوت
+template	Letter	خط
+template	A clean letterhead and a page to write on	صاف لیٹر ہیڈ اور لکھنے کے لیے ایک صفحہ
+template	Meeting minutes	اجلاس کی کارروائی
+template	Attendees, decisions and who does what by when	حاضرین، فیصلے اور کون کیا کب تک کرے گا
+template	Registration form	رجسٹریشن فارم
+template	Contact details, choices and a signature	رابطے کی تفصیلات، انتخابات اور دستخط
+template	Timesheet	ٹائم شیٹ
+template	A week of hours, day by day	ایک ہفتے کے گھنٹے، دن بہ دن
+template	Expense report	اخراجات کی رپورٹ
+template	Itemised expenses with a total to approve	منظوری کے لیے کل رقم کے ساتھ مدوار اخراجات
+template	Résumé	سی وی
+template	A calm two-column page about you	آپ کے بارے میں دو کالموں والا ایک پرسکون صفحہ
+template	Weekly planner	ہفتہ وار منصوبہ ساز
+template	Seven days and a space for what matters	سات دن اور اہم باتوں کے لیے جگہ
+template	Checklist	چیک لسٹ
+template	Tick things off, with room for notes	کاموں پر نشان لگائیں، نوٹس کے لیے جگہ کے ساتھ
+template	Study notes	مطالعے کے نوٹس
+template	Cues, notes and a summary, in three zones	کلیدی الفاظ، نوٹس اور خلاصہ، تین حصوں میں
+template	Certificate	سرٹیفکیٹ
+template	A landscape page to recognise an achievement	کسی کامیابی کے اعتراف کے لیے ایک افقی صفحہ

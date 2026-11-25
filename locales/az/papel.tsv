@@ -1,0 +1,44 @@
+# Azərbaycan (az) interface catalog for Papel.
+# Columns, separated by a TAB:  context <TAB> English source text <TAB> translation
+#   context  usually empty. `@plural`, `@id` and `@msg` mean something to the apps; any other
+#            word is a label that tells apart two meanings of the same English.
+#   escapes  \n  \t  \\  inside a column. `{name}` placeholders must appear in both columns (in any
+#            order), and a trailing "…" in one needs one in the other.
+#   @plural  English `one|other`; the translation lists this language's plural forms, `|`-separated.
+#   Lines starting with # and blank lines are ignored. A missing entry shows in English.
+#
+# Clean room: every entry was written from the plain meaning of the English text in ordinary
+# computing vocabulary. No other product's localisation, string table or translated UI was
+# consulted or copied; add entries the same way.
+
+template	Start from a template	Şablonla başlayın
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Dərhal doldura biləcəyiniz sakit, hazır səhifələr. Hər biri real forma sahələri olan adi PDF-dir.
+template	Business	Biznes
+template	Forms	Formalar
+template	Personal	Şəxsi
+template	Invoice	Qaimə-faktura
+template	Itemised, with totals and payment notes	Bənd-bənd, yekunlar və ödəniş qeydləri ilə
+template	Quote	Qiymət təklifi
+template	An offer with terms and a place to accept it	Şərtləri və qəbul üçün yeri olan təklif
+template	Receipt	Qəbz
+template	Proof of payment, with the way it was paid	Ödəniş üsulu ilə ödəniş sübutu
+template	Letter	Məktub
+template	A clean letterhead and a page to write on	Təmiz məktub başlığı və yazmaq üçün səhifə
+template	Meeting minutes	Görüş protokolu
+template	Attendees, decisions and who does what by when	İştirakçılar, qərarlar və kimin nəyi nə vaxta qədər edəcəyi
+template	Registration form	Qeydiyyat forması
+template	Contact details, choices and a signature	Əlaqə məlumatları, seçimlər və imza
+template	Timesheet	Vaxt cədvəli
+template	A week of hours, day by day	Bir həftənin saatları, gündən günə
+template	Expense report	Xərc hesabatı
+template	Itemised expenses with a total to approve	Təsdiq üçün yekunu olan ətraflı xərclər
+template	Résumé	Rezyume
+template	A calm two-column page about you	Sizin haqqınızda sakit iki sütunlu səhifə
+template	Weekly planner	Həftəlik planlaşdırıcı
+template	Seven days and a space for what matters	Yeddi gün və vacib olanlar üçün yer
+template	Checklist	Yoxlama siyahısı
+template	Tick things off, with room for notes	Tapşırıqları işarələyin, qeydlər üçün yerlə
+template	Study notes	Dərs qeydləri
+template	Cues, notes and a summary, in three zones	Açar sözlər, qeydlər və xülasə, üç zonada
+template	Certificate	Sertifikat
+template	A landscape page to recognise an achievement	Nailiyyəti qiymətləndirmək üçün üfüqi səhifə

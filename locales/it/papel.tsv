@@ -3831,3 +3831,34 @@ document scrollbar width	Wide	Larga
 	This document's script is asking	Lo script di questo documento chiede
 	Document: {name}	Documento: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Questa richiesta proviene dal documento, non da Papel. Inserisci una password solo se ti fidi di questo documento.
+template	Start from a template	Parti da un modello
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Pagine sobrie e pronte da compilare subito. Ognuna è un normale PDF con veri campi modulo.
+template	Business	Lavoro
+template	Forms	Moduli
+template	Personal	Personale
+template	Invoice	Fattura
+template	Itemised, with totals and payment notes	Con voci, totali e note di pagamento
+template	Quote	Preventivo
+template	An offer with terms and a place to accept it	Un’offerta con condizioni e uno spazio per accettarla
+template	Receipt	Ricevuta
+template	Proof of payment, with the way it was paid	Prova di pagamento, con il metodo usato
+template	Letter	Lettera
+template	A clean letterhead and a page to write on	Un’intestazione pulita e una pagina su cui scrivere
+template	Meeting minutes	Verbale di riunione
+template	Attendees, decisions and who does what by when	Partecipanti, decisioni e chi fa cosa entro quando
+template	Registration form	Modulo di iscrizione
+template	Contact details, choices and a signature	Recapiti, scelte e firma
+template	Timesheet	Foglio ore
+template	A week of hours, day by day	Una settimana di ore, giorno per giorno
+template	Expense report	Nota spese
+template	Itemised expenses with a total to approve	Spese dettagliate con un totale da approvare
+template	Résumé	Curriculum
+template	A calm two-column page about you	Una pagina sobria a due colonne su di te
+template	Weekly planner	Agenda settimanale
+template	Seven days and a space for what matters	Sette giorni e uno spazio per ciò che conta
+template	Checklist	Lista di controllo
+template	Tick things off, with room for notes	Spunta le attività, con spazio per le note
+template	Study notes	Appunti di studio
+template	Cues, notes and a summary, in three zones	Parole chiave, appunti e riepilogo, in tre zone
+template	Certificate	Attestato
+template	A landscape page to recognise an achievement	Una pagina orizzontale per riconoscere un traguardo

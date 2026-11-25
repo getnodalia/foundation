@@ -4163,3 +4163,34 @@ document scrollbar width	Wide	Platus
 	−LOC	−Eil.
 	This document's script is asking	Šio dokumento scenarijus klausia
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Ši užklausa gauta iš dokumento, o ne iš Papel. Slaptažodį įveskite tik tada, jei pasitikite šiuo dokumentu.
+template	Start from a template	Pradėkite nuo šablono
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Ramūs, paruošti lapai, kuriuos galite iš karto užpildyti. Kiekvienas yra paprastas PDF su tikrais formos laukais.
+template	Business	Verslas
+template	Forms	Formos
+template	Personal	Asmeninis
+template	Invoice	Sąskaita faktūra
+template	Itemised, with totals and payment notes	Pagal eilutes, su sumomis ir pastabomis apie mokėjimą
+template	Quote	Pasiūlymas
+template	An offer with terms and a place to accept it	Pasiūlymas su sąlygomis ir vieta jam priimti
+template	Receipt	Kvitas
+template	Proof of payment, with the way it was paid	Mokėjimo įrodymas su mokėjimo būdu
+template	Letter	Laiškas
+template	A clean letterhead and a page to write on	Švari antraštė ir lapas rašyti
+template	Meeting minutes	Posėdžio protokolas
+template	Attendees, decisions and who does what by when	Dalyviai, sprendimai ir kas ką iki kada daro
+template	Registration form	Registracijos forma
+template	Contact details, choices and a signature	Kontaktiniai duomenys, pasirinkimai ir parašas
+template	Timesheet	Darbo laiko apskaita
+template	A week of hours, day by day	Savaitė valandų, diena po dienos
+template	Expense report	Išlaidų ataskaita
+template	Itemised expenses with a total to approve	Išsamios išlaidos su patvirtintina bendra suma
+template	Résumé	Gyvenimo aprašymas
+template	A calm two-column page about you	Rami dviejų stulpelių pusė apie jus
+template	Weekly planner	Savaitės planuoklis
+template	Seven days and a space for what matters	Septynios dienos ir vietos svarbiam
+template	Checklist	Kontrolinis sąrašas
+template	Tick things off, with room for notes	Pažymėkite užduotis, yra vietos užrašams
+template	Study notes	Mokymosi užrašai
+template	Cues, notes and a summary, in three zones	Raktažodžiai, užrašai ir santrauka trijose zonose
+template	Certificate	Sertifikatas
+template	A landscape page to recognise an achievement	Gulsčias lapas pasiekimui pripažinti

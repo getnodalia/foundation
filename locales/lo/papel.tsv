@@ -3036,3 +3036,34 @@ signature pad	Type	ພິມ
 	This document's script is asking	ສະຄຣິບຂອງເອກະສານນີ້ກຳລັງຖາມ
 	Document: {name}	ເອກະສານ: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	ຄຳຂໍນີ້ມາຈາກເອກະສານ, ບໍ່ແມ່ນຈາກ Papel. ໃສ່ລະຫັດຜ່ານສະເພາະເມື່ອທ່ານໄວ້ວາງໃຈເອກະສານນີ້ເທົ່ານັ້ນ.
+template	Start from a template	ເລີ່ມຈາກແມ່ແບບ
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	ໜ້າສຳເລັດຮູບທີ່ສະຫງົບ ແລະ ຕື່ມໄດ້ທັນທີ. ແຕ່ລະໜ້າເປັນ PDF ທຳມະດາທີ່ມີຊ່ອງແບບຟອມຈິງ.
+template	Business	ທຸລະກິດ
+template	Forms	ແບບຟອມ
+template	Personal	ສ່ວນຕົວ
+template	Invoice	ໃບແຈ້ງໜີ້
+template	Itemised, with totals and payment notes	ແຍກລາຍການ ພ້ອມຍອດລວມ ແລະ ໝາຍເຫດການຊຳລະ
+template	Quote	ໃບສະເໜີລາຄາ
+template	An offer with terms and a place to accept it	ຂໍ້ສະເໜີພ້ອມເງື່ອນໄຂ ແລະ ບ່ອນຍອມຮັບ
+template	Receipt	ໃບຮັບເງິນ
+template	Proof of payment, with the way it was paid	ຫຼັກຖານການຊຳລະພ້ອມວິທີຊຳລະ
+template	Letter	ຈົດໝາຍ
+template	A clean letterhead and a page to write on	ຫົວຈົດໝາຍທີ່ສະອາດ ແລະ ໜ້າສຳລັບຂຽນ
+template	Meeting minutes	ບົດບັນທຶກກອງປະຊຸມ
+template	Attendees, decisions and who does what by when	ຜູ້ເຂົ້າຮ່ວມ ມະຕິ ແລະ ໃຜເຮັດຫຍັງພາຍໃນເວລາໃດ
+template	Registration form	ແບບຟອມລົງທະບຽນ
+template	Contact details, choices and a signature	ຂໍ້ມູນຕິດຕໍ່ ຕົວເລືອກ ແລະ ລາຍເຊັນ
+template	Timesheet	ໃບບັນທຶກເວລາ
+template	A week of hours, day by day	ຊົ່ວໂມງໜຶ່ງອາທິດ ມື້ຕໍ່ມື້
+template	Expense report	ລາຍງານຄ່າໃຊ້ຈ່າຍ
+template	Itemised expenses with a total to approve	ຄ່າໃຊ້ຈ່າຍແຍກລາຍການພ້ອມຍອດລວມເພື່ອອະນຸມັດ
+template	Résumé	ຊີວະປະຫວັດ
+template	A calm two-column page about you	ໜ້າສອງຖັນທີ່ສະຫງົບກ່ຽວກັບທ່ານ
+template	Weekly planner	ແຜນປະຈຳອາທິດ
+template	Seven days and a space for what matters	ເຈັດມື້ ແລະ ບ່ອນສຳລັບສິ່ງສຳຄັນ
+template	Checklist	ລາຍການກວດສອບ
+template	Tick things off, with room for notes	ຕິກວຽກທີ່ເຮັດແລ້ວ ພ້ອມບ່ອນສຳລັບບັນທຶກ
+template	Study notes	ບັນທຶກການຮຽນ
+template	Cues, notes and a summary, in three zones	ຄຳສຳຄັນ ບັນທຶກ ແລະ ສະຫຼຸບ ໃນສາມສ່ວນ
+template	Certificate	ໃບຢັ້ງຢືນ
+template	A landscape page to recognise an achievement	ໜ້າແນວນອນເພື່ອຍົກຍ້ອງຜົນສຳເລັດ

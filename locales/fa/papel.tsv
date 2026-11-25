@@ -2751,3 +2751,34 @@ calendar weekday	We	چه
 	This document's script is asking	اسکریپت این سند می‌پرسد
 	Document: {name}	سند: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	این درخواست از سند است، نه از Papel. فقط در صورتی گذرواژه وارد کنید که به این سند اعتماد دارید.
+template	Start from a template	شروع از یک الگو
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	صفحه‌های آرام و آماده که می‌توانید فوراً پر کنید. هر کدام یک پی‌دی‌اف معمولی با فیلدهای فرم واقعی است.
+template	Business	کسب‌وکار
+template	Forms	فرم‌ها
+template	Personal	شخصی
+template	Invoice	فاکتور
+template	Itemised, with totals and payment notes	ردیف‌به‌ردیف، با جمع‌ها و یادداشت‌های پرداخت
+template	Quote	پیش‌فاکتور
+template	An offer with terms and a place to accept it	پیشنهادی با شرایط و جایی برای پذیرش آن
+template	Receipt	رسید
+template	Proof of payment, with the way it was paid	مدرک پرداخت همراه با روش پرداخت
+template	Letter	نامه
+template	A clean letterhead and a page to write on	سربرگی تمیز و صفحه‌ای برای نوشتن
+template	Meeting minutes	صورت‌جلسه
+template	Attendees, decisions and who does what by when	حاضران، تصمیم‌ها و اینکه چه کسی چه کاری را تا چه زمانی انجام می‌دهد
+template	Registration form	فرم ثبت‌نام
+template	Contact details, choices and a signature	اطلاعات تماس، گزینه‌ها و امضا
+template	Timesheet	برگه ساعت کار
+template	A week of hours, day by day	یک هفته ساعت، روز به روز
+template	Expense report	گزارش هزینه‌ها
+template	Itemised expenses with a total to approve	هزینه‌های جزئی با جمع کل برای تأیید
+template	Résumé	رزومه
+template	A calm two-column page about you	صفحه‌ای آرام با دو ستون درباره شما
+template	Weekly planner	برنامه‌ریز هفتگی
+template	Seven days and a space for what matters	هفت روز و جایی برای مهم‌ترین چیزها
+template	Checklist	فهرست بازبینی
+template	Tick things off, with room for notes	کارها را علامت بزنید، با جا برای یادداشت
+template	Study notes	یادداشت‌های مطالعه
+template	Cues, notes and a summary, in three zones	کلیدواژه‌ها، یادداشت‌ها و خلاصه در سه ناحیه
+template	Certificate	گواهی
+template	A landscape page to recognise an achievement	صفحه‌ای افقی برای قدردانی از یک دستاورد

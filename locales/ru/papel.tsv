@@ -4064,3 +4064,34 @@ document scrollbar width	Wide	Широкая
 	This document's script is asking	Скрипт этого документа спрашивает
 	Document: {name}	Документ: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Этот запрос исходит от документа, а не от Papel. Вводите пароль, только если доверяете этому документу.
+template	Start from a template	Начать с шаблона
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Спокойные готовые страницы, которые можно заполнить сразу. Каждая — обычный PDF с настоящими полями формы.
+template	Business	Бизнес
+template	Forms	Формы
+template	Personal	Личное
+template	Invoice	Счёт
+template	Itemised, with totals and payment notes	Постатейно, с итогами и заметками об оплате
+template	Quote	Коммерческое предложение
+template	An offer with terms and a place to accept it	Предложение с условиями и местом для согласия
+template	Receipt	Квитанция
+template	Proof of payment, with the way it was paid	Подтверждение оплаты со способом платежа
+template	Letter	Письмо
+template	A clean letterhead and a page to write on	Чистый бланк и страница для письма
+template	Meeting minutes	Протокол встречи
+template	Attendees, decisions and who does what by when	Участники, решения и кто что делает к какому сроку
+template	Registration form	Регистрационная форма
+template	Contact details, choices and a signature	Контактные данные, выбор и подпись
+template	Timesheet	Табель учёта времени
+template	A week of hours, day by day	Неделя часов, день за днём
+template	Expense report	Отчёт о расходах
+template	Itemised expenses with a total to approve	Подробные расходы с итогом на утверждение
+template	Résumé	Резюме
+template	A calm two-column page about you	Спокойная страница в две колонки о вас
+template	Weekly planner	Планировщик недели
+template	Seven days and a space for what matters	Семь дней и место для самого важного
+template	Checklist	Чек-лист
+template	Tick things off, with room for notes	Отмечайте задачи, есть место для заметок
+template	Study notes	Конспект
+template	Cues, notes and a summary, in three zones	Ключевые слова, заметки и резюме в трёх зонах
+template	Certificate	Сертификат
+template	A landscape page to recognise an achievement	Альбомная страница для признания достижения

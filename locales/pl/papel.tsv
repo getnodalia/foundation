@@ -3876,3 +3876,34 @@ document scrollbar width	Wide	Szeroki
 	This document's script is asking	Skrypt tego dokumentu pyta
 	Document: {name}	Dokument: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	To żądanie pochodzi z dokumentu, a nie z Papel. Wpisz hasło tylko wtedy, gdy ufasz temu dokumentowi.
+template	Start from a template	Zacznij od szablonu
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Spokojne, gotowe strony do natychmiastowego wypełnienia. Każda to zwykły plik PDF z prawdziwymi polami formularza.
+template	Business	Biznes
+template	Forms	Formularze
+template	Personal	Osobiste
+template	Invoice	Faktura
+template	Itemised, with totals and payment notes	Z pozycjami, sumami i uwagami o płatności
+template	Quote	Oferta
+template	An offer with terms and a place to accept it	Oferta z warunkami i miejscem na jej przyjęcie
+template	Receipt	Pokwitowanie
+template	Proof of payment, with the way it was paid	Potwierdzenie zapłaty wraz ze sposobem płatności
+template	Letter	List
+template	A clean letterhead and a page to write on	Czysty nagłówek i strona do pisania
+template	Meeting minutes	Protokół ze spotkania
+template	Attendees, decisions and who does what by when	Uczestnicy, decyzje oraz kto co robi i do kiedy
+template	Registration form	Formularz zgłoszeniowy
+template	Contact details, choices and a signature	Dane kontaktowe, wybory i podpis
+template	Timesheet	Karta czasu pracy
+template	A week of hours, day by day	Tydzień godzin, dzień po dniu
+template	Expense report	Rozliczenie wydatków
+template	Itemised expenses with a total to approve	Szczegółowe wydatki z sumą do zatwierdzenia
+template	Résumé	Życiorys
+template	A calm two-column page about you	Spokojna strona w dwóch kolumnach o Tobie
+template	Weekly planner	Plan tygodnia
+template	Seven days and a space for what matters	Siedem dni i miejsce na to, co ważne
+template	Checklist	Lista kontrolna
+template	Tick things off, with room for notes	Odhaczaj zadania, z miejscem na notatki
+template	Study notes	Notatki do nauki
+template	Cues, notes and a summary, in three zones	Hasła, notatki i podsumowanie w trzech strefach
+template	Certificate	Dyplom
+template	A landscape page to recognise an achievement	Strona pozioma do uhonorowania osiągnięcia

@@ -2425,3 +2425,34 @@ calendar weekday	We	on
 	This document's script is asking	Det här dokumentets skript frågar
 	Document: {name}	Dokument: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Den här begäran kommer från dokumentet, inte från Papel. Ange bara ett lösenord om du litar på det här dokumentet.
+template	Start from a template	Börja från en mall
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Lugna, färdiga sidor som du kan fylla i direkt. Varje sida är en vanlig pdf med riktiga formulärfält.
+template	Business	Företag
+template	Forms	Formulär
+template	Personal	Privat
+template	Invoice	Faktura
+template	Itemised, with totals and payment notes	Med poster, summor och betalningsanteckningar
+template	Quote	Offert
+template	An offer with terms and a place to accept it	Ett erbjudande med villkor och plats att godkänna det
+template	Receipt	Kvitto
+template	Proof of payment, with the way it was paid	Betalningsbevis med betalsätt
+template	Letter	Brev
+template	A clean letterhead and a page to write on	Ett rent brevhuvud och en sida att skriva på
+template	Meeting minutes	Mötesprotokoll
+template	Attendees, decisions and who does what by when	Deltagare, beslut och vem som gör vad till när
+template	Registration form	Anmälningsformulär
+template	Contact details, choices and a signature	Kontaktuppgifter, val och underskrift
+template	Timesheet	Tidrapport
+template	A week of hours, day by day	En vecka med timmar, dag för dag
+template	Expense report	Utläggsrapport
+template	Itemised expenses with a total to approve	Specificerade utlägg med en summa att godkänna
+template	Résumé	CV
+template	A calm two-column page about you	En lugn sida i två spalter om dig
+template	Weekly planner	Veckoplanerare
+template	Seven days and a space for what matters	Sju dagar och plats för det som är viktigt
+template	Checklist	Checklista
+template	Tick things off, with room for notes	Bocka av uppgifter, med plats för anteckningar
+template	Study notes	Studieanteckningar
+template	Cues, notes and a summary, in three zones	Nyckelord, anteckningar och sammanfattning i tre zoner
+template	Certificate	Certifikat
+template	A landscape page to recognise an achievement	En liggande sida för att uppmärksamma en prestation

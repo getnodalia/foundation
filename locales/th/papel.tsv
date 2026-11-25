@@ -3314,3 +3314,34 @@ calendar weekday	We	พ
 	This document's script is asking	สคริปต์ของเอกสารนี้กำลังถาม
 	Document: {name}	เอกสาร: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	คำขอนี้มาจากเอกสาร ไม่ใช่จาก Papel ป้อนรหัสผ่านเฉพาะเมื่อคุณเชื่อถือเอกสารนี้เท่านั้น
+template	Start from a template	เริ่มจากแม่แบบ
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	หน้าสำเร็จรูปที่เรียบง่ายและกรอกได้ทันที แต่ละหน้าเป็น PDF ธรรมดาที่มีช่องฟอร์มจริง
+template	Business	ธุรกิจ
+template	Forms	แบบฟอร์ม
+template	Personal	ส่วนตัว
+template	Invoice	ใบแจ้งหนี้
+template	Itemised, with totals and payment notes	แยกรายการ พร้อมยอดรวมและหมายเหตุการชำระเงิน
+template	Quote	ใบเสนอราคา
+template	An offer with terms and a place to accept it	ข้อเสนอพร้อมเงื่อนไขและที่สำหรับยอมรับ
+template	Receipt	ใบเสร็จรับเงิน
+template	Proof of payment, with the way it was paid	หลักฐานการชำระเงินพร้อมวิธีที่ชำระ
+template	Letter	จดหมาย
+template	A clean letterhead and a page to write on	หัวจดหมายที่สะอาดตาและหน้าสำหรับเขียน
+template	Meeting minutes	รายงานการประชุม
+template	Attendees, decisions and who does what by when	ผู้เข้าร่วม มติ และใครทำอะไรภายในเมื่อใด
+template	Registration form	แบบฟอร์มลงทะเบียน
+template	Contact details, choices and a signature	ข้อมูลติดต่อ ตัวเลือก และลายเซ็น
+template	Timesheet	ใบบันทึกเวลา
+template	A week of hours, day by day	หนึ่งสัปดาห์ของชั่วโมงทำงาน วันต่อวัน
+template	Expense report	รายงานค่าใช้จ่าย
+template	Itemised expenses with a total to approve	ค่าใช้จ่ายแยกรายการพร้อมยอดรวมเพื่ออนุมัติ
+template	Résumé	เรซูเม่
+template	A calm two-column page about you	หน้าสองคอลัมน์ที่เรียบง่ายเกี่ยวกับคุณ
+template	Weekly planner	แผนรายสัปดาห์
+template	Seven days and a space for what matters	เจ็ดวันและพื้นที่สำหรับสิ่งสำคัญ
+template	Checklist	รายการตรวจสอบ
+template	Tick things off, with room for notes	ติ๊กงานที่ทำแล้ว พร้อมที่ว่างสำหรับโน้ต
+template	Study notes	โน้ตการเรียน
+template	Cues, notes and a summary, in three zones	คำสำคัญ โน้ต และสรุป ในสามส่วน
+template	Certificate	ใบประกาศนียบัตร
+template	A landscape page to recognise an achievement	หน้าแนวนอนเพื่อยกย่องความสำเร็จ

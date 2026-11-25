@@ -1,0 +1,45 @@
+# Slovenčina (sk) interface catalog for Papel.
+# Columns, separated by a TAB:  context <TAB> English source text <TAB> translation
+#   context  usually empty. `@plural`, `@id` and `@msg` mean something to the apps; any other
+#            word is a label that tells apart two meanings of the same English.
+#   escapes  \n  \t  \\  inside a column. `{name}` placeholders must appear in both columns (in any
+#            order), and a trailing "…" in one needs one in the other.
+#   @plural  English `one|other`; the translation lists this language's plural forms, `|`-separated.
+#   Lines starting with # and blank lines are ignored. A missing entry shows in English.
+#
+# Clean room: every entry was written from the plain meaning of the English text in ordinary
+# computing vocabulary. No other product's localisation, string table or translated UI was
+# consulted or copied; add entries the same way.
+
+template	Start from a template	Začnite šablónou
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Pokojné, hotové stránky, ktoré môžete hneď vyplniť. Každá je bežné PDF so skutočnými poľami formulára.
+template	Business	Firma
+template	Forms	Formuláre
+template	Personal	Osobné
+template	Invoice	Faktúra
+template	Itemised, with totals and payment notes	Po položkách, so súčtami a poznámkami k platbe
+template	Quote	Ponuka
+template	An offer with terms and a place to accept it	Ponuka s podmienkami a miestom na jej prijatie
+template	Receipt	Pokladničný doklad
+template	Proof of payment, with the way it was paid	Doklad o platbe so spôsobom úhrady
+template	Letter	List
+template	A clean letterhead and a page to write on	Čistá hlavička a stránka na písanie
+template	Meeting minutes	Zápisnica zo stretnutia
+template	Attendees, decisions and who does what by when	Účastníci, rozhodnutia a kto čo urobí dokedy
+template	Registration form	Prihlasovací formulár
+template	Contact details, choices and a signature	Kontaktné údaje, voľby a podpis
+template	Timesheet	Výkaz hodín
+template	A week of hours, day by day	Týždeň hodín, deň po dni
+template	Expense report	Vyúčtovanie výdavkov
+template	Itemised expenses with a total to approve	Položkové výdavky s celkovou sumou na schválenie
+template	Résumé	Životopis
+template	A calm two-column page about you	Pokojná dvojstĺpcová stránka o vás
+template	Weekly planner	Týždenný plánovač
+template	Seven days and a space for what matters	Sedem dní a miesto pre to dôležité
+template	Checklist	Kontrolný zoznam
+template	Tick things off, with room for notes	Odškrtávajte úlohy, s miestom na poznámky
+template	Study notes	Študijné poznámky
+template	Cues, notes and a summary, in three zones	Kľúčové slová, poznámky a zhrnutie v troch zónach
+template	Certificate	Certifikát
+template	A landscape page to recognise an achievement	Stránka na šírku na ocenenie úspechu
+	Templates	Šablóny

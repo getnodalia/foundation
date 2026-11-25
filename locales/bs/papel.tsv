@@ -2506,3 +2506,34 @@ calendar weekday	We	Sr
 	This document's script is asking	Skripta ovog dokumenta pita
 	Document: {name}	Dokument: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Ovaj zahtjev dolazi iz dokumenta, a ne iz PdfCrafta. Unesite lozinku samo ako vjerujete ovom dokumentu.
+template	Start from a template	Počnite od predloška
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Mirne, gotove stranice koje možete odmah popuniti. Svaka je običan PDF sa stvarnim poljima obrasca.
+template	Business	Posao
+template	Forms	Obrasci
+template	Personal	Lično
+template	Invoice	Faktura
+template	Itemised, with totals and payment notes	Stavka po stavka, s ukupnim iznosima i napomenama o plaćanju
+template	Quote	Ponuda
+template	An offer with terms and a place to accept it	Ponuda s uslovima i mjestom za prihvatanje
+template	Receipt	Priznanica
+template	Proof of payment, with the way it was paid	Dokaz o uplati, s načinom plaćanja
+template	Letter	Pismo
+template	A clean letterhead and a page to write on	Čist zaglavlje i stranica za pisanje
+template	Meeting minutes	Zapisnik sa sastanka
+template	Attendees, decisions and who does what by when	Prisutni, odluke i ko šta radi do kada
+template	Registration form	Prijavni obrazac
+template	Contact details, choices and a signature	Kontakt podaci, izbori i potpis
+template	Timesheet	Evidencija sati
+template	A week of hours, day by day	Sedmica sati, dan po dan
+template	Expense report	Izvještaj o troškovima
+template	Itemised expenses with a total to approve	Detaljni troškovi s ukupnim iznosom za odobrenje
+template	Résumé	Životopis
+template	A calm two-column page about you	Mirna stranica u dvije kolone o vama
+template	Weekly planner	Sedmični planer
+template	Seven days and a space for what matters	Sedam dana i prostor za ono što je važno
+template	Checklist	Kontrolna lista
+template	Tick things off, with room for notes	Označavajte zadatke, uz prostor za bilješke
+template	Study notes	Bilješke za učenje
+template	Cues, notes and a summary, in three zones	Ključne riječi, bilješke i sažetak u tri zone
+template	Certificate	Certifikat
+template	A landscape page to recognise an achievement	Položena stranica za priznanje postignuća
