@@ -2866,3 +2866,34 @@ calendar weekday	We	பு
 	This document's script is asking	இந்த ஆவணத்தின் ஸ்கிரிப்ட் கேட்கிறது
 	Document: {name}	ஆவணம்: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	இந்தக் கோரிக்கை Papel-இலிருந்து அல்ல, ஆவணத்திலிருந்து வருகிறது. இந்த ஆவணத்தை நம்பினால் மட்டுமே கடவுச்சொல்லை உள்ளிடவும்.
+template	Start from a template	வார்ப்புருவிலிருந்து தொடங்குங்கள்
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	அமைதியான, தயாரான பக்கங்கள்; உடனே நிரப்பலாம். ஒவ்வொன்றும் உண்மையான படிவப் புலங்களுடன் கூடிய சாதாரண PDF.
+template	Business	வணிகம்
+template	Forms	படிவங்கள்
+template	Personal	தனிப்பட்டது
+template	Invoice	விலைப்பட்டியல்
+template	Itemised, with totals and payment notes	பொருள்வாரியாக, மொத்தங்களும் கட்டணக் குறிப்புகளுடனும்
+template	Quote	விலைப்புள்ளி
+template	An offer with terms and a place to accept it	நிபந்தனைகளுடனும் ஏற்றுக்கொள்ள இடத்துடனும் ஒரு சலுகை
+template	Receipt	ரசீது
+template	Proof of payment, with the way it was paid	செலுத்திய முறையுடன் கட்டணத்திற்கான சான்று
+template	Letter	கடிதம்
+template	A clean letterhead and a page to write on	தூய்மையான கடிதத்தலைப்பும் எழுத ஒரு பக்கமும்
+template	Meeting minutes	கூட்ட நிகழ்வுக் குறிப்பு
+template	Attendees, decisions and who does what by when	பங்கேற்பாளர்கள், முடிவுகள், யார் எதை எப்போது செய்வார்கள்
+template	Registration form	பதிவுப் படிவம்
+template	Contact details, choices and a signature	தொடர்பு விவரங்கள், தேர்வுகள் மற்றும் கையொப்பம்
+template	Timesheet	நேரத்தாள்
+template	A week of hours, day by day	ஒரு வாரத்தின் மணிநேரங்கள், நாள் வாரியாக
+template	Expense report	செலவு அறிக்கை
+template	Itemised expenses with a total to approve	ஒப்புதலுக்கான மொத்தத்துடன் விவரமான செலவுகள்
+template	Résumé	சுயவிவரம்
+template	A calm two-column page about you	உங்களைப் பற்றிய இரு பத்திகளுடன் ஒரு அமைதியான பக்கம்
+template	Weekly planner	வாராந்திரத் திட்டமிடல்
+template	Seven days and a space for what matters	ஏழு நாட்களும் முக்கியமானவற்றுக்கான இடமும்
+template	Checklist	சரிபார்ப்புப் பட்டியல்
+template	Tick things off, with room for notes	பணிகளைக் குறியிடுங்கள், குறிப்புகளுக்கு இடத்துடன்
+template	Study notes	படிப்புக் குறிப்புகள்
+template	Cues, notes and a summary, in three zones	முக்கிய சொற்கள், குறிப்புகள் மற்றும் சுருக்கம், மூன்று பகுதிகளில்
+template	Certificate	சான்றிதழ்
+template	A landscape page to recognise an achievement	ஒரு சாதனையை அங்கீகரிக்க ஒரு அகலவாட்டுப் பக்கம்

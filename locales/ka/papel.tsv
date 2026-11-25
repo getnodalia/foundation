@@ -2912,3 +2912,34 @@ calendar weekday	We	ოთხ
 	This document's script is asking	ამ დოკუმენტის სკრიპტი გეკითხებათ
 	Document: {name}	დოკუმენტი: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	ეს მოთხოვნა დოკუმენტიდან მოდის და არა Papel-იდან. პაროლი შეიყვანეთ მხოლოდ იმ შემთხვევაში, თუ ამ დოკუმენტს ენდობით.
+template	Start from a template	დაიწყეთ შაბლონით
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	მშვიდი, მზა გვერდები, რომლებიც მაშინვე შეგიძლიათ შეავსოთ. თითოეული ჩვეულებრივი PDF-ია ნამდვილი ფორმის ველებით.
+template	Business	ბიზნესი
+template	Forms	ფორმები
+template	Personal	პირადი
+template	Invoice	ინვოისი
+template	Itemised, with totals and payment notes	პუნქტობრივად, ჯამებითა და გადახდის შენიშვნებით
+template	Quote	შეთავაზება
+template	An offer with terms and a place to accept it	შეთავაზება პირობებითა და დასთანხმების ადგილით
+template	Receipt	ქვითარი
+template	Proof of payment, with the way it was paid	გადახდის დადასტურება გადახდის ხერხით
+template	Letter	წერილი
+template	A clean letterhead and a page to write on	სუფთა ბლანკი და გვერდი წერისთვის
+template	Meeting minutes	შეხვედრის ოქმი
+template	Attendees, decisions and who does what by when	დამსწრეები, გადაწყვეტილებები და ვინ რას აკეთებს როდისთვის
+template	Registration form	რეგისტრაციის ფორმა
+template	Contact details, choices and a signature	საკონტაქტო მონაცემები, არჩევანი და ხელმოწერა
+template	Timesheet	სამუშაო საათების ფურცელი
+template	A week of hours, day by day	კვირის საათები, დღითი დღე
+template	Expense report	ხარჯების ანგარიში
+template	Itemised expenses with a total to approve	დეტალური ხარჯები დასამტკიცებელი ჯამით
+template	Résumé	რეზიუმე
+template	A calm two-column page about you	მშვიდი ორსვეტიანი გვერდი თქვენ შესახებ
+template	Weekly planner	კვირის გეგმა
+template	Seven days and a space for what matters	შვიდი დღე და ადგილი მნიშვნელოვანისთვის
+template	Checklist	საკონტროლო სია
+template	Tick things off, with room for notes	მონიშნეთ დავალებები, შენიშვნებისთვის ადგილით
+template	Study notes	სასწავლო ჩანაწერები
+template	Cues, notes and a summary, in three zones	საკვანძო სიტყვები, ჩანაწერები და შეჯამება სამ ზონაში
+template	Certificate	სერტიფიკატი
+template	A landscape page to recognise an achievement	ჰორიზონტალური გვერდი მიღწევის აღსანიშნავად

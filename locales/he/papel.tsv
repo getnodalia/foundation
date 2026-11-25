@@ -2721,3 +2721,34 @@ calendar weekday	We	ד׳
 	This document's script is asking	הסקריפט של מסמך זה שואל
 	Document: {name}	מסמך: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	בקשה זו מגיעה מהמסמך, לא מ-Papel. הזינו סיסמה רק אם אתם סומכים על מסמך זה.
+template	Start from a template	התחלה מתבנית
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	דפים רגועים ומוכנים שאפשר למלא מיד. כל אחד הוא PDF רגיל עם שדות טופס אמיתיים.
+template	Business	עסקים
+template	Forms	טפסים
+template	Personal	אישי
+template	Invoice	חשבונית
+template	Itemised, with totals and payment notes	מפורטת, עם סכומים והערות תשלום
+template	Quote	הצעת מחיר
+template	An offer with terms and a place to accept it	הצעה עם תנאים ומקום לאישורה
+template	Receipt	קבלה
+template	Proof of payment, with the way it was paid	אישור תשלום עם אופן התשלום
+template	Letter	מכתב
+template	A clean letterhead and a page to write on	כותרת נקייה ודף לכתיבה
+template	Meeting minutes	פרוטוקול ישיבה
+template	Attendees, decisions and who does what by when	משתתפים, החלטות ומי עושה מה ועד מתי
+template	Registration form	טופס הרשמה
+template	Contact details, choices and a signature	פרטי קשר, בחירות וחתימה
+template	Timesheet	דוח שעות
+template	A week of hours, day by day	שבוע של שעות, יום אחר יום
+template	Expense report	דוח הוצאות
+template	Itemised expenses with a total to approve	הוצאות מפורטות עם סכום כולל לאישור
+template	Résumé	קורות חיים
+template	A calm two-column page about you	דף רגוע בשני טורים עליכם
+template	Weekly planner	מתכנן שבועי
+template	Seven days and a space for what matters	שבעה ימים ומקום למה שחשוב
+template	Checklist	רשימת בדיקה
+template	Tick things off, with room for notes	סמנו משימות, עם מקום להערות
+template	Study notes	הערות לימוד
+template	Cues, notes and a summary, in three zones	מילות מפתח, הערות וסיכום בשלושה אזורים
+template	Certificate	תעודה
+template	A landscape page to recognise an achievement	דף לרוחב להכרה בהישג

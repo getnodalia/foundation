@@ -3312,3 +3312,34 @@ calendar weekday	We	چوارشەممە
 	This document's script is asking	سکریپتی ئەم بەڵگەنامەیە دەپرسێت
 	Document: {name}	بەڵگەنامە: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	ئەم داواکارییە لە بەڵگەنامەکەوە هاتووە، نەک لە Papel. تەنها ئەگەر متمانەت بەم بەڵگەنامەیە هەیە وشەی نهێنی بنووسە.
+template	Start from a template	لە قاڵبێکەوە دەست پێبکە
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	پەڕە ئامادەکراو و ئارامەکان کە دەتوانیت یەکسەر پڕیان بکەیتەوە. هەریەکەیان PDFـێکی ئاسایییە لەگەڵ خانەی فۆرمی ڕاستەقینە.
+template	Business	بازرگانی
+template	Forms	فۆرمەکان
+template	Personal	کەسی
+template	Invoice	پسولە
+template	Itemised, with totals and payment notes	بە ورد، لەگەڵ کۆی گشتی و تێبینی پارەدان
+template	Quote	نرخاندن
+template	An offer with terms and a place to accept it	پێشنیارێک لەگەڵ مەرج و شوێنێک بۆ قبوڵکردنی
+template	Receipt	وەسڵ
+template	Proof of payment, with the way it was paid	بەڵگەی پارەدان لەگەڵ شێوازی پارەدان
+template	Letter	نامە
+template	A clean letterhead and a page to write on	سەرنامەیەکی پاک و پەڕەیەک بۆ نووسین
+template	Meeting minutes	کۆتایی کۆبوونەوە
+template	Attendees, decisions and who does what by when	ئامادەبووان، بڕیارەکان و کێ چی دەکات و کەی
+template	Registration form	فۆرمی تۆمارکردن
+template	Contact details, choices and a signature	زانیاری پەیوەندی، هەڵبژاردنەکان و واژۆ
+template	Timesheet	خشتەی کاتژمێرەکان
+template	A week of hours, day by day	هەفتەیەک کاتژمێر، ڕۆژ بە ڕۆژ
+template	Expense report	ڕاپۆرتی خەرجی
+template	Itemised expenses with a total to approve	خەرجی ورد لەگەڵ کۆی گشتی بۆ پەسەندکردن
+template	Résumé	سیڤی
+template	A calm two-column page about you	پەڕەیەکی ئارام بە دوو ستوون دەربارەی تۆ
+template	Weekly planner	پلاندانەری هەفتانە
+template	Seven days and a space for what matters	حەوت ڕۆژ و شوێنێک بۆ ئەوەی گرنگە
+template	Checklist	لیستی پشکنین
+template	Tick things off, with room for notes	ئەرکەکان نیشان بکە، لەگەڵ شوێن بۆ تێبینی
+template	Study notes	تێبینی خوێندن
+template	Cues, notes and a summary, in three zones	وشەی سەرەکی، تێبینی و پوختە لە سێ ناوچەدا
+template	Certificate	بڕوانامە
+template	A landscape page to recognise an achievement	پەڕەیەکی ئاسۆیی بۆ ناسینەوەی دەستکەوتێک

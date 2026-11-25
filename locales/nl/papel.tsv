@@ -2601,3 +2601,34 @@ calendar weekday	We	Wo
 	This document's script is asking	Het script van dit document vraagt
 	Document: {name}	Document: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Dit verzoek komt van het document, niet van Papel. Voer alleen een wachtwoord in als u dit document vertrouwt.
+template	Start from a template	Begin met een sjabloon
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Rustige, kant-en-klare pagina’s die u meteen kunt invullen. Elke pagina is een gewone pdf met echte formuliervelden.
+template	Business	Zakelijk
+template	Forms	Formulieren
+template	Personal	Persoonlijk
+template	Invoice	Factuur
+template	Itemised, with totals and payment notes	Gespecificeerd, met totalen en betalingsnotities
+template	Quote	Offerte
+template	An offer with terms and a place to accept it	Een aanbod met voorwaarden en een plek om het te accepteren
+template	Receipt	Kwitantie
+template	Proof of payment, with the way it was paid	Bewijs van betaling, met de manier van betalen
+template	Letter	Brief
+template	A clean letterhead and a page to write on	Een strak briefhoofd en een pagina om op te schrijven
+template	Meeting minutes	Vergaderverslag
+template	Attendees, decisions and who does what by when	Aanwezigen, besluiten en wie wat wanneer doet
+template	Registration form	Inschrijfformulier
+template	Contact details, choices and a signature	Contactgegevens, keuzes en een handtekening
+template	Timesheet	Urenstaat
+template	A week of hours, day by day	Een week aan uren, dag voor dag
+template	Expense report	Onkostendeclaratie
+template	Itemised expenses with a total to approve	Gespecificeerde uitgaven met een totaal ter goedkeuring
+template	Résumé	Cv
+template	A calm two-column page about you	Een rustige pagina met twee kolommen over u
+template	Weekly planner	Weekplanner
+template	Seven days and a space for what matters	Zeven dagen en ruimte voor wat telt
+template	Checklist	Checklist
+template	Tick things off, with room for notes	Vink taken af, met ruimte voor notities
+template	Study notes	Studienotities
+template	Cues, notes and a summary, in three zones	Trefwoorden, notities en samenvatting in drie vlakken
+template	Certificate	Certificaat
+template	A landscape page to recognise an achievement	Een liggende pagina om een prestatie te erkennen

@@ -3791,3 +3791,34 @@ document scrollbar width	Wide	宽
 	This document's script is asking	此文档的脚本正在询问
 	Document: {name}	文档：{name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	此请求来自文档，而非 Papel。仅在您信任此文档时才输入密码。
+template	Start from a template	从模板开始
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	宁静、现成的页面，可立即填写。每一份都是带有真实表单域的普通 PDF。
+template	Business	商务
+template	Forms	表单
+template	Personal	个人
+template	Invoice	发票
+template	Itemised, with totals and payment notes	逐项列出，含合计和付款备注
+template	Quote	报价单
+template	An offer with terms and a place to accept it	附条件并留有接受位置的报价
+template	Receipt	收据
+template	Proof of payment, with the way it was paid	附付款方式的付款凭证
+template	Letter	信函
+template	A clean letterhead and a page to write on	简洁的信头和可书写的页面
+template	Meeting minutes	会议纪要
+template	Attendees, decisions and who does what by when	出席者、决定事项，以及谁在何时前做什么
+template	Registration form	报名表
+template	Contact details, choices and a signature	联系方式、选项和签名
+template	Timesheet	工时表
+template	A week of hours, day by day	一周的工时，逐日记录
+template	Expense report	费用报销单
+template	Itemised expenses with a total to approve	逐项费用，附待批准的合计
+template	Résumé	简历
+template	A calm two-column page about you	关于你的宁静双栏页面
+template	Weekly planner	每周计划
+template	Seven days and a space for what matters	七天，并为重要的事留出空间
+template	Checklist	清单
+template	Tick things off, with room for notes	勾选事项，并留有备注空间
+template	Study notes	学习笔记
+template	Cues, notes and a summary, in three zones	提示词、笔记和总结，分为三个区域
+template	Certificate	证书
+template	A landscape page to recognise an achievement	用于表彰成就的横向页面

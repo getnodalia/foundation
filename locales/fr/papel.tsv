@@ -4570,3 +4570,34 @@ review-suggestion	Replacement text	Texte de remplacement
 	on page {p}	à la page {p}
 	This document's script is asking	Le script de ce document demande
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Cette demande provient du document, pas de Papel. Ne saisissez un mot de passe que si vous faites confiance à ce document.
+template	Start from a template	Commencer à partir d’un modèle
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Des pages sobres, prêtes à remplir tout de suite. Chacune est un PDF ordinaire avec de vrais champs de formulaire.
+template	Business	Entreprise
+template	Forms	Formulaires
+template	Personal	Personnel
+template	Invoice	Facture
+template	Itemised, with totals and payment notes	Détaillée, avec totaux et conditions de paiement
+template	Quote	Devis
+template	An offer with terms and a place to accept it	Une offre avec conditions et un espace pour l’accepter
+template	Receipt	Reçu
+template	Proof of payment, with the way it was paid	Preuve de paiement, avec le mode de règlement
+template	Letter	Lettre
+template	A clean letterhead and a page to write on	Un en-tête sobre et une page pour écrire
+template	Meeting minutes	Compte rendu de réunion
+template	Attendees, decisions and who does what by when	Participants, décisions et qui fait quoi pour quand
+template	Registration form	Formulaire d’inscription
+template	Contact details, choices and a signature	Coordonnées, choix et signature
+template	Timesheet	Feuille d’heures
+template	A week of hours, day by day	Une semaine d’heures, jour après jour
+template	Expense report	Note de frais
+template	Itemised expenses with a total to approve	Dépenses détaillées avec un total à approuver
+template	Résumé	CV
+template	A calm two-column page about you	Une page sobre sur deux colonnes à votre sujet
+template	Weekly planner	Planificateur hebdomadaire
+template	Seven days and a space for what matters	Sept jours et un espace pour l’essentiel
+template	Checklist	Liste de contrôle
+template	Tick things off, with room for notes	Cochez les tâches, avec de la place pour des notes
+template	Study notes	Notes de cours
+template	Cues, notes and a summary, in three zones	Mots-clés, notes et résumé, en trois zones
+template	Certificate	Certificat
+template	A landscape page to recognise an achievement	Une page en paysage pour saluer une réussite

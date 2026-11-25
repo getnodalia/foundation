@@ -1,0 +1,44 @@
+# Galego (gl) interface catalog for Papel.
+# Columns, separated by a TAB:  context <TAB> English source text <TAB> translation
+#   context  usually empty. `@plural`, `@id` and `@msg` mean something to the apps; any other
+#            word is a label that tells apart two meanings of the same English.
+#   escapes  \n  \t  \\  inside a column. `{name}` placeholders must appear in both columns (in any
+#            order), and a trailing "…" in one needs one in the other.
+#   @plural  English `one|other`; the translation lists this language's plural forms, `|`-separated.
+#   Lines starting with # and blank lines are ignored. A missing entry shows in English.
+#
+# Clean room: every entry was written from the plain meaning of the English text in ordinary
+# computing vocabulary. No other product's localisation, string table or translated UI was
+# consulted or copied; add entries the same way.
+
+template	Start from a template	Comeza desde un modelo
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Páxinas tranquilas e listas para encher ao momento. Cada unha é un PDF normal con campos de formulario reais.
+template	Business	Negocio
+template	Forms	Formularios
+template	Personal	Persoal
+template	Invoice	Factura
+template	Itemised, with totals and payment notes	Con conceptos, totais e notas de pagamento
+template	Quote	Orzamento
+template	An offer with terms and a place to accept it	Unha oferta con condicións e un espazo para aceptala
+template	Receipt	Recibo
+template	Proof of payment, with the way it was paid	Xustificante de pagamento, coa forma de pagamento
+template	Letter	Carta
+template	A clean letterhead and a page to write on	Un cabeceiro limpo e unha páxina para escribir
+template	Meeting minutes	Acta de reunión
+template	Attendees, decisions and who does what by when	Asistentes, decisións e quen fai que e para cando
+template	Registration form	Formulario de inscrición
+template	Contact details, choices and a signature	Datos de contacto, opcións e sinatura
+template	Timesheet	Folla de horas
+template	A week of hours, day by day	Unha semana de horas, día a día
+template	Expense report	Informe de gastos
+template	Itemised expenses with a total to approve	Gastos detallados cun total para aprobar
+template	Résumé	Currículo
+template	A calm two-column page about you	Unha páxina tranquila en dúas columnas sobre ti
+template	Weekly planner	Planificador semanal
+template	Seven days and a space for what matters	Sete días e un espazo para o que importa
+template	Checklist	Lista de tarefas
+template	Tick things off, with room for notes	Marca tarefas, con espazo para notas
+template	Study notes	Apuntamentos de estudo
+template	Cues, notes and a summary, in three zones	Palabras clave, apuntamentos e resumo, en tres zonas
+template	Certificate	Certificado
+template	A landscape page to recognise an achievement	Unha páxina apaisada para recoñecer un logro

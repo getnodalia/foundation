@@ -3681,3 +3681,34 @@ document scrollbar width	Wide	Széles
 	This document's script is asking	A dokumentum szkriptje kérdez
 	Document: {name}	Dokumentum: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Ez a kérés a dokumentumtól származik, nem a PdfCrafttól. Csak akkor adjon meg jelszót, ha megbízik ebben a dokumentumban.
+template	Start from a template	Kezdés sablonból
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Nyugodt, kész oldalak, amelyeket azonnal kitölthet. Mindegyik közönséges PDF valódi űrlapmezőkkel.
+template	Business	Üzleti
+template	Forms	Űrlapok
+template	Personal	Személyes
+template	Invoice	Számla
+template	Itemised, with totals and payment notes	Tételesen, összesítéssel és fizetési megjegyzésekkel
+template	Quote	Árajánlat
+template	An offer with terms and a place to accept it	Ajánlat feltételekkel és hellyel az elfogadásához
+template	Receipt	Nyugta
+template	Proof of payment, with the way it was paid	Fizetési igazolás a fizetés módjával
+template	Letter	Levél
+template	A clean letterhead and a page to write on	Letisztult fejléc és egy oldal az íráshoz
+template	Meeting minutes	Jegyzőkönyv
+template	Attendees, decisions and who does what by when	Résztvevők, döntések, és hogy ki mit csinál mikorra
+template	Registration form	Jelentkezési lap
+template	Contact details, choices and a signature	Elérhetőségek, választások és aláírás
+template	Timesheet	Munkaidő-nyilvántartó
+template	A week of hours, day by day	Egy hét óra, napról napra
+template	Expense report	Költségelszámolás
+template	Itemised expenses with a total to approve	Tételes költségek, jóváhagyandó összesítéssel
+template	Résumé	Önéletrajz
+template	A calm two-column page about you	Nyugodt, kétoszlopos oldal Önről
+template	Weekly planner	Heti tervező
+template	Seven days and a space for what matters	Hét nap és hely a fontos dolgoknak
+template	Checklist	Ellenőrzőlista
+template	Tick things off, with room for notes	Pipálja ki a feladatokat, hellyel a jegyzeteknek
+template	Study notes	Tanulási jegyzetek
+template	Cues, notes and a summary, in three zones	Kulcsszavak, jegyzetek és összefoglaló, három zónában
+template	Certificate	Oklevél
+template	A landscape page to recognise an achievement	Fekvő oldal egy teljesítmény elismerésére

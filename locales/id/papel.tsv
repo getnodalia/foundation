@@ -3457,3 +3457,34 @@ calendar weekday	We	Rab
 	This document's script is asking	Skrip dokumen ini bertanya
 	Document: {name}	Dokumen: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Permintaan ini berasal dari dokumen, bukan dari Papel. Masukkan kata sandi hanya jika Anda memercayai dokumen ini.
+template	Start from a template	Mulai dari templat
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Halaman siap pakai yang tenang dan bisa langsung diisi. Masing-masing adalah PDF biasa dengan bidang formulir sungguhan.
+template	Business	Bisnis
+template	Forms	Formulir
+template	Personal	Pribadi
+template	Invoice	Faktur
+template	Itemised, with totals and payment notes	Terperinci, dengan total dan catatan pembayaran
+template	Quote	Penawaran
+template	An offer with terms and a place to accept it	Penawaran dengan ketentuan dan tempat untuk menyetujuinya
+template	Receipt	Kuitansi
+template	Proof of payment, with the way it was paid	Bukti pembayaran, beserta cara pembayarannya
+template	Letter	Surat
+template	A clean letterhead and a page to write on	Kop surat yang bersih dan halaman untuk menulis
+template	Meeting minutes	Notulen rapat
+template	Attendees, decisions and who does what by when	Peserta, keputusan, dan siapa mengerjakan apa pada kapan
+template	Registration form	Formulir pendaftaran
+template	Contact details, choices and a signature	Detail kontak, pilihan, dan tanda tangan
+template	Timesheet	Lembar jam kerja
+template	A week of hours, day by day	Satu minggu jam kerja, hari demi hari
+template	Expense report	Laporan pengeluaran
+template	Itemised expenses with a total to approve	Pengeluaran terperinci dengan total untuk disetujui
+template	Résumé	Daftar riwayat hidup
+template	A calm two-column page about you	Halaman dua kolom yang tenang tentang Anda
+template	Weekly planner	Perencana mingguan
+template	Seven days and a space for what matters	Tujuh hari dan ruang untuk hal yang penting
+template	Checklist	Daftar periksa
+template	Tick things off, with room for notes	Centang tugas, dengan ruang untuk catatan
+template	Study notes	Catatan belajar
+template	Cues, notes and a summary, in three zones	Kata kunci, catatan, dan ringkasan dalam tiga zona
+template	Certificate	Sertifikat
+template	A landscape page to recognise an achievement	Halaman lanskap untuk menghargai sebuah pencapaian

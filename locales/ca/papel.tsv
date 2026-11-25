@@ -4047,3 +4047,34 @@ calendar weekday	We	dc.
 	−LOC	−LOC
 	This document's script is asking	L'script d'aquest document pregunta
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Aquesta sol·licitud prové del document, no de Papel. Introduïu una contrasenya només si confieu en aquest document.
+template	Start from a template	Comença des d’una plantilla
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Pàgines tranquil·les i a punt per omplir a l’instant. Cadascuna és un PDF normal amb camps de formulari reals.
+template	Business	Negoci
+template	Forms	Formularis
+template	Personal	Personal
+template	Invoice	Factura
+template	Itemised, with totals and payment notes	Amb conceptes, totals i notes de pagament
+template	Quote	Pressupost
+template	An offer with terms and a place to accept it	Una oferta amb condicions i un espai per acceptar-la
+template	Receipt	Rebut
+template	Proof of payment, with the way it was paid	Justificant de pagament, amb la forma de pagament
+template	Letter	Carta
+template	A clean letterhead and a page to write on	Un capçal net i una pàgina per escriure
+template	Meeting minutes	Acta de reunió
+template	Attendees, decisions and who does what by when	Assistents, decisions i qui fa què i quan
+template	Registration form	Formulari d’inscripció
+template	Contact details, choices and a signature	Dades de contacte, opcions i signatura
+template	Timesheet	Full d’hores
+template	A week of hours, day by day	Una setmana d’hores, dia a dia
+template	Expense report	Informe de despeses
+template	Itemised expenses with a total to approve	Despeses detallades amb un total per aprovar
+template	Résumé	Currículum
+template	A calm two-column page about you	Una pàgina tranquil·la en dues columnes sobre tu
+template	Weekly planner	Planificador setmanal
+template	Seven days and a space for what matters	Set dies i un espai per al que importa
+template	Checklist	Llista de tasques
+template	Tick things off, with room for notes	Marca tasques, amb espai per a notes
+template	Study notes	Apunts d’estudi
+template	Cues, notes and a summary, in three zones	Paraules clau, apunts i resum, en tres zones
+template	Certificate	Certificat
+template	A landscape page to recognise an achievement	Una pàgina apaïsada per reconèixer un assoliment

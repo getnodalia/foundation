@@ -3738,3 +3738,34 @@ calendar weekday	We	बुध
 	This document's script is asking	इस दस्तावेज़ की स्क्रिप्ट पूछ रही है
 	Document: {name}	दस्तावेज़: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	यह अनुरोध दस्तावेज़ से आया है, Papel से नहीं। पासवर्ड तभी दर्ज करें जब आपको इस दस्तावेज़ पर भरोसा हो।
+template	Start from a template	टेम्पलेट से शुरू करें
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	शांत, तैयार पन्ने जिन्हें आप तुरंत भर सकते हैं। हर एक असली फ़ॉर्म फ़ील्ड वाला सामान्य PDF है।
+template	Business	व्यवसाय
+template	Forms	फ़ॉर्म
+template	Personal	व्यक्तिगत
+template	Invoice	चालान
+template	Itemised, with totals and payment notes	मदवार, कुल और भुगतान संबंधी टिप्पणियों के साथ
+template	Quote	कोटेशन
+template	An offer with terms and a place to accept it	शर्तों और स्वीकार करने की जगह के साथ एक प्रस्ताव
+template	Receipt	रसीद
+template	Proof of payment, with the way it was paid	भुगतान के तरीके के साथ भुगतान का प्रमाण
+template	Letter	पत्र
+template	A clean letterhead and a page to write on	साफ़ लेटरहेड और लिखने के लिए एक पन्ना
+template	Meeting minutes	बैठक का कार्यवृत्त
+template	Attendees, decisions and who does what by when	उपस्थित लोग, निर्णय और कौन क्या कब तक करेगा
+template	Registration form	पंजीकरण फ़ॉर्म
+template	Contact details, choices and a signature	संपर्क विवरण, विकल्प और हस्ताक्षर
+template	Timesheet	टाइमशीट
+template	A week of hours, day by day	एक सप्ताह के घंटे, दिन-दर-दिन
+template	Expense report	व्यय रिपोर्ट
+template	Itemised expenses with a total to approve	स्वीकृति के लिए कुल राशि के साथ मदवार व्यय
+template	Résumé	बायोडेटा
+template	A calm two-column page about you	आपके बारे में दो स्तंभों वाला एक शांत पन्ना
+template	Weekly planner	साप्ताहिक योजनाकार
+template	Seven days and a space for what matters	सात दिन और ज़रूरी बातों के लिए जगह
+template	Checklist	चेकलिस्ट
+template	Tick things off, with room for notes	कार्यों पर निशान लगाएँ, नोट्स के लिए जगह के साथ
+template	Study notes	अध्ययन नोट्स
+template	Cues, notes and a summary, in three zones	कीवर्ड, नोट्स और सारांश, तीन हिस्सों में
+template	Certificate	प्रमाणपत्र
+template	A landscape page to recognise an achievement	उपलब्धि को सम्मान देने के लिए एक आड़ा पन्ना

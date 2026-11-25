@@ -2488,3 +2488,34 @@ calendar weekday	We	on
 	This document's script is asking	Dette dokuments script spørger
 	Document: {name}	Dokument: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Denne anmodning kommer fra dokumentet, ikke fra Papel. Indtast kun en adgangskode, hvis du har tillid til dette dokument.
+template	Start from a template	Start med en skabelon
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Rolige, færdige sider, du kan udfylde med det samme. Hver er en almindelig pdf med rigtige formularfelter.
+template	Business	Erhverv
+template	Forms	Formularer
+template	Personal	Privat
+template	Invoice	Faktura
+template	Itemised, with totals and payment notes	Med poster, totaler og betalingsnoter
+template	Quote	Tilbud
+template	An offer with terms and a place to accept it	Et tilbud med vilkår og plads til at acceptere det
+template	Receipt	Kvittering
+template	Proof of payment, with the way it was paid	Bevis for betaling med betalingsmåde
+template	Letter	Brev
+template	A clean letterhead and a page to write on	Et rent brevhoved og en side at skrive på
+template	Meeting minutes	Mødereferat
+template	Attendees, decisions and who does what by when	Deltagere, beslutninger og hvem der gør hvad hvornår
+template	Registration form	Tilmeldingsformular
+template	Contact details, choices and a signature	Kontaktoplysninger, valg og underskrift
+template	Timesheet	Timeseddel
+template	A week of hours, day by day	En uge med timer, dag for dag
+template	Expense report	Udgiftsrapport
+template	Itemised expenses with a total to approve	Specificerede udgifter med en total til godkendelse
+template	Résumé	CV
+template	A calm two-column page about you	En rolig side i to spalter om dig
+template	Weekly planner	Ugeplanlægger
+template	Seven days and a space for what matters	Syv dage og plads til det vigtige
+template	Checklist	Tjekliste
+template	Tick things off, with room for notes	Sæt flueben ved opgaver, med plads til noter
+template	Study notes	Studienoter
+template	Cues, notes and a summary, in three zones	Stikord, noter og resumé i tre zoner
+template	Certificate	Certifikat
+template	A landscape page to recognise an achievement	En liggende side til at anerkende en præstation

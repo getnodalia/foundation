@@ -3822,3 +3822,34 @@ document scrollbar width	Wide	太い
 	This document's script is asking	この文書のスクリプトからの質問
 	Document: {name}	文書: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	この要求は Papel ではなく文書から送られています。この文書を信頼できる場合にのみパスワードを入力してください。
+template	Start from a template	テンプレートから始める
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	落ち着いた作りの、すぐに記入できるページです。どれも本物のフォームフィールド付きの通常のPDFです。
+template	Business	ビジネス
+template	Forms	フォーム
+template	Personal	個人
+template	Invoice	請求書
+template	Itemised, with totals and payment notes	明細、合計、支払いメモ付き
+template	Quote	見積書
+template	An offer with terms and a place to accept it	条件と承諾欄のある見積り
+template	Receipt	領収書
+template	Proof of payment, with the way it was paid	支払い方法を添えた支払いの証明
+template	Letter	手紙
+template	A clean letterhead and a page to write on	すっきりしたレターヘッドと書くためのページ
+template	Meeting minutes	議事録
+template	Attendees, decisions and who does what by when	出席者、決定事項、誰がいつまでに何をするか
+template	Registration form	申込フォーム
+template	Contact details, choices and a signature	連絡先、選択肢、署名
+template	Timesheet	勤務時間表
+template	A week of hours, day by day	1週間の時間を日ごとに
+template	Expense report	経費精算書
+template	Itemised expenses with a total to approve	承認用の合計付きの経費明細
+template	Résumé	履歴書
+template	A calm two-column page about you	あなたについての落ち着いた2段組のページ
+template	Weekly planner	週間プランナー
+template	Seven days and a space for what matters	7日間と大切なことのための余白
+template	Checklist	チェックリスト
+template	Tick things off, with room for notes	項目にチェックを付け、メモ欄も用意
+template	Study notes	学習ノート
+template	Cues, notes and a summary, in three zones	キーワード、ノート、まとめの3つの領域
+template	Certificate	賞状
+template	A landscape page to recognise an achievement	功績をたたえる横向きのページ

@@ -3683,3 +3683,34 @@ document scrollbar width	Wide	Широка
 	This document's script is asking	Скрипт цього документа запитує
 	Document: {name}	Документ: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Цей запит надходить від документа, а не від Papel. Вводьте пароль, лише якщо довіряєте цьому документу.
+template	Start from a template	Почати з шаблону
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Спокійні готові сторінки, які можна заповнити одразу. Кожна — звичайний PDF зі справжніми полями форми.
+template	Business	Бізнес
+template	Forms	Форми
+template	Personal	Особисте
+template	Invoice	Рахунок
+template	Itemised, with totals and payment notes	Постатейно, з підсумками та примітками про оплату
+template	Quote	Комерційна пропозиція
+template	An offer with terms and a place to accept it	Пропозиція з умовами та місцем для погодження
+template	Receipt	Квитанція
+template	Proof of payment, with the way it was paid	Підтвердження оплати зі способом платежу
+template	Letter	Лист
+template	A clean letterhead and a page to write on	Чистий бланк і сторінка для листа
+template	Meeting minutes	Протокол зустрічі
+template	Attendees, decisions and who does what by when	Учасники, рішення та хто що робить до якого терміну
+template	Registration form	Реєстраційна форма
+template	Contact details, choices and a signature	Контактні дані, вибір і підпис
+template	Timesheet	Табель обліку часу
+template	A week of hours, day by day	Тиждень годин, день за днем
+template	Expense report	Звіт про витрати
+template	Itemised expenses with a total to approve	Докладні витрати із сумою на затвердження
+template	Résumé	Резюме
+template	A calm two-column page about you	Спокійна сторінка у дві колонки про вас
+template	Weekly planner	Тижневий планувальник
+template	Seven days and a space for what matters	Сім днів і місце для найважливішого
+template	Checklist	Контрольний список
+template	Tick things off, with room for notes	Позначайте завдання, є місце для нотаток
+template	Study notes	Конспект
+template	Cues, notes and a summary, in three zones	Ключові слова, нотатки та підсумок у трьох зонах
+template	Certificate	Сертифікат
+template	A landscape page to recognise an achievement	Альбомна сторінка для визнання досягнення

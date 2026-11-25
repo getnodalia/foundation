@@ -2700,3 +2700,34 @@ calendar weekday	We	বু
 	This document's script is asking	এই নথির স্ক্রিপ্ট জানতে চাইছে
 	Document: {name}	নথি: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	এই অনুরোধটি নথি থেকে এসেছে, Papel থেকে নয়। এই নথিকে বিশ্বাস করলে তবেই পাসওয়ার্ড লিখুন।
+template	Start from a template	টেমপ্লেট থেকে শুরু করুন
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	শান্ত, তৈরি পাতা যা আপনি এখনই পূরণ করতে পারেন। প্রতিটি আসল ফর্ম ঘরসহ একটি সাধারণ PDF।
+template	Business	ব্যবসা
+template	Forms	ফর্ম
+template	Personal	ব্যক্তিগত
+template	Invoice	চালান
+template	Itemised, with totals and payment notes	আইটেমসহ, মোট ও পরিশোধের নোটসহ
+template	Quote	কোটেশন
+template	An offer with terms and a place to accept it	শর্ত এবং গ্রহণ করার জায়গাসহ একটি প্রস্তাব
+template	Receipt	রসিদ
+template	Proof of payment, with the way it was paid	পরিশোধের পদ্ধতিসহ পরিশোধের প্রমাণ
+template	Letter	চিঠি
+template	A clean letterhead and a page to write on	পরিচ্ছন্ন লেটারহেড এবং লেখার জন্য একটি পাতা
+template	Meeting minutes	সভার কার্যবিবরণী
+template	Attendees, decisions and who does what by when	উপস্থিত ব্যক্তি, সিদ্ধান্ত এবং কে কী কখন করবে
+template	Registration form	নিবন্ধন ফর্ম
+template	Contact details, choices and a signature	যোগাযোগের তথ্য, পছন্দ এবং স্বাক্ষর
+template	Timesheet	টাইমশিট
+template	A week of hours, day by day	এক সপ্তাহের ঘণ্টা, দিন ধরে ধরে
+template	Expense report	খরচের প্রতিবেদন
+template	Itemised expenses with a total to approve	অনুমোদনের জন্য মোটসহ আইটেমভিত্তিক খরচ
+template	Résumé	জীবনবৃত্তান্ত
+template	A calm two-column page about you	আপনার সম্পর্কে দুই কলামের একটি শান্ত পাতা
+template	Weekly planner	সাপ্তাহিক পরিকল্পনাকারী
+template	Seven days and a space for what matters	সাত দিন এবং গুরুত্বপূর্ণ বিষয়ের জন্য জায়গা
+template	Checklist	চেকলিস্ট
+template	Tick things off, with room for notes	কাজে টিক দিন, নোটের জন্য জায়গাসহ
+template	Study notes	পড়াশোনার নোট
+template	Cues, notes and a summary, in three zones	কীওয়ার্ড, নোট ও সারসংক্ষেপ, তিনটি অংশে
+template	Certificate	সনদ
+template	A landscape page to recognise an achievement	কোনো অর্জনকে স্বীকৃতি দেওয়ার জন্য একটি আড়াআড়ি পাতা

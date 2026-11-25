@@ -3721,3 +3721,34 @@ document scrollbar width	Wide	寬
 	This document's script is asking	此文件的指令碼正在詢問
 	Document: {name}	文件：{name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	此要求來自文件，而非 Papel。只有在您信任此文件時才輸入密碼。
+template	Start from a template	從範本開始
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	寧靜、現成的頁面，可立即填寫。每一份都是帶有真實表單欄位的一般 PDF。
+template	Business	商務
+template	Forms	表單
+template	Personal	個人
+template	Invoice	發票
+template	Itemised, with totals and payment notes	逐項列出，含合計與付款備註
+template	Quote	報價單
+template	An offer with terms and a place to accept it	附條件並留有接受位置的報價
+template	Receipt	收據
+template	Proof of payment, with the way it was paid	附付款方式的付款憑證
+template	Letter	信函
+template	A clean letterhead and a page to write on	簡潔的信頭與可書寫的頁面
+template	Meeting minutes	會議紀錄
+template	Attendees, decisions and who does what by when	出席者、決定事項，以及誰在何時前做什麼
+template	Registration form	報名表
+template	Contact details, choices and a signature	聯絡方式、選項與簽名
+template	Timesheet	工時表
+template	A week of hours, day by day	一週的工時，逐日記錄
+template	Expense report	費用報銷單
+template	Itemised expenses with a total to approve	逐項費用，附待核准的合計
+template	Résumé	履歷
+template	A calm two-column page about you	關於你的寧靜雙欄頁面
+template	Weekly planner	每週計畫
+template	Seven days and a space for what matters	七天，並為重要的事留出空間
+template	Checklist	清單
+template	Tick things off, with room for notes	勾選事項，並留有備註空間
+template	Study notes	學習筆記
+template	Cues, notes and a summary, in three zones	提示詞、筆記與總結，分為三個區域
+template	Certificate	證書
+template	A landscape page to recognise an achievement	用於表彰成就的橫向頁面

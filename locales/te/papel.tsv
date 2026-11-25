@@ -3478,3 +3478,34 @@ document scrollbar width	Wide	వెడల్పు
 	This document's script is asking	ఈ పత్రం యొక్క స్క్రిప్ట్ అడుగుతోంది
 	Document: {name}	పత్రం: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	ఈ అభ్యర్థన Papel నుండి కాదు, పత్రం నుండి వస్తోంది. ఈ పత్రాన్ని మీరు నమ్మితేనే పాస్‌వర్డ్ నమోదు చేయండి.
+template	Start from a template	టెంప్లేట్‌తో ప్రారంభించండి
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	ప్రశాంతమైన, సిద్ధంగా ఉన్న పేజీలు; వెంటనే పూరించవచ్చు. ప్రతి ఒక్కటి నిజమైన ఫారమ్ ఫీల్డ్‌లతో కూడిన సాధారణ PDF.
+template	Business	వ్యాపారం
+template	Forms	ఫారమ్‌లు
+template	Personal	వ్యక్తిగతం
+template	Invoice	ఇన్‌వాయిస్
+template	Itemised, with totals and payment notes	అంశాల వారీగా, మొత్తాలు మరియు చెల్లింపు గమనికలతో
+template	Quote	కొటేషన్
+template	An offer with terms and a place to accept it	షరతులతో మరియు అంగీకరించడానికి చోటుతో ఒక ప్రతిపాదన
+template	Receipt	రసీదు
+template	Proof of payment, with the way it was paid	చెల్లింపు విధానంతో చెల్లింపుకు రుజువు
+template	Letter	లేఖ
+template	A clean letterhead and a page to write on	శుభ్రమైన లెటర్‌హెడ్ మరియు రాయడానికి ఒక పేజీ
+template	Meeting minutes	సమావేశ వివరాలు
+template	Attendees, decisions and who does what by when	హాజరైనవారు, నిర్ణయాలు మరియు ఎవరు ఏమి ఎప్పటికి చేస్తారు
+template	Registration form	నమోదు ఫారమ్
+template	Contact details, choices and a signature	సంప్రదింపు వివరాలు, ఎంపికలు మరియు సంతకం
+template	Timesheet	టైమ్‌షీట్
+template	A week of hours, day by day	ఒక వారం గంటలు, రోజు రోజుకు
+template	Expense report	ఖర్చుల నివేదిక
+template	Itemised expenses with a total to approve	ఆమోదం కోసం మొత్తంతో వివరమైన ఖర్చులు
+template	Résumé	రెజ్యూమె
+template	A calm two-column page about you	మీ గురించి రెండు నిలువు వరుసలతో ప్రశాంతమైన పేజీ
+template	Weekly planner	వారపు ప్లానర్
+template	Seven days and a space for what matters	ఏడు రోజులు మరియు ముఖ్యమైనవాటికి చోటు
+template	Checklist	చెక్‌లిస్ట్
+template	Tick things off, with room for notes	పనులను టిక్ చేయండి, గమనికలకు చోటుతో
+template	Study notes	అధ్యయన గమనికలు
+template	Cues, notes and a summary, in three zones	కీవర్డ్‌లు, గమనికలు మరియు సారాంశం, మూడు జోన్‌లలో
+template	Certificate	సర్టిఫికేట్
+template	A landscape page to recognise an achievement	ఒక విజయాన్ని గుర్తించడానికి అడ్డంగా ఉండే పేజీ

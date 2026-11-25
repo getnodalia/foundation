@@ -344,3 +344,18 @@ ko, nl, pl, pt-br, ru, sr-latn, tr, uk, vi, zh-hans and zh-hant (sr.tsv became s
 They were written with a coding agent from the plain meaning of the English (the tool was
 not recorded); no native-speaker review has been recorded. Other locales have no rows for
 these keys yet.
+
+## Papel: the template gallery (Papel 0.2.0)
+
+Papel 0.2.0 adds a gallery of ready-made page templates. Its interface strings (the gallery
+heading and intro, the three category names, and the name and one-line summary of each of the 13
+templates, all under the `template` context) are new rows in `locales/<code>/papel.tsv`, and the
+word "Templates" (the menu and command label) is a new row in `locales/<code>/common.tsv`. `sk`
+has no `common.tsv`, so its "Templates" row is in `locales/sk/papel.tsv`. `az`, `et`, `gl`, `hr`,
+`sk`, `sr` and `sr-latn` had no `papel.tsv`; this change creates one for each with these rows only.
+
+The rows exist for all 52 locales. They were written with Claude Code (Sonnet 5.5), AI-assisted,
+from the plain meaning of the English; no other product's localisation was consulted. They have
+not been reviewed by a native speaker, and the rarer scripts (dv, ckb, lo, ta, te, ka, kk and
+similar) are the most likely to need a correction. The page contents of the templates themselves
+exist in English and Spanish only and are not part of the catalogs.

@@ -3986,3 +3986,34 @@ document scrollbar width	Wide	Breit
 	This document's script is asking	Das Skript dieses Dokuments fragt
 	Document: {name}	Dokument: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Diese Anfrage stammt vom Dokument, nicht von Papel. Geben Sie ein Passwort nur ein, wenn Sie diesem Dokument vertrauen.
+template	Start from a template	Mit einer Vorlage beginnen
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Ruhige, fertige Seiten zum sofortigen Ausfüllen. Jede ist ein normales PDF mit echten Formularfeldern.
+template	Business	Geschäft
+template	Forms	Formulare
+template	Personal	Privat
+template	Invoice	Rechnung
+template	Itemised, with totals and payment notes	Mit Positionen, Summen und Zahlungshinweisen
+template	Quote	Angebot
+template	An offer with terms and a place to accept it	Ein Angebot mit Bedingungen und Platz für die Annahme
+template	Receipt	Quittung
+template	Proof of payment, with the way it was paid	Zahlungsnachweis mit Zahlungsart
+template	Letter	Brief
+template	A clean letterhead and a page to write on	Ein klarer Briefkopf und eine Seite zum Schreiben
+template	Meeting minutes	Sitzungsprotokoll
+template	Attendees, decisions and who does what by when	Teilnehmende, Beschlüsse und wer was bis wann erledigt
+template	Registration form	Anmeldeformular
+template	Contact details, choices and a signature	Kontaktdaten, Auswahl und Unterschrift
+template	Timesheet	Stundenzettel
+template	A week of hours, day by day	Eine Woche voller Stunden, Tag für Tag
+template	Expense report	Spesenabrechnung
+template	Itemised expenses with a total to approve	Einzelne Ausgaben mit einer Summe zur Genehmigung
+template	Résumé	Lebenslauf
+template	A calm two-column page about you	Eine ruhige zweispaltige Seite über Sie
+template	Weekly planner	Wochenplaner
+template	Seven days and a space for what matters	Sieben Tage und Platz für das Wichtige
+template	Checklist	Checkliste
+template	Tick things off, with room for notes	Aufgaben abhaken, mit Platz für Notizen
+template	Study notes	Lernnotizen
+template	Cues, notes and a summary, in three zones	Stichwörter, Notizen und Zusammenfassung in drei Bereichen
+template	Certificate	Urkunde
+template	A landscape page to recognise an achievement	Eine Querformatseite zur Würdigung einer Leistung

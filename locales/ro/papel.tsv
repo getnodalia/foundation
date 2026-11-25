@@ -4047,3 +4047,34 @@ calendar weekday	We	Mi
 	−LOC	−LOC
 	This document's script is asking	Scriptul acestui document întreabă
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Această solicitare vine de la document, nu de la Papel. Introduceți o parolă doar dacă aveți încredere în acest document.
+template	Start from a template	Începe de la un șablon
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Pagini calme, gata de completat pe loc. Fiecare este un PDF obișnuit, cu câmpuri de formular reale.
+template	Business	Afaceri
+template	Forms	Formulare
+template	Personal	Personal
+template	Invoice	Factură
+template	Itemised, with totals and payment notes	Detaliată, cu totaluri și note de plată
+template	Quote	Ofertă
+template	An offer with terms and a place to accept it	O ofertă cu condiții și un loc pentru acceptare
+template	Receipt	Chitanță
+template	Proof of payment, with the way it was paid	Dovada plății, cu modalitatea de plată
+template	Letter	Scrisoare
+template	A clean letterhead and a page to write on	Un antet curat și o pagină pe care să scrii
+template	Meeting minutes	Proces-verbal de ședință
+template	Attendees, decisions and who does what by when	Participanți, decizii și cine ce face până când
+template	Registration form	Formular de înscriere
+template	Contact details, choices and a signature	Date de contact, opțiuni și semnătură
+template	Timesheet	Foaie de pontaj
+template	A week of hours, day by day	O săptămână de ore, zi cu zi
+template	Expense report	Decont de cheltuieli
+template	Itemised expenses with a total to approve	Cheltuieli detaliate, cu un total de aprobat
+template	Résumé	CV
+template	A calm two-column page about you	O pagină calmă, pe două coloane, despre tine
+template	Weekly planner	Planificator săptămânal
+template	Seven days and a space for what matters	Șapte zile și un spațiu pentru ce contează
+template	Checklist	Listă de verificare
+template	Tick things off, with room for notes	Bifează sarcinile, cu loc pentru note
+template	Study notes	Notițe de studiu
+template	Cues, notes and a summary, in three zones	Cuvinte-cheie, notițe și rezumat, în trei zone
+template	Certificate	Certificat
+template	A landscape page to recognise an achievement	O pagină pe orizontală pentru a recunoaște o realizare

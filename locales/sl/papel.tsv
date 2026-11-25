@@ -3648,3 +3648,34 @@ document scrollbar width	Wide	Široka
 	This document's script is asking	Skript tega dokumenta sprašuje
 	Document: {name}	Dokument: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Ta zahteva prihaja iz dokumenta, ne iz programa Papel. Geslo vnesite le, če temu dokumentu zaupate.
+template	Start from a template	Začnite s predlogo
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Mirne, že pripravljene strani, ki jih lahko takoj izpolnite. Vsaka je navaden PDF z resničnimi polji obrazca.
+template	Business	Poslovno
+template	Forms	Obrazci
+template	Personal	Osebno
+template	Invoice	Račun
+template	Itemised, with totals and payment notes	Po postavkah, s skupnimi zneski in opombami o plačilu
+template	Quote	Ponudba
+template	An offer with terms and a place to accept it	Ponudba s pogoji in prostorom za sprejem
+template	Receipt	Potrdilo o prejemu
+template	Proof of payment, with the way it was paid	Dokazilo o plačilu z načinom plačila
+template	Letter	Pismo
+template	A clean letterhead and a page to write on	Čista glava in stran za pisanje
+template	Meeting minutes	Zapisnik sestanka
+template	Attendees, decisions and who does what by when	Udeleženci, odločitve in kdo kaj naredi do kdaj
+template	Registration form	Prijavnica
+template	Contact details, choices and a signature	Kontaktni podatki, izbire in podpis
+template	Timesheet	Evidenca ur
+template	A week of hours, day by day	Teden ur, dan za dnem
+template	Expense report	Poročilo o stroških
+template	Itemised expenses with a total to approve	Podrobni stroški s skupnim zneskom za potrditev
+template	Résumé	Življenjepis
+template	A calm two-column page about you	Mirna dvostolpčna stran o vas
+template	Weekly planner	Tedenski načrtovalnik
+template	Seven days and a space for what matters	Sedem dni in prostor za pomembno
+template	Checklist	Kontrolni seznam
+template	Tick things off, with room for notes	Odkljukajte opravila, s prostorom za opombe
+template	Study notes	Učni zapiski
+template	Cues, notes and a summary, in three zones	Ključne besede, zapiski in povzetek v treh območjih
+template	Certificate	Certifikat
+template	A landscape page to recognise an achievement	Ležeča stran za priznanje dosežka

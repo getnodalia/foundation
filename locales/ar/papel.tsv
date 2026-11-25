@@ -3868,3 +3868,34 @@ document scrollbar width	Wide	عريض
 	This document's script is asking	نص هذا المستند البرمجي يطلب
 	Document: {name}	المستند: {name}
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	هذا الطلب صادر عن المستند، لا عن Papel. لا تُدخل كلمة مرور إلا إذا كنت تثق بهذا المستند.
+template	Start from a template	ابدأ من قالب
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	صفحات هادئة جاهزة يمكنك ملؤها فورًا. كل واحدة ملف PDF عادي بحقول نماذج حقيقية.
+template	Business	الأعمال
+template	Forms	النماذج
+template	Personal	شخصي
+template	Invoice	فاتورة
+template	Itemised, with totals and payment notes	مفصّلة، مع الإجماليات وملاحظات الدفع
+template	Quote	عرض سعر
+template	An offer with terms and a place to accept it	عرض مع الشروط ومكان لقبوله
+template	Receipt	إيصال
+template	Proof of payment, with the way it was paid	إثبات الدفع مع طريقة الدفع
+template	Letter	رسالة
+template	A clean letterhead and a page to write on	ترويسة نظيفة وصفحة للكتابة
+template	Meeting minutes	محضر اجتماع
+template	Attendees, decisions and who does what by when	الحاضرون والقرارات ومن يفعل ماذا ومتى
+template	Registration form	نموذج تسجيل
+template	Contact details, choices and a signature	بيانات الاتصال والخيارات والتوقيع
+template	Timesheet	جدول ساعات العمل
+template	A week of hours, day by day	أسبوع من الساعات، يومًا بيوم
+template	Expense report	تقرير مصروفات
+template	Itemised expenses with a total to approve	مصروفات مفصلة مع إجمالي للموافقة
+template	Résumé	سيرة ذاتية
+template	A calm two-column page about you	صفحة هادئة بعمودين عنك
+template	Weekly planner	مخطط أسبوعي
+template	Seven days and a space for what matters	سبعة أيام ومساحة لما يهم
+template	Checklist	قائمة مراجعة
+template	Tick things off, with room for notes	ضع علامة على المهام مع مساحة للملاحظات
+template	Study notes	ملاحظات الدراسة
+template	Cues, notes and a summary, in three zones	كلمات مفتاحية وملاحظات وملخص في ثلاث مناطق
+template	Certificate	شهادة
+template	A landscape page to recognise an achievement	صفحة أفقية لتقدير إنجاز

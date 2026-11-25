@@ -1,0 +1,44 @@
+# Српски (sr) interface catalog for Papel.
+# Columns, separated by a TAB:  context <TAB> English source text <TAB> translation
+#   context  usually empty. `@plural`, `@id` and `@msg` mean something to the apps; any other
+#            word is a label that tells apart two meanings of the same English.
+#   escapes  \n  \t  \\  inside a column. `{name}` placeholders must appear in both columns (in any
+#            order), and a trailing "…" in one needs one in the other.
+#   @plural  English `one|other`; the translation lists this language's plural forms, `|`-separated.
+#   Lines starting with # and blank lines are ignored. A missing entry shows in English.
+#
+# Clean room: every entry was written from the plain meaning of the English text in ordinary
+# computing vocabulary. No other product's localisation, string table or translated UI was
+# consulted or copied; add entries the same way.
+
+template	Start from a template	Почните од шаблона
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Мирне, готове странице које можете одмах попунити. Свака је обичан PDF са стварним пољима обрасца.
+template	Business	Посао
+template	Forms	Обрасци
+template	Personal	Лично
+template	Invoice	Фактура
+template	Itemised, with totals and payment notes	Ставку по ставку, са укупним износима и напоменама о плаћању
+template	Quote	Понуда
+template	An offer with terms and a place to accept it	Понуда са условима и местом за прихватање
+template	Receipt	Признаница
+template	Proof of payment, with the way it was paid	Доказ о уплати, са начином плаћања
+template	Letter	Писмо
+template	A clean letterhead and a page to write on	Чисто заглавље и страница за писање
+template	Meeting minutes	Записник са састанка
+template	Attendees, decisions and who does what by when	Присутни, одлуке и ко шта ради до када
+template	Registration form	Пријавни образац
+template	Contact details, choices and a signature	Контакт подаци, избори и потпис
+template	Timesheet	Евиденција сати
+template	A week of hours, day by day	Недеља сати, дан по дан
+template	Expense report	Извештај о трошковима
+template	Itemised expenses with a total to approve	Детаљни трошкови са укупним износом за одобрење
+template	Résumé	Биографија
+template	A calm two-column page about you	Мирна страница у две колоне о вама
+template	Weekly planner	Недељни планер
+template	Seven days and a space for what matters	Седам дана и простор за оно што је важно
+template	Checklist	Контролна листа
+template	Tick things off, with room for notes	Означавајте задатке, уз простор за белешке
+template	Study notes	Белешке за учење
+template	Cues, notes and a summary, in three zones	Кључне речи, белешке и резиме у три зоне
+template	Certificate	Сертификат
+template	A landscape page to recognise an achievement	Положена страница за признање постигнућа

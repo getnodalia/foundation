@@ -4531,3 +4531,34 @@ document scrollbar width	Wide	Plats
 	−LOC	−LOC
 	This document's script is asking	Šī dokumenta skripts jautā
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Šis pieprasījums nāk no dokumenta, nevis no Papel. Ievadiet paroli tikai tad, ja uzticaties šim dokumentam.
+template	Start from a template	Sāciet ar veidni
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Mierīgas, gatavas lapas, ko varat uzreiz aizpildīt. Katra ir parasts PDF ar īstiem veidlapas laukiem.
+template	Business	Uzņēmējdarbība
+template	Forms	Veidlapas
+template	Personal	Personiskais
+template	Invoice	Rēķins
+template	Itemised, with totals and payment notes	Pa pozīcijām, ar kopsummām un maksājuma piezīmēm
+template	Quote	Piedāvājums
+template	An offer with terms and a place to accept it	Piedāvājums ar nosacījumiem un vietu tā pieņemšanai
+template	Receipt	Kvīts
+template	Proof of payment, with the way it was paid	Maksājuma apliecinājums ar maksāšanas veidu
+template	Letter	Vēstule
+template	A clean letterhead and a page to write on	Tīra veidlapas galva un lapa rakstīšanai
+template	Meeting minutes	Sanāksmes protokols
+template	Attendees, decisions and who does what by when	Dalībnieki, lēmumi un kas ko dara līdz kuram laikam
+template	Registration form	Reģistrācijas veidlapa
+template	Contact details, choices and a signature	Kontaktinformācija, izvēles un paraksts
+template	Timesheet	Darba laika uzskaite
+template	A week of hours, day by day	Nedēļa stundu, diena pēc dienas
+template	Expense report	Izdevumu pārskats
+template	Itemised expenses with a total to approve	Detalizēti izdevumi ar apstiprināmu kopsummu
+template	Résumé	Dzīvesstāsts
+template	A calm two-column page about you	Mierīga lapa divās kolonnās par jums
+template	Weekly planner	Nedēļas plānotājs
+template	Seven days and a space for what matters	Septiņas dienas un vieta svarīgajam
+template	Checklist	Kontrolsaraksts
+template	Tick things off, with room for notes	Atzīmējiet uzdevumus, ar vietu piezīmēm
+template	Study notes	Mācību piezīmes
+template	Cues, notes and a summary, in three zones	Atslēgvārdi, piezīmes un kopsavilkums trijās zonās
+template	Certificate	Sertifikāts
+template	A landscape page to recognise an achievement	Guļus lapa sasnieguma atzīšanai

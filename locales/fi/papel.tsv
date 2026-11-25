@@ -3855,3 +3855,34 @@ calendar weekday	We	Ke
 	−LOC	−LOC
 	This document's script is asking	Tämän asiakirjan skripti kysyy
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Tämä pyyntö tulee asiakirjasta, ei PdfCraftista. Kirjoita salasana vain, jos luotat tähän asiakirjaan.
+template	Start from a template	Aloita mallista
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Rauhallisia, valmiita sivuja, jotka voit täyttää heti. Jokainen on tavallinen PDF, jossa on aitoja lomakekenttiä.
+template	Business	Yritys
+template	Forms	Lomakkeet
+template	Personal	Henkilökohtainen
+template	Invoice	Lasku
+template	Itemised, with totals and payment notes	Erittely, loppusummat ja maksuhuomautukset
+template	Quote	Tarjous
+template	An offer with terms and a place to accept it	Tarjous ehtoineen ja tilaa sen hyväksymiselle
+template	Receipt	Kuitti
+template	Proof of payment, with the way it was paid	Maksutodiste maksutapoineen
+template	Letter	Kirje
+template	A clean letterhead and a page to write on	Selkeä kirjepohja ja sivu kirjoittamista varten
+template	Meeting minutes	Kokouspöytäkirja
+template	Attendees, decisions and who does what by when	Osallistujat, päätökset ja kuka tekee mitä milloin
+template	Registration form	Ilmoittautumislomake
+template	Contact details, choices and a signature	Yhteystiedot, valinnat ja allekirjoitus
+template	Timesheet	Tuntilista
+template	A week of hours, day by day	Viikon tunnit päivä päivältä
+template	Expense report	Kulukorvaus
+template	Itemised expenses with a total to approve	Eritellyt kulut ja hyväksyttävä loppusumma
+template	Résumé	Ansioluettelo
+template	A calm two-column page about you	Rauhallinen kaksipalstainen sivu sinusta
+template	Weekly planner	Viikkosuunnitelma
+template	Seven days and a space for what matters	Seitsemän päivää ja tilaa tärkeälle
+template	Checklist	Tarkistuslista
+template	Tick things off, with room for notes	Rastita tehtävät, tilaa muistiinpanoille
+template	Study notes	Opiskelumuistiinpanot
+template	Cues, notes and a summary, in three zones	Avainsanat, muistiinpanot ja yhteenveto kolmella alueella
+template	Certificate	Todistus
+template	A landscape page to recognise an achievement	Vaakasivu saavutuksen tunnustamiseen

@@ -3856,3 +3856,34 @@ document scrollbar width	Wide	Rộng
 	−LOC	−LOC
 	This document's script is asking	Tập lệnh của tài liệu này đang hỏi
 	This request comes from the document, not Papel. Only enter a password if you trust this document.	Yêu cầu này đến từ tài liệu, không phải từ Papel. Chỉ nhập mật khẩu nếu bạn tin cậy tài liệu này.
+template	Start from a template	Bắt đầu từ một mẫu
+template	Calm, ready-made pages you can fill in right away. Each one is a normal PDF with real form fields.	Những trang dựng sẵn, nhẹ nhàng, có thể điền ngay. Mỗi trang là một tệp PDF bình thường với các trường biểu mẫu thật.
+template	Business	Kinh doanh
+template	Forms	Biểu mẫu
+template	Personal	Cá nhân
+template	Invoice	Hóa đơn
+template	Itemised, with totals and payment notes	Chi tiết từng khoản, có tổng và ghi chú thanh toán
+template	Quote	Báo giá
+template	An offer with terms and a place to accept it	Một đề nghị có điều khoản và chỗ để chấp nhận
+template	Receipt	Biên lai
+template	Proof of payment, with the way it was paid	Chứng từ thanh toán, kèm hình thức thanh toán
+template	Letter	Thư
+template	A clean letterhead and a page to write on	Tiêu đề thư gọn gàng và một trang để viết
+template	Meeting minutes	Biên bản cuộc họp
+template	Attendees, decisions and who does what by when	Người tham dự, quyết định và ai làm gì, khi nào
+template	Registration form	Biểu mẫu đăng ký
+template	Contact details, choices and a signature	Thông tin liên hệ, lựa chọn và chữ ký
+template	Timesheet	Bảng chấm công
+template	A week of hours, day by day	Một tuần giờ làm, từng ngày một
+template	Expense report	Báo cáo chi phí
+template	Itemised expenses with a total to approve	Chi phí chi tiết kèm tổng số để phê duyệt
+template	Résumé	Sơ yếu lý lịch
+template	A calm two-column page about you	Một trang hai cột nhẹ nhàng về bạn
+template	Weekly planner	Kế hoạch tuần
+template	Seven days and a space for what matters	Bảy ngày và chỗ cho điều quan trọng
+template	Checklist	Danh sách kiểm tra
+template	Tick things off, with room for notes	Đánh dấu công việc, có chỗ ghi chú
+template	Study notes	Ghi chú học tập
+template	Cues, notes and a summary, in three zones	Từ khóa, ghi chú và tóm tắt, trong ba vùng
+template	Certificate	Chứng nhận
+template	A landscape page to recognise an achievement	Một trang ngang để ghi nhận thành tích
