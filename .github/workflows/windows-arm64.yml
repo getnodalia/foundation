@@ -1,0 +1,199 @@
+name: Windows ARM64
+
+# Reusable Windows on ARM checks for the Rust desktop apps: package the ARM64 release the way the
+# app's release-windows.yml packages x64 (cross-compiled on an x64 runner, unsigned here), then
+# start the packaged command-line tool and install and remove the MSI on a Windows 11 ARM64
+# runner, and optionally run the test suite natively on ARM64.
+#
+# Written for Nodalia; the caller decides when it runs (`on:`), usually nightly or weekly and on
+# changes to the Windows packaging.
+on:
+  workflow_call:
+    inputs:
+      app-name:
+        description: "Lower-case machine name of the app (papel, toma, ...); names the artifact and the MSI"
+        type: string
+        required: true
+      cli-name:
+        description: "Executable of the command-line tool inside the portable zip, without .exe; empty is <app-name>-cli"
+        type: string
+        default: ""
+      cli-output-pattern:
+        description: "Regular expression the CLI's --version output must match; empty is the app name"
+        type: string
+        default: ""
+      package-script:
+        description: "PowerShell packaging script, called with -Arch arm64"
+        type: string
+        default: "packaging/windows/package.ps1"
+      run-tests:
+        description: "Also run the workspace tests natively on Windows ARM64"
+        type: boolean
+        default: false
+      test-command:
+        description: "Command that runs the tests when run-tests is true"
+        type: string
+        default: "cargo test --workspace --lib --bins --tests --locked"
+      fonts-repository:
+        description: "Repository holding the fonts build input (NODALIA_FONTS_DIR); empty skips it"
+        type: string
+        default: ""
+      fonts-ref:
+        description: "Commit of the fonts repository"
+        type: string
+        default: ""
+      i18n-repository:
+        description: "Repository holding the translations build input (NODALIA_I18N_DIR); empty skips it"
+        type: string
+        default: ""
+      i18n-ref:
+        description: "Commit of the translations repository"
+        type: string
+        default: ""
+      package-timeout-minutes:
+        description: "Timeout of the packaging job"
+        type: number
+        default: 120
+      test-timeout-minutes:
+        description: "Timeout of the native test job"
+        type: number
+        default: 150
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: package (cross-compiled on x64)
+    runs-on: windows-2025
+    timeout-minutes: ${{ inputs.package-timeout-minutes }}
+    env:
+      NODALIA_FONTS_DIR: ${{ github.workspace }}\nodalia-fonts
+      NODALIA_FONTS_REQUIRED: ${{ inputs.fonts-repository != '' && '1' || '' }}
+      NODALIA_I18N_DIR: ${{ github.workspace }}\nodalia-i18n
+      NODALIA_I18N_REQUIRED: ${{ inputs.i18n-repository != '' && '1' || '' }}
+      DIST: ${{ github.workspace }}\dist
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check out the fonts
+        if: inputs.fonts-repository != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ inputs.fonts-repository }}
+          ref: ${{ inputs.fonts-ref }}
+          path: nodalia-fonts
+          persist-credentials: false
+
+      - name: Check out the translations
+        if: inputs.i18n-repository != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ inputs.i18n-repository }}
+          ref: ${{ inputs.i18n-ref }}
+          path: nodalia-i18n
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
+        with:
+          targets: aarch64-pc-windows-msvc
+
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          key: windows-arm64-package
+
+      - name: WiX
+        shell: pwsh
+        run: |
+          dotnet tool install --global wix --version 5.0.2
+          wix extension add -g WixToolset.UI.wixext/5.0.2 WixToolset.Util.wixext/5.0.2
+
+      - name: Build and package (unsigned)
+        shell: pwsh
+        env:
+          PACKAGE_SCRIPT: ${{ inputs.package-script }}
+        run: pwsh "$env:PACKAGE_SCRIPT" -Arch arm64
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ inputs.app-name }}-windows-arm64
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  install:
+    name: install and run (Windows 11 ARM64)
+    needs: package
+    runs-on: windows-11-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: ${{ inputs.app-name }}-windows-arm64
+          path: dist
+      - name: Start the portable CLI, install and remove the MSI
+        shell: pwsh
+        env:
+          APP: ${{ inputs.app-name }}
+          CLI: ${{ inputs.cli-name != '' && inputs.cli-name || format('{0}-cli', inputs.app-name) }}
+          PATTERN: ${{ inputs.cli-output-pattern != '' && inputs.cli-output-pattern || inputs.app-name }}
+        run: |
+          Set-Location dist
+          $zip = Get-ChildItem -File "$env:APP-*-windows-arm64-portable.zip" | Select-Object -First 1
+          $msi = Get-ChildItem -File "$env:APP-*-windows-arm64.msi" | Select-Object -First 1
+          if (-not $zip -or -not $msi) { Get-ChildItem; throw "expected the ARM64 MSI and portable zip" }
+          Expand-Archive $zip.FullName -DestinationPath portable
+          $cli = Get-ChildItem -Recurse portable -Filter "$env:CLI.exe" | Select-Object -First 1
+          if (-not $cli) { Get-ChildItem -Recurse portable; throw "$env:CLI.exe is not in the portable zip" }
+          $out = & $cli.FullName --version
+          Write-Output $out
+          if ($LASTEXITCODE -ne 0 -or -not ($out -match $env:PATTERN)) { throw "$env:CLI --version failed on ARM64" }
+          $p = Start-Process msiexec.exe -ArgumentList '/i', "`"$($msi.FullName)`"", '/qn', '/l*v', 'install.log' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content install.log -Tail 60; throw "install failed: $($p.ExitCode)" }
+          $p = Start-Process msiexec.exe -ArgumentList '/x', "`"$($msi.FullName)`"", '/qn', '/l*v', 'uninstall.log' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content uninstall.log -Tail 60; throw "uninstall failed: $($p.ExitCode)" }
+
+  test:
+    name: tests (native ARM64)
+    if: inputs.run-tests
+    runs-on: windows-11-arm
+    timeout-minutes: ${{ inputs.test-timeout-minutes }}
+    env:
+      NODALIA_FONTS_DIR: ${{ github.workspace }}\nodalia-fonts
+      NODALIA_I18N_DIR: ${{ github.workspace }}\nodalia-i18n
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check out the fonts
+        if: inputs.fonts-repository != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ inputs.fonts-repository }}
+          ref: ${{ inputs.fonts-ref }}
+          path: nodalia-fonts
+          persist-credentials: false
+
+      - name: Check out the translations
+        if: inputs.i18n-repository != ''
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ inputs.i18n-repository }}
+          ref: ${{ inputs.i18n-ref }}
+          path: nodalia-i18n
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
+
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          key: windows-arm64-test
+
+      - name: Tests
+        shell: pwsh
+        env:
+          TEST_COMMAND: ${{ inputs.test-command }}
+        run: Invoke-Expression $env:TEST_COMMAND
