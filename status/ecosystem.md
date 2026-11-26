@@ -3,7 +3,7 @@
 Every state here is backed by a PR, a CI run or a file in the repository; anything not verified
 says **pending**. Updated with each Foundation PR.
 
-Last update: 2026-11-12.
+Last update: 2026-11-26.
 
 ## Definitions
 

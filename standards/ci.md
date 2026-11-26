@@ -34,6 +34,7 @@ jobs:
 | `ast-grep.yml` | the inherited `ast-grep.yml` | ast-grep rule tests and scan |
 | `nix.yml` | the inherited `nix.yml` | `nix flake check --no-build` |
 | `freebsd.yml` | the inherited `freebsd.yml` | build and test in a FreeBSD VM on a Linux runner (x86_64; nightly) |
+| `windows-arm64.yml` | the inherited `windows-arm64.yml` | cross-compile and package the ARM64 release on an x64 runner, install and start it on Windows 11 ARM64, optionally run the tests natively |
 
 Workflows that only one product needs (Lienzo's perf nightly, Vortia's numerical checks, Nodalix
 OS's ISO and kernel builds) stay in that product's repository. Move a job here only when a second
