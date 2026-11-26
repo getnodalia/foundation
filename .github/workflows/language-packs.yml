@@ -45,7 +45,7 @@ jobs:
             exit 0
           fi
           mkdir packs && cd packs
-          curl -sSLf --retry 3 -o origin-index.json "$ORIGIN/index.json"
+          curl --proto =https --tlsv1.2 -sSLf --retry 3 -o origin-index.json "$ORIGIN/index.json"
           echo "$ORIGIN_INDEX_SHA256  origin-index.json" | sha256sum -c -
           python3 - <<'PY'
           import hashlib, json, os, subprocess
@@ -56,7 +56,7 @@ jobs:
               name = pack["locale"] + ".tar.zst"
               if pack["url"] != f"{origin}/{name}":
                   raise SystemExit(f"unexpected URL for {name}: {pack['url']}")
-              subprocess.run(["curl", "-sSLf", "--retry", "3", "-o", name, pack["url"]], check=True)
+              subprocess.run(["curl", "--proto", "=https", "--tlsv1.2", "-sSLf", "--retry", "3", "-o", name, pack["url"]], check=True)
               data = open(name, "rb").read()
               if hashlib.sha256(data).hexdigest() != pack["sha256"] or len(data) != pack["size"]:
                   raise SystemExit(f"{name} does not match the index")
