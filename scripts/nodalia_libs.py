@@ -84,6 +84,9 @@ LIBRARIES = {
              "upstream": "storytold/craft-libs"},
     "i18n": {"mirror": "vendor/craft-i18n/main", "branch": "nodalia/i18n",
              "upstream": "storytold/craft-i18n",
+             # Nodalia's apps add and fix catalog rows on the branch itself, so a new upstream
+             # commit is merged into it instead of replacing its tree (see merge_local).
+             "keep_local": True,
              # Catalogs named after upstream apps are the Nodalia apps' catalogs.
              "file_renames": {"photocraft.tsv": "lienzo.tsv", "pdfcraft.tsv": "papel.tsv",
                               "vectorcraft.tsv": "pluma.tsv", "wordcraft.tsv": "letra.tsv",
@@ -350,6 +353,143 @@ def app_rules(slug: str, repo: Path) -> tuple[Path, Path]:
     return home / "scripts" / "rebrand.py", config
 
 
+def pure_base(library: str, upstream_sha: str, tip: str, repo: Path) -> str | None:
+    """The commit holding the plain renamed upstream tree to merge from: the one generated from the
+    fork point of upstream_sha and the newest generated commit, else the newest generated commit.
+    A merge commit keeps that tree as its second parent."""
+    try:
+        log = git("log", "--first-parent", f"--format=%P|{FORMAT}", tip, cwd=repo)
+    except subprocess.CalledProcessError:
+        return None
+    pure: dict[str, str] = {}
+    newest = None
+    for line in log.splitlines():
+        head, _, rest = line.partition("|")
+        parents = head.split()
+        fields = rest.split()
+        if len(fields) < 2:
+            continue  # a commit that is not generated: someone's edit
+        upstream = fields[1]
+        pure.setdefault(upstream, parents[1] if len(parents) > 1 else fields[0])
+        newest = newest or upstream
+    if newest is None:
+        return None
+    try:
+        fork = git("merge-base", upstream_sha, newest, cwd=repo)
+    except subprocess.CalledProcessError:
+        fork = newest
+    return pure.get(fork) or pure[newest]
+
+
+def merge_rows(base: str, ours: str, theirs: str) -> str | None:
+    """Three-way merge of one catalog by row (context, English): what upstream added or changed
+    since base is applied to the rows the branch left alone, what the branch changed or added
+    stays, and a row both changed keeps the branch's. A row upstream dropped stays too: the apps
+    read these catalogs now, and a string they still show must not turn English because
+    upstream's own app moved on. None when a file is not a plain catalog."""
+    def parse(text: str):
+        rows: dict[tuple[str, str], str] = {}
+        for line in text.removeprefix("\ufeff").split("\n"):
+            line = line.removesuffix("\r")
+            if not line.strip() or line.startswith("#"):
+                continue
+            cols = line.split("\t")
+            if len(cols) != 3:
+                return None
+            rows.setdefault((cols[0], cols[1]), cols[2])
+        return rows
+    b, o, t = parse(base), parse(ours), parse(theirs)
+    if b is None or o is None or t is None:
+        return None
+    merged: dict[tuple[str, str], str] = {}
+    for key in o.keys() | t.keys() | b.keys():
+        bv, ov, tv = b.get(key), o.get(key), t.get(key)
+        value = ov if ov == tv or tv == bv or tv is None else tv if ov == bv else ov
+        if value is not None:
+            merged[key] = value
+    header = []
+    for line in ours.removeprefix("\ufeff").split("\n"):
+        if line.strip() and not line.startswith("#"):
+            break
+        header.append(line.removesuffix("\r"))
+    while header and not header[-1].strip():
+        header.pop()
+    order = sorted(merged, key=lambda k: (k[1].casefold(), k[1], k[0]))
+    body = "".join(f"{c}\t{src}\t{merged[(c, src)]}\n" for c, src in order)
+    return ("\n".join(header) + "\n\n" if header else "") + body
+
+
+def merge_local(base: str, ours: str, theirs: str, repo: Path) -> str:
+    """The tree of ours with what theirs changed since base. Catalogs (`*.tsv`) merge by row, and
+    any other conflict takes ours, so nothing the branch holds is replaced by an older upstream
+    version or dropped because upstream dropped it."""
+    merged = subprocess.run(["git", "merge-tree", "--write-tree", f"--merge-base={base}", ours, theirs],
+                            cwd=repo, text=True, capture_output=True)
+    if merged.returncode not in (0, 1):
+        raise RuntimeError(f"git merge-tree failed: {merged.stderr.strip()}")
+    lines = merged.stdout.split("\n")
+    tree = lines[0].strip()
+    conflicts: dict[str, dict[str, str]] = {}
+    for line in lines[1:]:
+        if not line.strip():
+            break
+        info, _, path = line.partition("\t")
+        _mode, oid, stage = info.split()
+        conflicts.setdefault(path, {})[stage] = oid
+
+    def blob(rev: str, path: str) -> str | None:
+        # Not through git(): that strips the text, and a catalog can begin or end with a space.
+        out = subprocess.run(["git", "cat-file", "blob", f"{rev}:{path}"], cwd=repo, capture_output=True)
+        return out.stdout.decode("utf-8", "surrogateescape") if out.returncode == 0 else None
+
+    def stage_blob(oid: str | None) -> str | None:
+        if not oid:
+            return None
+        out = subprocess.run(["git", "cat-file", "blob", oid], cwd=repo, check=True, capture_output=True)
+        return out.stdout.decode("utf-8", "surrogateescape")
+
+    catalogs = [p for p in git("diff", "--name-only", base, theirs, "--", "*.tsv", cwd=repo).splitlines()]
+    resolved: dict[str, str | None] = {}
+    with tempfile.TemporaryDirectory() as tmp:
+        for path in sorted(set(conflicts) | set(catalogs)):
+            st = conflicts.get(path)
+            o = stage_blob(st.get("2")) if st else blob(ours, path)
+            t = stage_blob(st.get("3")) if st else blob(theirs, path)
+            b = (stage_blob(st.get("1")) if st else blob(base, path)) or ""  # "" when absent
+            if o is None:
+                # The branch deleted it (it stays deleted), or upstream added it (the merge did).
+                if st or b:
+                    resolved[path] = None
+                continue
+            if t is None:  # upstream deleted it: the branch keeps it
+                resolved[path] = o
+                continue
+            text = merge_rows(b, o, t) if path.endswith(".tsv") else None
+            if text is None and st:
+                files = {}
+                for name, content in (("base", b), ("ours", o), ("theirs", t)):
+                    files[name] = Path(tmp) / name
+                    files[name].write_bytes(content.encode("utf-8", "surrogateescape"))
+                out = subprocess.run(["git", "merge-file", "-p", "--ours", str(files["ours"]),
+                                      str(files["base"]), str(files["theirs"])], capture_output=True)
+                text = out.stdout.decode("utf-8", "surrogateescape")
+            if text is not None:
+                resolved[path] = text
+        if not resolved:
+            return tree
+        env = {**os.environ, "GIT_INDEX_FILE": str(Path(tmp) / "index")}
+        git("read-tree", tree, cwd=repo, env=env)
+        for path, text in sorted(resolved.items()):
+            if text is None:
+                git("update-index", "--force-remove", "--", path, cwd=repo, env=env)
+                continue
+            oid = subprocess.run(["git", "hash-object", "-w", "--stdin"], cwd=repo,
+                                 input=text.encode("utf-8", "surrogateescape"),
+                                 capture_output=True, check=True).stdout.decode().strip()
+            git("update-index", "--add", "--cacheinfo", f"100644,{oid},{path}", cwd=repo, env=env)
+        return git("write-tree", cwd=repo, env=env)
+
+
 def generate(library: str, upstream_sha: str, repo: Path) -> str:
     """Commit the renamed tree of upstream_sha on top of the branch; return the new commit."""
     found = lookup(library, upstream_sha, repo)
@@ -381,12 +521,12 @@ def generate(library: str, upstream_sha: str, repo: Path) -> str:
             tree = git("write-tree", cwd=work)
         finally:
             git("worktree", "remove", "--force", str(work), cwd=repo)
-    # One parent: the previous generated commit. The upstream commit is named by the trailer and
-    # its history stays on the mirror; as a parent it would bring upstream's workflow files into
-    # the push, which the workflow's token may not do.
-    parents: list[str] = []
+    # The upstream commit is named by the trailer and its history stays on the mirror; as a
+    # parent it would bring upstream's workflow files into the push, which the workflow's token
+    # may not do.
+    tip = None
     try:
-        parents = ["-p", git("rev-parse", f"origin/{spec['branch']}", cwd=repo)]
+        tip = git("rev-parse", f"origin/{spec['branch']}", cwd=repo)
     except subprocess.CalledProcessError:
         pass
     date = git("show", "-s", "--format=%cI", full, cwd=repo)
@@ -395,7 +535,18 @@ def generate(library: str, upstream_sha: str, repo: Path) -> str:
            "GIT_AUTHOR_DATE": date, "GIT_COMMITTER_DATE": date}
     message = (f"nodalia-{library} from {spec['upstream']}@{full[:12]}\n\n"
                f"Upstream-Commit: {full}\nGenerator: {GENERATOR}\n")
-    commit = git("commit-tree", tree, *parents, "-m", message, cwd=repo, env=env)
+    base = pure_base(library, full, tip, repo) if tip and spec.get("keep_local") else None
+    if base:
+        # What the branch holds besides upstream's files (rows the apps added or fixed) stays:
+        # only what upstream changed since `base` is applied. `pure` keeps the renamed upstream
+        # tree as the second parent, the base of the next merge.
+        pure = git("commit-tree", tree, "-p", base, "-m", message, cwd=repo, env=env)
+        merged = merge_local(base, tip, pure, repo)
+        commit = git("commit-tree", merged, "-p", tip, "-p", pure, "-m", message, cwd=repo, env=env)
+    else:
+        # One parent: the previous generated commit.
+        parents = ["-p", tip] if tip else []
+        commit = git("commit-tree", tree, *parents, "-m", message, cwd=repo, env=env)
     git("update-ref", f"refs/remotes/origin/{spec['branch']}", commit, cwd=repo)
     return commit
 

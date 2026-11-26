@@ -53,8 +53,14 @@ commit; an app moves to it, and its weekly upstream sync keeps it there, with
 maps every pinned SHA. The workflow runs when a `vendor/` branch moves, every Monday before the
 apps' syncs, and on request for a commit an app needs (`library` and `commits` inputs).
 
-Translations, fonts and fixes still go to the `vendor/` branches by pull request; the generated
-branches are never edited by hand.
+Translations, fonts and fixes still go to the `vendor/` branches by pull request. The generated
+branches are not edited by hand, with one exception: `nodalia/i18n` is also where Nodalia's apps add
+and fix their catalog rows (`locales/<locale>/<app>.tsv`), so a new upstream commit is merged into
+it and never replaces its tree. The generated commit has the branch's tip and the plain renamed
+upstream tree as its two parents, and it applies only what upstream changed since the previous
+generated tree: rows upstream added or changed are taken for rows the branch left alone, rows the
+branch added or changed stay, and a row upstream dropped stays too (the apps still show it). Other
+conflicts take the branch's side.
 
 ## Depending on it
 

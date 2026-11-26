@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Tests for nodalia_libs.py's renaming: python3 -m unittest scripts/test_nodalia_libs.py"""
 
+import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -111,6 +113,118 @@ class GeneratorTests(unittest.TestCase):
         self.assertIsNone(nl.current(["c" * 40, sha]))
         self.assertIsNone(nl.current(["c" * 40, sha, str(nl.GENERATOR - 1)]))
         self.assertEqual(nl.current(["c" * 40, sha, str(nl.GENERATOR)]), sha)
+
+
+HEAD = "# Spanish (es) interface catalog for lienzo.\n# Columns...\n"
+
+
+def catalog(*rows: tuple[str, str]) -> str:
+    return HEAD + "\n" + "".join(f"\t{src}\t{tr}\n" for src, tr in rows)
+
+
+class MergeRowsTests(unittest.TestCase):
+    def test_what_the_branch_added_survives_an_older_upstream(self):
+        base = catalog(("Open", "Abrir"), ("Save", "Guardar"))
+        ours = catalog(("Open", "Abrir"), ("Open Recent", "Abrir reciente"), ("Save", "Guardar"))
+        theirs = catalog(("Open", "Abrir"), ("Save", "Guardar archivo"))
+        merged = nl.merge_rows(base, ours, theirs)
+        self.assertEqual(merged, catalog(("Open", "Abrir"), ("Open Recent", "Abrir reciente"),
+                                         ("Save", "Guardar archivo")))
+
+    def test_a_row_both_changed_keeps_the_branchs(self):
+        base = catalog(("Save", "Guardar"))
+        ours = catalog(("Save", "Guardar como"))
+        theirs = catalog(("Save", "Salvar"))
+        self.assertEqual(nl.merge_rows(base, ours, theirs), ours)
+
+    def test_a_row_upstream_dropped_stays(self):
+        # The apps still show it; upstream's own app moved on.
+        base = catalog(("Open", "Abrir"), ("Save", "Guardar"))
+        self.assertEqual(nl.merge_rows(base, base, catalog(("Open", "Abrir"))), base)
+        ours = catalog(("Open", "Abrir"), ("Save", "Guardar archivo"))
+        self.assertEqual(nl.merge_rows(base, ours, catalog(("Open", "Abrir"))), ours)
+
+    def test_a_file_that_is_not_a_catalog_is_left_to_the_line_merge(self):
+        self.assertIsNone(nl.merge_rows("a\tb\n", "a\tb\n", "a\tb\n"))
+
+
+class MergeLocalTests(unittest.TestCase):
+    def run_git(self, *args, **kw):
+        return subprocess.run(["git", *args], cwd=self.repo, check=True, text=True,
+                              capture_output=True, env=self.env, **kw).stdout.strip()
+
+    def commit(self, files: dict[str, str], *parents: str) -> str:
+        for name, text in files.items():
+            path = self.repo / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text)
+        self.run_git("add", "-A")
+        tree = self.run_git("write-tree")
+        args = [a for p in parents for a in ("-p", p)]
+        return self.run_git("commit-tree", tree, *args, "-m", "c")
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.repo = Path(self.tmp.name)
+        self.env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+                    "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"}
+        self.run_git("init", "-q")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_rows_added_on_the_branch_survive_the_next_upstream_commit(self):
+        f = "locales/es/lienzo.tsv"
+        pure1 = self.commit({f: catalog(("Open", "Abrir"), ("Save", "Guardar")), "NOTICE": "a\nb\n"})
+        # Someone adds a row on the branch next to the one upstream is about to change.
+        tip = self.commit({f: catalog(("Open", "Abrir"), ("Open Recent", "Abrir reciente"),
+                                      ("Save", "Guardar")), "NOTICE": "a\nb\nours\n"}, pure1)
+        pure2 = self.commit({f: catalog(("Open", "Abrir"), ("Save", "Guardar archivo"),
+                                        ("Zoom", "Ampliar")), "NOTICE": "a\nb\nupstream\n"}, pure1)
+        merged = nl.merge_local(pure1, tip, pure2, self.repo)
+        self.assertEqual(self.run_git("show", f"{merged}:{f}") + "\n",
+                         catalog(("Open", "Abrir"), ("Open Recent", "Abrir reciente"),
+                                 ("Save", "Guardar archivo"), ("Zoom", "Ampliar")))
+        # A conflicting line of another file takes the branch's side.
+        self.assertIn("ours", self.run_git("show", f"{merged}:NOTICE"))
+        self.assertNotIn("<<<<", self.run_git("show", f"{merged}:NOTICE"))
+
+    def test_rows_upstream_dropped_are_not_dropped_by_a_clean_merge_either(self):
+        f = "locales/es/letra.tsv"
+        rows = [("A", "a"), ("B", "b"), ("C", "c")]
+        pure1 = self.commit({f: catalog(*rows)})
+        tip = self.commit({f: catalog(*rows, ("Z", "z"))}, pure1)
+        pure2 = self.commit({f: catalog(("A", "a"))}, pure1)
+        merged = nl.merge_local(pure1, tip, pure2, self.repo)
+        self.assertEqual(self.run_git("show", f"{merged}:{f}") + "\n", catalog(*rows, ("Z", "z")))
+
+    def test_the_base_is_the_commit_generated_from_the_fork_point(self):
+        commit = self._commit_msg
+        u1 = commit("u1", "u1")
+        u2 = commit("u2", "u2", u1)
+        u3 = commit("u3", "u3", u2)
+        side = commit("side", "side", u1)
+        trailer = lambda sha: f"gen\n\nUpstream-Commit: {sha}\nGenerator: {nl.GENERATOR}\n"
+        g1 = self._commit_msg("g1", trailer(u1))
+        edit = self._commit_msg("edit", "edit", g1)
+        pure2 = self._commit_msg("g2", trailer(u2), g1)
+        tip = self._commit_msg("merged", trailer(u2), edit, pure2)
+        nl.LIBRARIES["t"] = {"branch": "t", "mirror": "m", "upstream": "u"}
+        try:
+            self.assertEqual(nl.pure_base("t", u3, tip, self.repo), pure2)
+            self.assertEqual(nl.pure_base("t", side, tip, self.repo), g1)
+            # A branch holding only the first generated commit and an edit.
+            self.assertEqual(nl.pure_base("t", u3, edit, self.repo), g1)
+            # Nothing generated yet.
+            self.assertIsNone(nl.pure_base("t", u3, u3, self.repo))
+        finally:
+            del nl.LIBRARIES["t"]
+
+    def _commit_msg(self, name, message, *parents):
+        (self.repo / name).write_text(name)
+        self.run_git("add", "-A")
+        args = [a for p in parents for a in ("-p", p)]
+        return self.run_git("commit-tree", self.run_git("write-tree"), *args, "-m", message)
 
 
 class TreeTests(unittest.TestCase):
