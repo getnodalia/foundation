@@ -12,6 +12,12 @@ on:
         default: |
           git+https://github.com/getnodalia/
           git+https://github.com/danielmigueltejedor/nodalia-design
+      forbidden-name-prefixes:
+        description: "Crate name prefixes no package in Cargo.lock may have, one per line (apps are independent of the Craft apps' crates)"
+        type: string
+        default: |
+          craft-
+          craft_
       working-directory:
         description: "Directory holding Cargo.lock"
         type: string
@@ -68,4 +74,20 @@ jobs:
               print(*bad, sep="\n")
               sys.exit(1)
           print("All git dependencies come from:", *allowed, sep="\n  ")
+          PY
+      - name: No crate is named after the Craft apps
+        env:
+          FORBIDDEN: ${{ inputs.forbidden-name-prefixes }}
+        run: |
+          python3 - <<'PY'
+          import os, sys, tomllib
+          forbidden = tuple(p.strip() for p in os.environ["FORBIDDEN"].splitlines() if p.strip())
+          with open("Cargo.lock", "rb") as fh:
+              lock = tomllib.load(fh)
+          bad = sorted({p["name"] for p in lock.get("package", []) if forbidden and p["name"].startswith(forbidden)})
+          if bad:
+              print("::error::Crates named after the Craft apps (rename them to nodalia-* or the app's own name):")
+              print(*bad, sep="\n")
+              sys.exit(1)
+          print("No crate has a forbidden name prefix:", *forbidden, sep="\n  ")
           PY
