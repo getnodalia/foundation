@@ -1,0 +1,72 @@
+name: Language packs
+
+# Mirrors the `language-packs-2` release (spelling and hyphenation packs that Letra downloads on
+# request) into this repository, so no Nodalia app reads from another organisation. It runs once
+# when this file lands on main, or by hand, and does nothing when the release already exists.
+#
+# The origin's index is checked against its pinned sha256, every pack against the sha256 and size
+# the index lists, and the rewritten index against the digest the apps pin. Only the URLs change.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/language-packs.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: language-packs
+  cancel-in-progress: false
+
+env:
+  ORIGIN: https://github.com/storytold/craft-i18n/releases/download/language-packs-2
+  ORIGIN_INDEX_SHA256: b35c7aef0591177f18233b551da16035dcd615549ff874e169ffd19f16fea74b
+  NEW_INDEX_SHA256: 0c5028810b1bd576afae542eac2576740a2e0f31bbb68e3553491272dd5191ba
+  TAG: language-packs-2
+
+jobs:
+  mirror:
+    name: Mirror the language packs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - name: Mirror
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+            echo "$TAG already exists; nothing to do."
+            exit 0
+          fi
+          mkdir packs && cd packs
+          curl --proto =https --tlsv1.2 -sSLf --retry 3 -o origin-index.json "$ORIGIN/index.json"
+          echo "$ORIGIN_INDEX_SHA256  origin-index.json" | sha256sum -c -
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess
+          index = json.load(open("origin-index.json"))
+          origin = os.environ["ORIGIN"]
+          base = f"https://github.com/{os.environ['REPO']}/releases/download/{os.environ['TAG']}/"
+          for pack in index["packs"]:
+              name = pack["locale"] + ".tar.zst"
+              if pack["url"] != f"{origin}/{name}":
+                  raise SystemExit(f"unexpected URL for {name}: {pack['url']}")
+              subprocess.run(["curl", "--proto", "=https", "--tlsv1.2", "-sSLf", "--retry", "3", "-o", name, pack["url"]], check=True)
+              data = open(name, "rb").read()
+              if hashlib.sha256(data).hexdigest() != pack["sha256"] or len(data) != pack["size"]:
+                  raise SystemExit(f"{name} does not match the index")
+              pack["url"] = base + name
+          with open("index.json", "w", encoding="utf-8") as fh:
+              fh.write(json.dumps(index, indent=2, ensure_ascii=False) + "\n")
+          PY
+          echo "$NEW_INDEX_SHA256  index.json" | sha256sum -c -
+          gh release create "$TAG" --repo "$REPO" --draft --latest=false \
+            --title "Language packs 2" \
+            --notes "Spelling and hyphenation packs for Nodalia apps (Letra), mirrored unchanged from the previous download location. Every pack keeps its sha256, size and licence; the index lists the new URLs. Index sha256: $NEW_INDEX_SHA256" \
+            index.json ./*.tar.zst
+          gh release edit "$TAG" --repo "$REPO" --draft=false --latest=false
