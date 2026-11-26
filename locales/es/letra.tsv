@@ -2837,3 +2837,6 @@ preview	Title	Título
 @plural	{n} font not installed|{n} fonts not installed	{n} fuente no instalada|{n} fuentes no instaladas
 @plural	{n} missing font can be downloaded|{n} missing fonts can be downloaded	Se puede descargar {n} fuente que falta|Se pueden descargar {n} fuentes que faltan
 @plural	…and {n} more|…and {n} more	…y {n} más|…y {n} más
+	Equations	Ecuaciones
+	Number\nEquation	Numerar\necuación
+	Number Equation	Numerar ecuación
